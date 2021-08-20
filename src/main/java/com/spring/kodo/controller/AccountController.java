@@ -1,5 +1,7 @@
-package com.spring.kodo.account;
+package com.spring.kodo.controller;
 
+import com.spring.kodo.entity.Account;
+import com.spring.kodo.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

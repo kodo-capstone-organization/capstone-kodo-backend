@@ -8,19 +8,25 @@ import java.util.Properties;
 @SpringBootApplication
 public class KodoApplication
 {
-
     public static void main(String[] args)
     {
         SpringApplication application = new SpringApplication(KodoApplication.class);
+        application.setDefaultProperties(getCustomApplicationProperties());
+        application.run(args);
+    }
 
+    private static Properties getCustomApplicationProperties() {
         Properties properties = new Properties();
 
-        properties.setProperty("spring.datasource.url", System.getenv("DATASOURCE_URL"));
-        properties.setProperty("spring.datasource.username", System.getenv("DATASOURCE_USERNAME"));
-        properties.setProperty("spring.datasource.password", System.getenv("DATASOURCE_PASSWORD"));
+        // Datasource
+        String datasourcePrefix = "spring.datasource.";
+        properties.setProperty(datasourcePrefix + "url", System.getenv("DATASOURCE_URL"));
+        properties.setProperty(datasourcePrefix + "username", System.getenv("DATASOURCE_USERNAME"));
+        properties.setProperty(datasourcePrefix + "password", System.getenv("DATASOURCE_PASSWORD"));
 
-        application.setDefaultProperties(properties);
-        application.run(args);
+        // Set other custom properties here
+
+        return properties;
     }
 
 }

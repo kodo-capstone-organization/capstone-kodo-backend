@@ -1,4 +1,4 @@
-package com.spring.kodo.account;
+package com.spring.kodo.entity;
 
 import javax.persistence.*;
 

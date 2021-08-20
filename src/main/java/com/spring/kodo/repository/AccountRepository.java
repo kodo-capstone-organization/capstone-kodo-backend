@@ -1,0 +1,18 @@
+package com.spring.kodo.repository;
+
+import com.spring.kodo.entity.Account;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface AccountRepository extends JpaRepository<Account, Long>
+{
+    // Basically the EntityManager of Account
+    // Provides methods out-of-the-box. E.g.:
+    // 1 - save(S entity)
+    // 2 - findById(ID id)
+    // 3 - findOne()
+    // 4 - findAll()
+    // For full method list, ctrl + click into JpaRepository
+    // Or visit: https://docs.spring.io/autorepo/docs/spring-data-jpa/current/api/org/springframework/data/jpa/repository/support/SimpleJpaRepository.html
+}
