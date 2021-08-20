@@ -1,5 +1,8 @@
 package com.spring.kodo.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 import javax.persistence.*;
 
 @Entity
@@ -7,17 +10,11 @@ import javax.persistence.*;
 public class Account
 {
     @Id
-    @SequenceGenerator(
-            name = "account_sequence",
-            sequenceName = "account_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "account_sequence"
-    )
+    @SequenceGenerator(name = "account_sequence", sequenceName = "account_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "account_sequence")
     private Long accountId;
     private String username;
+    @JsonProperty(access = Access.WRITE_ONLY) // Will not be read on serialization (GET request)
     private String password;
     private String name;
     private String bio;
@@ -122,14 +119,14 @@ public class Account
         this.displayPictureUrl = displayPictureUrl;
     }
 
-    public boolean isAdmin()
+    public boolean getIsAdmin()
     {
         return isAdmin;
     }
 
-    public void setAdmin(boolean admin)
+    public void setAdmin(boolean isAdmin)
     {
-        isAdmin = admin;
+        isAdmin = isAdmin;
     }
 
     @Override

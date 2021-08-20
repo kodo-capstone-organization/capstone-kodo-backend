@@ -1,9 +1,11 @@
 package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.Account;
+import com.spring.kodo.exception.AccountNotFoundException;
 import com.spring.kodo.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,15 +16,18 @@ import java.util.List;
 public class AccountController
 {
     @Autowired
-    private final AccountService accountService;
+    private AccountService accountService;
 
-    public AccountController(AccountService accountService)
+    @GetMapping("/getAccountByAccountId/{accountId}")
+    public Account getAccountByAccountId(@PathVariable Long accountId)
     {
-        this.accountService = accountService;
+        return this.accountService
+                .getAccountByAccountId(accountId)
+                .orElseThrow(AccountNotFoundException::new);
     }
 
-    @GetMapping
-    public List<Account> getAccounts()
+    @GetMapping("/getAllAccounts")
+    public List<Account> getAllAccounts()
     {
         return this.accountService.getAccounts();
     }
