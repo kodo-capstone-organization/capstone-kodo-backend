@@ -17,7 +17,7 @@ public class AccountConfig
         {
             List<Account> accounts = new ArrayList<>();
 
-            for (int i = 1; i <= 5; i++)
+            for (int i = 1; i <= 10; i++)
             {
                 Account account = new Account("account" + i, "password", "account" + i, "account" + i, "account" + i + "@gmail.com", "", false);
                 accounts.add(account);
