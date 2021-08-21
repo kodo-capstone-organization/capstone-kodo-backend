@@ -6,6 +6,8 @@ import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table
@@ -39,23 +41,32 @@ public class Account
 
     @Column(nullable = false, unique = true, length = 64)
     @Email(message = "Email is not valid", regexp = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])")
-    @NotEmpty(message = "Email cannot be empty")
+    @NotBlank(message = "Email cannot be empty")
     @Size(max = 64)
     private String email;
 
-    @Column(nullable = true, unique = true, length = 512)
+    @Column(unique = true, length = 512)
     @URL // Maybe can have a regex to help check if the URL is valid? Unsure of what constraints though
     @NotNull
     @Size(min = 0, max = 512)
     private String displayPictureUrl;
+
+    @Column(nullable = false)
+    @NotNull
     private boolean isAdmin;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<Tag> interests;
 
     public Account()
     {
+        this.interests = new ArrayList<>();
     }
 
     public Account(Long accountId, String username, String password, String name, String bio, String email, String displayPictureUrl, boolean isAdmin)
     {
+        this();
+
         this.accountId = accountId;
         this.username = username;
         this.password = password;
@@ -68,6 +79,8 @@ public class Account
 
     public Account(String username, String password, String name, String bio, String email, String displayPictureUrl, boolean isAdmin)
     {
+        this();
+
         this.username = username;
         this.password = password;
         this.name = name;
