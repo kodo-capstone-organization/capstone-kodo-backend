@@ -2,8 +2,10 @@ package com.spring.kodo.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 @Entity
 @Table
@@ -13,12 +15,38 @@ public class Account
     @SequenceGenerator(name = "account_sequence", sequenceName = "account_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "account_sequence")
     private Long accountId;
+
+    @Column(nullable = false, unique = true, length = 32)
+    @NotBlank(message = "Username cannot be blank")
+    @Size(max = 32)
     private String username;
+
     @JsonProperty(access = Access.WRITE_ONLY) // Will not be read on serialization (GET request)
+    @Column(nullable = false, length = 32)
+    @NotBlank(message = "Password cannot be blank")
+    @Size(max = 32)
     private String password;
+
+    @Column(nullable = false, length = 64)
+    @NotBlank(message = "Name cannot be blank")
+    @Size(max = 64)
     private String name;
+
+    @Column(length = 512)
+    @NotNull
+    @Size(min = 0, max = 512)
     private String bio;
+
+    @Column(nullable = false, unique = true, length = 64)
+    @Email(message = "Email is not valid", regexp = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])")
+    @NotEmpty(message = "Email cannot be empty")
+    @Size(max = 64)
     private String email;
+
+    @Column(nullable = true, unique = true, length = 512)
+    @URL // Maybe can have a regex to help check if the URL is valid? Unsure of what constraints though
+    @NotNull
+    @Size(min = 0, max = 512)
     private String displayPictureUrl;
     private boolean isAdmin;
 
