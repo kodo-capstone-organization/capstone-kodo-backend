@@ -14,8 +14,7 @@ import java.util.List;
 public class Account
 {
     @Id
-    @SequenceGenerator(name = "account_sequence", sequenceName = "account_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "account_sequence")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long accountId;
 
     @Column(nullable = false, unique = true, length = 32)
@@ -55,7 +54,7 @@ public class Account
     @NotNull
     private boolean isAdmin;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = Tag.class, fetch = FetchType.LAZY)
     private List<Tag> interests;
 
     public Account()
@@ -160,14 +159,24 @@ public class Account
         this.displayPictureUrl = displayPictureUrl;
     }
 
-    public boolean getIsAdmin()
+    public boolean isAdmin()
     {
         return isAdmin;
     }
 
-    public void setAdmin(boolean isAdmin)
+    public void setAdmin(boolean admin)
     {
-        isAdmin = isAdmin;
+        isAdmin = admin;
+    }
+
+    public List<Tag> getInterests()
+    {
+        return interests;
+    }
+
+    public void setInterests(List<Tag> interests)
+    {
+        this.interests = interests;
     }
 
     @Override

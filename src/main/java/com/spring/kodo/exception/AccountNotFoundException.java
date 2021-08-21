@@ -6,7 +6,11 @@ public class AccountNotFoundException extends KodoRestRuntimeException
 {
     public AccountNotFoundException()
     {
-        // TODO: Message should be passed in from thrower?
-        super("Kodo account not found");
+        super("Account not found");
+    }
+
+    public AccountNotFoundException(String message)
+    {
+        super(message);
     }
 }
