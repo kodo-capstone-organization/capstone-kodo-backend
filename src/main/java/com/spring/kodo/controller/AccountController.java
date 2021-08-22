@@ -4,6 +4,7 @@ import com.spring.kodo.entity.Account;
 import com.spring.kodo.util.exception.AccountNotFoundException;
 import com.spring.kodo.service.AccountService;
 import com.spring.kodo.util.exception.AccountPermissionDeniedException;
+import com.spring.kodo.util.exception.InputDataValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,12 @@ public class AccountController
     @Autowired
     private AccountService accountService;
 
+    @GetMapping("/getAllAccounts")
+    public List<Account> getAllAccounts()
+    {
+        return this.accountService.getAllAccounts();
+    }
+
     @GetMapping("/getAccountByAccountId/{accountId}")
     public Account getAccountByAccountId(@PathVariable Long accountId)
     {
@@ -31,13 +38,19 @@ public class AccountController
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
-
     }
 
-    @GetMapping("/getAllAccounts")
-    public List<Account> getAllAccounts()
+    @PostMapping("/createNewAccount")
+    public Account createNewAccount(@RequestBody Account newAccount, @RequestBody List<String> tagTitles)
     {
-        return this.accountService.getAllAccounts();
+        try
+        {
+            return this.accountService.createNewAccount(newAccount, tagTitles);
+        }
+        catch (InputDataValidationException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
     }
 
     @DeleteMapping("/deactivateAccount/{deactivatingAccountId}&{requestingAccountId}")

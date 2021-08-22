@@ -3,9 +3,11 @@ package com.spring.kodo.config;
 import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Tag;
 import com.spring.kodo.util.exception.AccountNotFoundException;
+import com.spring.kodo.util.exception.InputDataValidationException;
 import com.spring.kodo.util.exception.TagNotFoundException;
 import com.spring.kodo.service.AccountService;
 import com.spring.kodo.service.TagService;
+import com.spring.kodo.util.exception.UpdateAccountException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
@@ -57,7 +59,7 @@ public class DatabaseConfig
                 }
             }
         }
-        catch (AccountNotFoundException | TagNotFoundException ex)
+        catch (AccountNotFoundException | TagNotFoundException | UpdateAccountException ex)
         {
             System.err.println(ex.getMessage());
         }
@@ -68,6 +70,26 @@ public class DatabaseConfig
 
         List<Long> tagIds = tags.stream().map(Tag::getTagId).collect(Collectors.toList());
         System.out.println(">> Added Tags with tagIds: " + tagIds);
+
+        // Creating new account with a list of tag titles
+        System.out.println(">> Simulating frontend account creation - passing in account details and a list of tagTitles");
+        Account newAccount = new Account("tutor2", "password", "Tutor 2", "I am Tutor 2", "tutor2@gmail.com", "https://tutor2URL.com", false);
+        List<String> tagTitles = new ArrayList();
+        tagTitles.add("New_Title");
+        tagTitles.add("Java");
+        try
+        {
+            Account account = accountService.createNewAccount(newAccount, tagTitles);
+            System.out.println("    | Account with ID: " + account.getAccountId() + " successfully created with tags: " + account.getInterests());
+            System.out.println("    | Check that tag created has new ID while the other references a previously-created Tag ID");
+        }
+        catch
+        (InputDataValidationException ex)
+        {
+            System.err.println(ex.getMessage());
+        }
+
+
 
         System.out.println("===== Init Data Fully Loaded to Database =====");
     }

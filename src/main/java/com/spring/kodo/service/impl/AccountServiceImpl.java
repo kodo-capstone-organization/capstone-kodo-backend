@@ -2,30 +2,74 @@ package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Tag;
-import com.spring.kodo.util.exception.AccountNotFoundException;
-import com.spring.kodo.util.exception.AccountPermissionDeniedException;
-import com.spring.kodo.util.exception.TagNotFoundException;
+import com.spring.kodo.util.MessageFormatterUtil;
+import com.spring.kodo.util.exception.*;
 import com.spring.kodo.repository.AccountRepository;
 import com.spring.kodo.service.AccountService;
 import com.spring.kodo.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class AccountServiceImpl implements AccountService
 {
     @Autowired // With this annotation, we do not to populate AccountRepository in this class' constructor
     private AccountRepository accountRepository;
-
     @Autowired
     private TagService tagService;
 
-    @Override
-    public Account createNewAccount(Account account)
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+
+    public AccountServiceImpl()
     {
-        return accountRepository.save(account);
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
+
+    @Override
+    public Account createNewAccount(Account newAccount, List<String> tagTitles) throws InputDataValidationException
+    {
+        Set<ConstraintViolation<Account>> constraintViolations = validator.validate(newAccount);
+        if(constraintViolations.isEmpty())
+        {
+            // Persist Account
+            Account persistedAccount = accountRepository.saveAndFlush(newAccount);
+
+            // Process Tags
+            if(tagTitles != null && (!tagTitles.isEmpty()))
+            {
+                for(String tagTitle: tagTitles)
+                {
+                    Tag tag = tagService.getTagByTitleOrCreateNew(tagTitle);
+                    try
+                    {
+                        persistedAccount = addTagToAccount(persistedAccount, tag);
+                    }
+                    catch (TagNotFoundException | AccountNotFoundException | UpdateAccountException ex)
+                    {
+                        // Since we are still in a creation step, these generic exceptions will probably not happen / can kinda be ignored
+                        // e.g. acc not found, duplicate tag exception
+                        continue;
+                    }
+                }
+            }
+
+            accountRepository.saveAndFlush(persistedAccount);
+            return persistedAccount;
+        }
+        else
+        {
+            throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+        }
+
     }
 
     @Override
@@ -82,12 +126,11 @@ public class AccountServiceImpl implements AccountService
     @Override
     public List<Account> getAllAccounts()
     {
-        return (List<Account>) accountRepository.findAll();
+        return accountRepository.findAll();
     }
 
     @Override
-    public Account addTagToAccount(Account account, Tag tag) throws AccountNotFoundException, TagNotFoundException
-    {
+    public Account addTagToAccount(Account account, Tag tag) throws AccountNotFoundException, TagNotFoundException, UpdateAccountException {
         account = getAccountByAccountId(account.getAccountId());
         tag = tagService.getTagByTagId(tag.getTagId());
 
@@ -97,7 +140,8 @@ public class AccountServiceImpl implements AccountService
         }
         else
         {
-            // throw duplicate add tag error
+            throw new UpdateAccountException("Unable to add tag with title: " + tag.getTitle() +
+                    " to account with ID: " + account.getAccountId() + " as tag is already linked to this account");
         }
 
         accountRepository.saveAndFlush(account);

@@ -43,6 +43,39 @@ public class TagServiceImpl implements TagService
     }
 
     @Override
+    public Tag getTagByTitle (String tagTitle) throws TagNotFoundException
+    {
+        Tag tag = tagRepository.findByTitle(tagTitle).orElse(null);
+
+        if (tag != null)
+        {
+            return tag;
+        }
+        else
+        {
+            throw new TagNotFoundException("Tag with Title: " + tagTitle + " does not exist!");
+        }
+    }
+
+
+    @Override
+    public Tag getTagByTitleOrCreateNew(String tagTitle)
+    {
+        Tag tag = null;
+        try
+        {
+            tag = getTagByTitle(tagTitle);
+        }
+        catch (TagNotFoundException ex)
+        {
+            Tag newTag = new Tag(tagTitle);
+            tag = createNewTag(newTag);
+        }
+
+        return tag;
+    }
+
+    @Override
     public List<Tag> getAllTags()
     {
         return tagRepository.findAll();
