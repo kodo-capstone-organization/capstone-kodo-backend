@@ -4,13 +4,13 @@ import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Tag;
 import com.spring.kodo.repository.AccountRepository;
 import com.spring.kodo.repository.TagRepository;
+import com.spring.kodo.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +23,9 @@ public class DatabaseConfig
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private AccountService accountService;
 
     @Autowired
     private Environment env;
@@ -57,7 +60,12 @@ public class DatabaseConfig
         );
 
         savedAccounts.get(1).getInterests().addAll(savedTags);
-        savedAccounts = accountRepository.saveAll(savedAccounts);
+
+        for (int i = 0; i < savedAccounts.size(); i++)
+        {
+            savedAccounts.set(i, accountService.createNewAccount(savedAccounts.get(i)));
+        }
+//        savedAccounts = accountRepository.saveAll(savedAccounts);
 
 //        List<Account> savedAccounts = accountRepository.saveAll(
 //                Arrays.asList(

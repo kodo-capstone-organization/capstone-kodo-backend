@@ -4,6 +4,8 @@ import com.spring.kodo.entity.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long>
 {
@@ -15,4 +17,10 @@ public interface AccountRepository extends JpaRepository<Account, Long>
     // 4 - findAll()
     // For full method list, ctrl + click into JpaRepository
     // Or visit: https://docs.spring.io/autorepo/docs/spring-data-jpa/current/api/org/springframework/data/jpa/repository/support/SimpleJpaRepository.html
+
+    Optional<Account> findByUsername(String username);
+
+    Optional<Account> findByName(String name);
+
+    Optional<Account> findByEmail(String email);
 }

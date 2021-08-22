@@ -16,9 +16,33 @@ public class AccountServiceImpl implements AccountService
     private AccountRepository accountRepository;
 
     @Override
+    public Account createNewAccount(Account account)
+    {
+        return this.accountRepository.save(account);
+    }
+
+    @Override
     public Optional<Account> getAccountByAccountId(Long accountId)
     {
         return this.accountRepository.findById(accountId);
+    }
+
+    @Override
+    public Optional<Account> getAccountByUsername(String username)
+    {
+        return this.accountRepository.findByUsername(username);
+    }
+
+    @Override
+    public Optional<Account> getAccountByName(String name)
+    {
+        return this.accountRepository.findByName(name);
+    }
+
+    @Override
+    public Optional<Account> getAccountByEmail(String email)
+    {
+        return this.accountRepository.findByEmail(email);
     }
 
     @Override
