@@ -2,17 +2,16 @@ package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Tag;
-import com.spring.kodo.exception.AccountNotFoundException;
-import com.spring.kodo.exception.TagNotFoundException;
+import com.spring.kodo.util.exception.AccountNotFoundException;
+import com.spring.kodo.util.exception.AccountPermissionDeniedException;
+import com.spring.kodo.util.exception.TagNotFoundException;
 import com.spring.kodo.repository.AccountRepository;
 import com.spring.kodo.service.AccountService;
 import com.spring.kodo.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AccountServiceImpl implements AccountService
@@ -36,40 +35,61 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
-    public Optional<Account> getAccountByAccountId(Long accountId)
+    public Account getAccountByAccountId(Long accountId) throws AccountNotFoundException
     {
-        return accountRepository.findById(accountId);
+        Account account = accountRepository.findById(accountId).orElse(null);
+
+        if (account != null)
+        {
+            return account;
+        }
+        else
+        {
+            throw new AccountNotFoundException("Account with ID: " + accountId + " does not exist!");
+        }
     }
 
     @Override
-    public Optional<Account> getAccountByUsername(String username)
+    public Account getAccountByUsername(String username) throws AccountNotFoundException
     {
-        return accountRepository.findByUsername(username);
+        Account account = accountRepository.findByUsername(username).orElse(null);
+
+        if (account != null)
+        {
+            return account;
+        }
+        else
+        {
+            throw new AccountNotFoundException("Account with Username: " + username + " does not exist!");
+        }
     }
 
     @Override
-    public Optional<Account> getAccountByName(String name)
+    public Account getAccountByEmail(String email) throws AccountNotFoundException
     {
-        return accountRepository.findByName(name);
+        Account account = accountRepository.findByEmail(email).orElse(null);
+
+        if (account != null)
+        {
+            return account;
+        }
+        else
+        {
+            throw new AccountNotFoundException("Account with Email: " + email + " does not exist!");
+        }
     }
 
     @Override
-    public Optional<Account> getAccountByEmail(String email)
+    public List<Account> getAllAccounts()
     {
-        return accountRepository.findByEmail(email);
+        return (List<Account>) accountRepository.findAll();
     }
 
     @Override
-    public List<Account> getAccounts()
+    public Account addTagToAccount(Account account, Tag tag) throws AccountNotFoundException, TagNotFoundException
     {
-        return accountRepository.findAll();
-    }
-
-    @Override
-    public Account addTagToAccount(Account account, Tag tag)
-    {
-        account = getAccountByAccountId(account.getAccountId()).orElseThrow(AccountNotFoundException::new);;
-        tag = tagService.getTagByTagId(tag.getTagId()).orElseThrow(TagNotFoundException::new);
+        account = getAccountByAccountId(account.getAccountId());
+        tag = tagService.getTagByTagId(tag.getTagId());
 
         if (!account.getInterests().contains(tag))
         {
@@ -82,6 +102,30 @@ public class AccountServiceImpl implements AccountService
 
         accountRepository.saveAndFlush(account);
         return account;
+    }
+
+    @Override
+    public Long deactivateAccount(Long deactivatingAccountId, Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException
+    {
+        if (deactivatingAccountId == requestingAccountId)
+        {
+            throw new AccountPermissionDeniedException("You cannot deactivate your own account");
+        }
+
+        Account requestingAccount = getAccountByAccountId(requestingAccountId);
+        Account deactivatingAccount = getAccountByAccountId(deactivatingAccountId);
+
+        // Check that requestingAccount is an admin account
+        if (requestingAccount.getIsAdmin())
+        {
+            deactivatingAccount.setIsActive(Boolean.FALSE);
+            Account deactivatedAccount = accountRepository.saveAndFlush(deactivatingAccount);
+            return deactivatedAccount.getAccountId();
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("You do not have administrative rights to deactivate accounts.");
+        }
     }
 }
 

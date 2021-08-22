@@ -1,14 +1,13 @@
 package com.spring.kodo.service.impl;
 
-import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Tag;
+import com.spring.kodo.util.exception.TagNotFoundException;
 import com.spring.kodo.repository.TagRepository;
 import com.spring.kodo.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TagServiceImpl implements TagService
@@ -29,13 +28,22 @@ public class TagServiceImpl implements TagService
     }
 
     @Override
-    public Optional<Tag> getTagByTagId(Long tagId)
+    public Tag getTagByTagId(Long tagId) throws TagNotFoundException
     {
-        return tagRepository.findById(tagId);
+        Tag tag = tagRepository.findById(tagId).orElse(null);
+
+        if (tag != null)
+        {
+            return tag;
+        }
+        else
+        {
+            throw new TagNotFoundException("Tag with ID: " + tagId + " does not exist!");
+        }
     }
 
     @Override
-    public List<Tag> getTags()
+    public List<Tag> getAllTags()
     {
         return tagRepository.findAll();
     }

@@ -52,7 +52,11 @@ public class Account
 
     @Column(nullable = false)
     @NotNull
-    private boolean isAdmin;
+    private Boolean isAdmin;
+
+    @Column(nullable = false)
+    @NotNull
+    private Boolean isActive;
 
     @ManyToMany(targetEntity = Tag.class, fetch = FetchType.LAZY)
     private List<Tag> interests;
@@ -60,6 +64,7 @@ public class Account
     public Account()
     {
         this.interests = new ArrayList<>();
+        this.isActive = true;
     }
 
     public Account(Long accountId, String username, String password, String name, String bio, String email, String displayPictureUrl, boolean isAdmin)
@@ -159,14 +164,20 @@ public class Account
         this.displayPictureUrl = displayPictureUrl;
     }
 
-    public boolean isAdmin()
-    {
+    public Boolean getIsAdmin() {
         return isAdmin;
     }
 
-    public void setAdmin(boolean admin)
-    {
+    public void setIsAdmin(Boolean admin) {
         isAdmin = admin;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean active) {
+        isActive = active;
     }
 
     public List<Tag> getInterests()

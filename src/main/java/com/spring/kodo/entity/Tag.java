@@ -14,7 +14,7 @@ public class Tag
     private Long tagId;
 
     @Column(nullable = false, unique = true, length = 32)
-    @NotBlank(message = "Title cannot be blank")
+    @NotBlank(message = "Tag title cannot be blank")
     @Size(max = 32)
     private String title;
 

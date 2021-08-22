@@ -2,8 +2,8 @@ package com.spring.kodo.config;
 
 import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Tag;
-import com.spring.kodo.repository.AccountRepository;
-import com.spring.kodo.repository.TagRepository;
+import com.spring.kodo.util.exception.AccountNotFoundException;
+import com.spring.kodo.util.exception.TagNotFoundException;
 import com.spring.kodo.service.AccountService;
 import com.spring.kodo.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,12 +47,19 @@ public class DatabaseConfig
         tagService.createNewTags(tags);
 
         // Test add Tag to Account
-        for (int i = 1; i < accounts.size(); i++)
+        try
         {
-            for (int j = 0; j < tags.size(); j++)
+            for (int i = 1; i < accounts.size(); i++)
             {
-                accountService.addTagToAccount(accounts.get(i), tags.get(j));
+                for (int j = 0; j < tags.size(); j++)
+                {
+                    accountService.addTagToAccount(accounts.get(i), tags.get(j));
+                }
             }
+        }
+        catch (AccountNotFoundException | TagNotFoundException ex)
+        {
+            System.err.println(ex.getMessage());
         }
 
         // Print Ids of saved data list

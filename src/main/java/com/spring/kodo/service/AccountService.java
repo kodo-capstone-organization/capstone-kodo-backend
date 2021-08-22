@@ -2,20 +2,23 @@ package com.spring.kodo.service;
 
 import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Tag;
+import com.spring.kodo.util.exception.AccountNotFoundException;
+import com.spring.kodo.util.exception.AccountPermissionDeniedException;
+import com.spring.kodo.util.exception.TagNotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface AccountService
 {
     Account createNewAccount(Account account);
     List<Account> createNewAccounts(List<Account> accounts);
 
-    Optional<Account> getAccountByAccountId(Long accountId);
-    Optional<Account> getAccountByUsername(String username);
-    Optional<Account> getAccountByName(String name);
-    Optional<Account> getAccountByEmail(String email);
-    List<Account> getAccounts();
+    List<Account> getAllAccounts();
+    Account getAccountByAccountId(Long accountId) throws AccountNotFoundException;
+    Account getAccountByUsername(String username) throws AccountNotFoundException;
+    Account getAccountByEmail(String email) throws AccountNotFoundException;
 
-    Account addTagToAccount(Account account, Tag tag);
+    Account addTagToAccount(Account account, Tag tag) throws AccountNotFoundException, TagNotFoundException;
+
+    Long deactivateAccount(Long deactivatingAccountId, Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException;
 }
