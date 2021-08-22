@@ -1,5 +1,6 @@
 package com.spring.kodo.service.impl;
 
+import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Tag;
 import com.spring.kodo.repository.TagRepository;
 import com.spring.kodo.service.TagService;
@@ -16,15 +17,27 @@ public class TagServiceImpl implements TagService
     private TagRepository tagRepository;
 
     @Override
+    public Tag createNewTag(Tag tag)
+    {
+        return tagRepository.save(tag);
+    }
+
+    @Override
+    public List<Tag> createNewTags(List<Tag> tags)
+    {
+        return tagRepository.saveAll(tags);
+    }
+
+    @Override
     public Optional<Tag> getTagByTagId(Long tagId)
     {
-        return this.tagRepository.findById(tagId);
+        return tagRepository.findById(tagId);
     }
 
     @Override
     public List<Tag> getTags()
     {
-        return this.tagRepository.findAll();
+        return tagRepository.findAll();
     }
 }
 
