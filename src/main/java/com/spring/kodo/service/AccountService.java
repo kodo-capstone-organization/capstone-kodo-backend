@@ -19,4 +19,6 @@ public interface AccountService
     Account addTagToAccount(Account account, Tag tag) throws AccountNotFoundException, TagNotFoundException, UpdateAccountException;
 
     Long deactivateAccount(Long deactivatingAccountId, Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException;
+
+    Account login(String username, String password) throws InvalidLoginCredentialsException, AccountNotFoundException;
 }

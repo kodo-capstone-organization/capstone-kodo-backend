@@ -3,6 +3,7 @@ package com.spring.kodo.service.impl;
 import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Tag;
 import com.spring.kodo.util.MessageFormatterUtil;
+import com.spring.kodo.util.cryptography.CryptographicHelper;
 import com.spring.kodo.util.exception.*;
 import com.spring.kodo.repository.AccountRepository;
 import com.spring.kodo.service.AccountService;
@@ -169,6 +170,28 @@ public class AccountServiceImpl implements AccountService
         else
         {
             throw new AccountPermissionDeniedException("You do not have administrative rights to deactivate accounts.");
+        }
+    }
+
+    public Account login(String username, String password) throws InvalidLoginCredentialsException, AccountNotFoundException
+    {
+        if (username != null)
+        {
+            Account account = getAccountByUsername(username);
+            String hashedPassword = CryptographicHelper.getSHA256Digest(password, account.getSalt());
+
+            if (account.getPassword().equals(hashedPassword))
+            {
+                return account;
+            }
+            else
+            {
+                throw new InvalidLoginCredentialsException("Username or Password is invalid");
+            }
+        }
+        else
+        {
+            throw new InvalidLoginCredentialsException("Username or Password is invalid");
         }
     }
 }

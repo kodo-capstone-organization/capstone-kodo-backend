@@ -2,12 +2,9 @@ package com.spring.kodo.config;
 
 import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Tag;
-import com.spring.kodo.util.exception.AccountNotFoundException;
-import com.spring.kodo.util.exception.InputDataValidationException;
-import com.spring.kodo.util.exception.TagNotFoundException;
+import com.spring.kodo.util.exception.*;
 import com.spring.kodo.service.AccountService;
 import com.spring.kodo.service.TagService;
-import com.spring.kodo.util.exception.UpdateAccountException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +12,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,12 +69,21 @@ public class DatabaseConfig
         List<Long> tagIds = tags.stream().map(Tag::getTagId).collect(Collectors.toList());
         System.out.println(">> Added Tags with tagIds: " + tagIds);
 
-        // Creating new account with a list of tag titles
+        System.out.println("===== Init Data Fully Loaded to Database =====");
+
+        // Tutor 2 tests
+        System.out.println("\n===== 2. Tutor 2 Tests =====");
+        testTutor2();
+        System.out.println("\n===== Tutor 2 Tests Completed =====");
+    }
+
+    private void testTutor2()
+    {
+        // Test Creating new account with a list of tag titles
         System.out.println(">> Simulating frontend account creation - passing in account details and a list of tagTitles");
         Account newAccount = new Account("tutor2", "password", "Tutor 2", "I am Tutor 2", "tutor2@gmail.com", "https://tutor2URL.com", false);
-        List<String> tagTitles = new ArrayList();
-        tagTitles.add("New_Title");
-        tagTitles.add("Java");
+        List<String> tagTitles = Arrays.asList("Bash", "BASIC", "F", "F#", "F*");
+
         try
         {
             Account account = accountService.createNewAccount(newAccount, tagTitles);
@@ -89,9 +96,27 @@ public class DatabaseConfig
             System.err.println(ex.getMessage());
         }
 
+        // Test Login Success
+        try
+        {
+            Account account = accountService.login("tutor2", "password");
+            System.out.println("    | Account with ID: " + account.getAccountId() + " successfully login: " + account.getName());
+        }
+        catch(InvalidLoginCredentialsException | AccountNotFoundException ex)
+        {
+            System.err.println(ex.getMessage());
+        }
 
-
-        System.out.println("===== Init Data Fully Loaded to Database =====");
+        // Test Login Failure
+        try
+        {
+            Account account = accountService.login("tutor2", "password123");
+            System.out.println("    | Account with ID: " + account.getAccountId() + " successfully login: " + account.getName());
+        }
+        catch(InvalidLoginCredentialsException | AccountNotFoundException ex)
+        {
+            System.out.println(ex.getMessage()); // using out instead of err just because
+        }
     }
 
     private void addAccounts(List<Account> accounts)
@@ -104,11 +129,15 @@ public class DatabaseConfig
 
     private void addTags(List<Tag> tags)
     {
-        tags.add(new Tag("Java"));
-        tags.add(new Tag("Go"));
         tags.add(new Tag("Python"));
-        tags.add(new Tag("C"));
+        tags.add(new Tag("JavaScript"));
+        tags.add(new Tag("Java"));
         tags.add(new Tag("C#"));
+        tags.add(new Tag("C"));
+        tags.add(new Tag("C++"));
+        tags.add(new Tag("Go"));
+        tags.add(new Tag("R"));
+        tags.add(new Tag("Swift"));
     }
-
 }
+
