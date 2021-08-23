@@ -5,6 +5,7 @@ import com.spring.kodo.util.exception.AccountNotFoundException;
 import com.spring.kodo.service.AccountService;
 import com.spring.kodo.util.exception.AccountPermissionDeniedException;
 import com.spring.kodo.util.exception.InputDataValidationException;
+import com.spring.kodo.util.exception.InvalidLoginCredentialsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,6 +69,24 @@ public class AccountController
         catch (AccountNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
+    @PostMapping("/login/{username}&{password}")
+    public ResponseEntity login(@PathVariable String username, @PathVariable String password)
+    {
+        try
+        {
+            Account accountLoggedIn = this.accountService.login(username, password);
+            return ResponseEntity.status(HttpStatus.OK).body("Successfully login with Account ID: " + accountLoggedIn.getAccountId());
+        }
+        catch (AccountNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+        catch (InvalidLoginCredentialsException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 }

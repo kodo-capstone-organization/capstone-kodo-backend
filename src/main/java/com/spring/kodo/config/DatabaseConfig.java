@@ -90,8 +90,7 @@ public class DatabaseConfig
             System.out.println("    | Account with ID: " + account.getAccountId() + " successfully created with tags: " + account.getInterests());
             System.out.println("    | Check that tag created has new ID while the other references a previously-created Tag ID");
         }
-        catch
-        (InputDataValidationException ex)
+        catch (InputDataValidationException ex)
         {
             System.err.println(ex.getMessage());
         }
@@ -102,7 +101,7 @@ public class DatabaseConfig
             Account account = accountService.login("tutor2", "password");
             System.out.println("    | Account with ID: " + account.getAccountId() + " successfully login: " + account.getName());
         }
-        catch(InvalidLoginCredentialsException | AccountNotFoundException ex)
+        catch (InvalidLoginCredentialsException | AccountNotFoundException ex)
         {
             System.err.println(ex.getMessage());
         }
@@ -113,7 +112,7 @@ public class DatabaseConfig
             Account account = accountService.login("tutor2", "password123");
             System.out.println("    | Account with ID: " + account.getAccountId() + " successfully login: " + account.getName());
         }
-        catch(InvalidLoginCredentialsException | AccountNotFoundException ex)
+        catch (InvalidLoginCredentialsException | AccountNotFoundException ex)
         {
             System.out.println(ex.getMessage()); // using out instead of err just because
         }
