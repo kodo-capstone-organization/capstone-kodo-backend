@@ -2,6 +2,7 @@ package com.spring.kodo.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.spring.kodo.util.cryptography.CryptographicHelper;
 import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.*;
@@ -23,9 +24,15 @@ public class Account
     private String username;
 
     @JsonProperty(access = Access.WRITE_ONLY) // Will not be read on serialization (GET request)
-    @Column(nullable = false, length = 32)
+    @Column(nullable = false, unique = true, length = 64)
+    @NotBlank(message = "Salt cannot be blank")
+    @Size(max = 64)
+    private String salt;
+
+    @JsonProperty(access = Access.WRITE_ONLY) // Will not be read on serialization (GET request)
+    @Column(nullable = false, length = 64)
     @NotBlank(message = "Password cannot be blank")
-    @Size(max = 32)
+    @Size(max = 64)
     private String password;
 
     @Column(nullable = false, length = 64)
@@ -63,6 +70,7 @@ public class Account
 
     public Account()
     {
+        this.salt = CryptographicHelper.generateRandomString(64);
         this.interests = new ArrayList<>();
         this.isActive = true;
     }
@@ -73,7 +81,7 @@ public class Account
 
         this.accountId = accountId;
         this.username = username;
-        this.password = password;
+        this.password = CryptographicHelper.getSHA256Digest(password, this.salt);
         this.name = name;
         this.bio = bio;
         this.email = email;
@@ -86,7 +94,7 @@ public class Account
         this();
 
         this.username = username;
-        this.password = password;
+        this.password = CryptographicHelper.getSHA256Digest(password, this.salt);
         this.name = name;
         this.bio = bio;
         this.email = email;
@@ -114,6 +122,16 @@ public class Account
         this.username = username;
     }
 
+    public String getSalt()
+    {
+        return salt;
+    }
+
+    public void setSalt(String salt)
+    {
+        this.salt = salt;
+    }
+
     public String getPassword()
     {
         return password;
@@ -121,7 +139,14 @@ public class Account
 
     public void setPassword(String password)
     {
-        this.password = password;
+        if (this.password != null)
+        {
+            this.password = CryptographicHelper.getSHA256Digest(password, this.salt);
+        }
+        else
+        {
+            this.password = null;
+        }
     }
 
     public String getName()
@@ -164,19 +189,23 @@ public class Account
         this.displayPictureUrl = displayPictureUrl;
     }
 
-    public Boolean getIsAdmin() {
+    public Boolean getIsAdmin()
+    {
         return isAdmin;
     }
 
-    public void setIsAdmin(Boolean admin) {
+    public void setIsAdmin(Boolean admin)
+    {
         isAdmin = admin;
     }
 
-    public Boolean getIsActive() {
+    public Boolean getIsActive()
+    {
         return isActive;
     }
 
-    public void setIsActive(Boolean active) {
+    public void setIsActive(Boolean active)
+    {
         isActive = active;
     }
 
@@ -196,12 +225,15 @@ public class Account
         return "Account{" +
                 "accountId=" + accountId +
                 ", username='" + username + '\'' +
+                ", salt='" + salt + '\'' +
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
                 ", bio='" + bio + '\'' +
                 ", email='" + email + '\'' +
                 ", displayPictureUrl='" + displayPictureUrl + '\'' +
                 ", isAdmin=" + isAdmin +
+                ", isActive=" + isActive +
+                ", interests=" + interests +
                 '}';
     }
 }
