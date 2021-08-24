@@ -23,6 +23,9 @@ public class ForumPost
     @NotNull
     private LocalDateTime timeStamp;
 
+    @OneToOne(optional = true, targetEntity = ForumPost.class, fetch = FetchType.LAZY)
+    private ForumPost reply;
+
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Account account;
@@ -69,6 +72,16 @@ public class ForumPost
         this.timeStamp = timeStamp;
     }
 
+    public ForumPost getReply()
+    {
+        return reply;
+    }
+
+    public void setReply(ForumPost reply)
+    {
+        this.reply = reply;
+    }
+
     public Account getAccount()
     {
         return account;
@@ -86,6 +99,7 @@ public class ForumPost
                 "forumPostId=" + forumPostId +
                 ", message='" + message + '\'' +
                 ", timeStamp=" + timeStamp +
+                ", reply=" + reply +
                 ", account=" + account +
                 '}';
     }

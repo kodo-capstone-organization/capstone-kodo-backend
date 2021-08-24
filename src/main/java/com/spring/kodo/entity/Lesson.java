@@ -28,7 +28,7 @@ public class Lesson
     @Column(nullable = false)
     @NotNull
     @Size(min = 1)
-    private int sequence;
+    private Integer sequence;
 
     @OneToMany(targetEntity = Content.class, mappedBy = "lesson", fetch = FetchType.LAZY)
     private List<Content> contents;
@@ -77,12 +77,12 @@ public class Lesson
         this.description = description;
     }
 
-    public int getSequence()
+    public Integer getSequence()
     {
         return sequence;
     }
 
-    public void setSequence(int sequence)
+    public void setSequence(Integer sequence)
     {
         this.sequence = sequence;
     }

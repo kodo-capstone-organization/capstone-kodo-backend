@@ -31,7 +31,7 @@ public class QuizQuestion
     @Column(nullable = false)
     @NotNull
     @Min(0)
-    private int marks;
+    private Integer marks;
 
     @ManyToOne(targetEntity = Quiz.class, fetch = FetchType.LAZY)
     private Quiz quiz;
@@ -74,12 +74,12 @@ public class QuizQuestion
         this.type = type;
     }
 
-    public int getMarks()
+    public Integer getMarks()
     {
         return marks;
     }
 
-    public void setMarks(int marks)
+    public void setMarks(Integer marks)
     {
         this.marks = marks;
     }
