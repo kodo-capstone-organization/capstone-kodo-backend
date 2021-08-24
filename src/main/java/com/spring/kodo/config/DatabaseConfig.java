@@ -3,6 +3,7 @@ package com.spring.kodo.config;
 import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Course;
 import com.spring.kodo.entity.Tag;
+import com.spring.kodo.service.FileService;
 import com.spring.kodo.service.AccountService;
 import com.spring.kodo.service.CourseService;
 import com.spring.kodo.service.TagService;
@@ -28,6 +29,9 @@ public class DatabaseConfig
 
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private FileService fileService;
 
     @Autowired
     private Environment env;
