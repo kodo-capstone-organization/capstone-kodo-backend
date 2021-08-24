@@ -2,6 +2,8 @@ package com.spring.kodo.controller;
 
 import com.spring.kodo.service.FileService;
 import com.spring.kodo.util.exception.FileUploadToGCSException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +21,16 @@ public class FileController
      * (2) Course's Banner Picture
      * (3) Content > Multimedia for Lesson
     */
+    Logger logger = LoggerFactory.getLogger(FileController.class);
 
     @Autowired
     FileService fileService;
 
     @PostMapping("/upload")
     public ResponseEntity upload(@RequestParam("file") MultipartFile multipartFile) {
-        System.out.println("HIT file/upload | File Name : " + multipartFile.getOriginalFilename());
+
+        logger.info("HIT file/upload | POST | Received File Name : " + multipartFile.getOriginalFilename());
+
         try
         {
             String fileBucketURL = fileService.upload(multipartFile);
@@ -37,7 +42,7 @@ public class FileController
         }
     }
 
-    @DeleteMapping("/delete/{fileBucketURL}")
+    @DeleteMapping("/delete/{gcsFileName}")
     public ResponseEntity delete(@PathVariable String gcsFileName)
     {
            Boolean success = fileService.delete(gcsFileName);

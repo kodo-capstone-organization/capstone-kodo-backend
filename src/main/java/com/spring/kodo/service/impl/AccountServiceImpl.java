@@ -11,10 +11,7 @@ import com.spring.kodo.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import javax.validation.*;
 import java.util.List;
 import java.util.Set;
 
@@ -36,11 +33,11 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
-    public Account createNewAccount(Account newAccount, List<String> tagTitles) throws InputDataValidationException
-    {
+    public Account createNewAccount(Account newAccount, List<String> tagTitles) throws InputDataValidationException, AccountExistsException {
         Set<ConstraintViolation<Account>> constraintViolations = validator.validate(newAccount);
         if(constraintViolations.isEmpty())
         {
+            // TODO: Check for email or username repeats before flushing
             // Persist Account
             Account persistedAccount = accountRepository.saveAndFlush(newAccount);
 
@@ -124,7 +121,67 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
+    public Account updateAccount(Account account, List<String> tagTitles) throws AccountNotFoundException, TagNotFoundException, InputDataValidationException, UpdateAccountException
+    {
+        Account accountToUpdate = null;
+
+        if(account != null && account.getAccountId() != null)
+        {
+            Set<ConstraintViolation<Account>>constraintViolations = validator.validate(account);
+
+            if(constraintViolations.isEmpty())
+            {
+                // Get managed instance of account to be updated
+                accountToUpdate = getAccountByAccountId(account.getAccountId());
+
+                if (accountToUpdate.getUsername().equals(account.getUsername()))
+                {
+                    // Update tags (interests)
+                    if(tagTitles != null)
+                    {
+                        accountToUpdate.getInterests().clear();
+
+                        for(String tagTitle: tagTitles)
+                        {
+                            Tag tag = tagService.getTagByTitleOrCreateNew(tagTitle);
+                            addTagToAccount(accountToUpdate, tag);
+                        }
+                    }
+
+                    // TODO: Check if display picture URL has changed. If yes, delete from gcs and upload new one.
+                    
+                    // Update other non-relational fields
+                    accountToUpdate.setUsername(account.getUsername());
+                    accountToUpdate.setName(account.getName());
+                    accountToUpdate.setPassword(account.getPassword());
+                    accountToUpdate.setSalt(account.getSalt());
+                    accountToUpdate.setBio(account.getBio());
+                    accountToUpdate.setEmail(account.getEmail());
+                    accountToUpdate.setDisplayPictureUrl(account.getDisplayPictureUrl());
+                    accountToUpdate.setIsAdmin(account.getIsAdmin());
+                    accountToUpdate.setIsActive(account.getIsActive());
+
+                    return accountRepository.saveAndFlush(accountToUpdate);
+                }
+                else
+                {
+                    throw new UpdateAccountException("Username of account record to be updated does not match the existing record");
+                }
+            }
+            else
+            {
+                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
+        }
+        else
+        {
+            throw new AccountNotFoundException("Account ID not provided for account to be updated");
+        }
+    }
+
+    @Override
     public Account addTagToAccount(Account account, Tag tag) throws AccountNotFoundException, TagNotFoundException, UpdateAccountException {
+
         account = getAccountByAccountId(account.getAccountId());
         tag = tagService.getTagByTagId(tag.getTagId());
 

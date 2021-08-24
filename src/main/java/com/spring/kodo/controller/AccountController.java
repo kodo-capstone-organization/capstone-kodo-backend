@@ -1,25 +1,33 @@
 package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.Account;
-import com.spring.kodo.util.exception.AccountNotFoundException;
+import com.spring.kodo.restentity.CreateNewAccountReq;
+import com.spring.kodo.service.FileService;
+import com.spring.kodo.util.exception.*;
 import com.spring.kodo.service.AccountService;
-import com.spring.kodo.util.exception.AccountPermissionDeniedException;
-import com.spring.kodo.util.exception.InputDataValidationException;
-import com.spring.kodo.util.exception.InvalidLoginCredentialsException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/account")
 public class AccountController
 {
+    Logger logger = LoggerFactory.getLogger(AccountController.class);
+
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private FileService fileService;
 
     @GetMapping("/getAllAccounts")
     public List<Account> getAllAccounts()
@@ -32,8 +40,7 @@ public class AccountController
     {
         try
         {
-            Account account = this.accountService.getAccountByAccountId(accountId);
-            return account;
+           return this.accountService.getAccountByAccountId(accountId);
         }
         catch (AccountNotFoundException ex)
         {
@@ -42,15 +49,38 @@ public class AccountController
     }
 
     @PostMapping("/createNewAccount")
-    public Account createNewAccount(@RequestParam("account") Account newAccount, @RequestParam("tagTitles") List<String> tagTitles)
+    public Account createNewAccount(@RequestPart(name="account", required = true) CreateNewAccountReq createNewAccountReq,
+                                    @RequestPart(name="displayPicture", required = false) MultipartFile displayPicture)
     {
-        try
+        if (createNewAccountReq != null)
         {
-            return this.accountService.createNewAccount(newAccount, tagTitles);
+            logger.info("HIT account/createNewAccount | POST | Received : " + createNewAccountReq);
+            try
+            {
+                Account newAccount = new Account(createNewAccountReq.getUsername(), createNewAccountReq.getPassword(), createNewAccountReq.getName(), createNewAccountReq.getBio(), createNewAccountReq.getEmail(), "", createNewAccountReq.getIsAdmin());
+                newAccount = this.accountService.createNewAccount(newAccount, createNewAccountReq.getTagTitles());
+
+                if (displayPicture != null)
+                {
+                    String displayPictureURL = fileService.upload(displayPicture);
+                    newAccount.setDisplayPictureUrl(displayPictureURL);
+                    newAccount = accountService.updateAccount(newAccount, newAccount.getInterests().stream().map(tag -> tag.getTitle()).collect(Collectors.toList()));
+                }
+
+                return newAccount;
+            }
+            catch (InputDataValidationException | AccountExistsException | FileUploadToGCSException ex)
+            {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+            }
+            catch (AccountNotFoundException | TagNotFoundException | UpdateAccountException ex)
+            {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+            }
         }
-        catch (InputDataValidationException ex)
+        else
         {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Create New Account Request");
         }
     }
 

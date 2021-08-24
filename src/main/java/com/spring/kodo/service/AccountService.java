@@ -8,12 +8,17 @@ import java.util.List;
 
 public interface AccountService
 {
-    Account createNewAccount(Account account, List<String> tagTitles) throws InputDataValidationException;
+    Account createNewAccount(Account account, List<String> tagTitles) throws InputDataValidationException, AccountExistsException;
 
     List<Account> getAllAccounts();
+
     Account getAccountByAccountId(Long accountId) throws AccountNotFoundException;
+
     Account getAccountByUsername(String username) throws AccountNotFoundException;
+
     Account getAccountByEmail(String email) throws AccountNotFoundException;
+
+    Account updateAccount(Account account, List<String> tagTitles) throws AccountNotFoundException, TagNotFoundException, InputDataValidationException, UpdateAccountException;
 
     Account addTagToAccount(Account account, Tag tag) throws AccountNotFoundException, TagNotFoundException, UpdateAccountException;
 

@@ -56,7 +56,6 @@ public class Account
 
     @Column(unique = true, length = 512)
     @URL // Maybe can have a regex to help check if the URL is valid? Unsure of what constraints though
-    @NotNull
     @Size(min = 0, max = 512)
     private String displayPictureUrl;
 
@@ -67,6 +66,9 @@ public class Account
     @Column(nullable = false)
     @NotNull
     private Boolean isActive;
+
+    @ManyToMany(targetEntity = Tag.class, fetch = FetchType.LAZY)
+    private List<Tag> interests;
 
     @OneToMany(targetEntity = EnrolledCourse.class, fetch = FetchType.LAZY)
     private List<EnrolledCourse> enrolledCourses;
@@ -79,9 +81,6 @@ public class Account
 
     @OneToMany(targetEntity = ForumPost.class, mappedBy = "account", fetch = FetchType.LAZY)
     private List<ForumPost> forumPosts;
-
-    @ManyToMany(targetEntity = Tag.class, fetch = FetchType.LAZY)
-    private List<Tag> interests;
 
     @ManyToMany(targetEntity = StudentAttempt.class, fetch = FetchType.LAZY)
     private List<StudentAttempt> studentAttempts;
