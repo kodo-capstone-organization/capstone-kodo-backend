@@ -10,32 +10,31 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table
-public class Question
+public class QuizQuestion
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long questionId;
+    private Long quizQuestionId;
+
+    @Column(nullable = false, length = 2048)
+    @NotBlank(message = "Content cannot be blank")
+    @Size(max = 2048)
+    private String content;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
     private QuestionType type;
 
-    @Column(nullable = false, length = 512)
-    @NotBlank(message = "Question cannot be blank")
-    @Size(max = 512)
-    private String question;
-
     @Column(nullable = false)
     @NotNull
     @Min(0)
-    private int mark;
+    private int marks;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @ManyToOne(targetEntity = Quiz.class, fetch = FetchType.LAZY)
     private Quiz quiz;
 
-    public Question()
+    public QuizQuestion()
     {
     }
 }
