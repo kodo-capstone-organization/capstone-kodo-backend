@@ -17,6 +17,9 @@ public class Quiz extends Content
     @OneToMany(targetEntity = QuizQuestion.class, mappedBy = "quiz", fetch = FetchType.LAZY)
     private List<QuizQuestion> questions;
 
+    @OneToMany(targetEntity = StudentAttempt.class, mappedBy = "quiz", fetch = FetchType.LAZY)
+    private List<StudentAttempt> studentAttempts;
+
     public Quiz()
     {
         this.questions = new ArrayList<>();
