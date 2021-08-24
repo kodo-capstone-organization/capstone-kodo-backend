@@ -7,6 +7,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table
@@ -34,7 +36,11 @@ public class QuizQuestion
     @ManyToOne(targetEntity = Quiz.class, fetch = FetchType.LAZY)
     private Quiz quiz;
 
+    @OneToMany(targetEntity = QuizQuestionOption.class, fetch = FetchType.LAZY)
+    private List<QuizQuestionOption> quizQuestionOptions;
+
     public QuizQuestion()
     {
+        this.quizQuestionOptions = new ArrayList<>();
     }
 }
