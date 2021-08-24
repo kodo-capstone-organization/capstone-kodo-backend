@@ -4,6 +4,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table
@@ -28,7 +30,82 @@ public class Lesson
     @Size(min = 1)
     private int sequence;
 
+    @OneToMany(targetEntity = Content.class, mappedBy = "lesson", fetch = FetchType.LAZY)
+    private List<Content> contents;
+
     public Lesson()
     {
+        this.contents = new ArrayList<>();
+    }
+
+    public Lesson(String name, String description, int sequence)
+    {
+        this();
+
+        this.name = name;
+        this.description = description;
+        this.sequence = sequence;
+    }
+
+    public Long getLessonId()
+    {
+        return lessonId;
+    }
+
+    public void setLessonId(Long lessonId)
+    {
+        this.lessonId = lessonId;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public void setDescription(String description)
+    {
+        this.description = description;
+    }
+
+    public int getSequence()
+    {
+        return sequence;
+    }
+
+    public void setSequence(int sequence)
+    {
+        this.sequence = sequence;
+    }
+
+    public List<Content> getContents()
+    {
+        return contents;
+    }
+
+    public void setContents(List<Content> contents)
+    {
+        this.contents = contents;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Lesson{" +
+                "lessonId=" + lessonId +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", sequence=" + sequence +
+                ", contents=" + contents +
+                '}';
     }
 }

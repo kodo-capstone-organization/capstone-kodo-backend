@@ -177,6 +177,10 @@ public class Course
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", bannerUrl='" + bannerUrl + '\'' +
+                ", tutor=" + tutor +
+                ", enrollment=" + enrollment +
+                ", lessons=" + lessons +
+                ", courseTags=" + courseTags +
                 '}';
     }
 }
