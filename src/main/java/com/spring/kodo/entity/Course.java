@@ -50,6 +50,9 @@ public class Course
     @OneToMany(targetEntity = Tag.class, fetch = FetchType.LAZY)
     private List<Tag> courseTags;
 
+    @OneToMany(targetEntity = ForumCategory.class, fetch = FetchType.LAZY)
+    private List<ForumCategory> forumCategories;
+
     public Course()
     {
         this.enrollment = new ArrayList<>();
