@@ -31,4 +31,44 @@ public class Quiz extends Content
         this.questions = new ArrayList<>();
         this.timeLimit = timeLimit;
     }
+
+    public LocalTime getTimeLimit()
+    {
+        return timeLimit;
+    }
+
+    public void setTimeLimit(LocalTime timeLimit)
+    {
+        this.timeLimit = timeLimit;
+    }
+
+    public List<QuizQuestion> getQuestions()
+    {
+        return questions;
+    }
+
+    public void setQuestions(List<QuizQuestion> questions)
+    {
+        this.questions = questions;
+    }
+
+    public List<StudentAttempt> getStudentAttempts()
+    {
+        return studentAttempts;
+    }
+
+    public void setStudentAttempts(List<StudentAttempt> studentAttempts)
+    {
+        this.studentAttempts = studentAttempts;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Quiz{" +
+                "timeLimit=" + timeLimit +
+                ", questions=" + questions +
+                ", studentAttempts=" + studentAttempts +
+                '}';
+    }
 }

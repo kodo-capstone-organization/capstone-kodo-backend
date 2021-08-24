@@ -43,4 +43,77 @@ public class QuizQuestion
     {
         this.quizQuestionOptions = new ArrayList<>();
     }
+
+    public Long getQuizQuestionId()
+    {
+        return quizQuestionId;
+    }
+
+    public void setQuizQuestionId(Long quizQuestionId)
+    {
+        this.quizQuestionId = quizQuestionId;
+    }
+
+    public String getContent()
+    {
+        return content;
+    }
+
+    public void setContent(String content)
+    {
+        this.content = content;
+    }
+
+    public QuestionType getType()
+    {
+        return type;
+    }
+
+    public void setType(QuestionType type)
+    {
+        this.type = type;
+    }
+
+    public int getMarks()
+    {
+        return marks;
+    }
+
+    public void setMarks(int marks)
+    {
+        this.marks = marks;
+    }
+
+    public Quiz getQuiz()
+    {
+        return quiz;
+    }
+
+    public void setQuiz(Quiz quiz)
+    {
+        this.quiz = quiz;
+    }
+
+    public List<QuizQuestionOption> getQuizQuestionOptions()
+    {
+        return quizQuestionOptions;
+    }
+
+    public void setQuizQuestionOptions(List<QuizQuestionOption> quizQuestionOptions)
+    {
+        this.quizQuestionOptions = quizQuestionOptions;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "QuizQuestion{" +
+                "quizQuestionId=" + quizQuestionId +
+                ", content='" + content + '\'' +
+                ", type=" + type +
+                ", marks=" + marks +
+                ", quiz=" + quiz +
+                ", quizQuestionOptions=" + quizQuestionOptions +
+                '}';
+    }
 }

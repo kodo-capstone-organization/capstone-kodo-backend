@@ -23,4 +23,44 @@ public class StudentAttempt
     {
         this.studentAttemptQuestions = new ArrayList<>();
     }
+
+    public Long getStudentAttemptId()
+    {
+        return studentAttemptId;
+    }
+
+    public void setStudentAttemptId(Long studentAttemptId)
+    {
+        this.studentAttemptId = studentAttemptId;
+    }
+
+    public Quiz getQuiz()
+    {
+        return quiz;
+    }
+
+    public void setQuiz(Quiz quiz)
+    {
+        this.quiz = quiz;
+    }
+
+    public List<StudentAttemptQuestion> getStudentAttemptQuestions()
+    {
+        return studentAttemptQuestions;
+    }
+
+    public void setStudentAttemptQuestions(List<StudentAttemptQuestion> studentAttemptQuestions)
+    {
+        this.studentAttemptQuestions = studentAttemptQuestions;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "StudentAttempt{" +
+                "studentAttemptId=" + studentAttemptId +
+                ", quiz=" + quiz +
+                ", studentAttemptQuestions=" + studentAttemptQuestions +
+                '}';
+    }
 }

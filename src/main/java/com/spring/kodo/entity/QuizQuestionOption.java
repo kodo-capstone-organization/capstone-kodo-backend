@@ -25,4 +25,66 @@ public class QuizQuestionOption
     @Column(nullable = false)
     @NotNull
     private Boolean correct;
+
+    public QuizQuestionOption()
+    {
+    }
+
+    public QuizQuestionOption(String leftContent, String rightContent, Boolean correct)
+    {
+        this.leftContent = leftContent;
+        this.rightContent = rightContent;
+        this.correct = correct;
+    }
+
+    public Long getQuizQuestionOptionId()
+    {
+        return quizQuestionOptionId;
+    }
+
+    public void setQuizQuestionOptionId(Long quizQuestionOptionId)
+    {
+        this.quizQuestionOptionId = quizQuestionOptionId;
+    }
+
+    public String getLeftContent()
+    {
+        return leftContent;
+    }
+
+    public void setLeftContent(String leftContent)
+    {
+        this.leftContent = leftContent;
+    }
+
+    public String getRightContent()
+    {
+        return rightContent;
+    }
+
+    public void setRightContent(String rightContent)
+    {
+        this.rightContent = rightContent;
+    }
+
+    public Boolean getCorrect()
+    {
+        return correct;
+    }
+
+    public void setCorrect(Boolean correct)
+    {
+        this.correct = correct;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "QuizQuestionOption{" +
+                "quizQuestionOptionId=" + quizQuestionOptionId +
+                ", leftContent='" + leftContent + '\'' +
+                ", rightContent='" + rightContent + '\'' +
+                ", correct=" + correct +
+                '}';
+    }
 }
