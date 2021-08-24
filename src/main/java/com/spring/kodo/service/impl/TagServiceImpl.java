@@ -1,6 +1,5 @@
 package com.spring.kodo.service.impl;
 
-import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Tag;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.InputDataValidationException;

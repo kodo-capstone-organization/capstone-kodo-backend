@@ -42,7 +42,7 @@ public class AccountController
     }
 
     @PostMapping("/createNewAccount")
-    public Account createNewAccount(@RequestBody Account newAccount, @RequestBody List<String> tagTitles)
+    public Account createNewAccount(@RequestParam("account") Account newAccount, @RequestParam("tagTitles") List<String> tagTitles)
     {
         try
         {
