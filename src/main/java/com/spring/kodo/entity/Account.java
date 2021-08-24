@@ -65,6 +65,9 @@ public class Account
     @NotNull
     private Boolean isActive;
 
+    @OneToMany(targetEntity = Course.class, mappedBy = "tutor", fetch = FetchType.LAZY)
+    private List<Course> courses;
+
     @ManyToMany(targetEntity = Tag.class, fetch = FetchType.LAZY)
     private List<Tag> interests;
 
@@ -207,6 +210,16 @@ public class Account
     public void setIsActive(Boolean active)
     {
         isActive = active;
+    }
+
+    public List<Course> getCourses()
+    {
+        return courses;
+    }
+
+    public void setCourses(List<Course> courses)
+    {
+        this.courses = courses;
     }
 
     public List<Tag> getInterests()
