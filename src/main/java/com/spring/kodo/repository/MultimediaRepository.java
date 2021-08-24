@@ -1,6 +1,5 @@
 package com.spring.kodo.repository;
 
-import com.spring.kodo.entity.Content;
 import com.spring.kodo.entity.Multimedia;
 import com.spring.kodo.util.enumeration.MultimediaType;
 import org.springframework.data.jpa.repository.JpaRepository;
