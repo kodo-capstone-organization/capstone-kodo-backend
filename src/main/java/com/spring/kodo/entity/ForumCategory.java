@@ -31,4 +31,63 @@ public class ForumCategory
     {
         this.forumThreads = new ArrayList<>();
     }
+
+    public ForumCategory(String name, String description)
+    {
+        this();
+
+        this.name = name;
+        this.description = description;
+    }
+
+    public Long getForumCategoryId()
+    {
+        return forumCategoryId;
+    }
+
+    public void setForumCategoryId(Long forumCategoryId)
+    {
+        this.forumCategoryId = forumCategoryId;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public void setDescription(String description)
+    {
+        this.description = description;
+    }
+
+    public List<ForumThread> getForumThreads()
+    {
+        return forumThreads;
+    }
+
+    public void setForumThreads(List<ForumThread> forumThreads)
+    {
+        this.forumThreads = forumThreads;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "ForumCategory{" +
+                "forumCategoryId=" + forumCategoryId +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", forumThreads=" + forumThreads +
+                '}';
+    }
 }
