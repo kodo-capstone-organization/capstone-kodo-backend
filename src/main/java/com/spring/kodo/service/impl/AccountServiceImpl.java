@@ -70,13 +70,6 @@ public class AccountServiceImpl implements AccountService
         {
             throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
         }
-
-    }
-
-    @Override
-    public List<Account> createNewAccounts(List<Account> accounts)
-    {
-        return accountRepository.saveAll(accounts);
     }
 
     @Override

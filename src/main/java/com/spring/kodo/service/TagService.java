@@ -10,8 +10,6 @@ public interface TagService
 {
     Tag createNewTag(Tag tag) throws InputDataValidationException;
 
-    List<Tag> createNewTags(List<Tag> tag);
-
     Tag getTagByTitleOrCreateNew(String tagTitle) throws InputDataValidationException;
 
     Tag getTagByTagId(Long tagId) throws TagNotFoundException;

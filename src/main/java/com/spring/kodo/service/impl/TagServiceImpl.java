@@ -48,12 +48,6 @@ public class TagServiceImpl implements TagService
     }
 
     @Override
-    public List<Tag> createNewTags(List<Tag> tags)
-    {
-        return tagRepository.saveAll(tags);
-    }
-
-    @Override
     public Tag getTagByTagId(Long tagId) throws TagNotFoundException
     {
         Tag tag = tagRepository.findById(tagId).orElse(null);
