@@ -1,10 +1,9 @@
 package com.spring.kodo.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @Table
@@ -14,6 +13,9 @@ public class Quiz extends Content
     @NotNull
     private LocalTime timeLimit;
 
+    @OneToMany(targetEntity = Question.class, mappedBy = "quiz", fetch = FetchType.LAZY)
+    private List<Question> questions;
+
     public Quiz()
     {
     }
@@ -22,5 +24,34 @@ public class Quiz extends Content
     {
         super(name, description);
         this.timeLimit = timeLimit;
+    }
+
+    public LocalTime getTimeLimit()
+    {
+        return timeLimit;
+    }
+
+    public void setTimeLimit(LocalTime timeLimit)
+    {
+        this.timeLimit = timeLimit;
+    }
+
+    public List<Question> getQuestions()
+    {
+        return questions;
+    }
+
+    public void setQuestions(List<Question> questions)
+    {
+        this.questions = questions;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Quiz{" +
+                "timeLimit=" + timeLimit +
+                ", questions=" + questions +
+                '}';
     }
 }
