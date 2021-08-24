@@ -41,11 +41,15 @@ public class Course
     @JoinColumn(nullable = false)
     private Account tutor;
 
+    @OneToMany(targetEntity = Lesson.class, fetch = FetchType.LAZY)
+    private List<Lesson> lessons;
+
     @OneToMany(targetEntity = Tag.class, fetch = FetchType.LAZY)
     private List<Tag> courseTags;
 
     public Course()
     {
+        this.lessons = new ArrayList<>();
         this.courseTags = new ArrayList<>();
     }
 
@@ -128,6 +132,16 @@ public class Course
     public void setTutor(Account tutor)
     {
         this.tutor = tutor;
+    }
+
+    public List<Lesson> getLessons()
+    {
+        return lessons;
+    }
+
+    public void setLessons(List<Lesson> lessons)
+    {
+        this.lessons = lessons;
     }
 
     public List<Tag> getCourseTags()
