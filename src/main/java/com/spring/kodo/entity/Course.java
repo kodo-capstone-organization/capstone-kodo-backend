@@ -41,6 +41,9 @@ public class Course
     @JoinColumn(nullable = false)
     private Account tutor;
 
+    @OneToMany(targetEntity = EnrolledCourse.class, mappedBy = "parentCourse", fetch = FetchType.LAZY)
+    private List<EnrolledCourse> enrollment;
+
     @OneToMany(targetEntity = Lesson.class, fetch = FetchType.LAZY)
     private List<Lesson> lessons;
 
@@ -49,6 +52,7 @@ public class Course
 
     public Course()
     {
+        this.enrollment = new ArrayList<>();
         this.lessons = new ArrayList<>();
         this.courseTags = new ArrayList<>();
     }
@@ -132,6 +136,16 @@ public class Course
     public void setTutor(Account tutor)
     {
         this.tutor = tutor;
+    }
+
+    public List<EnrolledCourse> getEnrollment()
+    {
+        return enrollment;
+    }
+
+    public void setEnrollment(List<EnrolledCourse> enrollment)
+    {
+        this.enrollment = enrollment;
     }
 
     public List<Lesson> getLessons()

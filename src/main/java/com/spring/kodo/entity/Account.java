@@ -65,6 +65,9 @@ public class Account
     @NotNull
     private Boolean isActive;
 
+    @OneToMany(targetEntity = EnrolledCourse.class, fetch = FetchType.LAZY)
+    private List<EnrolledCourse> enrolledCourses;
+
     @OneToMany(targetEntity = Course.class, mappedBy = "tutor", fetch = FetchType.LAZY)
     private List<Course> courses;
 
