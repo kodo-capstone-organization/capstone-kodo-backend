@@ -1,15 +1,14 @@
 package com.spring.kodo.repository;
 
 import com.spring.kodo.entity.Account;
-import com.spring.kodo.entity.CompletedLesson;
-import com.spring.kodo.entity.Lesson;
+import com.spring.kodo.entity.Content;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface CompletedLessonRepository extends JpaRepository<CompletedLesson, Long>
+public interface ContentRepository extends JpaRepository<Content, Long>
 {
     // Basically the EntityManager of Account
     // Provides methods out-of-the-box. E.g.:
@@ -20,5 +19,5 @@ public interface CompletedLessonRepository extends JpaRepository<CompletedLesson
     // For full method list, ctrl + click into JpaRepository
     // Or visit: https://docs.spring.io/autorepo/docs/spring-data-jpa/current/api/org/springframework/data/jpa/repository/support/SimpleJpaRepository.html
 
-    Optional<CompletedLesson> findByName(String name);
+    Optional<Content> findByName(String name);
 }
