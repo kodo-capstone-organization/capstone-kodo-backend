@@ -85,6 +85,12 @@ public class Account
     @ManyToMany(targetEntity = StudentAttempt.class, fetch = FetchType.LAZY)
     private List<StudentAttempt> studentAttempts;
 
+    @OneToMany(targetEntity = Account.class, fetch = FetchType.LAZY, mappedBy = "postCreator")
+    private List<ForumPost> posts;
+
+    @OneToMany(targetEntity = Account.class, fetch = FetchType.LAZY)
+    private List<ForumThread> threads;
+
     public Account()
     {
         this.salt = CryptographicHelper.generateRandomString(64);
