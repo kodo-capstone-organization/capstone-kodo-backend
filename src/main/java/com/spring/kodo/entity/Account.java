@@ -85,12 +85,6 @@ public class Account
     @ManyToMany(targetEntity = StudentAttempt.class, fetch = FetchType.LAZY)
     private List<StudentAttempt> studentAttempts;
 
-    @OneToMany(targetEntity = Account.class, fetch = FetchType.LAZY, mappedBy = "postCreator")
-    private List<ForumPost> posts;
-
-    @OneToMany(targetEntity = Account.class, fetch = FetchType.LAZY)
-    private List<ForumThread> threads;
-
     public Account()
     {
         this.salt = CryptographicHelper.generateRandomString(64);
@@ -237,24 +231,14 @@ public class Account
         isActive = active;
     }
 
-    public Boolean getAdmin()
+    public List<Tag> getInterests()
     {
-        return isAdmin;
+        return interests;
     }
 
-    public void setAdmin(Boolean admin)
+    public void setInterests(List<Tag> interests)
     {
-        isAdmin = admin;
-    }
-
-    public Boolean getActive()
-    {
-        return isActive;
-    }
-
-    public void setActive(Boolean active)
-    {
-        isActive = active;
+        this.interests = interests;
     }
 
     public List<EnrolledCourse> getEnrolledCourses()
@@ -295,16 +279,6 @@ public class Account
     public void setForumPosts(List<ForumPost> forumPosts)
     {
         this.forumPosts = forumPosts;
-    }
-
-    public List<Tag> getInterests()
-    {
-        return interests;
-    }
-
-    public void setInterests(List<Tag> interests)
-    {
-        this.interests = interests;
     }
 
     public List<StudentAttempt> getStudentAttempts()

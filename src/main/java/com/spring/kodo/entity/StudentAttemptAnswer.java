@@ -10,6 +10,8 @@ public class StudentAttemptAnswer
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long studentAttemptAnswerId;
 
+    private Integer marks;
+
     @ManyToOne(optional = false, targetEntity = QuizQuestionOption.class, fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private QuizQuestionOption quizQuestionOption;
