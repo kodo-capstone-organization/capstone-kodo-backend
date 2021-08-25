@@ -58,6 +58,7 @@ public class Course
         this.enrollment = new ArrayList<>();
         this.lessons = new ArrayList<>();
         this.courseTags = new ArrayList<>();
+        this.forumCategories = new ArrayList<>();
     }
 
     public Course(Long courseId, String name, String description, BigDecimal price, String bannerUrl)
@@ -171,6 +172,16 @@ public class Course
         this.courseTags = courseTags;
     }
 
+    public List<ForumCategory> getForumCategories()
+    {
+        return forumCategories;
+    }
+
+    public void setForumCategories(List<ForumCategory> forumCategories)
+    {
+        this.forumCategories = forumCategories;
+    }
+
     @Override
     public String toString()
     {
@@ -184,6 +195,7 @@ public class Course
                 ", enrollment=" + enrollment +
                 ", lessons=" + lessons +
                 ", courseTags=" + courseTags +
+                ", forumCategories=" + forumCategories +
                 '}';
     }
 }

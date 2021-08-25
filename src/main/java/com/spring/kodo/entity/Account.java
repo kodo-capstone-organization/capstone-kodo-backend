@@ -6,7 +6,10 @@ import com.spring.kodo.util.cryptography.CryptographicHelper;
 import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +56,6 @@ public class Account
 
     @Column(unique = true, length = 512)
     @URL // Maybe can have a regex to help check if the URL is valid? Unsure of what constraints though
-    @NotNull
     @Size(min = 0, max = 512)
     private String displayPictureUrl;
 
@@ -65,14 +67,23 @@ public class Account
     @NotNull
     private Boolean isActive;
 
+    @ManyToMany(targetEntity = Tag.class, fetch = FetchType.LAZY)
+    private List<Tag> interests;
+
     @OneToMany(targetEntity = EnrolledCourse.class, fetch = FetchType.LAZY)
     private List<EnrolledCourse> enrolledCourses;
 
     @OneToMany(targetEntity = Course.class, mappedBy = "tutor", fetch = FetchType.LAZY)
     private List<Course> courses;
 
-    @ManyToMany(targetEntity = Tag.class, fetch = FetchType.LAZY)
-    private List<Tag> interests;
+    @OneToMany(targetEntity = ForumThread.class, fetch = FetchType.LAZY)
+    private List<ForumThread> forumThreads;
+
+    @OneToMany(targetEntity = ForumPost.class, mappedBy = "account", fetch = FetchType.LAZY)
+    private List<ForumPost> forumPosts;
+
+    @ManyToMany(targetEntity = StudentAttempt.class, fetch = FetchType.LAZY)
+    private List<StudentAttempt> studentAttempts;
 
     @OneToMany(targetEntity = Account.class, fetch = FetchType.LAZY, mappedBy = "postCreator")
     private List<ForumPost> posts;
@@ -83,7 +94,12 @@ public class Account
     public Account()
     {
         this.salt = CryptographicHelper.generateRandomString(64);
+        this.enrolledCourses = new ArrayList<>();
+        this.courses = new ArrayList<>();
+        this.forumThreads = new ArrayList<>();
+        this.forumPosts = new ArrayList<>();
         this.interests = new ArrayList<>();
+        this.studentAttempts = new ArrayList<>();
         this.isActive = true;
     }
 
@@ -221,6 +237,36 @@ public class Account
         isActive = active;
     }
 
+    public Boolean getAdmin()
+    {
+        return isAdmin;
+    }
+
+    public void setAdmin(Boolean admin)
+    {
+        isAdmin = admin;
+    }
+
+    public Boolean getActive()
+    {
+        return isActive;
+    }
+
+    public void setActive(Boolean active)
+    {
+        isActive = active;
+    }
+
+    public List<EnrolledCourse> getEnrolledCourses()
+    {
+        return enrolledCourses;
+    }
+
+    public void setEnrolledCourses(List<EnrolledCourse> enrolledCourses)
+    {
+        this.enrolledCourses = enrolledCourses;
+    }
+
     public List<Course> getCourses()
     {
         return courses;
@@ -231,6 +277,26 @@ public class Account
         this.courses = courses;
     }
 
+    public List<ForumThread> getForumThreads()
+    {
+        return forumThreads;
+    }
+
+    public void setForumThreads(List<ForumThread> forumThreads)
+    {
+        this.forumThreads = forumThreads;
+    }
+
+    public List<ForumPost> getForumPosts()
+    {
+        return forumPosts;
+    }
+
+    public void setForumPosts(List<ForumPost> forumPosts)
+    {
+        this.forumPosts = forumPosts;
+    }
+
     public List<Tag> getInterests()
     {
         return interests;
@@ -239,6 +305,16 @@ public class Account
     public void setInterests(List<Tag> interests)
     {
         this.interests = interests;
+    }
+
+    public List<StudentAttempt> getStudentAttempts()
+    {
+        return studentAttempts;
+    }
+
+    public void setStudentAttempts(List<StudentAttempt> studentAttempts)
+    {
+        this.studentAttempts = studentAttempts;
     }
 
     @Override
@@ -255,7 +331,12 @@ public class Account
                 ", displayPictureUrl='" + displayPictureUrl + '\'' +
                 ", isAdmin=" + isAdmin +
                 ", isActive=" + isActive +
+                ", enrolledCourses=" + enrolledCourses +
+                ", courses=" + courses +
+                ", forumThreads=" + forumThreads +
+                ", forumPosts=" + forumPosts +
                 ", interests=" + interests +
+                ", studentAttempts=" + studentAttempts +
                 '}';
     }
 }

@@ -1,78 +1,91 @@
 package com.spring.kodo.entity;
 
-import com.google.type.DateTime;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table
-public class ForumThread {
-
+public class ForumThread
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long threadId;
+    private Long forumThreadId;
 
-    @Column(nullable = false, length = 512)
+    @Column(nullable = false, length = 256)
     @NotBlank(message = "Description cannot be blank")
-    @Size(max = 512)
+    @Size(max = 256)
     private String description;
 
     @Column(nullable = false)
-    @Temporal(TemporalType.TIME)
-    @NotNull(message = "Timestamp cannot be blank")
-    private DateTime timeStamp;
+    @NotNull
+    private LocalDateTime timeStamp;
 
     @OneToMany(targetEntity = ForumPost.class, fetch = FetchType.LAZY)
     private List<ForumPost> forumPosts;
 
-    public ForumThread() {
+    public ForumThread()
+    {
+        this.forumPosts = new ArrayList<>();
+        this.timeStamp = LocalDateTime.now();
     }
 
-    public ForumThread(String description, DateTime timeStamp) {
+    public ForumThread(String description)
+    {
+        this();
+
         this.description = description;
-        this.timeStamp = timeStamp;
     }
 
-    public Long getThreadId() {
-        return threadId;
+    public Long getForumThreadId()
+    {
+        return forumThreadId;
     }
 
-    public void setThreadId(Long threadId) {
-        this.threadId = threadId;
+    public void setForumThreadId(Long forumThreadId)
+    {
+        this.forumThreadId = forumThreadId;
     }
 
-    public String getDescription() {
+    public String getDescription()
+    {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(String description)
+    {
         this.description = description;
     }
 
-    public DateTime getTimeStamp() {
+    public LocalDateTime getTimeStamp()
+    {
         return timeStamp;
     }
 
-    public void setTimeStamp(DateTime timeStamp) {
+    public void setTimeStamp(LocalDateTime timeStamp)
+    {
         this.timeStamp = timeStamp;
     }
 
-    public List<ForumPost> getForumPosts() {
+    public List<ForumPost> getForumPosts()
+    {
         return forumPosts;
     }
 
-    public void setForumPosts(List<ForumPost> forumPosts) {
+    public void setForumPosts(List<ForumPost> forumPosts)
+    {
         this.forumPosts = forumPosts;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "ForumThread{" +
-                "threadId=" + threadId +
+                "forumThreadId=" + forumThreadId +
                 ", description='" + description + '\'' +
                 ", timeStamp=" + timeStamp +
                 ", forumPosts=" + forumPosts +
