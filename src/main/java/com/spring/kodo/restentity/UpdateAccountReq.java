@@ -7,12 +7,12 @@ import java.util.List;
 public class UpdateAccountReq
 {
     private Account account;
-    private List<String> tagTitles;
-    private List<Long> enrolledCourseIds;
-    private List<Long> courseIds;
-    private List<Long> forumThreadIds;
-    private List<Long> forumPostIds;
-    private List<Long> studentAttemptIds;
+    private List<String> tagTitles; // leave as null if not updating
+    private List<Long> enrolledCourseIds; // leave as null if not updating
+    private List<Long> courseIds; // leave as null if not updating
+    private List<Long> forumThreadIds; // leave as null if not updating
+    private List<Long> forumPostIds; // leave as null if not updating
+    private List<Long> studentAttemptIds; // leave as null if not updating
 
     public UpdateAccountReq(Account account, List<String> tagTitles, List<Long> enrolledCourseIds, List<Long> courseIds, List<Long> forumThreadIds, List<Long> forumPostIds, List<Long> studentAttemptIds) {
         this.account = account;

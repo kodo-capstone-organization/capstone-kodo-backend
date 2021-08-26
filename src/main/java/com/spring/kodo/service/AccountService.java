@@ -1,7 +1,6 @@
 package com.spring.kodo.service;
 
-import com.spring.kodo.entity.Account;
-import com.spring.kodo.entity.Tag;
+import com.spring.kodo.entity.*;
 import com.spring.kodo.util.exception.*;
 
 import java.util.List;
@@ -25,9 +24,15 @@ public interface AccountService
                           List<Long> forumThreadIds,
                           List<Long> forumPostIds,
                           List<Long> studentAttemptIds)
-            throws AccountNotFoundException, TagNotFoundException, InputDataValidationException, UpdateAccountException;
+            throws AccountNotFoundException, TagNotFoundException, InputDataValidationException, UpdateAccountException, EnrolledCourseNotFoundException, CourseNotFoundException, StudentAttemptQuestionNotFoundException, StudentAttemptNotFoundException;
 
     Account addTagToAccount(Account account, Tag tag) throws AccountNotFoundException, TagNotFoundException, UpdateAccountException;
+
+    Account addEnrolledCourseToAccount(Account account, EnrolledCourse enrolledCourse) throws AccountNotFoundException, TagNotFoundException, UpdateAccountException, EnrolledCourseNotFoundException;
+
+    Account addCourseToAccount(Account account, Course course) throws AccountNotFoundException, UpdateAccountException, CourseNotFoundException;
+
+    Account addStudentAttemptToAccount(Account account, StudentAttempt studentAttempt) throws AccountNotFoundException, StudentAttemptNotFoundException, UpdateAccountException;
 
     Long deactivateAccount(Long deactivatingAccountId, Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException;
 
