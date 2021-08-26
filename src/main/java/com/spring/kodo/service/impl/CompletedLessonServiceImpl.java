@@ -32,7 +32,7 @@ public class CompletedLessonServiceImpl implements CompletedLessonService
     }
 
     @Override
-    public CompletedLesson createNewCompletedLesson(CompletedLesson course) throws InputDataValidationException
+    public CompletedLesson createNewCompletedLesson(CompletedLesson completedLesson) throws InputDataValidationException
     {
         return null;
     }
