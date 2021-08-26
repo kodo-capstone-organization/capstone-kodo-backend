@@ -20,9 +20,6 @@ public class EnrolledCourse
     @JoinColumn(nullable = false)
     private Course parentCourse;
 
-    @ManyToOne(targetEntity = Lesson.class, fetch = FetchType.LAZY)
-    private Lesson parentLesson;
-
     @OneToMany(targetEntity = CompletedLesson.class, fetch = FetchType.LAZY)
     private List<CompletedLesson> completedLessons;
 
@@ -68,16 +65,6 @@ public class EnrolledCourse
         this.parentCourse = parentCourse;
     }
 
-    public Lesson getParentLesson()
-    {
-        return parentLesson;
-    }
-
-    public void setParentLesson(Lesson parentLesson)
-    {
-        this.parentLesson = parentLesson;
-    }
-
     public List<CompletedLesson> getCompletedLessons()
     {
         return completedLessons;
@@ -95,7 +82,6 @@ public class EnrolledCourse
                 "enrolledCourseId=" + enrolledCourseId +
                 ", courseRating=" + courseRating +
                 ", parentCourse=" + parentCourse +
-                ", parentLesson=" + parentLesson +
                 ", completedLessons=" + completedLessons +
                 '}';
     }

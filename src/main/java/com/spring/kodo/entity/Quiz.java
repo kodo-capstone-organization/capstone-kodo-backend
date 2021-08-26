@@ -1,7 +1,9 @@
 package com.spring.kodo.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,11 @@ public class Quiz extends Content
     @NotNull
     private LocalTime timeLimit;
 
+    @Column(nullable = false)
+    @NotNull
+    @Size(min=0, max=100)
+    private Integer maxAttemptsPerStudent;
+
     @OneToMany(targetEntity = QuizQuestion.class, mappedBy = "quiz", fetch = FetchType.LAZY)
     private List<QuizQuestion> questions;
 
@@ -25,11 +32,12 @@ public class Quiz extends Content
         this.questions = new ArrayList<>();
     }
 
-    public Quiz(String name, String description, LocalTime timeLimit)
+    public Quiz(String name, String description, LocalTime timeLimit, Integer maxAttemptsPerStudent)
     {
         super(name, description);
         this.questions = new ArrayList<>();
         this.timeLimit = timeLimit;
+        this.maxAttemptsPerStudent = maxAttemptsPerStudent;
     }
 
     public LocalTime getTimeLimit()
@@ -60,6 +68,14 @@ public class Quiz extends Content
     public void setStudentAttempts(List<StudentAttempt> studentAttempts)
     {
         this.studentAttempts = studentAttempts;
+    }
+
+    public Integer getMaxAttemptsPerStudent() {
+        return maxAttemptsPerStudent;
+    }
+
+    public void setMaxAttemptsPerStudent(Integer maxAttemptsPerStudent) {
+        this.maxAttemptsPerStudent = maxAttemptsPerStudent;
     }
 
     @Override
