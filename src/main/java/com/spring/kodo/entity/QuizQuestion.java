@@ -26,7 +26,7 @@ public class QuizQuestion
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
-    private QuestionType type;
+    private QuestionType questionType;
 
     @Column(nullable = false)
     @NotNull
@@ -64,14 +64,14 @@ public class QuizQuestion
         this.content = content;
     }
 
-    public QuestionType getType()
+    public QuestionType getQuestionType()
     {
-        return type;
+        return questionType;
     }
 
-    public void setType(QuestionType type)
+    public void setQuestionType(QuestionType questionType)
     {
-        this.type = type;
+        this.questionType = questionType;
     }
 
     public Integer getMarks()
@@ -110,7 +110,7 @@ public class QuizQuestion
         return "QuizQuestion{" +
                 "quizQuestionId=" + quizQuestionId +
                 ", content='" + content + '\'' +
-                ", type=" + type +
+                ", questionType=" + questionType +
                 ", marks=" + marks +
                 ", quiz=" + quiz +
                 ", quizQuestionOptions=" + quizQuestionOptions +
