@@ -17,5 +17,5 @@ public interface LessonService {
 
     Lesson updateLesson(Long lessonId, Lesson updatedLesson) throws LessonNotFoundException;
 
-    Lesson deleteLesson(Long lessonId) throws LessonNotFoundException;
+    Boolean deleteLesson(Long lessonId) throws LessonNotFoundException;
 }

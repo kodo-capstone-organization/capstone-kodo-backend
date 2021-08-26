@@ -75,6 +75,7 @@ public class LessonServiceImpl implements LessonService
         }
     }
 
+    //only updating attributes, not relationships
     @Override
     public Lesson updateLesson(Long lessonId, Lesson updatedLesson) throws LessonNotFoundException
     {
@@ -85,7 +86,6 @@ public class LessonServiceImpl implements LessonService
             lessonToUpdate.setName(updatedLesson.getName());
             lessonToUpdate.setDescription(updatedLesson.getDescription());
             lessonToUpdate.setSequence(updatedLesson.getSequence());
-            lessonToUpdate.setContents(updatedLesson.getContents());
             lessonRepository.saveAndFlush(lessonToUpdate);
             return lessonToUpdate;
         }
@@ -96,14 +96,14 @@ public class LessonServiceImpl implements LessonService
     }
 
     @Override
-    public Lesson deleteLesson(Long lessonId) throws LessonNotFoundException
+    public Boolean deleteLesson(Long lessonId) throws LessonNotFoundException
     {
         Lesson lessonToDelete = lessonRepository.findById(lessonId).orElse(null);
 
         if (lessonToDelete != null)
         {
             lessonRepository.deleteById(lessonId);
-            return lessonToDelete;
+            return true;
         }
         else
         {
