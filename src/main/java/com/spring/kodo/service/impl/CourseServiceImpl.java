@@ -1,8 +1,10 @@
 package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.Course;
+import com.spring.kodo.entity.Course;
 import com.spring.kodo.repository.CourseRepository;
 import com.spring.kodo.service.CourseService;
+import com.spring.kodo.util.exception.CourseNotFoundException;
 import com.spring.kodo.util.exception.CourseNotFoundException;
 import com.spring.kodo.util.exception.InputDataValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +37,18 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
-    public List<Course> getAllCourses()
+    public Course getCourseByCourseId(Long courseId) throws CourseNotFoundException
     {
-        return courseRepository.findAll();
+        Course course = courseRepository.findById(courseId).orElse(null);
+
+        if (course != null)
+        {
+            return course;
+        }
+        else
+        {
+            throw new CourseNotFoundException("Course with ID: " + courseId + " does not exist!");
+        }
     }
 
     @Override
@@ -53,5 +64,11 @@ public class CourseServiceImpl implements CourseService
         {
             throw new CourseNotFoundException("Course with Name: " + name + " does not exist!");
         }
+    }
+
+    @Override
+    public List<Course> getAllCourses()
+    {
+        return courseRepository.findAll();
     }
 }

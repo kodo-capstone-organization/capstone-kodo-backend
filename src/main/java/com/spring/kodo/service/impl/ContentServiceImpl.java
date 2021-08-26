@@ -1,8 +1,10 @@
 package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.Content;
+import com.spring.kodo.entity.Content;
 import com.spring.kodo.repository.ContentRepository;
 import com.spring.kodo.service.ContentService;
+import com.spring.kodo.util.exception.ContentNotFoundException;
 import com.spring.kodo.util.exception.ContentNotFoundException;
 import com.spring.kodo.util.exception.InputDataValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,7 @@ import java.util.List;
 public class ContentServiceImpl implements ContentService
 {
     @Autowired
-    private ContentRepository courseRepository;
+    private ContentRepository contentRepository;
 
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -35,23 +37,38 @@ public class ContentServiceImpl implements ContentService
     }
 
     @Override
-    public List<Content> getAllContents()
+    public Content getContentByContentId(Long contentId) throws ContentNotFoundException
     {
-        return courseRepository.findAll();
+        Content content = contentRepository.findById(contentId).orElse(null);
+
+        if (content != null)
+        {
+            return content;
+        }
+        else
+        {
+            throw new ContentNotFoundException("Content with ID: " + contentId + " does not exist!");
+        }
     }
 
     @Override
     public Content getContentByName(String name) throws ContentNotFoundException
     {
-        Content course = courseRepository.findByName(name).orElse(null);
+        Content content = contentRepository.findByName(name).orElse(null);
 
-        if (course != null)
+        if (content != null)
         {
-            return course;
+            return content;
         }
         else
         {
             throw new ContentNotFoundException("Content with Name: " + name + " does not exist!");
         }
+    }
+
+    @Override
+    public List<Content> getAllContents()
+    {
+        return contentRepository.findAll();
     }
 }
