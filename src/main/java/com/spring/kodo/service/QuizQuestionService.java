@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface QuizQuestionService
 {
-    QuizQuestion createNewQuizQuestion(QuizQuestion quiz) throws InputDataValidationException;
+    QuizQuestion createNewQuizQuestion(QuizQuestion quizQuestion) throws InputDataValidationException;
 
     QuizQuestion getQuizQuestionByQuizQuestionId(Long quizId) throws QuizQuestionNotFoundException;
 
