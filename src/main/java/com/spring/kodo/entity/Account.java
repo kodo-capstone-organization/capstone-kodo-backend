@@ -11,6 +11,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -199,6 +200,21 @@ public class Account
     public void setEmail(String email)
     {
         this.email = email;
+    }
+
+    public String getDisplayPictureFilename()
+    {
+        if (this.displayPictureUrl != null && this.displayPictureUrl != "")
+        {
+            int idx = this.getDisplayPictureUrl().lastIndexOf('/');
+            String lastString = this.getDisplayPictureUrl().substring(idx + 1);
+            // c63e7cf4-030f-49e8-9ab3-ae94f93dc442.jpg?generation=1629954876596626&alt=media
+            return lastString.split("\\?")[0];
+        }
+        else
+        {
+            return "";
+        }
     }
 
     public String getDisplayPictureUrl()

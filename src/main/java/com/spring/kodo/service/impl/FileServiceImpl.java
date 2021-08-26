@@ -64,7 +64,8 @@ public class FileServiceImpl implements FileService
                     BlobInfo.newBuilder(bucketName, fileName).build(), // get original file name
                     multipartFile.getBytes() // the file
             );
-            return blobInfo.getMediaLink(); // Return file url
+
+            return blobInfo.getMediaLink();
         }
         catch (IllegalStateException e)
         {

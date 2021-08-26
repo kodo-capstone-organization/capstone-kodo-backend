@@ -9,7 +9,7 @@ import com.google.cloud.storage.Storage;
 @Configuration
 public class GCSConfig
 {
-    @Value("${google.cloud.storage.bucket.name}")
+    @Value("${gcs.bucket.name}")
     private String bucketName;
 
     public Storage getGCSClient()
