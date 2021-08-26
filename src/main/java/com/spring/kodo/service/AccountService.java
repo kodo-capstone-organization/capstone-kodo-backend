@@ -18,7 +18,14 @@ public interface AccountService
 
     Account getAccountByEmail(String email) throws AccountNotFoundException;
 
-    Account updateAccount(Account account, List<String> tagTitles) throws AccountNotFoundException, TagNotFoundException, InputDataValidationException, UpdateAccountException;
+    Account updateAccount(Account account,
+                          List<String> tagTitles,
+                          List<Long> enrolledCourseIds,
+                          List<Long> coursesIds,
+                          List<Long> forumThreadIds,
+                          List<Long> forumPostIds,
+                          List<Long> studentAttemptIds)
+            throws AccountNotFoundException, TagNotFoundException, InputDataValidationException, UpdateAccountException;
 
     Account addTagToAccount(Account account, Tag tag) throws AccountNotFoundException, TagNotFoundException, UpdateAccountException;
 

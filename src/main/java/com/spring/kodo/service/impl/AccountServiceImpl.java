@@ -1,13 +1,13 @@
 package com.spring.kodo.service.impl;
 
-import com.spring.kodo.entity.Account;
-import com.spring.kodo.entity.Tag;
+import com.spring.kodo.entity.*;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.cryptography.CryptographicHelper;
 import com.spring.kodo.util.exception.*;
 import com.spring.kodo.repository.AccountRepository;
 import com.spring.kodo.service.AccountService;
 import com.spring.kodo.service.TagService;
+import org.apache.catalina.valves.StuckThreadDetectionValve;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -121,8 +121,16 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
-    public Account updateAccount(Account account, List<String> tagTitles) throws AccountNotFoundException, TagNotFoundException, InputDataValidationException, UpdateAccountException
+    public Account updateAccount(Account account,
+                                 List<String> tagTitles,
+                                 List<Long> enrolledCourseIds,
+                                 List<Long> courseIds,
+                                 List<Long> forumThreadIds,
+                                 List<Long> forumPostIds,
+                                 List<Long> studentAttemptIds)
+            throws AccountNotFoundException, TagNotFoundException, InputDataValidationException, UpdateAccountException
     {
+
         Account accountToUpdate = null;
 
         if(account != null && account.getAccountId() != null)
@@ -136,11 +144,10 @@ public class AccountServiceImpl implements AccountService
 
                 if (accountToUpdate.getUsername().equals(account.getUsername()))
                 {
-                    // Update tags (interests)
+                    // Update tags (interests) - Unidirectional
                     if(tagTitles != null)
                     {
                         accountToUpdate.getInterests().clear();
-
                         for(String tagTitle: tagTitles)
                         {
                             Tag tag = tagService.getTagByTitleOrCreateNew(tagTitle);
@@ -148,8 +155,71 @@ public class AccountServiceImpl implements AccountService
                         }
                     }
 
-                    // TODO: Check if display picture URL has changed. If yes, delete from gcs and upload new one.
-                    
+//                    // Update enrolled courses - Unidirectional
+//                    if (enrolledCourseIds != null)
+//                    {
+//                        accountToUpdate.getEnrolledCourses().clear();
+//                        for (Long enrolledCourseId: enrolledCourseIds)
+//                        {
+//                            EnrolledCourse enrolledCourse = enrolledCourseService.getEnrolledCourseById(enrolledCourseId);
+//                            addEnrolledCourseToAccount(accountToUpdate, enrolledCourse);
+//                        }
+//                    }
+//
+//                    // Update courses (as a tutor) - Bidirectional
+//                    if(courseIds != null)
+//                    {
+//                        for(Course course: accountToUpdate.getCourses())
+//                        {
+//                            course.setTutor(null);
+//                        }
+//
+//                        accountToUpdate.getCourses().clear();
+//                        for(Long courseId: courseIds)
+//                        {
+//                            Course course = courseService.getCourseByCourseId(courseId);
+//                            addCourseToAccount(accountToUpdate, course);
+//                        }
+//                    }
+//
+//                    // Update forumThreads - Unidirectional
+//                    if (forumThreadIds != null)
+//                    {
+//                        accountToUpdate.getForumThreads().clear();
+//                        for (Long forumThreadId: forumThreadIds)
+//                        {
+//                            ForumThread forumThread = forumService.getForumThreadByThreadId(forumThreadId);
+//                            addForumThreadToAccount(accountToUpdate, forumThread);
+//                        }
+//                    }
+//
+//                    // Update forumPosts (as an account) - Bidirectional
+//                    if(forumPostIds != null)
+//                    {
+//                        for(ForumPost forumPost: accountToUpdate.getForumPosts())
+//                        {
+//                            forumPost.setAccount(null);
+//                        }
+//
+//                        accountToUpdate.getForumPosts().clear();
+//                        for(Long forumPostId: forumPostIds)
+//                        {
+//                            ForumPost forumPost = forumService.getForumPostByPostId(forumPostId);
+//                            addForumPostToAccount(accountToUpdate, forumPost);
+//                        }
+//                    }
+//
+//                    // Update studentAttempts - Unidirectional
+//                    if (studentAttemptIds != null)
+//                    {
+//                        accountToUpdate.getStudentAttempts().clear();
+//                        for (Long studentAttemptId: studentAttemptIds)
+//                        {
+//                            StudentAttempt studentAttempt = quizService.getStudentAttemptByAttemptId(studentAttemptId);
+//                            addStudentAttemptToAccount(accountToUpdate, studentAttempt);
+//                        }
+//                    }
+
                     // Update other non-relational fields
                     accountToUpdate.setUsername(account.getUsername());
                     accountToUpdate.setName(account.getName());

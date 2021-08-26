@@ -2,6 +2,7 @@ package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.Account;
 import com.spring.kodo.restentity.CreateNewAccountReq;
+import com.spring.kodo.restentity.UpdateAccountReq;
 import com.spring.kodo.service.FileService;
 import com.spring.kodo.util.exception.*;
 import com.spring.kodo.service.AccountService;
@@ -64,7 +65,7 @@ public class AccountController
                 {
                     String displayPictureURL = fileService.upload(displayPicture);
                     newAccount.setDisplayPictureUrl(displayPictureURL);
-                    newAccount = accountService.updateAccount(newAccount, newAccount.getInterests().stream().map(tag -> tag.getTitle()).collect(Collectors.toList()));
+                    newAccount = accountService.updateAccount(newAccount, null, null, null, null,null,null);
                 }
 
                 return newAccount;
@@ -81,6 +82,59 @@ public class AccountController
         else
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Create New Account Request");
+        }
+    }
+
+    @PutMapping("/updateAccount")
+    public Account updateAccount(@RequestPart(name="account", required = true) UpdateAccountReq updateAccountReq,
+                                 @RequestPart(name="displayPicture", required = false) MultipartFile updatedDisplayPicture)
+    {
+        if (updateAccountReq != null)
+        {
+            try
+            {
+                Account updatedAccount = this.accountService.updateAccount(
+                        updateAccountReq.getAccount(),
+                        updateAccountReq.getTagTitles(),
+                        updateAccountReq.getEnrolledCourseIds(),
+                        updateAccountReq.getCourseIds(),
+                        updateAccountReq.getForumThreadIds(),
+                        updateAccountReq.getForumPostIds(),
+                        updateAccountReq.getStudentAttemptIds());
+
+                if (updatedDisplayPicture != null)
+                {
+                    // Delete existing file in cloud
+                    String currentDisplayPictureFilename = updatedAccount.getDisplayPictureFilename();
+                    Boolean isDeleted = fileService.delete(currentDisplayPictureFilename);
+
+                    if (isDeleted)
+                    {
+                        // Upload new file
+                        String updatedDisplayPictureURL = fileService.upload(updatedDisplayPicture);
+                        updatedAccount.setDisplayPictureUrl(updatedDisplayPictureURL);
+                        updatedAccount = accountService.updateAccount(updatedAccount, null, null, null, null, null,null);
+                    }
+                    else
+                    {
+                        throw new UpdateAccountException("Unable to replace display picture");
+                    }
+                }
+
+                return updatedAccount;
+            }
+            catch (AccountNotFoundException | TagNotFoundException | UpdateAccountException ex)
+            {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+            }
+            catch (InputDataValidationException | FileUploadToGCSException ex)
+            {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+            }
+        }
+        else
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Update Account Request");
         }
     }
 
