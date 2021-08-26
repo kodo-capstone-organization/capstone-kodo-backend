@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface MultimediaService
 {
-    Multimedia createNewMultimedia(Multimedia multimedia) throws InputDataValidationException, MultimediaExistsException;
+    Multimedia createNewMultimedia(Multimedia multimedia) throws InputDataValidationException, MultimediaExistsException, UnknownPersistenceException;
 
     List<Multimedia> getAllMultimedias();
 
@@ -18,4 +18,6 @@ public interface MultimediaService
     Multimedia getMultimediaByUrl(String url) throws MultimediaNotFoundException;
 
     Multimedia getMultimediaByType(MultimediaType multimediaType) throws MultimediaNotFoundException;
+
+    void deleteMultimedia(Long contentId) throws MultimediaNotFoundException;
 }

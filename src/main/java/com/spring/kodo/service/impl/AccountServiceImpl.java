@@ -143,7 +143,8 @@ public class AccountServiceImpl implements AccountService
     @Override
     public List<Account> getAllAccounts()
     {
-        return accountRepository.findAll();
+        List<Account> accounts = accountRepository.findAll();
+        return accounts;
     }
 
     @Override
@@ -159,10 +160,10 @@ public class AccountServiceImpl implements AccountService
             EnrolledCourseNotFoundException, CourseNotFoundException,
             StudentAttemptNotFoundException
     {
-        Account accountToUpdate = null;
 
         if(account != null && account.getAccountId() != null)
         {
+            Account accountToUpdate = null;
             Set<ConstraintViolation<Account>>constraintViolations = validator.validate(account);
 
             if(constraintViolations.isEmpty())

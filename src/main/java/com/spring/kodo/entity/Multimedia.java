@@ -1,5 +1,6 @@
 package com.spring.kodo.entity;
 
+import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.enumeration.MultimediaType;
 import org.hibernate.validator.constraints.URL;
 
@@ -43,6 +44,11 @@ public class Multimedia extends Content
     public void setUrl(String url)
     {
         this.url = url;
+    }
+
+    public String getUrlFilename()
+    {
+        return MessageFormatterUtil.getGCSObjectNameFromMediaLink(this.url);
     }
 
     public MultimediaType getType()

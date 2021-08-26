@@ -2,6 +2,7 @@ package com.spring.kodo.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.cryptography.CryptographicHelper;
 import org.hibernate.validator.constraints.URL;
 
@@ -203,17 +204,7 @@ public class Account
 
     public String getDisplayPictureFilename()
     {
-        if (this.displayPictureUrl != null && this.displayPictureUrl != "")
-        {
-            int idx = this.getDisplayPictureUrl().lastIndexOf('/');
-            String lastString = this.getDisplayPictureUrl().substring(idx + 1);
-            // c63e7cf4-030f-49e8-9ab3-ae94f93dc442.jpg?generation=1629954876596626&alt=media
-            return lastString.split("\\?")[0];
-        }
-        else
-        {
-            return "";
-        }
+        return MessageFormatterUtil.getGCSObjectNameFromMediaLink(this.displayPictureUrl);
     }
 
     public String getDisplayPictureUrl()

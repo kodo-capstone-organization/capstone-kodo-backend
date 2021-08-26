@@ -16,4 +16,19 @@ public class MessageFormatterUtil
 
         return msg;
     }
+
+    public static String getGCSObjectNameFromMediaLink(String mediaLink)
+    {
+        if (mediaLink != null && mediaLink != "")
+        {
+            int idx = mediaLink.lastIndexOf('/');
+            String lastString = mediaLink.substring(idx + 1);
+            // c63e7cf4-030f-49e8-9ab3-ae94f93dc442.jpg?generation=1629954876596626&alt=media
+            return lastString.split("\\?")[0];
+        }
+        else
+        {
+            return "";
+        }
+    }
 }
