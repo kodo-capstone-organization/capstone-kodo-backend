@@ -5,6 +5,7 @@ import com.spring.kodo.repository.LessonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.spring.kodo.service.LessonService;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -12,12 +13,14 @@ import javax.validation.ValidatorFactory;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
 import com.spring.kodo.entity.Lesson;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.cryptography.CryptographicHelper;
 import com.spring.kodo.util.exception.*;
 
-public class LessonServiceImpl implements LessonService {
+public class LessonServiceImpl implements LessonService
+{
 
     @Autowired // With this annotation, we do not to populate LessonRepository in this class' constructor
     private LessonRepository lessonRepository;
@@ -32,9 +35,10 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public Lesson createNewLesson (Lesson newLesson) throws InputDataValidationException {
+    public Lesson createNewLesson(Lesson newLesson) throws InputDataValidationException
+    {
         Set<ConstraintViolation<Lesson>> constraintViolations = validator.validate(newLesson);
-        if(constraintViolations.isEmpty())
+        if (constraintViolations.isEmpty())
         {
             return lessonRepository.saveAndFlush(newLesson);
         }
@@ -45,51 +49,67 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public Lesson getLessonByLessonId(Long lessonId) throws LessonNotFoundException {
+    public Lesson getLessonByLessonId(Long lessonId) throws LessonNotFoundException
+    {
         Lesson lesson = lessonRepository.findById(lessonId).orElse(null);
 
-        if (lesson != null) {
+        if (lesson != null)
+        {
             return lesson;
-        } else {
+        }
+        else
+        {
             throw new LessonNotFoundException("Lesson with ID: " + lessonId + " does not exist!");
         }
     }
 
     @Override
-    public Lesson getLessonByName(String name) throws LessonNotFoundException {
+    public Lesson getLessonByName(String name) throws LessonNotFoundException
+    {
         Lesson lesson = lessonRepository.findByName(name).orElse(null);
 
-        if (lesson != null) {
+        if (lesson != null)
+        {
             return lesson;
-        } else {
+        }
+        else
+        {
             throw new LessonNotFoundException("Lesson with Name: " + name + " does not exist!");
         }
     }
 
     @Override
-    public Lesson updateLesson(Long lessonId, Lesson updatedLesson) throws LessonNotFoundException {
+    public Lesson updateLesson(Long lessonId, Lesson updatedLesson) throws LessonNotFoundException
+    {
         Lesson lessonToUpdate = lessonRepository.findById(lessonId).orElse(null);
 
-        if (lessonToUpdate != null) {
+        if (lessonToUpdate != null)
+        {
             lessonToUpdate.setName(updatedLesson.getName());
             lessonToUpdate.setDescription(updatedLesson.getDescription());
             lessonToUpdate.setSequence(updatedLesson.getSequence());
             lessonToUpdate.setContents(updatedLesson.getContents());
             lessonRepository.saveAndFlush(lessonToUpdate);
             return lessonToUpdate;
-        } else {
+        }
+        else
+        {
             throw new LessonNotFoundException("Lesson with ID: " + lessonId + " does not exist!");
         }
     }
 
     @Override
-    public Lesson deleteLesson(Long lessonId) throws LessonNotFoundException {
+    public Lesson deleteLesson(Long lessonId) throws LessonNotFoundException
+    {
         Lesson lessonToDelete = lessonRepository.findById(lessonId).orElse(null);
 
-        if (lessonToDelete != null) {
+        if (lessonToDelete != null)
+        {
             lessonRepository.deleteById(lessonId);
             return lessonToDelete;
-        } else {
+        }
+        else
+        {
             throw new LessonNotFoundException("Lesson with ID: " + lessonId + " does not exist!");
         }
     }
