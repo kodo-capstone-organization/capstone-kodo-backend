@@ -51,7 +51,17 @@ public class DatabaseConfig
         // Create Accounts w Tags
         for (Account account : accounts)
         {
-            accountService.createNewAccount(account, tags.stream().map(tag -> tag.getTitle()).collect(Collectors.toList()));
+            accountService.createNewAccount(account, Arrays.asList(tags.get(getRandomNumber(0, tags.size())).getTitle()));
+        }
+
+        // Create Courses
+        for (Course course : courses)
+        {
+            courseService.createNewCourse(
+                    course,
+                    accounts.get(getRandomNumber(0, accounts.size())),
+                    Arrays.asList(tags.get(getRandomNumber(0, tags.size())).getTitle())
+            );
         }
 
         // Print Ids of saved data list
@@ -101,10 +111,17 @@ public class DatabaseConfig
     {
         return Arrays.asList(
                 new Course("Python Course", "A beginner course in Python language.", BigDecimal.valueOf(19.99), "https://pythoncoursebanner.com"),
-                new Course("JavaScript Course", "A beginner course in JavaScript language.", BigDecimal.valueOf(19.99), "https://javascriptbanner.com"),
-                new Course("Java Course", "A beginner course in Java language.", BigDecimal.valueOf(19.99), "https://javabanner.com"),
-                new Course("C# Course", "A beginner course in C# language.", BigDecimal.valueOf(19.99), "https://c#banner.com")
+                new Course("JavaScript Course", "A beginner course in JavaScript language.", BigDecimal.valueOf(29.99), "https://javascriptbanner.com"),
+                new Course("Java Course", "A beginner course in Java language.", BigDecimal.valueOf(39.99), "https://javabanner.com"),
+                new Course("C# Course", "A beginner course in C# language.", BigDecimal.valueOf(49.99), "https://c#banner.com"),
+                new Course("F# Course", "A beginner course in F# language.", BigDecimal.valueOf(49.99), "https://f#banner.com"),
+                new Course("Go Course", "A beginner course in Go language.", BigDecimal.valueOf(49.99), "https://gobanner.com")
         );
+    }
+
+    private int getRandomNumber(int min, int max)
+    {
+        return (int) ((Math.random() * (max - min)) + min);
     }
 }
 

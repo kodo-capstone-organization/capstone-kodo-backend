@@ -47,7 +47,7 @@ public class Course
     @OneToMany(targetEntity = Lesson.class, fetch = FetchType.LAZY)
     private List<Lesson> lessons;
 
-    @OneToMany(targetEntity = Tag.class, fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = Tag.class, fetch = FetchType.LAZY)
     private List<Tag> courseTags;
 
     @OneToMany(targetEntity = ForumCategory.class, fetch = FetchType.LAZY)

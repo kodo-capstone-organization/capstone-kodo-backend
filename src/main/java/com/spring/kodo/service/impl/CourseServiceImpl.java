@@ -1,25 +1,38 @@
 package com.spring.kodo.service.impl;
 
+import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Course;
 import com.spring.kodo.entity.Course;
+import com.spring.kodo.entity.Tag;
+import com.spring.kodo.repository.AccountRepository;
 import com.spring.kodo.repository.CourseRepository;
+import com.spring.kodo.service.AccountService;
 import com.spring.kodo.service.CourseService;
+import com.spring.kodo.service.TagService;
+import com.spring.kodo.util.MessageFormatterUtil;
+import com.spring.kodo.util.exception.*;
 import com.spring.kodo.util.exception.CourseNotFoundException;
-import com.spring.kodo.util.exception.CourseNotFoundException;
-import com.spring.kodo.util.exception.InputDataValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class CourseServiceImpl implements CourseService
 {
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private AccountService accountService;
+
+    @Autowired
+    private TagService tagService;
 
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -31,9 +44,51 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
-    public Course createNewCourse(Course course, List<String> tagTitles) throws InputDataValidationException
+    public Course createNewCourse(Course newCourse, Account tutor, List<String> tagTitles) throws InputDataValidationException
     {
-        return null;
+        Set<ConstraintViolation<Course>> constraintViolations = validator.validate(newCourse);
+        if (constraintViolations.isEmpty())
+        {
+            // Process Account Tutor
+            if (tutor != null)
+            {
+                try
+                {
+                    newCourse = addTutorToCourse(newCourse, tutor);
+                }
+                catch (AccountNotFoundException | CourseNotFoundException | UpdateCourseException ex)
+                {
+                    // Since we are still in a creation step, these generic exceptions will probably not happen / can kinda be ignored
+                    // e.g. acc not found, tutor already exists
+                }
+            }
+
+            // Process Tags
+            if (tagTitles != null && (!tagTitles.isEmpty()))
+            {
+                for (String tagTitle : tagTitles)
+                {
+                    Tag tag = tagService.getTagByTitleOrCreateNew(tagTitle);
+                    try
+                    {
+                        newCourse = addTagToCourse(newCourse, tag);
+                    }
+                    catch (TagNotFoundException | CourseNotFoundException | UpdateCourseException ex)
+                    {
+                        // Since we are still in a creation step, these generic exceptions will probably not happen / can kinda be ignored
+                        // e.g. acc not found, duplicate tag exception
+                        continue;
+                    }
+                }
+            }
+
+            courseRepository.saveAndFlush(newCourse);
+            return newCourse;
+        }
+        else
+        {
+            throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+        }
     }
 
     @Override
@@ -70,5 +125,40 @@ public class CourseServiceImpl implements CourseService
     public List<Course> getAllCourses()
     {
         return courseRepository.findAll();
+    }
+
+    private Course addTutorToCourse(Course course, Account tutor) throws CourseNotFoundException, AccountNotFoundException, UpdateCourseException
+    {
+        tutor = accountService.getAccountByAccountId(tutor.getAccountId());
+
+        if (course.getTutor() == null)
+        {
+            course.setTutor(tutor);
+            tutor.getCourses().add(course);
+        }
+        else
+        {
+            throw new UpdateCourseException("Unable to add tutor with name: " + tutor.getName() +
+                    " to course with Name: " + course.getName() + " as there is already a tutor linked to this course");
+        }
+
+        return course;
+    }
+
+    private Course addTagToCourse(Course course, Tag tag) throws CourseNotFoundException, TagNotFoundException, UpdateCourseException
+    {
+        tag = tagService.getTagByTagId(tag.getTagId());
+
+        if (!course.getCourseTags().contains(tag))
+        {
+            course.getCourseTags().add(tag);
+        }
+        else
+        {
+            throw new UpdateCourseException("Unable to add tag with title: " + tag.getTitle() +
+                    " to course with ID: " + course.getCourseId() + " as tag is already linked to this course");
+        }
+
+        return course;
     }
 }
