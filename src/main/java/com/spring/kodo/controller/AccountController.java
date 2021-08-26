@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/account")
@@ -74,7 +73,7 @@ public class AccountController
             {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
             }
-            catch (AccountNotFoundException | TagNotFoundException | UpdateAccountException ex)
+            catch (AccountNotFoundException | TagNotFoundException | UpdateAccountException | EnrolledCourseNotFoundException | CourseNotFoundException | StudentAttemptQuestionNotFoundException | StudentAttemptNotFoundException ex)
             {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
             }
@@ -123,7 +122,7 @@ public class AccountController
 
                 return updatedAccount;
             }
-            catch (AccountNotFoundException | TagNotFoundException | UpdateAccountException ex)
+            catch (AccountNotFoundException | TagNotFoundException | UpdateAccountException | EnrolledCourseNotFoundException | CourseNotFoundException | StudentAttemptQuestionNotFoundException | StudentAttemptNotFoundException ex)
             {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
             }

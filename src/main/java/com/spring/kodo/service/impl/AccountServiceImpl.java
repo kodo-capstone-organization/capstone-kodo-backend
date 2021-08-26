@@ -1,13 +1,13 @@
 package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.*;
+import com.spring.kodo.repository.CourseRepository;
+import com.spring.kodo.repository.StudentAttemptRepository;
+import com.spring.kodo.service.*;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.cryptography.CryptographicHelper;
 import com.spring.kodo.util.exception.*;
 import com.spring.kodo.repository.AccountRepository;
-import com.spring.kodo.service.AccountService;
-import com.spring.kodo.service.TagService;
-import org.apache.catalina.valves.StuckThreadDetectionValve;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +21,18 @@ public class AccountServiceImpl implements AccountService
     @Autowired // With this annotation, we do not to populate AccountRepository in this class' constructor
     private AccountRepository accountRepository;
     @Autowired
+    private CourseRepository courseRepository;
+    @Autowired
+    private StudentAttemptRepository studentAttemptRepository;
+
+    @Autowired
     private TagService tagService;
+    @Autowired
+    private EnrolledCourseService enrolledCourseService;
+    @Autowired
+    private CourseService courseService;
+    @Autowired
+    private StudentAttemptService studentAttemptService;
 
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -128,9 +139,11 @@ public class AccountServiceImpl implements AccountService
                                  List<Long> forumThreadIds,
                                  List<Long> forumPostIds,
                                  List<Long> studentAttemptIds)
-            throws AccountNotFoundException, TagNotFoundException, InputDataValidationException, UpdateAccountException
+            throws AccountNotFoundException, TagNotFoundException,
+            InputDataValidationException, UpdateAccountException,
+            EnrolledCourseNotFoundException, CourseNotFoundException,
+            StudentAttemptNotFoundException
     {
-
         Account accountToUpdate = null;
 
         if(account != null && account.getAccountId() != null)
@@ -155,34 +168,34 @@ public class AccountServiceImpl implements AccountService
                         }
                     }
 
-//                    // Update enrolled courses - Unidirectional
-//                    if (enrolledCourseIds != null)
-//                    {
-//                        accountToUpdate.getEnrolledCourses().clear();
-//                        for (Long enrolledCourseId: enrolledCourseIds)
-//                        {
-//                            EnrolledCourse enrolledCourse = enrolledCourseService.getEnrolledCourseById(enrolledCourseId);
-//                            addEnrolledCourseToAccount(accountToUpdate, enrolledCourse);
-//                        }
-//                    }
-//
-//                    // Update courses (as a tutor) - Bidirectional
-//                    if(courseIds != null)
-//                    {
-//                        for(Course course: accountToUpdate.getCourses())
-//                        {
-//                            course.setTutor(null);
-//                        }
-//
-//                        accountToUpdate.getCourses().clear();
-//                        for(Long courseId: courseIds)
-//                        {
-//                            Course course = courseService.getCourseByCourseId(courseId);
-//                            addCourseToAccount(accountToUpdate, course);
-//                        }
-//                    }
-//
-//                    // Update forumThreads - Unidirectional
+                    // Update enrolled courses - Unidirectional
+                    if (enrolledCourseIds != null)
+                    {
+                        accountToUpdate.getEnrolledCourses().clear();
+                        for (Long enrolledCourseId: enrolledCourseIds)
+                        {
+                            EnrolledCourse enrolledCourse = enrolledCourseService.getEnrolledCourseByEnrolledCourseId(enrolledCourseId);
+                            addEnrolledCourseToAccount(accountToUpdate, enrolledCourse);
+                        }
+                    }
+
+                    // Update courses (as a tutor) - Bidirectional, 1-to-many
+                    if(courseIds != null)
+                    {
+                        for(Course course: accountToUpdate.getCourses())
+                        {
+                            course.setTutor(null);
+                        }
+
+                        accountToUpdate.getCourses().clear();
+                        for(Long courseId: courseIds)
+                        {
+                            Course course = courseService.getCourseByCourseId(courseId);
+                            addCourseToAccount(accountToUpdate, course);
+                        }
+                    }
+
+                    // Update forumThreads - Unidirectional
 //                    if (forumThreadIds != null)
 //                    {
 //                        accountToUpdate.getForumThreads().clear();
@@ -208,17 +221,17 @@ public class AccountServiceImpl implements AccountService
 //                            addForumPostToAccount(accountToUpdate, forumPost);
 //                        }
 //                    }
-//
-//                    // Update studentAttempts - Unidirectional
-//                    if (studentAttemptIds != null)
-//                    {
-//                        accountToUpdate.getStudentAttempts().clear();
-//                        for (Long studentAttemptId: studentAttemptIds)
-//                        {
-//                            StudentAttempt studentAttempt = quizService.getStudentAttemptByAttemptId(studentAttemptId);
-//                            addStudentAttemptToAccount(accountToUpdate, studentAttempt);
-//                        }
-//                    }
+
+                    // Update studentAttempts - Unidirectional
+                    if (studentAttemptIds != null)
+                    {
+                        accountToUpdate.getStudentAttempts().clear();
+                        for (Long studentAttemptId: studentAttemptIds)
+                        {
+                            StudentAttempt studentAttempt = studentAttemptService.getStudentAttemptByStudentAttemptId(studentAttemptId);
+                            addStudentAttemptToAccount(accountToUpdate, studentAttempt);
+                        }
+                    }
 
                     // Update other non-relational fields
                     accountToUpdate.setUsername(account.getUsername());
@@ -263,6 +276,74 @@ public class AccountServiceImpl implements AccountService
         {
             throw new UpdateAccountException("Unable to add tag with title: " + tag.getTitle() +
                     " to account with ID: " + account.getAccountId() + " as tag is already linked to this account");
+        }
+
+        accountRepository.saveAndFlush(account);
+        return account;
+    }
+
+    @Override
+    public Account addEnrolledCourseToAccount(Account account, EnrolledCourse enrolledCourse) throws AccountNotFoundException, EnrolledCourseNotFoundException, UpdateAccountException {
+
+        account = getAccountByAccountId(account.getAccountId());
+        enrolledCourse = enrolledCourseService.getEnrolledCourseByEnrolledCourseId(enrolledCourse.getEnrolledCourseId());
+
+        if (!account.getEnrolledCourses().contains(enrolledCourse))
+        {
+            account.getEnrolledCourses().add(enrolledCourse);
+        }
+        else
+        {
+            throw new UpdateAccountException("Unable to add enrolled course for course: " + enrolledCourse.getParentCourse() +
+                    " to account with ID: " + account.getAccountId() + " as this account is already enrolled in this course");
+        }
+
+        accountRepository.saveAndFlush(account);
+        return account;
+    }
+
+    @Override
+    public Account addCourseToAccount(Account account, Course course) throws AccountNotFoundException, UpdateAccountException, CourseNotFoundException {
+
+        // BIDRECTIONAL!!!
+        account = getAccountByAccountId(account.getAccountId());
+        course = courseService.getCourseByCourseId(course.getCourseId());
+
+        if (!account.getCourses().contains(course))
+        {
+            account.getCourses().add(course);
+            course.setTutor(account);
+        }
+        else
+        {
+            throw new UpdateAccountException("Unable to add course: " + course.getName() +
+                    " to tutor with account ID: " + account.getAccountId() + " as this account is already the tutor of this course");
+        }
+
+        accountRepository.saveAndFlush(account);
+        courseRepository.saveAndFlush(course);
+
+        return account;
+    }
+
+    @Override
+    public Account addStudentAttemptToAccount(Account account, StudentAttempt studentAttempt) throws AccountNotFoundException, StudentAttemptNotFoundException, UpdateAccountException {
+
+        account = getAccountByAccountId(account.getAccountId());
+        studentAttempt = studentAttemptService.getStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId());
+
+        if (account.getStudentAttempts().contains(studentAttempt))
+        {
+            throw new UpdateAccountException("This attempt has already been recorded.");
+        }
+        else if (accountRepository.getNumberOfStudentAttemptsByStudentForQuiz(studentAttempt.getQuiz().getContentId(), account.getAccountId()) >= studentAttempt.getQuiz().getMaxAttemptsPerStudent())
+        {
+            studentAttemptRepository.delete(studentAttempt); // clean up
+            throw new UpdateAccountException("This account has ran out of attempts for quiz: " + studentAttempt.getQuiz().getName() + ". Attempt is thus deleted");
+        }
+        else
+        {
+            account.getStudentAttempts().add(studentAttempt);
         }
 
         accountRepository.saveAndFlush(account);
