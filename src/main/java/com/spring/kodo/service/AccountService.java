@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface AccountService
 {
-    Account createNewAccount(Account account, List<String> tagTitles) throws InputDataValidationException, AccountExistsException;
+    Account createNewAccount(Account account, List<String> tagTitles) throws InputDataValidationException, UnknownPersistenceException, AccountUsernameOrEmailExistsException;
 
     List<Account> getAllAccounts();
 

@@ -69,13 +69,16 @@ public class AccountController
 
                 return newAccount;
             }
-            catch (InputDataValidationException | AccountExistsException | FileUploadToGCSException ex)
+            catch (InputDataValidationException | AccountUsernameOrEmailExistsException | FileUploadToGCSException ex)
             {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
             }
             catch (AccountNotFoundException | TagNotFoundException | UpdateAccountException | EnrolledCourseNotFoundException | CourseNotFoundException | StudentAttemptQuestionNotFoundException | StudentAttemptNotFoundException ex)
             {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+            }
+            catch (UnknownPersistenceException ex) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
             }
         }
         else

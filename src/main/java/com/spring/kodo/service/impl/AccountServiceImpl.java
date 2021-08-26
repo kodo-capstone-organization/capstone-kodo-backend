@@ -9,6 +9,7 @@ import com.spring.kodo.util.cryptography.CryptographicHelper;
 import com.spring.kodo.util.exception.*;
 import com.spring.kodo.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.validation.*;
@@ -44,39 +45,53 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
-    public Account createNewAccount(Account newAccount, List<String> tagTitles) throws InputDataValidationException, AccountExistsException {
-        Set<ConstraintViolation<Account>> constraintViolations = validator.validate(newAccount);
-        if(constraintViolations.isEmpty())
+    public Account createNewAccount(Account newAccount, List<String> tagTitles) throws InputDataValidationException, UnknownPersistenceException, AccountUsernameOrEmailExistsException
+    {
+        try
         {
-            // TODO: Check for email or username repeats before flushing
-            // Persist Account
-            Account persistedAccount = accountRepository.saveAndFlush(newAccount);
-
-            // Process Tags
-            if(tagTitles != null && (!tagTitles.isEmpty()))
+            Set<ConstraintViolation<Account>> constraintViolations = validator.validate(newAccount);
+            if(constraintViolations.isEmpty())
             {
-                for(String tagTitle: tagTitles)
+                // Persist Account
+                Account persistedAccount = accountRepository.saveAndFlush(newAccount);
+
+                // Process Tags
+                if(tagTitles != null && (!tagTitles.isEmpty()))
                 {
-                    Tag tag = tagService.getTagByTitleOrCreateNew(tagTitle);
-                    try
+                    for(String tagTitle: tagTitles)
                     {
-                        persistedAccount = addTagToAccount(persistedAccount, tag);
-                    }
-                    catch (TagNotFoundException | AccountNotFoundException | UpdateAccountException ex)
-                    {
-                        // Since we are still in a creation step, these generic exceptions will probably not happen / can kinda be ignored
-                        // e.g. acc not found, duplicate tag exception
-                        continue;
+                        Tag tag = tagService.getTagByTitleOrCreateNew(tagTitle);
+                        try
+                        {
+                            persistedAccount = addTagToAccount(persistedAccount, tag);
+                        }
+                        catch (TagNotFoundException | AccountNotFoundException | UpdateAccountException ex)
+                        {
+                            // Since we are still in a creation step, these generic exceptions will probably not happen / can kinda be ignored
+                            // e.g. acc not found, duplicate tag exception
+                            continue;
+                        }
                     }
                 }
-            }
 
-            accountRepository.saveAndFlush(persistedAccount);
-            return persistedAccount;
+                accountRepository.saveAndFlush(persistedAccount);
+                return persistedAccount;
+            }
+            else
+            {
+                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
         }
-        else
+        catch(DataAccessException ex)
         {
-            throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            if(ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
+            {
+                throw new AccountUsernameOrEmailExistsException("Account username and/or email is already in use!");
+            }
+            else
+            {
+                throw new UnknownPersistenceException(ex.getMessage());
+            }
         }
     }
 
@@ -327,7 +342,7 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
-    public Account addStudentAttemptToAccount(Account account, StudentAttempt studentAttempt) throws AccountNotFoundException, StudentAttemptNotFoundException, UpdateAccountException {
+    public Account addStudentAttemptToAccount (Account account, StudentAttempt studentAttempt) throws AccountNotFoundException, StudentAttemptNotFoundException, UpdateAccountException {
 
         account = getAccountByAccountId(account.getAccountId());
         studentAttempt = studentAttemptService.getStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId());
