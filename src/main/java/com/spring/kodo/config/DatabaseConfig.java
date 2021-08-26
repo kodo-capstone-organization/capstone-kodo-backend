@@ -14,8 +14,10 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -35,6 +37,18 @@ public class DatabaseConfig
 
     @Autowired
     private Environment env;
+
+    private static final List<String> PROGRAMMING_LANGUAGES = Arrays.asList(
+            "Python",
+            "JavaScript",
+            "Java",
+            "C#",
+            "C",
+            "C++",
+            "Go",
+            "R",
+            "Swift"
+    );
 
     @EventListener(ApplicationReadyEvent.class)
     public void loadDataOnStartup() throws Exception
@@ -60,7 +74,7 @@ public class DatabaseConfig
             courseService.createNewCourse(
                     course,
                     accounts.get(getRandomNumber(0, accounts.size())),
-                    Arrays.asList(tags.get(getRandomNumber(0, tags.size())).getTitle())
+                    Arrays.asList(tags.get(courses.indexOf(course)).getTitle())
             );
         }
 
@@ -94,29 +108,26 @@ public class DatabaseConfig
 
     private List<Tag> addTags()
     {
-        return Arrays.asList(
-                new Tag("Python"),
-                new Tag("JavaScript"),
-                new Tag("Java"),
-                new Tag("C#"),
-                new Tag("C"),
-                new Tag("C++"),
-                new Tag("Go"),
-                new Tag("R"),
-                new Tag("Swift")
-        );
+        List<Tag> tags = new ArrayList<>();
+
+        for (String language : PROGRAMMING_LANGUAGES)
+        {
+            tags.add(new Tag(language));
+        }
+
+        return tags;
     }
 
     private List<Course> addCourses()
     {
-        return Arrays.asList(
-                new Course("Python Course", "A beginner course in Python language.", BigDecimal.valueOf(19.99), "https://pythoncoursebanner.com"),
-                new Course("JavaScript Course", "A beginner course in JavaScript language.", BigDecimal.valueOf(29.99), "https://javascriptbanner.com"),
-                new Course("Java Course", "A beginner course in Java language.", BigDecimal.valueOf(39.99), "https://javabanner.com"),
-                new Course("C# Course", "A beginner course in C# language.", BigDecimal.valueOf(49.99), "https://c#banner.com"),
-                new Course("F# Course", "A beginner course in F# language.", BigDecimal.valueOf(49.99), "https://f#banner.com"),
-                new Course("Go Course", "A beginner course in Go language.", BigDecimal.valueOf(49.99), "https://gobanner.com")
-        );
+        List<Course> courses = new ArrayList<>();
+
+        for (String language : PROGRAMMING_LANGUAGES)
+        {
+            courses.add(new Course(language + " Course", "A beginner course in " + language + " language.", BigDecimal.valueOf(19.99), "https://" + language.toLowerCase() + "coursebanner.com"));
+        }
+
+        return courses;
     }
 
     private int getRandomNumber(int min, int max)
