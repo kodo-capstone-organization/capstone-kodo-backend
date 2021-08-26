@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface MultimediaRepository extends JpaRepository<Multimedia, Long>
 {
-    Optional<Multimedia> findByName(String name);
+    Optional<Multimedia> findByUrl(String url);
 
     Optional<Multimedia> findByType(MultimediaType type);
 }
