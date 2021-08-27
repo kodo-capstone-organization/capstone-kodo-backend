@@ -129,6 +129,13 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
+    public List<Course> getAllCoursesOfATutor(Long accountId) throws AccountNotFoundException
+    {
+        Account account = accountService.getAccountByAccountId(accountId);
+        return account.getCourses();
+    }
+
+    @Override
     public Course addTagToCourse(Course course, String tagTitle) throws InputDataValidationException, CourseNotFoundException, TagNotFoundException, UpdateCourseException
     {
         Tag tag = tagService.getTagByTitleOrCreateNew(tagTitle);

@@ -13,6 +13,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -57,6 +58,12 @@ public class ForumPostServiceImpl implements ForumPostService {
         {
             throw new ForumPostNotFoundException("Forum Post with ID: " + forumPostId + " does not exist!");
         }
+    }
+
+    @Override
+    public List<ForumPost> getAllForumPosts()
+    {
+        return forumPostRepository.findAll();
     }
 
     //only updating attributes, not relationships
