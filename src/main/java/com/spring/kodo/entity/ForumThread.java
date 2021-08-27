@@ -16,6 +16,11 @@ public class ForumThread
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long forumThreadId;
 
+    @Column(nullable = false, length = 128)
+    @NotBlank(message = "Name cannot be blank")
+    @Size(max = 128)
+    private String name;
+
     @Column(nullable = false, length = 256)
     @NotBlank(message = "Description cannot be blank")
     @Size(max = 256)
@@ -34,11 +39,19 @@ public class ForumThread
         this.timeStamp = LocalDateTime.now();
     }
 
-    public ForumThread(String description)
+    public ForumThread(String name, String description)
     {
         this();
-
+        this.name = name;
         this.description = description;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Long getForumThreadId()
