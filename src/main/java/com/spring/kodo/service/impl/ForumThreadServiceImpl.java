@@ -61,6 +61,20 @@ public class ForumThreadServiceImpl implements ForumThreadService {
         }
     }
 
+    @Override
+    public ForumThread getForumThreadByName(String name) throws ForumThreadNotFoundException {
+        ForumThread forumThread = forumThreadRepository.findByName(name).orElse(null);
+
+        if (forumThread != null)
+        {
+            return forumThread;
+        }
+        else
+        {
+            throw new ForumThreadNotFoundException("Forum Thread with name: " + name + " does not exist!");
+        }
+    }
+
     //only updating attributes, not relationships
     @Override
     public ForumThread updateForumThread(Long forumThreadId, ForumThread updatedForumThread) throws ForumThreadNotFoundException
