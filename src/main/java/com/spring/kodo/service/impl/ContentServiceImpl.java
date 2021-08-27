@@ -34,13 +34,13 @@ public class ContentServiceImpl implements ContentService
     }
 
     @Override
-    public Content createNewContent(Content content) throws InputDataValidationException, UnknownPersistenceException {
-
+    public Content createNewContent(Content content) throws InputDataValidationException, UnknownPersistenceException
+    {
         try
         {
             Set<ConstraintViolation<Content>> constraintViolations = validator.validate(content);
 
-            if(constraintViolations.isEmpty())
+            if (constraintViolations.isEmpty())
             {
                 return contentRepository.saveAndFlush(content);
             }

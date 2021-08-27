@@ -22,10 +22,6 @@ public abstract class Content
     @Size(max = 512)
     private String description;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
-    private Lesson lesson;
-
     public Content()
     {
     }
@@ -66,16 +62,6 @@ public abstract class Content
         this.description = description;
     }
 
-    public Lesson getLesson()
-    {
-        return lesson;
-    }
-
-    public void setLesson(Lesson lesson)
-    {
-        this.lesson = lesson;
-    }
-
     @Override
     public String toString()
     {
@@ -83,7 +69,6 @@ public abstract class Content
                 "contentId=" + contentId +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", lesson=" + lesson +
                 '}';
     }
 }

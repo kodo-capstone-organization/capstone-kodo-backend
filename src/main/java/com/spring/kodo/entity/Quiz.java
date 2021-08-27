@@ -1,6 +1,7 @@
 package com.spring.kodo.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -18,7 +19,8 @@ public class Quiz extends Content
 
     @Column(nullable = false)
     @NotNull
-    @Size(min=0, max=100)
+    @Min(0)
+    @Max(100)
     private Integer maxAttemptsPerStudent;
 
     @OneToMany(targetEntity = QuizQuestion.class, mappedBy = "quiz", fetch = FetchType.LAZY)

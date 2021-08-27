@@ -1,24 +1,39 @@
 package com.spring.kodo.service.impl;
 
+import com.spring.kodo.entity.Quiz;
 import com.spring.kodo.entity.QuizQuestion;
+import com.spring.kodo.entity.QuizQuestionOption;
+import com.spring.kodo.repository.QuizQuestionOptionRepository;
 import com.spring.kodo.repository.QuizQuestionRepository;
 import com.spring.kodo.service.QuizQuestionService;
+import com.spring.kodo.service.QuizService;
+import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.enumeration.QuestionType;
+import com.spring.kodo.util.exception.CreateQuizQuestionException;
 import com.spring.kodo.util.exception.InputDataValidationException;
+import com.spring.kodo.util.exception.QuizNotFoundException;
 import com.spring.kodo.util.exception.QuizQuestionNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class QuizQuestionServiceImpl implements QuizQuestionService
 {
     @Autowired
     private QuizQuestionRepository quizQuestionRepository;
+
+    @Autowired
+    private QuizQuestionOptionRepository quizQuestionOptionRepository;
+
+    @Autowired
+    private QuizService quizService;
 
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -30,9 +45,35 @@ public class QuizQuestionServiceImpl implements QuizQuestionService
     }
 
     @Override
-    public QuizQuestion createNewQuizQuestion(QuizQuestion quizQuestion) throws InputDataValidationException
+    public QuizQuestion createNewQuizQuestion(QuizQuestion newQuizQuestion, Long quizId, List<QuizQuestionOption> quizQuestionOptions) throws CreateQuizQuestionException, InputDataValidationException
     {
-        return null;
+        Set<ConstraintViolation<QuizQuestion>> constraintViolations = validator.validate(newQuizQuestion);
+        if (constraintViolations.isEmpty())
+        {
+            try
+            {
+                Quiz quiz = quizService.getQuizByQuizId(quizId);
+                quiz.getQuestions().add(newQuizQuestion);
+                newQuizQuestion.setQuiz(quiz);
+
+                for (QuizQuestionOption quizQuestionOption : quizQuestionOptions)
+                {
+                    newQuizQuestion.getQuizQuestionOptions().add(quizQuestionOption);
+                    quizQuestionOptionRepository.save(quizQuestionOption);
+                }
+            }
+            catch (QuizNotFoundException ex)
+            {
+                throw new CreateQuizQuestionException(ex.getMessage());
+            }
+
+            quizQuestionRepository.saveAndFlush(newQuizQuestion);
+            return newQuizQuestion;
+        }
+        else
+        {
+            throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+        }
     }
 
     @Override

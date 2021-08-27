@@ -44,6 +44,15 @@ public class QuizQuestion
         this.quizQuestionOptions = new ArrayList<>();
     }
 
+    public QuizQuestion(String content, QuestionType questionType, Integer marks)
+    {
+        this();
+
+        this.content = content;
+        this.questionType = questionType;
+        this.marks = marks;
+    }
+
     public Long getQuizQuestionId()
     {
         return quizQuestionId;

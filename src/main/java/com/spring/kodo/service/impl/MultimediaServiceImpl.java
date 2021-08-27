@@ -119,15 +119,15 @@ public class MultimediaServiceImpl implements MultimediaService
     public void deleteMultimedia(Long contentId) throws MultimediaNotFoundException
     {
         Multimedia multimediaToRemove = getMultimediaByMultimediaId(contentId);
-        try
-        {
-            Lesson linkedLesson = lessonService.getLessonByLessonId(multimediaToRemove.getLesson().getLessonId());
-            linkedLesson.getContents().remove(multimediaToRemove);
-        }
-        catch (LessonNotFoundException e)
-        {
-            // If no lesson found, all the more we should delete this multimedia
-        }
+//        try
+//        {
+//            Lesson linkedLesson = lessonService.getLessonByLessonId(multimediaToRemove.getLesson().getLessonId());
+//            linkedLesson.getContents().remove(multimediaToRemove);
+//        }
+//        catch (LessonNotFoundException e)
+//        {
+//            // If no lesson found, all the more we should delete this multimedia
+//        }
 
         // Delete from cloud
         fileService.delete(multimediaToRemove.getUrlFilename());
