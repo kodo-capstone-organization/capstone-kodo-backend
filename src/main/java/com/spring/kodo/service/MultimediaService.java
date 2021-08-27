@@ -19,5 +19,8 @@ public interface MultimediaService
 
     Multimedia getMultimediaByType(MultimediaType multimediaType) throws MultimediaNotFoundException;
 
+    // File handling should have been done before calling this method
+    Multimedia updateMultimedia(Multimedia multimedia);
+
     void deleteMultimedia(Long contentId) throws MultimediaNotFoundException;
 }

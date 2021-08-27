@@ -115,22 +115,19 @@ public class MultimediaServiceImpl implements MultimediaService
         return multimediaRepository.findAll();
     }
 
+    @Override  // File handling should have been done before calling this method
+    public Multimedia updateMultimedia (Multimedia multimedia)
+    {
+        return multimediaRepository.saveAndFlush(multimedia);
+    }
+
     @Override
     public void deleteMultimedia(Long contentId) throws MultimediaNotFoundException
     {
         Multimedia multimediaToRemove = getMultimediaByMultimediaId(contentId);
-//        try
-//        {
-//            Lesson linkedLesson = lessonService.getLessonByLessonId(multimediaToRemove.getLesson().getLessonId());
-//            linkedLesson.getContents().remove(multimediaToRemove);
-//        }
-//        catch (LessonNotFoundException e)
-//        {
-//            // If no lesson found, all the more we should delete this multimedia
-//        }
-
-        // Delete from cloud
+        // Delete from filestore
         fileService.delete(multimediaToRemove.getUrlFilename());
+        // Delete from db
         multimediaRepository.delete(multimediaToRemove);
     }
 }
