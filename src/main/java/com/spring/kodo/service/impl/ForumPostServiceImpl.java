@@ -7,6 +7,7 @@ import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.ForumPostNotFoundException;
 import com.spring.kodo.util.exception.InputDataValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -14,6 +15,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.Set;
 
+@Service
 public class ForumPostServiceImpl implements ForumPostService {
 
     @Autowired // With this annotation, we do not to populate ForumPostRepository in this class' constructor
