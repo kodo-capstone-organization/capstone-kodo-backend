@@ -1,5 +1,6 @@
 package com.spring.kodo.service.impl;
 
+import com.spring.kodo.entity.Course;
 import com.spring.kodo.repository.LessonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.util.List;
 import java.util.Set;
 
 import com.spring.kodo.entity.Lesson;
@@ -32,6 +34,7 @@ public class LessonServiceImpl implements LessonService
     }
 
     @Override
+    // Add Long courseId
     public Lesson createNewLesson(Lesson newLesson) throws InputDataValidationException
     {
         Set<ConstraintViolation<Lesson>> constraintViolations = validator.validate(newLesson);
@@ -73,6 +76,12 @@ public class LessonServiceImpl implements LessonService
         {
             throw new LessonNotFoundException("Lesson with Name: " + name + " does not exist!");
         }
+    }
+
+    @Override
+    public List<Lesson> getAllLessons()
+    {
+        return lessonRepository.findAll();
     }
 
     //only updating attributes, not relationships

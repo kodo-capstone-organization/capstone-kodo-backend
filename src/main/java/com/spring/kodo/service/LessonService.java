@@ -7,13 +7,15 @@ import com.spring.kodo.util.exception.InputDataValidationException;
 
 import java.util.List;
 
-public interface LessonService {
-
-    Lesson createNewLesson (Lesson lesson) throws InputDataValidationException;
+public interface LessonService
+{
+    Lesson createNewLesson(Lesson lesson) throws InputDataValidationException;
 
     Lesson getLessonByLessonId(Long lessonId) throws LessonNotFoundException;
 
     Lesson getLessonByName(String name) throws LessonNotFoundException;
+
+    List<Lesson> getAllLessons();
 
     Lesson updateLesson(Long lessonId, Lesson updatedLesson) throws LessonNotFoundException;
 

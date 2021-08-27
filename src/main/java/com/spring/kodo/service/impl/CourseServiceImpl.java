@@ -1,13 +1,12 @@
 package com.spring.kodo.service.impl;
 
-import com.spring.kodo.entity.Account;
+import com.spring.kodo.entity.*;
 import com.spring.kodo.entity.Course;
-import com.spring.kodo.entity.Course;
-import com.spring.kodo.entity.Tag;
 import com.spring.kodo.repository.AccountRepository;
 import com.spring.kodo.repository.CourseRepository;
 import com.spring.kodo.service.AccountService;
 import com.spring.kodo.service.CourseService;
+import com.spring.kodo.service.LessonService;
 import com.spring.kodo.service.TagService;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.*;
@@ -29,6 +28,9 @@ public class CourseServiceImpl implements CourseService
     private CourseRepository courseRepository;
 
     @Autowired
+    private LessonService lessonService;
+
+    @Autowired
     private AccountService accountService;
 
     @Autowired
@@ -44,17 +46,17 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
-    public Course createNewCourse(Course newCourse, Account tutor, List<String> tagTitles) throws InputDataValidationException
+    public Course createNewCourse(Course newCourse, Long tutorId, List<String> tagTitles) throws InputDataValidationException
     {
         Set<ConstraintViolation<Course>> constraintViolations = validator.validate(newCourse);
         if (constraintViolations.isEmpty())
         {
             // Process Account Tutor
-            if (tutor != null)
+            if (tutorId != null)
             {
                 try
                 {
-                    newCourse = addTutorToCourse(newCourse, tutor);
+                    newCourse = setTutorToCourse(newCourse, tutorId);
                 }
                 catch (AccountNotFoundException | CourseNotFoundException | UpdateCourseException ex)
                 {
@@ -64,14 +66,13 @@ public class CourseServiceImpl implements CourseService
             }
 
             // Process Tags
-            if (tagTitles != null && (!tagTitles.isEmpty()))
+            if (tagTitles != null)
             {
                 for (String tagTitle : tagTitles)
                 {
-                    Tag tag = tagService.getTagByTitleOrCreateNew(tagTitle);
                     try
                     {
-                        newCourse = addTagToCourse(newCourse, tag);
+                        newCourse = addTagToCourse(newCourse, tagTitle);
                     }
                     catch (TagNotFoundException | CourseNotFoundException | UpdateCourseException ex)
                     {
@@ -127,9 +128,46 @@ public class CourseServiceImpl implements CourseService
         return courseRepository.findAll();
     }
 
-    private Course addTutorToCourse(Course course, Account tutor) throws CourseNotFoundException, AccountNotFoundException, UpdateCourseException
+    @Override
+    public Course addTagToCourse(Course course, String tagTitle) throws InputDataValidationException, CourseNotFoundException, TagNotFoundException, UpdateCourseException
     {
-        tutor = accountService.getAccountByAccountId(tutor.getAccountId());
+        Tag tag = tagService.getTagByTitleOrCreateNew(tagTitle);
+
+        if (!course.getCourseTags().contains(tag))
+        {
+            course.getCourseTags().add(tag);
+        }
+        else
+        {
+            throw new UpdateCourseException("Unable to add tag with title: " + tag.getTitle() +
+                    " to course with ID: " + course.getCourseId() + " as tag is already linked to this course");
+        }
+
+        return course;
+    }
+
+    @Override
+    public Course addLessonToCourse(Course course, Lesson lesson) throws CourseNotFoundException, InputDataValidationException, UpdateCourseException
+    {
+        course = getCourseByCourseId(course.getCourseId());
+
+        if (!course.getLessons().contains(lesson))
+        {
+            lesson = lessonService.createNewLesson(lesson);
+            course.getLessons().add(lesson);
+        }
+        else
+        {
+            throw new UpdateCourseException("Unable to add lesson with name: " + lesson.getName() +
+                    " to course with ID: " + course.getCourseId() + " as tag is already linked to this course");
+        }
+
+        return course;
+    }
+
+    private Course setTutorToCourse(Course course, Long tutorId) throws CourseNotFoundException, AccountNotFoundException, UpdateCourseException
+    {
+        Account tutor = accountService.getAccountByAccountId(tutorId);
 
         if (course.getTutor() == null)
         {
@@ -140,23 +178,6 @@ public class CourseServiceImpl implements CourseService
         {
             throw new UpdateCourseException("Unable to add tutor with name: " + tutor.getName() +
                     " to course with Name: " + course.getName() + " as there is already a tutor linked to this course");
-        }
-
-        return course;
-    }
-
-    private Course addTagToCourse(Course course, Tag tag) throws CourseNotFoundException, TagNotFoundException, UpdateCourseException
-    {
-        tag = tagService.getTagByTagId(tag.getTagId());
-
-        if (!course.getCourseTags().contains(tag))
-        {
-            course.getCourseTags().add(tag);
-        }
-        else
-        {
-            throw new UpdateCourseException("Unable to add tag with title: " + tag.getTitle() +
-                    " to course with ID: " + course.getCourseId() + " as tag is already linked to this course");
         }
 
         return course;

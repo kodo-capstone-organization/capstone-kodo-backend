@@ -1,6 +1,7 @@
 package com.spring.kodo.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -27,7 +28,7 @@ public class Lesson
 
     @Column(nullable = false)
     @NotNull
-    @Size(min = 1)
+    @Min(1)
     private Integer sequence;
 
     @OneToMany(targetEntity = Content.class, mappedBy = "lesson", fetch = FetchType.LAZY)

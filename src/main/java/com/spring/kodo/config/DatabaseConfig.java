@@ -2,11 +2,9 @@ package com.spring.kodo.config;
 
 import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Course;
+import com.spring.kodo.entity.Lesson;
 import com.spring.kodo.entity.Tag;
-import com.spring.kodo.service.FileService;
-import com.spring.kodo.service.AccountService;
-import com.spring.kodo.service.CourseService;
-import com.spring.kodo.service.TagService;
+import com.spring.kodo.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +21,9 @@ import java.util.stream.Collectors;
 @Configuration
 public class DatabaseConfig
 {
+    @Autowired
+    private LessonService lessonService;
+
     @Autowired
     private CourseService courseService;
 
@@ -41,14 +42,17 @@ public class DatabaseConfig
     private static final List<String> PROGRAMMING_LANGUAGES = Arrays.asList(
             "Python",
             "JavaScript",
+            "TypeScript",
             "Java",
-            "C#",
             "C",
+            "C#",
             "C++",
             "Go",
             "R",
             "Swift"
     );
+
+    private static final Integer LESSON_COUNT = 10;
 
     @EventListener(ApplicationReadyEvent.class)
     public void loadDataOnStartup() throws Exception
@@ -60,6 +64,7 @@ public class DatabaseConfig
         List<Account> accounts = addAccounts();
         List<Tag> tags = addTags();
         List<Course> courses = addCourses();
+        List<Lesson> lessons = addLessons();
 
         // Create data set to Database
         // Create Accounts w Tags
@@ -68,14 +73,24 @@ public class DatabaseConfig
             accountService.createNewAccount(account, Arrays.asList(tags.get(getRandomNumber(0, tags.size())).getTitle()));
         }
 
-        // Create Courses
+        // Create Courses and lessons
         for (Course course : courses)
         {
+            int courseIndex = courses.indexOf(course);
+
             courseService.createNewCourse(
                     course,
-                    accounts.get(getRandomNumber(0, accounts.size())),
-                    Arrays.asList(tags.get(courses.indexOf(course)).getTitle())
+                    accounts.get(getRandomNumber(0, accounts.size())).getAccountId(),
+                    Arrays.asList(tags.get(courseIndex).getTitle())
             );
+
+            for (int i = LESSON_COUNT * courseIndex; i < LESSON_COUNT * (courseIndex + 1); i++)
+            {
+                courseService.addLessonToCourse(
+                        course,
+                        lessons.get(i)
+                );
+            }
         }
 
         // Print Ids of saved data list
@@ -94,6 +109,9 @@ public class DatabaseConfig
 
         List<Long> courseIds = courseService.getAllCourses().stream().map(Course::getCourseId).collect(Collectors.toList());
         System.out.println(">> Added Courses with courseIds: " + courseIds);
+
+        List<Long> lessonIds = lessonService.getAllLessons().stream().map(Lesson::getLessonId).collect(Collectors.toList());
+        System.out.println(">> Added Lessons with lessonIds: " + lessonIds);
     }
 
     private List<Account> addAccounts()
@@ -130,9 +148,36 @@ public class DatabaseConfig
         return courses;
     }
 
+    private List<Lesson> addLessons()
+    {
+        List<Lesson> lessons = new ArrayList<>();
+
+        for (String language : PROGRAMMING_LANGUAGES)
+        {
+            for (int i = 1; i <= LESSON_COUNT; i++)
+            {
+                lessons.add(new Lesson(language + " Lesson " + i, "A very interesting " + ordinal(i) + " lesson on " + language, i));
+            }
+        }
+
+        return lessons;
+    }
+
     private int getRandomNumber(int min, int max)
     {
         return (int) ((Math.random() * (max - min)) + min);
+    }
+
+    private String ordinal(int i) {
+        String[] suffixes = new String[] { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" };
+        switch (i % 100) {
+            case 11:
+            case 12:
+            case 13:
+                return i + "th";
+            default:
+                return i + suffixes[i % 10];
+        }
     }
 }
 
