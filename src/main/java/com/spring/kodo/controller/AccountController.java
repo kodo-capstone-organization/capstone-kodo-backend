@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/account")
@@ -158,13 +159,15 @@ public class AccountController
         }
     }
 
-    @PostMapping("/login/{username}&{password}")
-    public ResponseEntity login(@PathVariable String username, @PathVariable String password)
+    @PostMapping("/login")
+    public ResponseEntity login(@RequestPart (name="username", required=true) String username, @RequestPart (name="password", required=true) String password)
     {
+        System.out.println(username);
+        System.out.println(password);
         try
         {
             Account accountLoggedIn = this.accountService.login(username, password);
-            return ResponseEntity.status(HttpStatus.OK).body("Successfully login with Account ID: " + accountLoggedIn.getAccountId());
+            return ResponseEntity.status(HttpStatus.OK).body(accountLoggedIn.getAccountId());
         }
         catch (AccountNotFoundException ex)
         {
