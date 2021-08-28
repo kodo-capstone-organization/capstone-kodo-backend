@@ -74,7 +74,7 @@ public class AccountController
             {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
             }
-            catch (AccountNotFoundException | TagNotFoundException | UpdateAccountException | EnrolledCourseNotFoundException | CourseNotFoundException | StudentAttemptQuestionNotFoundException | StudentAttemptNotFoundException ex)
+            catch (AccountNotFoundException | TagNotFoundException | UpdateAccountException | EnrolledCourseNotFoundException | CourseNotFoundException | StudentAttemptQuestionNotFoundException | StudentAttemptNotFoundException | ForumThreadNotFoundException | ForumPostNotFoundException ex)
             {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
             }
@@ -126,7 +126,7 @@ public class AccountController
 
                 return updatedAccount;
             }
-            catch (AccountNotFoundException | TagNotFoundException | UpdateAccountException | EnrolledCourseNotFoundException | CourseNotFoundException | StudentAttemptQuestionNotFoundException | StudentAttemptNotFoundException ex)
+            catch (AccountNotFoundException | TagNotFoundException | UpdateAccountException | EnrolledCourseNotFoundException | CourseNotFoundException | StudentAttemptQuestionNotFoundException | StudentAttemptNotFoundException | ForumThreadNotFoundException | ForumPostNotFoundException ex)
             {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
             }

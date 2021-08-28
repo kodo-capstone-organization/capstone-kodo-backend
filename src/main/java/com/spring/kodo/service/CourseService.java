@@ -17,6 +17,8 @@ public interface CourseService
 
     List<Course> getAllCourses();
 
+    List<Course> getAllCoursesOfATutor(Long accountId) throws AccountNotFoundException;
+
     Course addTagToCourse(Course course, String tagTitle) throws InputDataValidationException, CourseNotFoundException, TagNotFoundException, UpdateCourseException;
 
     Course addLessonToCourse(Course course, Lesson lesson) throws CourseNotFoundException, InputDataValidationException, UpdateCourseException;

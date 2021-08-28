@@ -10,6 +10,7 @@ import com.spring.kodo.util.exception.ForumThreadNotFoundException;
 import com.spring.kodo.util.exception.InputDataValidationException;
 import com.spring.kodo.util.exception.ForumCategoryNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -17,7 +18,9 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.Set;
 
-public class ForumCategoryServiceImpl implements ForumCategoryService {
+@Service
+public class ForumCategoryServiceImpl implements ForumCategoryService
+{
     @Autowired // With this annotation, we do not to populate ForumCategoryRepository in this class' constructor
     private ForumCategoryRepository forumCategoryRepository;
     @Autowired

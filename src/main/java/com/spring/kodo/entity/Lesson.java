@@ -31,7 +31,7 @@ public class Lesson
     @Min(1)
     private Integer sequence;
 
-    @OneToMany(targetEntity = Content.class, mappedBy = "lesson", fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = Content.class, fetch = FetchType.LAZY)
     private List<Content> contents;
 
     public Lesson()

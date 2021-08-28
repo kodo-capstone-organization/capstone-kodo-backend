@@ -1,25 +1,33 @@
 package com.spring.kodo.service.impl;
 
+import com.spring.kodo.entity.ForumCategory;
 import com.spring.kodo.entity.ForumPost;
 import com.spring.kodo.entity.ForumThread;
 import com.spring.kodo.repository.ForumThreadRepository;
+import com.spring.kodo.service.ForumCategoryService;
 import com.spring.kodo.service.ForumThreadService;
 import com.spring.kodo.service.ForumPostService;
 import com.spring.kodo.util.MessageFormatterUtil;
+import com.spring.kodo.util.exception.ForumCategoryNotFoundException;
 import com.spring.kodo.util.exception.ForumPostNotFoundException;
 import com.spring.kodo.util.exception.ForumThreadNotFoundException;
 import com.spring.kodo.util.exception.InputDataValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.util.List;
 import java.util.Set;
 
+@Service
 public class ForumThreadServiceImpl implements ForumThreadService {
     @Autowired // With this annotation, we do not to populate ForumThreadRepository in this class' constructor
     private ForumThreadRepository forumThreadRepository;
+    @Autowired
+    private ForumCategoryService forumCategoryService;
     @Autowired
     private ForumPostService forumPostService;
 
@@ -73,6 +81,13 @@ public class ForumThreadServiceImpl implements ForumThreadService {
         {
             throw new ForumThreadNotFoundException("Forum Thread with name: " + name + " does not exist!");
         }
+    }
+
+    @Override
+    public List<ForumThread> getAllForumThreadsOfAForumCategory(Long forumCategoryId) throws ForumCategoryNotFoundException
+    {
+        ForumCategory forumCategory =  forumCategoryService.getForumCategoryByForumCategoryId(forumCategoryId);
+        return forumCategory.getForumThreads();
     }
 
     //only updating attributes, not relationships

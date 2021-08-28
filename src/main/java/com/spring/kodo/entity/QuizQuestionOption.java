@@ -18,7 +18,7 @@ public class QuizQuestionOption
     @Size(max = 512)
     private String leftContent;
 
-    @Column(nullable = false, length = 512)
+    @Column(length = 512)
     @Size(max = 512)
     private String rightContent;
 

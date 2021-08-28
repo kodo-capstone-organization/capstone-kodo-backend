@@ -2,6 +2,7 @@ package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.*;
 import com.spring.kodo.repository.CourseRepository;
+import com.spring.kodo.repository.ForumPostRepository;
 import com.spring.kodo.repository.StudentAttemptRepository;
 import com.spring.kodo.service.*;
 import com.spring.kodo.util.MessageFormatterUtil;
@@ -25,6 +26,8 @@ public class AccountServiceImpl implements AccountService
     private CourseRepository courseRepository;
     @Autowired
     private StudentAttemptRepository studentAttemptRepository;
+    @Autowired
+    private ForumPostRepository forumPostRepository;
 
     @Autowired
     private TagService tagService;
@@ -32,6 +35,10 @@ public class AccountServiceImpl implements AccountService
     private EnrolledCourseService enrolledCourseService;
     @Autowired
     private CourseService courseService;
+    @Autowired
+    private ForumThreadService forumThreadService;
+    @Autowired
+    private ForumPostService forumPostService;
     @Autowired
     private StudentAttemptService studentAttemptService;
 
@@ -158,7 +165,8 @@ public class AccountServiceImpl implements AccountService
             throws AccountNotFoundException, TagNotFoundException,
             InputDataValidationException, UpdateAccountException,
             EnrolledCourseNotFoundException, CourseNotFoundException,
-            StudentAttemptNotFoundException
+            StudentAttemptNotFoundException, ForumThreadNotFoundException,
+            ForumPostNotFoundException
     {
 
         if(account != null && account.getAccountId() != null)
@@ -212,31 +220,31 @@ public class AccountServiceImpl implements AccountService
                     }
 
                     // Update forumThreads - Unidirectional
-//                    if (forumThreadIds != null)
-//                    {
-//                        accountToUpdate.getForumThreads().clear();
-//                        for (Long forumThreadId: forumThreadIds)
-//                        {
-//                            ForumThread forumThread = forumService.getForumThreadByThreadId(forumThreadId);
-//                            addForumThreadToAccount(accountToUpdate, forumThread);
-//                        }
-//                    }
-//
-//                    // Update forumPosts (as an account) - Bidirectional
-//                    if(forumPostIds != null)
-//                    {
-//                        for(ForumPost forumPost: accountToUpdate.getForumPosts())
-//                        {
-//                            forumPost.setAccount(null);
-//                        }
-//
-//                        accountToUpdate.getForumPosts().clear();
-//                        for(Long forumPostId: forumPostIds)
-//                        {
-//                            ForumPost forumPost = forumService.getForumPostByPostId(forumPostId);
-//                            addForumPostToAccount(accountToUpdate, forumPost);
-//                        }
-//                    }
+                    if (forumThreadIds != null)
+                    {
+                        accountToUpdate.getForumThreads().clear();
+                        for (Long forumThreadId: forumThreadIds)
+                        {
+                            ForumThread forumThread = forumThreadService.getForumThreadByForumThreadId(forumThreadId);
+                            addForumThreadToAccount(accountToUpdate, forumThread);
+                        }
+                    }
+
+                    // Update forumPosts (as an account) - Bidirectional
+                    if(forumPostIds != null)
+                    {
+                        for(ForumPost forumPost: accountToUpdate.getForumPosts())
+                        {
+                            forumPost.setAccount(null);
+                        }
+
+                        accountToUpdate.getForumPosts().clear();
+                        for(Long forumPostId: forumPostIds)
+                        {
+                            ForumPost forumPost = forumPostService.getForumPostByForumPostId(forumPostId);
+                            addForumPostToAccount(accountToUpdate, forumPost);
+                        }
+                    }
 
                     // Update studentAttempts - Unidirectional
                     if (studentAttemptIds != null)
@@ -338,6 +346,48 @@ public class AccountServiceImpl implements AccountService
 
         accountRepository.saveAndFlush(account);
         courseRepository.saveAndFlush(course);
+
+        return account;
+    }
+
+    @Override
+    public Account addForumThreadToAccount(Account account, ForumThread forumThread) throws AccountNotFoundException, UpdateAccountException, ForumThreadNotFoundException
+    {
+        account = getAccountByAccountId(account.getAccountId());
+        forumThread = forumThreadService.getForumThreadByForumThreadId(forumThread.getForumThreadId());
+
+        if (!account.getForumThreads().contains(forumThread))
+        {
+            account.getForumThreads().add(forumThread);
+        }
+        else
+        {
+            throw new UpdateAccountException("Forum thread is already associated to account");
+        }
+
+        accountRepository.saveAndFlush(account);
+        return account;
+    }
+
+    @Override
+    public Account addForumPostToAccount(Account account, ForumPost forumPost) throws AccountNotFoundException, ForumPostNotFoundException, UpdateAccountException
+    {
+        account = getAccountByAccountId(account.getAccountId());
+        forumPost = forumPostService.getForumPostByForumPostId(forumPost.getForumPostId());
+
+        if (!account.getForumPosts().contains(forumPost))
+        {
+            account.getForumPosts().add(forumPost);
+            forumPost.setAccount(account);
+        }
+        else
+        {
+            throw new UpdateAccountException("Unable to add forumPost: " + forumPost.getForumPostId() +
+                    " to account account ID: " + account.getAccountId() + " as this account is already the creator of this post");
+        }
+
+        accountRepository.saveAndFlush(account);
+        forumPostRepository.saveAndFlush(forumPost);
 
         return account;
     }

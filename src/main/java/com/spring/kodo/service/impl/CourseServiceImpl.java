@@ -129,6 +129,13 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
+    public List<Course> getAllCoursesOfATutor(Long accountId) throws AccountNotFoundException
+    {
+        Account account = accountService.getAccountByAccountId(accountId);
+        return account.getCourses();
+    }
+
+    @Override
     public Course addTagToCourse(Course course, String tagTitle) throws InputDataValidationException, CourseNotFoundException, TagNotFoundException, UpdateCourseException
     {
         Tag tag = tagService.getTagByTitleOrCreateNew(tagTitle);
@@ -162,6 +169,7 @@ public class CourseServiceImpl implements CourseService
                     " to course with ID: " + course.getCourseId() + " as tag is already linked to this course");
         }
 
+        courseRepository.saveAndFlush(course);
         return course;
     }
 
@@ -180,6 +188,7 @@ public class CourseServiceImpl implements CourseService
                     " to course with Name: " + course.getName() + " as there is already a tutor linked to this course");
         }
 
+        courseRepository.saveAndFlush(course);
         return course;
     }
 }
