@@ -162,8 +162,6 @@ public class AccountController
     @PostMapping("/login")
     public ResponseEntity login(@RequestPart (name="username", required=true) String username, @RequestPart (name="password", required=true) String password)
     {
-        System.out.println(username);
-        System.out.println(password);
         try
         {
             Account accountLoggedIn = this.accountService.login(username, password);
