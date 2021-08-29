@@ -32,7 +32,7 @@ public class Course
     @Digits(integer = 9, fraction = 2)
     private BigDecimal price;
 
-    @Column(unique = true, length = 512)
+    @Column(length = 512)
     @URL
     @Size(min = 0, max = 512)
     private String bannerUrl;

@@ -14,7 +14,7 @@ import javax.validation.constraints.Size;
 @Entity
 public class Multimedia extends Content
 {
-    @Column(unique = true, length = 512)
+    @Column(length = 512)
     @URL // Maybe can have a regex to help check if the URL is valid? Unsure of what constraints though
     @NotNull
     @Size(min = 0, max = 512)

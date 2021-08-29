@@ -55,7 +55,7 @@ public class Account
     @Size(max = 64)
     private String email;
 
-    @Column(unique = true, length = 512)
+    @Column(length = 512)
     @URL // Maybe can have a regex to help check if the URL is valid? Unsure of what constraints though
     @Size(min = 0, max = 512)
     private String displayPictureUrl;
