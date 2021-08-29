@@ -210,9 +210,9 @@ public class DatabaseConfig
     {
         return Arrays.asList(
                 new Account("admin", "password", "Admin Adam", "I am Admin", "admin@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/1131f24e-b080-4420-a897-88bcee2b2787.gif?generation=1630265308844077&alt=media", true),
-                new Account("student1", "password", "Student Samuel", "I am Student 1", "student1@gmail.com", "https://student1URL.com", false),
-                new Account("student2", "password", "Student Sunny", "I am Student 2", "student2@gmail.com", "https://student2URL.com", false),
-                new Account("tutor1", "password", "Tutor Trisha", "I am Tutor 1", "tutor1@gmail.com", "https://tutor1URL.com", false)
+                new Account("student1", "password", "Student Samuel", "I am Student 1", "student1@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/cba20ec5-5739-4853-b425-ba39647cd8cc.gif?generation=1630266661221190&alt=media", false),
+                new Account("student2", "password", "Student Sunny", "I am Student 2", "student2@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/46a24305-9b12-4445-b779-5ee1d56b94d7.gif?generation=1630266556687403&alt=media", false),
+                new Account("tutor1", "password", "Tutor Trisha", "I am Tutor 1", "tutor1@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/18700b5a-4890-430f-9bab-1d312862c030.gif?generation=1630266710675423&alt=media", false)
         );
     }
 
