@@ -1,5 +1,6 @@
 package com.spring.kodo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.*;
@@ -37,6 +38,7 @@ public class Course
     @Size(min = 0, max = 512)
     private String bannerUrl;
 
+    @JsonBackReference
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Account tutor;

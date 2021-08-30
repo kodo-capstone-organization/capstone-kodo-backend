@@ -1,5 +1,6 @@
 package com.spring.kodo.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.spring.kodo.util.MessageFormatterUtil;
@@ -75,6 +76,7 @@ public class Account
     @JoinColumn
     private List<EnrolledCourse> enrolledCourses;
 
+    @JsonManagedReference
     @OneToMany(targetEntity = Course.class, mappedBy = "tutor", fetch = FetchType.LAZY)
     private List<Course> courses;
 
@@ -82,6 +84,7 @@ public class Account
     @JoinColumn
     private List<ForumThread> forumThreads;
 
+    @JsonManagedReference
     @OneToMany(targetEntity = ForumPost.class, mappedBy = "account", fetch = FetchType.LAZY)
     private List<ForumPost> forumPosts;
 

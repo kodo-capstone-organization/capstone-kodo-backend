@@ -1,5 +1,7 @@
 package com.spring.kodo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -26,6 +28,7 @@ public class ForumPost
     @OneToOne(optional = true, targetEntity = ForumPost.class, fetch = FetchType.LAZY)
     private ForumPost reply;
 
+    @JsonBackReference
     @ManyToOne(optional = false)
     private Account account;
 
