@@ -68,9 +68,6 @@ public class Account
     @NotNull
     private Boolean isActive;
 
-    @Column()
-    private String stripeAccountId;
-
     @ManyToMany(targetEntity = Tag.class, fetch = FetchType.LAZY)
     private List<Tag> interests;
 
@@ -299,10 +296,6 @@ public class Account
     {
         this.studentAttempts = studentAttempts;
     }
-
-    public String getStripeAccountId() { return stripeAccountId; }
-
-    public void setStripeAccountId(String stripeAccountId) { this.stripeAccountId = stripeAccountId; }
 
     @Override
     public String toString()

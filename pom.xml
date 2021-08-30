@@ -71,11 +71,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.stripe</groupId>
-			<artifactId>stripe-java</artifactId>
-			<version>19.45.0</version>
-		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
