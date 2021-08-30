@@ -4,6 +4,7 @@ import com.spring.kodo.entity.*;
 import com.spring.kodo.service.*;
 import com.spring.kodo.util.enumeration.MultimediaType;
 import com.spring.kodo.util.enumeration.QuestionType;
+import com.spring.kodo.util.exception.InputDataValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
@@ -16,11 +17,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Configuration
 public class DatabaseConfig
 {
+    @Autowired
+    private StudentAttemptAnswerService studentAttemptAnswerService;
+
+    @Autowired
+    private StudentAttemptQuestionService studentAttemptQuestionService;
+
     @Autowired
     private StudentAttemptService studentAttemptService;
 
@@ -54,45 +62,66 @@ public class DatabaseConfig
     @Autowired
     private Environment env;
 
-    private static final List<String> PROGRAMMING_LANGUAGES = Arrays.asList(
-            "C",
-            "C#",
-            "C++",
-            "Go",
-            "Java",
-            "JavaScript",
-            "Perl",
-            "Python",
-            "R",
-            "Rust",
-            "SQL",
-            "Scala",
-            "Swift",
-            "TypeScript"
-    );
+    private List<String> PROGRAMMING_LANGUAGES;
 
-    private static final Integer PREFIXED_ADMIN_COUNT = 1;
-    private static final Integer TUTOR_COUNT = 5;
-    private static final Integer PREFIXED_TUTOR_COUNT = 1;
-    private static final Integer STUDENT_COUNT = 50;
-    private static final Integer PREFIXED_STUDENT_COUNT = 2;
+    // Edit these to scale the sample database
+    private final Integer PROGRAMMING_LANGUAGES_COUNT = 14; // Current max is 14
 
-    private static final Integer ADMIN_FIRST_INDEX = 0; // 0
-    private static final Integer ADMIN_LAST_INDEX = ADMIN_FIRST_INDEX + PREFIXED_ADMIN_COUNT; // 1
-    private static final Integer STUDENT_FIRST_INDEX = ADMIN_LAST_INDEX + 1; // 2
-    private static final Integer STUDENT_LAST_INDEX = STUDENT_FIRST_INDEX + STUDENT_COUNT - 1; // 51
-    private static final Integer TUTOR_FIRST_INDEX = STUDENT_LAST_INDEX + 1; // 52
-    private static final Integer TUTOR_LAST_INDEX = TUTOR_FIRST_INDEX + TUTOR_COUNT - 1; // 56
+    private final Integer PREFIXED_ADMIN_COUNT = 1;
+    private final Integer TUTOR_COUNT = 5;
+    private final Integer PREFIXED_TUTOR_COUNT = 1;
+    private final Integer STUDENT_COUNT = 50;
+    private final Integer PREFIXED_STUDENT_COUNT = 2;
 
-    private static final Integer LESSON_COUNT = 5;
-    private static final Integer QUIZ_QUESTION_COUNT = 5;
-    private static final Integer QUIZ_QUESTION_OPTION_COUNT = 4;
-    private static final Integer STUDENT_ATTEMPT_COUNT = 3;
+    private final Integer LESSON_COUNT = 5;
+    private final Integer QUIZ_QUESTION_COUNT = 5;
+    private final Integer QUIZ_QUESTION_OPTION_COUNT = 4;
+    private final Integer STUDENT_ATTEMPT_COUNT = 3;
+
+    // Don't Edit these
+    private final Integer ADMIN_FIRST_INDEX = 0; // 0
+    private final Integer ADMIN_LAST_INDEX = ADMIN_FIRST_INDEX + PREFIXED_ADMIN_COUNT; // 1
+    private final Integer STUDENT_FIRST_INDEX = ADMIN_LAST_INDEX + 1; // 2
+    private final Integer STUDENT_LAST_INDEX = STUDENT_FIRST_INDEX + STUDENT_COUNT - 1; // 51
+    private final Integer TUTOR_FIRST_INDEX = STUDENT_LAST_INDEX + 1; // 52
+    private final Integer TUTOR_LAST_INDEX = TUTOR_FIRST_INDEX + TUTOR_COUNT - 1; // 56
+
+    public DatabaseConfig()
+    {
+        PROGRAMMING_LANGUAGES = Arrays.asList(
+                "C",
+                "C#",
+                "C++",
+                "Go",
+                "Java",
+                "JavaScript",
+                "Perl",
+                "Python",
+                "R",
+                "Rust",
+                "SQL",
+                "Scala",
+                "Swift",
+                "TypeScript"
+        );
+    }
 
     @EventListener(ApplicationReadyEvent.class)
     public void loadDataOnStartup() throws Exception
     {
+        long start = System.currentTimeMillis();
+
         System.out.println("\n===== Application started on port: " + env.getProperty("local.server.port") + " =====");
+        System.out.println("\n===== 0. Checking settings =====");
+        if (PROGRAMMING_LANGUAGES_COUNT <= PROGRAMMING_LANGUAGES.size())
+        {
+            PROGRAMMING_LANGUAGES = PROGRAMMING_LANGUAGES.subList(0, PROGRAMMING_LANGUAGES_COUNT);
+        }
+        else
+        {
+            throw new InputDataValidationException("Programming Language size has to be <= " + PROGRAMMING_LANGUAGES.size());
+        }
+
         System.out.println("\n===== 1. Loading Init Data to Database =====");
 
         // Populate data lists
@@ -123,6 +152,8 @@ public class DatabaseConfig
         printIds();
 
         System.out.println("\n===== Init Data Fully Loaded to Database =====");
+        long end = System.currentTimeMillis();
+        System.out.printf("\n===== %f seconds =====\n", ((double) (end - start)) / 1000);
     }
 
     private void create(
@@ -202,10 +233,25 @@ public class DatabaseConfig
                 // StudentAttempt Creation
                 for (int j = 0; j < STUDENT_ATTEMPT_COUNT; j++)
                 {
-                    studentAttemptService.createNewStudentAttempt(
+                    StudentAttempt studentAttempt = studentAttemptService.createNewStudentAttempt(
                             quiz.getContentId(),
                             accounts.get(getRandomNumber(STUDENT_FIRST_INDEX, STUDENT_LAST_INDEX)).getAccountId()
                     );
+
+                    for (StudentAttemptQuestion studentAttemptQuestion : studentAttempt.getStudentAttemptQuestions())
+                    {
+                        quizQuestionOption = studentAttemptQuestion.getQuizQuestion().getQuizQuestionOptions().get(
+                                getRandomNumber(
+                                        0,
+                                        studentAttemptQuestion.getQuizQuestion().getQuizQuestionOptions().size() - 1)
+                        );
+
+                        studentAttemptService.addStudentAttemptAnswerToStudentAttemptQuestion(
+                                studentAttemptQuestion.getStudentAttemptQuestionId(),
+                                Arrays.asList(quizQuestionOption.getQuizQuestionOptionId())
+                        );
+                    }
+
                 }
 
                 // Multimedia Creation
@@ -229,19 +275,25 @@ public class DatabaseConfig
         System.out.println(">> Added Lessons with lessonIds: " + lessonIds);
 
         List<Long> quizIds = quizService.getAllQuizzes().stream().map(Quiz::getContentId).collect(Collectors.toList());
-        System.out.println(">> Added Lessons with quizIds: " + quizIds);
+        System.out.println(">> Added Quizzes with quizIds: " + quizIds);
 
         List<Long> quizQuestionIds = quizQuestionService.getAllQuizQuestions().stream().map(QuizQuestion::getQuizQuestionId).collect(Collectors.toList());
-        System.out.println(">> Added Lessons with quizQuestionIds: " + quizQuestionIds);
+        System.out.println(">> Added QuizQuestions with quizQuestionIds: " + quizQuestionIds);
 
         List<Long> quizQuestionOptionIds = quizQuestionOptionService.getAllQuizQuestionOptions().stream().map(QuizQuestionOption::getQuizQuestionOptionId).collect(Collectors.toList());
-        System.out.println(">> Added Lessons with quizQuestionOptionIds: " + quizQuestionOptionIds);
+        System.out.println(">> Added QuizQuestionOptions with quizQuestionOptionIds: " + quizQuestionOptionIds);
 
         List<Long> multimediaIds = multimediaService.getAllMultimedias().stream().map(Multimedia::getContentId).collect(Collectors.toList());
-        System.out.println(">> Added Lessons with multimediaIds: " + multimediaIds);
+        System.out.println(">> Added Multimedias with multimediaIds: " + multimediaIds);
 
         List<Long> studentAttemptIds = studentAttemptService.getAllStudentAttempts().stream().map(StudentAttempt::getStudentAttemptId).collect(Collectors.toList());
-        System.out.println(">> Added Lessons with studentAttemptIds: " + studentAttemptIds);
+        System.out.println(">> Added StudentAttempts with studentAttemptIds: " + studentAttemptIds);
+
+        List<Long> studentAttemptQuestionIds = studentAttemptQuestionService.getAllStudentAttemptQuestions().stream().map(StudentAttemptQuestion::getStudentAttemptQuestionId).collect(Collectors.toList());
+        System.out.println(">> Added StudentAttemptQuestions with studentAttemptIds: " + studentAttemptQuestionIds);
+
+        List<Long> studentAttemptAnswerIds = studentAttemptAnswerService.getAllStudentAttemptAnswers().stream().map(StudentAttemptAnswer::getStudentAttemptAnswerId).collect(Collectors.toList());
+        System.out.println(">> Added StudentAttemptAnswers with studentAttemptIds: " + studentAttemptAnswerIds);
     }
 
     private List<Account> addAccounts()

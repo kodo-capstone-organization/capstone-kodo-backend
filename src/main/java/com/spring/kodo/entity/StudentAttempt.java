@@ -41,6 +41,16 @@ public class StudentAttempt
         this.studentAttemptId = studentAttemptId;
     }
 
+    public LocalDateTime getDateTimeOfAttempt()
+    {
+        return dateTimeOfAttempt;
+    }
+
+    public void setDateTimeOfAttempt(LocalDateTime dateTimeOfAttempt)
+    {
+        this.dateTimeOfAttempt = dateTimeOfAttempt;
+    }
+
     public Quiz getQuiz()
     {
         return quiz;

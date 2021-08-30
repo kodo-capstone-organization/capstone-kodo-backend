@@ -4,9 +4,7 @@ import com.spring.kodo.entity.*;
 import com.spring.kodo.repository.StudentAttemptAnswerRepository;
 import com.spring.kodo.repository.StudentAttemptQuestionRepository;
 import com.spring.kodo.repository.StudentAttemptRepository;
-import com.spring.kodo.service.AccountService;
-import com.spring.kodo.service.QuizService;
-import com.spring.kodo.service.StudentAttemptService;
+import com.spring.kodo.service.*;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +30,12 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
     private StudentAttemptRepository studentAttemptRepository;
 
     @Autowired
+    private StudentAttemptQuestionService studentAttemptQuestionService;
+
+    @Autowired
+    private QuizQuestionOptionService quizQuestionOptionService;
+
+    @Autowired
     private QuizService quizService;
 
     @Autowired
@@ -52,7 +56,7 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
         StudentAttempt newStudentAttempt = new StudentAttempt();
 
         Set<ConstraintViolation<StudentAttempt>> constraintViolations = validator.validate(newStudentAttempt);
-        if(constraintViolations.isEmpty())
+        if (constraintViolations.isEmpty())
         {
             if (studentId != null)
             {
@@ -109,4 +113,28 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
         return studentAttemptRepository.findAll();
     }
 
+    @Override
+    public void addStudentAttemptAnswerToStudentAttemptQuestion(Long studentAttemptQuestionId, List<Long> quizQuestionOptionIds) throws UpdateStudentAttemptAnswerException, StudentAttemptQuestionNotFoundException, QuizQuestionOptionNotFoundException
+    {
+        if (studentAttemptQuestionId != null)
+        {
+            StudentAttemptQuestion studentAttemptQuestion = studentAttemptQuestionService.getStudentAttemptQuestionByStudentAttemptQuestionId(studentAttemptQuestionId);
+
+            for (Long quizQuestionOptionId : quizQuestionOptionIds)
+            {
+                StudentAttemptAnswer studentAttemptAnswer = new StudentAttemptAnswer();
+                QuizQuestionOption quizQuestionOption = quizQuestionOptionService.getQuizQuestionOptionByQuizQuestionOptionId(quizQuestionOptionId);
+
+                studentAttemptAnswer.setQuizQuestionOption(quizQuestionOption);
+
+                studentAttemptQuestion.getStudentAttemptAnswers().add(studentAttemptAnswer);
+
+                studentAttemptAnswerRepository.saveAndFlush(studentAttemptAnswer);
+            }
+        }
+        else
+        {
+            throw new UpdateStudentAttemptAnswerException("StudentAttempt ID not provided for student attempt to be updated");
+        }
+    }
 }
