@@ -64,6 +64,12 @@ public class DatabaseConfig
             "Swift"
     );
 
+    private static final Integer PREFIXED_ADMIN_COUNT = 1;
+    private static final Integer TUTOR_COUNT = 5;
+    private static final Integer PREFIXED_TUTOR_COUNT = 1;
+    private static final Integer STUDENT_COUNT = 50;
+    private static final Integer PREFIXED_STUDENT_COUNT = 2;
+
     private static final Integer LESSON_COUNT = 5;
     private static final Integer QUIZ_QUESTION_COUNT = 5;
     private static final Integer QUIZ_QUESTION_OPTION_COUNT = 4;
@@ -143,12 +149,16 @@ public class DatabaseConfig
                 && quizQuestionOptionIndex < quizQuestionOptions.size()
                 && multimediaIndex < multimedias.size())
         {
-            course = courses.get(courseIndex);
-            tag = tags.get(tagIndex);
+            course = courses.get(courseIndex++);
+            tag = tags.get(tagIndex++);
 
             courseService.createNewCourse(
                     course,
-                    accounts.get(getRandomNumber(0, accounts.size())).getAccountId(),
+                    accounts.get(
+                            getRandomNumber(
+                                    PREFIXED_ADMIN_COUNT + STUDENT_COUNT + 1,
+                                    PREFIXED_ADMIN_COUNT + STUDENT_COUNT + TUTOR_COUNT
+                            )).getAccountId(),
                     Arrays.asList(tag.getTitle())
             );
 
@@ -204,12 +214,24 @@ public class DatabaseConfig
 
     private List<Account> addAccounts()
     {
-        return Arrays.asList(
-                new Account("admin", "password", "Admin Adam", "I am Admin", "admin@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/1131f24e-b080-4420-a897-88bcee2b2787.gif?generation=1630265308844077&alt=media", true),
-                new Account("student1", "password", "Student Samuel", "I am Student 1", "student1@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/cba20ec5-5739-4853-b425-ba39647cd8cc.gif?generation=1630266661221190&alt=media", false),
-                new Account("student2", "password", "Student Sunny", "I am Student 2", "student2@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/46a24305-9b12-4445-b779-5ee1d56b94d7.gif?generation=1630266556687403&alt=media", false),
-                new Account("tutor1", "password", "Tutor Trisha", "I am Tutor 1", "tutor1@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/18700b5a-4890-430f-9bab-1d312862c030.gif?generation=1630266710675423&alt=media", false)
-        );
+        List<Account> accounts = new ArrayList<>();
+
+        accounts.add(new Account("admin", "password", "Admin Adam", "I am Admin", "admin@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/1131f24e-b080-4420-a897-88bcee2b2787.gif?generation=1630265308844077&alt=media", true));
+
+        accounts.add(new Account("student1", "password", "Student Samuel", "I am Student Samuel", "studentsamuel@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/cba20ec5-5739-4853-b425-ba39647cd8cc.gif?generation=1630266661221190&alt=media", false));
+        accounts.add(new Account("student2", "password", "Student Sunny", "I am Student Sunny", "studentsunny@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/46a24305-9b12-4445-b779-5ee1d56b94d7.gif?generation=1630266556687403&alt=media", false));
+        for (int i = PREFIXED_STUDENT_COUNT + 1; i <= STUDENT_COUNT; i++)
+        {
+            accounts.add(new Account("student" + i, "password", "Student " + i, "I am Student " + i, "student" + i + "@gmail.com", "https://student" + i + ".com", false));
+        }
+
+        accounts.add(new Account("tutor1", "password", "Tutor Trisha", "I am Tutor 1", "tutor1@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/18700b5a-4890-430f-9bab-1d312862c030.gif?generation=1630266710675423&alt=media", false));
+        for (int i = PREFIXED_TUTOR_COUNT + 1; i <= TUTOR_COUNT; i++)
+        {
+            accounts.add(new Account("tutor" + i, "password", "Tutor " + i, "I am Tutor " + i, "tutor" + i + "@gmail.com", "https://student" + i + ".com", false));
+        }
+
+        return accounts;
     }
 
     private List<Tag> addTags()

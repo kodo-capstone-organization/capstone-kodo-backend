@@ -4,7 +4,6 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,20 +23,20 @@ public class Quiz extends Content
     private Integer maxAttemptsPerStudent;
 
     @OneToMany(targetEntity = QuizQuestion.class, mappedBy = "quiz", fetch = FetchType.LAZY)
-    private List<QuizQuestion> questions;
+    private List<QuizQuestion> quizQuestions;
 
     @OneToMany(targetEntity = StudentAttempt.class, mappedBy = "quiz", fetch = FetchType.LAZY)
     private List<StudentAttempt> studentAttempts;
 
     public Quiz()
     {
-        this.questions = new ArrayList<>();
+        this.quizQuestions = new ArrayList<>();
     }
 
     public Quiz(String name, String description, LocalTime timeLimit, Integer maxAttemptsPerStudent)
     {
         super(name, description);
-        this.questions = new ArrayList<>();
+        this.quizQuestions = new ArrayList<>();
         this.timeLimit = timeLimit;
         this.maxAttemptsPerStudent = maxAttemptsPerStudent;
     }
@@ -52,14 +51,14 @@ public class Quiz extends Content
         this.timeLimit = timeLimit;
     }
 
-    public List<QuizQuestion> getQuestions()
+    public List<QuizQuestion> getQuizQuestions()
     {
-        return questions;
+        return quizQuestions;
     }
 
-    public void setQuestions(List<QuizQuestion> questions)
+    public void setQuizQuestions(List<QuizQuestion> questions)
     {
-        this.questions = questions;
+        this.quizQuestions = questions;
     }
 
     public List<StudentAttempt> getStudentAttempts()
@@ -85,7 +84,7 @@ public class Quiz extends Content
     {
         return "Quiz{" +
                 "timeLimit=" + timeLimit +
-                ", questions=" + questions +
+                ", quizQuestions=" + quizQuestions +
                 ", studentAttempts=" + studentAttempts +
                 '}';
     }

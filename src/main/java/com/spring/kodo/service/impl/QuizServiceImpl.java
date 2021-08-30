@@ -83,7 +83,7 @@ public class QuizServiceImpl implements QuizService
     public Quiz addQuizQuestionToQuiz(Quiz quiz, QuizQuestion quizQuestion, List<QuizQuestionOption> quizQuestionOptions) throws QuizNotFoundException, UpdateQuizException
     {
         quiz = getQuizByQuizId(quiz.getContentId());
-        if (!quiz.getQuestions().contains(quizQuestion))
+        if (!quiz.getQuizQuestions().contains(quizQuestion))
         {
             try
             {

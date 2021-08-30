@@ -53,7 +53,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService
             try
             {
                 Quiz quiz = quizService.getQuizByQuizId(quizId);
-                quiz.getQuestions().add(newQuizQuestion);
+                quiz.getQuizQuestions().add(newQuizQuestion);
                 newQuizQuestion.setQuiz(quiz);
 
                 for (QuizQuestionOption quizQuestionOption : quizQuestionOptions)
