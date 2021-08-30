@@ -45,12 +45,14 @@ public class Course
     private List<EnrolledCourse> enrollment;
 
     @OneToMany(targetEntity = Lesson.class, fetch = FetchType.LAZY)
+    @JoinColumn
     private List<Lesson> lessons;
 
     @ManyToMany(targetEntity = Tag.class, fetch = FetchType.LAZY)
     private List<Tag> courseTags;
 
     @OneToMany(targetEntity = ForumCategory.class, fetch = FetchType.LAZY)
+    @JoinColumn
     private List<ForumCategory> forumCategories;
 
     public Course()

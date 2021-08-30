@@ -19,10 +19,10 @@ public class StudentAttempt
     private LocalDateTime dateTimeOfAttempt;
 
     @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
     private Quiz quiz;
 
     @OneToMany(targetEntity = StudentAttemptQuestion.class, fetch = FetchType.LAZY)
+    @JoinColumn
     private List<StudentAttemptQuestion> studentAttemptQuestions;
 
     public StudentAttempt()

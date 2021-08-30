@@ -23,7 +23,6 @@ public class StudentAttemptAnswer
     private Integer marks;
 
     @ManyToOne(optional = false, targetEntity = QuizQuestionOption.class, fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
     private QuizQuestionOption quizQuestionOption;
 
     public StudentAttemptAnswer()

@@ -27,7 +27,6 @@ public class ForumPost
     private ForumPost reply;
 
     @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
     private Account account;
 
     public ForumPost()

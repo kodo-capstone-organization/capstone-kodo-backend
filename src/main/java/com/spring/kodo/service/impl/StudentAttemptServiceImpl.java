@@ -61,7 +61,10 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
             if (studentId != null)
             {
                 Account account = accountService.getAccountByAccountId(studentId);
-                account.getStudentAttempts().add(newStudentAttempt);
+                if (!account.getStudentAttempts().contains(newStudentAttempt))
+                {
+                    account.getStudentAttempts().add(newStudentAttempt);
+                }
             }
 
             if (quizId != null)

@@ -13,10 +13,10 @@ public class StudentAttemptQuestion
     private Long studentAttemptQuestionId;
 
     @ManyToOne(optional = false, targetEntity = QuizQuestion.class, fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
     private QuizQuestion quizQuestion;
 
     @OneToMany(targetEntity = StudentAttemptAnswer.class, fetch = FetchType.LAZY)
+    @JoinColumn
     private List<StudentAttemptAnswer> studentAttemptAnswers;
 
     public StudentAttemptQuestion()

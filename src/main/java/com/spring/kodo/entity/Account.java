@@ -72,18 +72,21 @@ public class Account
     private List<Tag> interests;
 
     @OneToMany(targetEntity = EnrolledCourse.class, fetch = FetchType.LAZY)
+    @JoinColumn
     private List<EnrolledCourse> enrolledCourses;
 
     @OneToMany(targetEntity = Course.class, mappedBy = "tutor", fetch = FetchType.LAZY)
     private List<Course> courses;
 
     @OneToMany(targetEntity = ForumThread.class, fetch = FetchType.LAZY)
+    @JoinColumn
     private List<ForumThread> forumThreads;
 
     @OneToMany(targetEntity = ForumPost.class, mappedBy = "account", fetch = FetchType.LAZY)
     private List<ForumPost> forumPosts;
 
-    @ManyToMany(targetEntity = StudentAttempt.class, fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = StudentAttempt.class, fetch = FetchType.LAZY)
+    @JoinColumn
     private List<StudentAttempt> studentAttempts;
 
     public Account()

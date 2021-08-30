@@ -21,6 +21,7 @@ public class EnrolledCourse
     private Course parentCourse;
 
     @OneToMany(targetEntity = CompletedLesson.class, fetch = FetchType.LAZY)
+    @JoinColumn
     private List<CompletedLesson> completedLessons;
 
     public EnrolledCourse()

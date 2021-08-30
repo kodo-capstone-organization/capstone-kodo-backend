@@ -32,6 +32,7 @@ public class Lesson
     private Integer sequence;
 
     @OneToMany(targetEntity = Content.class, fetch = FetchType.LAZY)
+    @JoinColumn
     private List<Content> contents;
 
     public Lesson()

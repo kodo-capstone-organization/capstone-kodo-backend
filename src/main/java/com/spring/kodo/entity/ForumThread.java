@@ -31,6 +31,7 @@ public class ForumThread
     private LocalDateTime timeStamp;
 
     @OneToMany(targetEntity = ForumPost.class, fetch = FetchType.LAZY)
+    @JoinColumn
     private List<ForumPost> forumPosts;
 
     public ForumThread()

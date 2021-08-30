@@ -37,6 +37,7 @@ public class QuizQuestion
     private Quiz quiz;
 
     @OneToMany(targetEntity = QuizQuestionOption.class, fetch = FetchType.LAZY)
+    @JoinColumn
     private List<QuizQuestionOption> quizQuestionOptions;
 
     public QuizQuestion()

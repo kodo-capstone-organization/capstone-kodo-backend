@@ -25,6 +25,7 @@ public class ForumCategory
     private String description;
 
     @OneToMany(targetEntity = ForumThread.class, fetch = FetchType.LAZY)
+    @JoinColumn
     private List<ForumThread> forumThreads;
 
     public ForumCategory()

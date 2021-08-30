@@ -2,12 +2,9 @@ package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.*;
 import com.spring.kodo.repository.LessonRepository;
-import com.spring.kodo.service.ContentService;
-import com.spring.kodo.service.MultimediaService;
-import com.spring.kodo.service.QuizService;
+import com.spring.kodo.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.spring.kodo.service.LessonService;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -27,6 +24,9 @@ public class LessonServiceImpl implements LessonService
     private LessonRepository lessonRepository;
 
     @Autowired
+    private CourseService courseService;
+
+    @Autowired
     private QuizService quizService;
 
     @Autowired
@@ -42,13 +42,16 @@ public class LessonServiceImpl implements LessonService
     }
 
     @Override
-    // Add Long courseId
-    public Lesson createNewLesson(Lesson newLesson) throws InputDataValidationException
+    public Lesson createNewLesson(Lesson newLesson, Long courseId) throws InputDataValidationException, CourseNotFoundException
     {
         Set<ConstraintViolation<Lesson>> constraintViolations = validator.validate(newLesson);
         if (constraintViolations.isEmpty())
         {
-            return lessonRepository.saveAndFlush(newLesson);
+            Course course = courseService.getCourseByCourseId(courseId);
+            course.getLessons().add(newLesson);
+
+            lessonRepository.saveAndFlush(newLesson);
+            return newLesson;
         }
         else
         {

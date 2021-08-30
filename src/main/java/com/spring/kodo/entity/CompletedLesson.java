@@ -11,7 +11,6 @@ public class CompletedLesson
     private Long completedLessonId;
 
     @ManyToOne(targetEntity = Lesson.class, optional = false)
-    @JoinColumn(nullable = false)
     private Lesson parentLesson;
 
     public CompletedLesson()

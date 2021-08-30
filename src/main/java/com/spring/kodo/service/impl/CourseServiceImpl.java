@@ -156,12 +156,9 @@ public class CourseServiceImpl implements CourseService
     @Override
     public Course addLessonToCourse(Course course, Lesson lesson) throws CourseNotFoundException, InputDataValidationException, UpdateCourseException
     {
-        course = getCourseByCourseId(course.getCourseId());
-
-        if (!course.getLessons().contains(lesson))
+        if (course != null && !course.getLessons().contains(lesson))
         {
-            lesson = lessonService.createNewLesson(lesson);
-            course.getLessons().add(lesson);
+            lessonService.createNewLesson(lesson, course.getCourseId());
         }
         else
         {
