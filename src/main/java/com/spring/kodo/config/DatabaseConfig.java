@@ -22,6 +22,9 @@ import java.util.stream.Collectors;
 public class DatabaseConfig
 {
     @Autowired
+    private StudentAttemptService studentAttemptService;
+
+    @Autowired
     private MultimediaService multimediaService;
 
     @Autowired
@@ -52,16 +55,20 @@ public class DatabaseConfig
     private Environment env;
 
     private static final List<String> PROGRAMMING_LANGUAGES = Arrays.asList(
-            "Python",
-            "JavaScript",
-            "TypeScript",
-            "Java",
             "C",
             "C#",
             "C++",
             "Go",
+            "Java",
+            "JavaScript",
+            "Perl",
+            "Python",
             "R",
-            "Swift"
+            "Rust",
+            "SQL",
+            "Scala",
+            "Swift",
+            "TypeScript"
     );
 
     private static final Integer PREFIXED_ADMIN_COUNT = 1;
@@ -70,9 +77,17 @@ public class DatabaseConfig
     private static final Integer STUDENT_COUNT = 50;
     private static final Integer PREFIXED_STUDENT_COUNT = 2;
 
+    private static final Integer ADMIN_FIRST_INDEX = 0; // 0
+    private static final Integer ADMIN_LAST_INDEX = ADMIN_FIRST_INDEX + PREFIXED_ADMIN_COUNT; // 1
+    private static final Integer STUDENT_FIRST_INDEX = ADMIN_LAST_INDEX + 1; // 2
+    private static final Integer STUDENT_LAST_INDEX = STUDENT_FIRST_INDEX + STUDENT_COUNT - 1; // 51
+    private static final Integer TUTOR_FIRST_INDEX = STUDENT_LAST_INDEX + 1; // 52
+    private static final Integer TUTOR_LAST_INDEX = TUTOR_FIRST_INDEX + TUTOR_COUNT - 1; // 56
+
     private static final Integer LESSON_COUNT = 5;
     private static final Integer QUIZ_QUESTION_COUNT = 5;
     private static final Integer QUIZ_QUESTION_OPTION_COUNT = 4;
+    private static final Integer STUDENT_ATTEMPT_COUNT = 3;
 
     @EventListener(ApplicationReadyEvent.class)
     public void loadDataOnStartup() throws Exception
@@ -81,6 +96,7 @@ public class DatabaseConfig
         System.out.println("\n===== 1. Loading Init Data to Database =====");
 
         // Populate data lists
+        System.out.println("\n===== 1.1. Populating Data Lists =====");
         List<Account> accounts = addAccounts();
         List<Tag> tags = addTags();
         List<Course> courses = addCourses();
@@ -91,6 +107,7 @@ public class DatabaseConfig
         List<Multimedia> multimedias = addMultimedias();
 
         // Create data set to Database
+        System.out.println("\n===== 1.2. Creating Data Lists to Database =====");
         create(accounts,
                 tags,
                 courses,
@@ -102,9 +119,10 @@ public class DatabaseConfig
         );
 
         // Print Ids of saved data list
+        System.out.println("\n===== 1.3. Print IDs =====");
         printIds();
 
-        System.out.println("===== Init Data Fully Loaded to Database =====");
+        System.out.println("\n===== Init Data Fully Loaded to Database =====");
     }
 
     private void create(
@@ -152,13 +170,10 @@ public class DatabaseConfig
             course = courses.get(courseIndex++);
             tag = tags.get(tagIndex++);
 
+            // Course Creation
             courseService.createNewCourse(
                     course,
-                    accounts.get(
-                            getRandomNumber(
-                                    PREFIXED_ADMIN_COUNT + STUDENT_COUNT + 1,
-                                    PREFIXED_ADMIN_COUNT + STUDENT_COUNT + TUTOR_COUNT
-                            )).getAccountId(),
+                    accounts.get(getRandomNumber(TUTOR_FIRST_INDEX, TUTOR_LAST_INDEX)).getAccountId(),
                     Arrays.asList(tag.getTitle())
             );
 
@@ -168,9 +183,13 @@ public class DatabaseConfig
                 quiz = quizzes.get(quizIndex);
                 multimedia = multimedias.get(multimediaIndex);
 
+                // Lesson Creation
                 courseService.addLessonToCourse(course, lesson);
+
+                // Quiz Creation
                 lessonService.addContentToLesson(lesson, quiz);
 
+                // QuizQuestion Creation
                 for (int j = 0; j < QUIZ_QUESTION_COUNT; j++, quizQuestionIndex++, quizQuestionOptionIndex += QUIZ_QUESTION_OPTION_COUNT)
                 {
                     quizService.addQuizQuestionToQuiz(
@@ -180,6 +199,16 @@ public class DatabaseConfig
                     );
                 }
 
+                // StudentAttempt Creation
+                for (int j = 0; j < STUDENT_ATTEMPT_COUNT; j++)
+                {
+                    studentAttemptService.createNewStudentAttempt(
+                            quiz.getContentId(),
+                            accounts.get(getRandomNumber(STUDENT_FIRST_INDEX, STUDENT_LAST_INDEX)).getAccountId()
+                    );
+                }
+
+                // Multimedia Creation
                 lessonService.addContentToLesson(lesson, multimedia);
             }
         }
@@ -210,6 +239,9 @@ public class DatabaseConfig
 
         List<Long> multimediaIds = multimediaService.getAllMultimedias().stream().map(Multimedia::getContentId).collect(Collectors.toList());
         System.out.println(">> Added Lessons with multimediaIds: " + multimediaIds);
+
+        List<Long> studentAttemptIds = studentAttemptService.getAllStudentAttempts().stream().map(StudentAttempt::getStudentAttemptId).collect(Collectors.toList());
+        System.out.println(">> Added Lessons with studentAttemptIds: " + studentAttemptIds);
     }
 
     private List<Account> addAccounts()

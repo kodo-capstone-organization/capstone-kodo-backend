@@ -1,12 +1,10 @@
 package com.spring.kodo.service.impl;
 
-import com.spring.kodo.entity.Quiz;
-import com.spring.kodo.entity.QuizQuestion;
-import com.spring.kodo.entity.StudentAttempt;
-import com.spring.kodo.entity.StudentAttemptQuestion;
+import com.spring.kodo.entity.*;
 import com.spring.kodo.repository.StudentAttemptAnswerRepository;
 import com.spring.kodo.repository.StudentAttemptQuestionRepository;
 import com.spring.kodo.repository.StudentAttemptRepository;
+import com.spring.kodo.service.AccountService;
 import com.spring.kodo.service.QuizService;
 import com.spring.kodo.service.StudentAttemptService;
 import com.spring.kodo.util.MessageFormatterUtil;
@@ -36,6 +34,9 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
     @Autowired
     private QuizService quizService;
 
+    @Autowired
+    private AccountService accountService;
+
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
 
@@ -46,11 +47,19 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
     }
 
     @Override
-    public StudentAttempt createNewStudentAttempt(StudentAttempt newStudentAttempt, Long quizId) throws QuizNotFoundException, InputDataValidationException
+    public StudentAttempt createNewStudentAttempt(Long quizId, Long studentId) throws AccountNotFoundException, QuizNotFoundException, InputDataValidationException
     {
+        StudentAttempt newStudentAttempt = new StudentAttempt();
+
         Set<ConstraintViolation<StudentAttempt>> constraintViolations = validator.validate(newStudentAttempt);
         if(constraintViolations.isEmpty())
         {
+            if (studentId != null)
+            {
+                Account account = accountService.getAccountByAccountId(studentId);
+                account.getStudentAttempts().add(newStudentAttempt);
+            }
+
             if (quizId != null)
             {
                 Quiz quiz = quizService.getQuizByQuizId(quizId);

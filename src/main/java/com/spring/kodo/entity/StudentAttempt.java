@@ -1,6 +1,8 @@
 package com.spring.kodo.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +14,10 @@ public class StudentAttempt
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long studentAttemptId;
 
+    @Column(nullable = false)
+    @NotNull
+    private LocalDateTime dateTimeOfAttempt;
+
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Quiz quiz;
@@ -21,6 +27,7 @@ public class StudentAttempt
 
     public StudentAttempt()
     {
+        this.dateTimeOfAttempt = LocalDateTime.now();
         this.studentAttemptQuestions = new ArrayList<>();
     }
 
@@ -59,6 +66,7 @@ public class StudentAttempt
     {
         return "StudentAttempt{" +
                 "studentAttemptId=" + studentAttemptId +
+                ", dateTimeOfAttempt=" + dateTimeOfAttempt +
                 ", quiz=" + quiz +
                 ", studentAttemptQuestions=" + studentAttemptQuestions +
                 '}';
