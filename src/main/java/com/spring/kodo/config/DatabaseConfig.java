@@ -85,6 +85,33 @@ public class DatabaseConfig
         List<Multimedia> multimedias = addMultimedias();
 
         // Create data set to Database
+        create(accounts,
+                tags,
+                courses,
+                lessons,
+                quizzes,
+                quizQuestions,
+                quizQuestionOptions,
+                multimedias
+        );
+
+        // Print Ids of saved data list
+        printIds();
+
+        System.out.println("===== Init Data Fully Loaded to Database =====");
+    }
+
+    private void create(
+            List<Account> accounts,
+            List<Tag> tags,
+            List<Course> courses,
+            List<Lesson> lessons,
+            List<Quiz> quizzes,
+            List<QuizQuestion> quizQuestions,
+            List<QuizQuestionOption> quizQuestionOptions,
+            List<Multimedia> multimedias
+    ) throws Exception
+    {
         // Create Accounts w Tags
         for (Account account : accounts)
         {
@@ -146,37 +173,6 @@ public class DatabaseConfig
                 lessonService.addContentToLesson(lesson, multimedia);
             }
         }
-//        for (int i = 0; i < courses.size(); i++)
-//        {
-//            Course course = courses.get(i);
-//            Tag tag = tags.get(i);
-//            courseService.createNewCourse(
-//                    course,
-//                    accounts.get(getRandomNumber(0, accounts.size())).getAccountId(),
-//                    Arrays.asList(tag.getTitle())
-//            );
-//
-//            for (int j = LESSON_COUNT * i; j < LESSON_COUNT * (i + 1); j++)
-//            {
-//                Lesson lesson = lessons.get(j);
-//                Quiz quiz = quizzes.get(j);
-//                Multimedia multimedia = multimedias.get(j);
-//                courseService.addLessonToCourse(course, lesson);
-//                lessonService.addContentToLesson(lesson, quiz);
-//
-//                for (int k = QUIZ_QUESTION_COUNT * j; k < QUIZ_QUESTION_COUNT * (j + 1); k++)
-//                {
-//                    quizService.addQuizQuestionToQuiz(quiz, quizQuestions.get(k), quizQuestionOptions.subList());
-//                }
-//
-//                lessonService.addContentToLesson(lesson, multimedia);
-//            }
-//        }
-
-        // Print Ids of saved data list
-        printIds();
-
-        System.out.println("===== Init Data Fully Loaded to Database =====");
     }
 
     private void printIds()
