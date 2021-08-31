@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface CourseService
 {
-    Course createNewCourse(Course newCourse, Long tutorId, List<String> tagTitles) throws InputDataValidationException;
+    Course createNewCourse(Course newCourse, Long tutorId, List<String> tagTitles) throws TagNameExistsException, UnknownPersistenceException, InputDataValidationException;
 
     Course getCourseByCourseId(Long courseId) throws CourseNotFoundException;
 
@@ -19,7 +19,7 @@ public interface CourseService
 
     List<Course> getAllCoursesOfATutor(Long accountId) throws AccountNotFoundException;
 
-    Course addTagToCourse(Course course, String tagTitle) throws InputDataValidationException, CourseNotFoundException, TagNotFoundException, UpdateCourseException;
+    Course addTagToCourse(Course course, String tagTitle) throws CourseNotFoundException, TagNotFoundException, UpdateCourseException, TagNameExistsException, UnknownPersistenceException, InputDataValidationException;
 
     Course addLessonToCourse(Course course, Lesson lesson) throws CourseNotFoundException, InputDataValidationException, UpdateCourseException;
 }

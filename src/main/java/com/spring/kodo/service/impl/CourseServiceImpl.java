@@ -46,7 +46,7 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
-    public Course createNewCourse(Course newCourse, Long tutorId, List<String> tagTitles) throws InputDataValidationException
+    public Course createNewCourse(Course newCourse, Long tutorId, List<String> tagTitles) throws TagNameExistsException, UnknownPersistenceException, InputDataValidationException
     {
         Set<ConstraintViolation<Course>> constraintViolations = validator.validate(newCourse);
         if (constraintViolations.isEmpty())
@@ -136,7 +136,7 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
-    public Course addTagToCourse(Course course, String tagTitle) throws InputDataValidationException, CourseNotFoundException, TagNotFoundException, UpdateCourseException
+    public Course addTagToCourse(Course course, String tagTitle) throws CourseNotFoundException, TagNotFoundException, UpdateCourseException, TagNameExistsException, UnknownPersistenceException, InputDataValidationException
     {
         Tag tag = tagService.getTagByTitleOrCreateNew(tagTitle);
 

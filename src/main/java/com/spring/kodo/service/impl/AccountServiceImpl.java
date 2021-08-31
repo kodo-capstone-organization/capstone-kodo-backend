@@ -1,6 +1,7 @@
 package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.*;
+import com.spring.kodo.repository.AccountRepository;
 import com.spring.kodo.repository.CourseRepository;
 import com.spring.kodo.repository.ForumPostRepository;
 import com.spring.kodo.repository.StudentAttemptRepository;
@@ -8,13 +9,14 @@ import com.spring.kodo.service.*;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.cryptography.CryptographicHelper;
 import com.spring.kodo.util.exception.*;
-import com.spring.kodo.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.*;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.util.List;
 import java.util.Set;
 
@@ -53,7 +55,7 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
-    public Account createNewAccount(Account newAccount, List<String> tagTitles) throws InputDataValidationException, UnknownPersistenceException, AccountUsernameOrEmailExistsException
+    public Account createNewAccount(Account newAccount, List<String> tagTitles) throws TagNameExistsException, InputDataValidationException, UnknownPersistenceException, AccountUsernameOrEmailExistsException
     {
         try
         {
@@ -165,10 +167,11 @@ public class AccountServiceImpl implements AccountService
             List<Long> studentAttemptIds
     )
             throws AccountNotFoundException, TagNotFoundException,
-            InputDataValidationException, UpdateAccountException,
-            EnrolledCourseNotFoundException, CourseNotFoundException,
-            StudentAttemptNotFoundException, ForumThreadNotFoundException,
-            ForumPostNotFoundException
+            UpdateAccountException, EnrolledCourseNotFoundException,
+            CourseNotFoundException, StudentAttemptNotFoundException,
+            ForumThreadNotFoundException, ForumPostNotFoundException,
+            TagNameExistsException, UnknownPersistenceException,
+            InputDataValidationException
     {
 
         if (account != null && account.getAccountId() != null)
