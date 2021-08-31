@@ -32,13 +32,7 @@ public class MultimediaServiceImpl implements MultimediaService
     private MultimediaRepository multimediaRepository;
 
     @Autowired
-    private ContentService contentService;
-
-    @Autowired
     private FileService fileService;
-
-    @Autowired
-    private LessonService lessonService;
 
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -50,14 +44,15 @@ public class MultimediaServiceImpl implements MultimediaService
     }
 
     @Override
-    public Multimedia createNewMultimedia(Multimedia multimedia) throws InputDataValidationException, UnknownPersistenceException
+    public Multimedia createNewMultimedia(Multimedia newMultimedia) throws InputDataValidationException, UnknownPersistenceException
     {
         try
         {
-            Set<ConstraintViolation<Content>> constraintViolations = validator.validate(multimedia);
+            Set<ConstraintViolation<Content>> constraintViolations = validator.validate(newMultimedia);
             if (constraintViolations.isEmpty())
             {
-                return (Multimedia) contentService.createNewContent(multimedia);
+                multimediaRepository.saveAndFlush(newMultimedia);
+                return newMultimedia;
             }
             else
             {

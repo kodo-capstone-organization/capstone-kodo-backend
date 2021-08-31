@@ -11,8 +11,6 @@ import java.util.List;
 
 public interface ContentService
 {
-    Content createNewContent(Content content) throws InputDataValidationException, UnknownPersistenceException;
-
     Content getContentByContentId(Long contentId) throws ContentNotFoundException;
 
     Content getContentByName(String name) throws ContentNotFoundException;
