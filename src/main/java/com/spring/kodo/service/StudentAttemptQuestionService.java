@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface StudentAttemptQuestionService
 {
-    StudentAttemptQuestion createNewStudentAttemptQuestion(Long quizQuestionId) throws InputDataValidationException, CreateStudentAttemptQuestionException, QuizQuestionNotFoundException;
+    StudentAttemptQuestion createNewStudentAttemptQuestion(Long quizQuestionId) throws InputDataValidationException, CreateStudentAttemptQuestionException, QuizQuestionNotFoundException, UnknownPersistenceException;
 
     StudentAttemptQuestion getStudentAttemptQuestionByStudentAttemptQuestionId(Long studentAttemptQuestionId) throws StudentAttemptQuestionNotFoundException;
 

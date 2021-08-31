@@ -10,6 +10,7 @@ import com.spring.kodo.service.StudentAttemptAnswerService;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
@@ -38,30 +39,37 @@ public class StudentAttemptAnswerServiceImpl implements StudentAttemptAnswerServ
     }
 
     @Override
-    public StudentAttemptAnswer createNewStudentAttemptAnswer(Long quizQuestionOptionId) throws InputDataValidationException, CreateStudentAttemptAnswerException, QuizQuestionOptionNotFoundException
+    public StudentAttemptAnswer createNewStudentAttemptAnswer(Long quizQuestionOptionId) throws InputDataValidationException, CreateStudentAttemptAnswerException, QuizQuestionOptionNotFoundException, UnknownPersistenceException
     {
-        StudentAttemptAnswer newStudentAttemptAnswer = new StudentAttemptAnswer();
-
-        Set<ConstraintViolation<StudentAttemptAnswer>> constraintViolations = validator.validate(newStudentAttemptAnswer);
-        if (constraintViolations.isEmpty())
+        try
         {
-            if (quizQuestionOptionId != null)
-            {
-                QuizQuestionOption quizQuestionOption = quizQuestionOptionService.getQuizQuestionOptionByQuizQuestionOptionId(quizQuestionOptionId);
-                newStudentAttemptAnswer.setQuizQuestionOption(quizQuestionOption);
+            StudentAttemptAnswer newStudentAttemptAnswer = new StudentAttemptAnswer();
 
-                // Persist StudentAttemptQuestion
-                studentAttemptAnswerRepository.saveAndFlush(newStudentAttemptAnswer);
-                return newStudentAttemptAnswer;
+            Set<ConstraintViolation<StudentAttemptAnswer>> constraintViolations = validator.validate(newStudentAttemptAnswer);
+            if (constraintViolations.isEmpty())
+            {
+                if (quizQuestionOptionId != null)
+                {
+                    QuizQuestionOption quizQuestionOption = quizQuestionOptionService.getQuizQuestionOptionByQuizQuestionOptionId(quizQuestionOptionId);
+                    newStudentAttemptAnswer.setQuizQuestionOption(quizQuestionOption);
+
+                    // Persist StudentAttemptQuestion
+                    studentAttemptAnswerRepository.saveAndFlush(newStudentAttemptAnswer);
+                    return newStudentAttemptAnswer;
+                }
+                else
+                {
+                    throw new CreateStudentAttemptAnswerException("QuizQuestionOptionId cannot be null");
+                }
             }
             else
             {
-                throw new CreateStudentAttemptAnswerException("QuizQuestionOptionId cannot be null");
+                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
         }
-        else
+        catch (DataAccessException ex)
         {
-            throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            throw new UnknownPersistenceException(ex.getMessage());
         }
     }
 
