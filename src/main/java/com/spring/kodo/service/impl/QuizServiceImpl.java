@@ -9,6 +9,7 @@ import com.spring.kodo.service.QuizService;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
@@ -37,18 +38,32 @@ public class QuizServiceImpl implements QuizService
     }
 
     @Override
-    public Quiz createNewQuiz(Quiz newQuiz) throws InputDataValidationException, CreateQuizException
+    public Quiz createNewQuiz(Quiz newQuiz) throws UnknownPersistenceException, CreateQuizException, InputDataValidationException
     {
-        Set<ConstraintViolation<Quiz>> constraintViolations = validator.validate(newQuiz);
-        if (constraintViolations.isEmpty())
+        try
         {
-            // Persist before adding in quizQuestions
-            quizRepository.saveAndFlush(newQuiz);
-            return newQuiz;
+            if (newQuiz != null)
+            {
+                Set<ConstraintViolation<Quiz>> constraintViolations = validator.validate(newQuiz);
+                if (constraintViolations.isEmpty())
+                {
+                    // Persist before adding in quizQuestions
+                    quizRepository.saveAndFlush(newQuiz);
+                    return newQuiz;
+                }
+                else
+                {
+                    throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                }
+            }
+            else
+            {
+                throw new CreateQuizException("New Quiz cannot be null");
+            }
         }
-        else
+        catch (DataAccessException ex)
         {
-            throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            throw new UnknownPersistenceException(ex.getMessage());
         }
     }
 

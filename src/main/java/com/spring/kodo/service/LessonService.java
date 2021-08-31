@@ -20,5 +20,5 @@ public interface LessonService
 
     Boolean deleteLesson(Long lessonId) throws LessonNotFoundException;
 
-    Lesson addContentToLesson(Lesson lesson, Content content) throws LessonNotFoundException, UpdateContentException;
+    Lesson addContentToLesson(Lesson lesson, Content content) throws LessonNotFoundException, UpdateContentException, UnknownPersistenceException;
 }

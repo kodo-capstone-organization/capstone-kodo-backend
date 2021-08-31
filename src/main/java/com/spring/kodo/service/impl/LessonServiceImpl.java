@@ -136,7 +136,7 @@ public class LessonServiceImpl implements LessonService
         }
     }
 
-    public Lesson addContentToLesson(Lesson lesson, Content content) throws LessonNotFoundException, UpdateContentException
+    public Lesson addContentToLesson(Lesson lesson, Content content) throws LessonNotFoundException, UpdateContentException, UnknownPersistenceException
     {
         lesson = getLessonByLessonId(lesson.getLessonId());
 
