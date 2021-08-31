@@ -17,7 +17,7 @@ public class StudentAttemptAnswer
     @NotNull
     private LocalDateTime dateTimeOfAttempt;
 
-    @Column
+    @Column(nullable = false)
     @NotNull
     @Min(0)
     private Integer marks;

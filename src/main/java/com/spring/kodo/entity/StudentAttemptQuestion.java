@@ -16,7 +16,11 @@ public class StudentAttemptQuestion
     private QuizQuestion quizQuestion;
 
     @OneToMany(targetEntity = StudentAttemptAnswer.class, fetch = FetchType.LAZY)
-    @JoinColumn
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "student_attempt_question_id", referencedColumnName="studentAttemptQuestionId"),
+            inverseJoinColumns = @JoinColumn(name = "student_attempt_answer_id", referencedColumnName = "studentAttemptAnswerId"),
+            uniqueConstraints = @UniqueConstraint(columnNames = { "student_attempt_question_id", "student_attempt_answer_id" })
+    )
     private List<StudentAttemptAnswer> studentAttemptAnswers;
 
     public StudentAttemptQuestion()

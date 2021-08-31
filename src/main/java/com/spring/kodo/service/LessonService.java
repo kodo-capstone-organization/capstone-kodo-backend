@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface LessonService
 {
-    Lesson createNewLesson(Lesson newLesson, Long courseId) throws InputDataValidationException, CourseNotFoundException;
+    Lesson createNewLesson(Lesson newLesson) throws InputDataValidationException, CourseNotFoundException;
 
     Lesson getLessonByLessonId(Long lessonId) throws LessonNotFoundException;
 

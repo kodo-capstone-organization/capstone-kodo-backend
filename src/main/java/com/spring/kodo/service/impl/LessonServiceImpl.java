@@ -42,14 +42,11 @@ public class LessonServiceImpl implements LessonService
     }
 
     @Override
-    public Lesson createNewLesson(Lesson newLesson, Long courseId) throws InputDataValidationException, CourseNotFoundException
+    public Lesson createNewLesson(Lesson newLesson) throws InputDataValidationException, CourseNotFoundException
     {
         Set<ConstraintViolation<Lesson>> constraintViolations = validator.validate(newLesson);
         if (constraintViolations.isEmpty())
         {
-            Course course = courseService.getCourseByCourseId(courseId);
-            course.getLessons().add(newLesson);
-
             lessonRepository.saveAndFlush(newLesson);
             return newLesson;
         }

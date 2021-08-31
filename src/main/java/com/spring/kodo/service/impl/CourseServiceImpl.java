@@ -158,7 +158,10 @@ public class CourseServiceImpl implements CourseService
     {
         if (course != null && !course.getLessons().contains(lesson))
         {
-            lessonService.createNewLesson(lesson, course.getCourseId());
+            lesson = lessonService.createNewLesson(lesson);
+
+            course = getCourseByCourseId(course.getCourseId());
+            course.getLessons().add(lesson);
         }
         else
         {
@@ -185,7 +188,6 @@ public class CourseServiceImpl implements CourseService
                     " to course with Name: " + course.getName() + " as there is already a tutor linked to this course");
         }
 
-        courseRepository.saveAndFlush(course);
         return course;
     }
 }

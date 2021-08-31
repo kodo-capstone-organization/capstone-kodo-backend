@@ -21,25 +21,13 @@ import java.util.Set;
 public class StudentAttemptServiceImpl implements StudentAttemptService
 {
     @Autowired
-    private StudentAttemptAnswerRepository studentAttemptAnswerRepository;
-
-    @Autowired
-    private StudentAttemptQuestionRepository studentAttemptQuestionRepository;
-
-    @Autowired
     private StudentAttemptRepository studentAttemptRepository;
 
     @Autowired
     private StudentAttemptQuestionService studentAttemptQuestionService;
 
     @Autowired
-    private QuizQuestionOptionService quizQuestionOptionService;
-
-    @Autowired
     private QuizService quizService;
-
-    @Autowired
-    private AccountService accountService;
 
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -51,22 +39,13 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
     }
 
     @Override
-    public StudentAttempt createNewStudentAttempt(Long quizId, Long studentId) throws AccountNotFoundException, QuizNotFoundException, InputDataValidationException
+    public StudentAttempt createNewStudentAttempt(Long quizId) throws CreateStudentAttemptException, QuizNotFoundException, InputDataValidationException, CreateStudentAttemptQuestionException, QuizQuestionNotFoundException
     {
         StudentAttempt newStudentAttempt = new StudentAttempt();
 
         Set<ConstraintViolation<StudentAttempt>> constraintViolations = validator.validate(newStudentAttempt);
         if (constraintViolations.isEmpty())
         {
-            if (studentId != null)
-            {
-                Account account = accountService.getAccountByAccountId(studentId);
-                if (!account.getStudentAttempts().contains(newStudentAttempt))
-                {
-                    account.getStudentAttempts().add(newStudentAttempt);
-                }
-            }
-
             if (quizId != null)
             {
                 Quiz quiz = quizService.getQuizByQuizId(quizId);
@@ -76,18 +55,18 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
                 // Link QuizQuestions to StudentAttemptQuestions
                 for (QuizQuestion quizQuestion : quiz.getQuizQuestions())
                 {
-                    StudentAttemptQuestion studentAttemptQuestion = new StudentAttemptQuestion();
-                    studentAttemptQuestion.setQuizQuestion(quizQuestion);
-
+                    StudentAttemptQuestion studentAttemptQuestion = studentAttemptQuestionService.createNewStudentAttemptQuestion(quizQuestion.getQuizQuestionId());
                     newStudentAttempt.getStudentAttemptQuestions().add(studentAttemptQuestion);
-
-                    studentAttemptQuestionRepository.save(studentAttemptQuestion);
                 }
-            }
 
-            // Persist StudentAttempt
-            studentAttemptRepository.saveAndFlush(newStudentAttempt);
-            return newStudentAttempt;
+                // Persist StudentAttempt
+                studentAttemptRepository.saveAndFlush(newStudentAttempt);
+                return newStudentAttempt;
+            }
+            else
+            {
+                throw new CreateStudentAttemptException("Quiz ID cannot be null");
+            }
         }
         else
         {
@@ -96,7 +75,8 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
     }
 
     @Override
-    public StudentAttempt getStudentAttemptByStudentAttemptId(Long studentAttemptId) throws StudentAttemptNotFoundException
+    public StudentAttempt getStudentAttemptByStudentAttemptId(Long studentAttemptId) throws
+            StudentAttemptNotFoundException
     {
         StudentAttempt studentAttempt = studentAttemptRepository.findById(studentAttemptId).orElse(null);
 
@@ -114,30 +94,5 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
     public List<StudentAttempt> getAllStudentAttempts()
     {
         return studentAttemptRepository.findAll();
-    }
-
-    @Override
-    public void addStudentAttemptAnswerToStudentAttemptQuestion(Long studentAttemptQuestionId, List<Long> quizQuestionOptionIds) throws UpdateStudentAttemptAnswerException, StudentAttemptQuestionNotFoundException, QuizQuestionOptionNotFoundException
-    {
-        if (studentAttemptQuestionId != null)
-        {
-            StudentAttemptQuestion studentAttemptQuestion = studentAttemptQuestionService.getStudentAttemptQuestionByStudentAttemptQuestionId(studentAttemptQuestionId);
-
-            for (Long quizQuestionOptionId : quizQuestionOptionIds)
-            {
-                StudentAttemptAnswer studentAttemptAnswer = new StudentAttemptAnswer();
-                QuizQuestionOption quizQuestionOption = quizQuestionOptionService.getQuizQuestionOptionByQuizQuestionOptionId(quizQuestionOptionId);
-
-                studentAttemptAnswer.setQuizQuestionOption(quizQuestionOption);
-
-                studentAttemptQuestion.getStudentAttemptAnswers().add(studentAttemptAnswer);
-
-                studentAttemptAnswerRepository.saveAndFlush(studentAttemptAnswer);
-            }
-        }
-        else
-        {
-            throw new UpdateStudentAttemptAnswerException("StudentAttempt ID not provided for student attempt to be updated");
-        }
     }
 }

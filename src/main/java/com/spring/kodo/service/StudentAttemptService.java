@@ -8,11 +8,9 @@ import java.util.List;
 
 public interface StudentAttemptService
 {
-    StudentAttempt createNewStudentAttempt(Long quizId, Long studentId) throws AccountNotFoundException, QuizNotFoundException, InputDataValidationException;
+    StudentAttempt createNewStudentAttempt(Long quizId) throws CreateStudentAttemptException, QuizNotFoundException, InputDataValidationException, CreateStudentAttemptQuestionException, QuizQuestionNotFoundException;
 
     StudentAttempt getStudentAttemptByStudentAttemptId(Long studentAttemptId) throws StudentAttemptNotFoundException;
 
     List<StudentAttempt> getAllStudentAttempts();
-
-    void addStudentAttemptAnswerToStudentAttemptQuestion(Long studentAttemptQuestionId, List<Long> quizQuestionOptionIds) throws UpdateStudentAttemptAnswerException, StudentAttemptQuestionNotFoundException, QuizQuestionOptionNotFoundException;
 }

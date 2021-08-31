@@ -70,6 +70,11 @@ public class Account
     private Boolean isActive;
 
     @ManyToMany(targetEntity = Tag.class, fetch = FetchType.LAZY)
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "account_id", referencedColumnName="accountId"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "tagId"),
+            uniqueConstraints = @UniqueConstraint(columnNames = { "account_id", "tag_id" })
+    )
     private List<Tag> interests;
 
     @OneToMany(targetEntity = EnrolledCourse.class, fetch = FetchType.LAZY)
@@ -93,7 +98,11 @@ public class Account
     private List<ForumPost> forumPosts;
 
     @OneToMany(targetEntity = StudentAttempt.class, fetch = FetchType.LAZY)
-    @JoinColumn
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "account_id", referencedColumnName="accountId"),
+            inverseJoinColumns = @JoinColumn(name = "student_attempt_id", referencedColumnName = "studentAttemptId"),
+            uniqueConstraints = @UniqueConstraint(columnNames = { "account_id", "student_attempt_id" })
+    )
     private List<StudentAttempt> studentAttempts;
 
     public Account()

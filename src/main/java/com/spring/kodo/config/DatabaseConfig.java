@@ -191,6 +191,7 @@ public class DatabaseConfig
         Quiz quiz;
         QuizQuestion quizQuestion;
         QuizQuestionOption quizQuestionOption;
+        StudentAttemptAnswer studentAttemptAnswer;
         Multimedia multimedia;
 
         while (courseIndex < courses.size()
@@ -248,25 +249,21 @@ public class DatabaseConfig
                     {
                     }
 
-                    StudentAttempt studentAttempt = studentAttemptService.createNewStudentAttempt(
-                            quiz.getContentId(),
-                            student.getAccountId()
-                    );
+                    StudentAttempt studentAttempt = studentAttemptService.createNewStudentAttempt(quiz.getContentId());
+                    accountService.addStudentAttemptToAccount(student, studentAttempt);
 
                     for (StudentAttemptQuestion studentAttemptQuestion : studentAttempt.getStudentAttemptQuestions())
                     {
-                        quizQuestionOption = studentAttemptQuestion.getQuizQuestion().getQuizQuestionOptions().get(
+                        quizQuestion = studentAttemptQuestion.getQuizQuestion();
+                        quizQuestionOption = quizQuestion.getQuizQuestionOptions().get(
                                 getRandomNumber(
                                         0,
-                                        studentAttemptQuestion.getQuizQuestion().getQuizQuestionOptions().size() - 1)
+                                        quizQuestion.getQuizQuestionOptions().size() - 1)
                         );
 
-                        studentAttemptService.addStudentAttemptAnswerToStudentAttemptQuestion(
-                                studentAttemptQuestion.getStudentAttemptQuestionId(),
-                                Arrays.asList(quizQuestionOption.getQuizQuestionOptionId())
-                        );
+                        studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption.getQuizQuestionOptionId());
+                        studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
                     }
-
                 }
 
                 // Multimedia Creation

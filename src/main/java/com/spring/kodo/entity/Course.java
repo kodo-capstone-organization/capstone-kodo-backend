@@ -47,10 +47,19 @@ public class Course
     private List<EnrolledCourse> enrollment;
 
     @OneToMany(targetEntity = Lesson.class, fetch = FetchType.LAZY)
-    @JoinColumn
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "course_id", referencedColumnName="courseId"),
+            inverseJoinColumns = @JoinColumn(name = "lesson_id", referencedColumnName = "lessonId"),
+            uniqueConstraints = @UniqueConstraint(columnNames = { "course_id", "lesson_id" })
+    )
     private List<Lesson> lessons;
 
     @ManyToMany(targetEntity = Tag.class, fetch = FetchType.LAZY)
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "course_id", referencedColumnName="courseId"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "tagId"),
+            uniqueConstraints = @UniqueConstraint(columnNames = { "course_id", "tag_id" })
+    )
     private List<Tag> courseTags;
 
     @OneToMany(targetEntity = ForumCategory.class, fetch = FetchType.LAZY)

@@ -58,20 +58,20 @@ public class AccountServiceImpl implements AccountService
         try
         {
             Set<ConstraintViolation<Account>> constraintViolations = validator.validate(newAccount);
-            if(constraintViolations.isEmpty())
+            if (constraintViolations.isEmpty())
             {
                 // Persist Account
-                Account persistedAccount = accountRepository.saveAndFlush(newAccount);
+                accountRepository.saveAndFlush(newAccount);
 
                 // Process Tags
-                if(tagTitles != null && (!tagTitles.isEmpty()))
+                if (tagTitles != null && (!tagTitles.isEmpty()))
                 {
-                    for(String tagTitle: tagTitles)
+                    for (String tagTitle : tagTitles)
                     {
                         Tag tag = tagService.getTagByTitleOrCreateNew(tagTitle);
                         try
                         {
-                            persistedAccount = addTagToAccount(persistedAccount, tag);
+                            newAccount = addTagToAccount(newAccount, tag);
                         }
                         catch (TagNotFoundException | AccountNotFoundException | UpdateAccountException ex)
                         {
@@ -82,17 +82,16 @@ public class AccountServiceImpl implements AccountService
                     }
                 }
 
-                accountRepository.saveAndFlush(persistedAccount);
-                return persistedAccount;
+                return newAccount;
             }
             else
             {
                 throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
         }
-        catch(DataAccessException ex)
+        catch (DataAccessException ex)
         {
-            if(ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
+            if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
             {
                 throw new AccountUsernameOrEmailExistsException("Account username and/or email is already in use!");
             }
@@ -156,13 +155,15 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
-    public Account updateAccount(Account account,
-                                 List<String> tagTitles,
-                                 List<Long> enrolledCourseIds,
-                                 List<Long> courseIds,
-                                 List<Long> forumThreadIds,
-                                 List<Long> forumPostIds,
-                                 List<Long> studentAttemptIds)
+    public Account updateAccount(
+            Account account,
+            List<String> tagTitles,
+            List<Long> enrolledCourseIds,
+            List<Long> courseIds,
+            List<Long> forumThreadIds,
+            List<Long> forumPostIds,
+            List<Long> studentAttemptIds
+    )
             throws AccountNotFoundException, TagNotFoundException,
             InputDataValidationException, UpdateAccountException,
             EnrolledCourseNotFoundException, CourseNotFoundException,
@@ -170,12 +171,12 @@ public class AccountServiceImpl implements AccountService
             ForumPostNotFoundException
     {
 
-        if(account != null && account.getAccountId() != null)
+        if (account != null && account.getAccountId() != null)
         {
             Account accountToUpdate = null;
-            Set<ConstraintViolation<Account>>constraintViolations = validator.validate(account);
+            Set<ConstraintViolation<Account>> constraintViolations = validator.validate(account);
 
-            if(constraintViolations.isEmpty())
+            if (constraintViolations.isEmpty())
             {
                 // Get managed instance of account to be updated
                 accountToUpdate = getAccountByAccountId(account.getAccountId());
@@ -183,10 +184,10 @@ public class AccountServiceImpl implements AccountService
                 if (accountToUpdate.getUsername().equals(account.getUsername()))
                 {
                     // Update tags (interests) - Unidirectional
-                    if(tagTitles != null)
+                    if (tagTitles != null)
                     {
                         accountToUpdate.getInterests().clear();
-                        for(String tagTitle: tagTitles)
+                        for (String tagTitle : tagTitles)
                         {
                             Tag tag = tagService.getTagByTitleOrCreateNew(tagTitle);
                             addTagToAccount(accountToUpdate, tag);
@@ -197,7 +198,7 @@ public class AccountServiceImpl implements AccountService
                     if (enrolledCourseIds != null)
                     {
                         accountToUpdate.getEnrolledCourses().clear();
-                        for (Long enrolledCourseId: enrolledCourseIds)
+                        for (Long enrolledCourseId : enrolledCourseIds)
                         {
                             EnrolledCourse enrolledCourse = enrolledCourseService.getEnrolledCourseByEnrolledCourseId(enrolledCourseId);
                             addEnrolledCourseToAccount(accountToUpdate, enrolledCourse);
@@ -205,15 +206,15 @@ public class AccountServiceImpl implements AccountService
                     }
 
                     // Update courses (as a tutor) - Bidirectional, 1-to-many
-                    if(courseIds != null)
+                    if (courseIds != null)
                     {
-                        for(Course course: accountToUpdate.getCourses())
+                        for (Course course : accountToUpdate.getCourses())
                         {
                             course.setTutor(null);
                         }
 
                         accountToUpdate.getCourses().clear();
-                        for(Long courseId: courseIds)
+                        for (Long courseId : courseIds)
                         {
                             Course course = courseService.getCourseByCourseId(courseId);
                             addCourseToAccount(accountToUpdate, course);
@@ -224,7 +225,7 @@ public class AccountServiceImpl implements AccountService
                     if (forumThreadIds != null)
                     {
                         accountToUpdate.getForumThreads().clear();
-                        for (Long forumThreadId: forumThreadIds)
+                        for (Long forumThreadId : forumThreadIds)
                         {
                             ForumThread forumThread = forumThreadService.getForumThreadByForumThreadId(forumThreadId);
                             addForumThreadToAccount(accountToUpdate, forumThread);
@@ -232,15 +233,15 @@ public class AccountServiceImpl implements AccountService
                     }
 
                     // Update forumPosts (as an account) - Bidirectional
-                    if(forumPostIds != null)
+                    if (forumPostIds != null)
                     {
-                        for(ForumPost forumPost: accountToUpdate.getForumPosts())
+                        for (ForumPost forumPost : accountToUpdate.getForumPosts())
                         {
                             forumPost.setAccount(null);
                         }
 
                         accountToUpdate.getForumPosts().clear();
-                        for(Long forumPostId: forumPostIds)
+                        for (Long forumPostId : forumPostIds)
                         {
                             ForumPost forumPost = forumPostService.getForumPostByForumPostId(forumPostId);
                             addForumPostToAccount(accountToUpdate, forumPost);
@@ -251,7 +252,7 @@ public class AccountServiceImpl implements AccountService
                     if (studentAttemptIds != null)
                     {
                         accountToUpdate.getStudentAttempts().clear();
-                        for (Long studentAttemptId: studentAttemptIds)
+                        for (Long studentAttemptId : studentAttemptIds)
                         {
                             StudentAttempt studentAttempt = studentAttemptService.getStudentAttemptByStudentAttemptId(studentAttemptId);
                             addStudentAttemptToAccount(accountToUpdate, studentAttempt);
@@ -288,8 +289,8 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
-    public Account addTagToAccount(Account account, Tag tag) throws AccountNotFoundException, TagNotFoundException, UpdateAccountException {
-
+    public Account addTagToAccount(Account account, Tag tag) throws AccountNotFoundException, TagNotFoundException, UpdateAccountException
+    {
         account = getAccountByAccountId(account.getAccountId());
         tag = tagService.getTagByTagId(tag.getTagId());
 
@@ -308,7 +309,8 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
-    public Account addEnrolledCourseToAccount(Account account, EnrolledCourse enrolledCourse) throws AccountNotFoundException, EnrolledCourseNotFoundException, UpdateAccountException {
+    public Account addEnrolledCourseToAccount(Account account, EnrolledCourse enrolledCourse) throws AccountNotFoundException, EnrolledCourseNotFoundException, UpdateAccountException
+    {
 
         account = getAccountByAccountId(account.getAccountId());
         enrolledCourse = enrolledCourseService.getEnrolledCourseByEnrolledCourseId(enrolledCourse.getEnrolledCourseId());
@@ -328,7 +330,8 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
-    public Account addCourseToAccount(Account account, Course course) throws AccountNotFoundException, UpdateAccountException, CourseNotFoundException {
+    public Account addCourseToAccount(Account account, Course course) throws AccountNotFoundException, UpdateAccountException, CourseNotFoundException
+    {
 
         // BIDRECTIONAL!!!
         account = getAccountByAccountId(account.getAccountId());
@@ -394,7 +397,8 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
-    public Account addStudentAttemptToAccount (Account account, StudentAttempt studentAttempt) throws AccountNotFoundException, StudentAttemptNotFoundException, UpdateAccountException {
+    public Account addStudentAttemptToAccount(Account account, StudentAttempt studentAttempt) throws AccountNotFoundException, StudentAttemptNotFoundException, UpdateAccountException
+    {
 
         account = getAccountByAccountId(account.getAccountId());
         studentAttempt = studentAttemptService.getStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId());
