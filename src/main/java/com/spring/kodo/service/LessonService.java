@@ -2,16 +2,13 @@ package com.spring.kodo.service;
 
 import com.spring.kodo.entity.Content;
 import com.spring.kodo.entity.Lesson;
-import com.spring.kodo.util.exception.CourseNotFoundException;
-import com.spring.kodo.util.exception.LessonNotFoundException;
-import com.spring.kodo.util.exception.InputDataValidationException;
-import com.spring.kodo.util.exception.UpdateContentException;
+import com.spring.kodo.util.exception.*;
 
 import java.util.List;
 
 public interface LessonService
 {
-    Lesson createNewLesson(Lesson newLesson) throws InputDataValidationException, CourseNotFoundException;
+    Lesson createNewLesson(Lesson newLesson) throws InputDataValidationException, CourseNotFoundException, UnknownPersistenceException;
 
     Lesson getLessonByLessonId(Long lessonId) throws LessonNotFoundException;
 

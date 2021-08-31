@@ -4,6 +4,7 @@ import com.spring.kodo.entity.*;
 import com.spring.kodo.repository.LessonRepository;
 import com.spring.kodo.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
@@ -42,17 +43,24 @@ public class LessonServiceImpl implements LessonService
     }
 
     @Override
-    public Lesson createNewLesson(Lesson newLesson) throws InputDataValidationException, CourseNotFoundException
+    public Lesson createNewLesson(Lesson newLesson) throws InputDataValidationException, UnknownPersistenceException
     {
-        Set<ConstraintViolation<Lesson>> constraintViolations = validator.validate(newLesson);
-        if (constraintViolations.isEmpty())
+        try
         {
-            lessonRepository.saveAndFlush(newLesson);
-            return newLesson;
+            Set<ConstraintViolation<Lesson>> constraintViolations = validator.validate(newLesson);
+            if (constraintViolations.isEmpty())
+            {
+                lessonRepository.saveAndFlush(newLesson);
+                return newLesson;
+            }
+            else
+            {
+                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
         }
-        else
+        catch (DataAccessException ex)
         {
-            throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            throw new UnknownPersistenceException(ex.getMessage());
         }
     }
 

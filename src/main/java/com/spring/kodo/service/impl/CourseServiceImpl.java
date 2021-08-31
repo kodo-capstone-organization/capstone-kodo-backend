@@ -161,7 +161,7 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
-    public Course addLessonToCourse(Course course, Lesson lesson) throws CourseNotFoundException, InputDataValidationException, UpdateCourseException
+    public Course addLessonToCourse(Course course, Lesson lesson) throws CourseNotFoundException, InputDataValidationException, UpdateCourseException, UnknownPersistenceException
     {
         if (course != null && !course.getLessons().contains(lesson))
         {
@@ -169,15 +169,15 @@ public class CourseServiceImpl implements CourseService
 
             course = getCourseByCourseId(course.getCourseId());
             course.getLessons().add(lesson);
+
+            courseRepository.saveAndFlush(course);
+            return course;
         }
         else
         {
             throw new UpdateCourseException("Unable to add lesson with name: " + lesson.getName() +
                     " to course with ID: " + course.getCourseId() + " as tag is already linked to this course");
         }
-
-        courseRepository.saveAndFlush(course);
-        return course;
     }
 
     private Course setTutorToCourse(Course course, Long tutorId) throws CourseNotFoundException, AccountNotFoundException, UpdateCourseException

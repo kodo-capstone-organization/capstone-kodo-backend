@@ -10,6 +10,7 @@ import com.spring.kodo.util.exception.ForumThreadNotFoundException;
 import com.spring.kodo.util.exception.InputDataValidationException;
 import com.spring.kodo.util.exception.ForumCategoryNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
@@ -83,7 +84,7 @@ public class ForumCategoryServiceImpl implements ForumCategoryService
     @Override
     public ForumCategory updateForumCategory(Long forumCategoryId, ForumCategory updatedForumCategory) throws ForumCategoryNotFoundException
     {
-        ForumCategory forumCategoryToUpdate  = forumCategoryRepository.findById(forumCategoryId).orElse(null);
+        ForumCategory forumCategoryToUpdate = forumCategoryRepository.findById(forumCategoryId).orElse(null);
 
         if (forumCategoryToUpdate != null)
         {
@@ -104,10 +105,14 @@ public class ForumCategoryServiceImpl implements ForumCategoryService
 
         if (forumCategoryToDelete != null)
         {
-            for (ForumThread thread : forumCategoryToDelete.getForumThreads()) {
-                try {
+            for (ForumThread thread : forumCategoryToDelete.getForumThreads())
+            {
+                try
+                {
                     forumThreadService.deleteForumThread(thread.getForumThreadId());
-                } catch (ForumThreadNotFoundException e) {
+                }
+                catch (ForumThreadNotFoundException e)
+                {
                     e.printStackTrace();
                 }
             }

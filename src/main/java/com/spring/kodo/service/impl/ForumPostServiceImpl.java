@@ -32,7 +32,7 @@ public class ForumPostServiceImpl implements ForumPostService {
     }
 
     @Override
-    public ForumPost createNewForumPost (ForumPost newForumPost) throws InputDataValidationException
+    public ForumPost createNewForumPost(ForumPost newForumPost) throws InputDataValidationException
     {
         Set<ConstraintViolation<ForumPost>> constraintViolations = validator.validate(newForumPost);
         if (constraintViolations.isEmpty())

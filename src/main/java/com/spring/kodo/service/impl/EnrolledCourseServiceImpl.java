@@ -54,7 +54,7 @@ public class EnrolledCourseServiceImpl implements EnrolledCourseService
                 if (studentId != null)
                 {
                     Account student = accountService.getAccountByAccountId(studentId);
-                    
+
                     if (courseId != null)
                     {
                         Course course = courseService.getCourseByCourseId(courseId);
@@ -82,7 +82,6 @@ public class EnrolledCourseServiceImpl implements EnrolledCourseService
                 {
                     throw new CreateNewEnrolledCourseException("Student ID cannot be null");
                 }
-
             }
             else
             {

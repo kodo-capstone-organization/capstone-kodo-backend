@@ -15,6 +15,7 @@ import com.spring.kodo.util.exception.MultimediaNotFoundException;
 import com.spring.kodo.util.exception.InputDataValidationException;
 import com.spring.kodo.util.exception.UnknownPersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
@@ -51,16 +52,21 @@ public class MultimediaServiceImpl implements MultimediaService
     @Override
     public Multimedia createNewMultimedia(Multimedia multimedia) throws InputDataValidationException, UnknownPersistenceException
     {
-        // Multimedia inherits from content
-        // Constraint violation checks on child also checks parent variables
-        Set<ConstraintViolation<Content>> constraintViolations = validator.validate(multimedia);
-        if(constraintViolations.isEmpty())
+        try
         {
-            return (Multimedia) contentService.createNewContent(multimedia);
+            Set<ConstraintViolation<Content>> constraintViolations = validator.validate(multimedia);
+            if (constraintViolations.isEmpty())
+            {
+                return (Multimedia) contentService.createNewContent(multimedia);
+            }
+            else
+            {
+                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
         }
-        else
+        catch (DataAccessException ex)
         {
-            throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            throw new UnknownPersistenceException(ex.getMessage());
         }
     }
 
@@ -116,7 +122,7 @@ public class MultimediaServiceImpl implements MultimediaService
     }
 
     @Override  // File handling should have been done before calling this method
-    public Multimedia updateMultimedia (Multimedia multimedia)
+    public Multimedia updateMultimedia(Multimedia multimedia)
     {
         return multimediaRepository.saveAndFlush(multimedia);
     }
