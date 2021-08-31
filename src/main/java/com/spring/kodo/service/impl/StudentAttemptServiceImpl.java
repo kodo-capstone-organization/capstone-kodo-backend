@@ -52,6 +52,7 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
                 newStudentAttempt.setQuiz(quiz);
                 quiz.getStudentAttempts().add(newStudentAttempt);
 
+                // Create StudentAttemptQuestion
                 // Link QuizQuestions to StudentAttemptQuestions
                 for (QuizQuestion quizQuestion : quiz.getQuizQuestions())
                 {

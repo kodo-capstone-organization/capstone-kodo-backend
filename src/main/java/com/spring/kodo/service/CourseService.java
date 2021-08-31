@@ -9,7 +9,15 @@ import java.util.List;
 
 public interface CourseService
 {
-    Course createNewCourse(Course newCourse, Long tutorId, List<String> tagTitles) throws TagNameExistsException, UnknownPersistenceException, InputDataValidationException;
+    Course createNewCourse(Course newCourse, Long tutorId, List<String> tagTitles)
+            throws CreateNewCourseException,
+            UpdateCourseException,
+            TagNotFoundException,
+            AccountNotFoundException,
+            CourseNotFoundException,
+            TagNameExistsException,
+            UnknownPersistenceException,
+            InputDataValidationException;
 
     Course getCourseByCourseId(Long courseId) throws CourseNotFoundException;
 

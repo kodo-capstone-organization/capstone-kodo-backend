@@ -12,6 +12,7 @@ import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.*;
 import com.spring.kodo.util.exception.CourseNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
@@ -46,49 +47,55 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
-    public Course createNewCourse(Course newCourse, Long tutorId, List<String> tagTitles) throws TagNameExistsException, UnknownPersistenceException, InputDataValidationException
+    public Course createNewCourse(Course newCourse, Long tutorId, List<String> tagTitles)
+            throws CreateNewCourseException,
+            UpdateCourseException,
+            TagNotFoundException,
+            AccountNotFoundException,
+            CourseNotFoundException,
+            TagNameExistsException,
+            UnknownPersistenceException,
+            InputDataValidationException
     {
-        Set<ConstraintViolation<Course>> constraintViolations = validator.validate(newCourse);
-        if (constraintViolations.isEmpty())
+        try
         {
-            // Process Account Tutor
-            if (tutorId != null)
+            Set<ConstraintViolation<Course>> constraintViolations = validator.validate(newCourse);
+            if (constraintViolations.isEmpty())
             {
-                try
+                // Process Account Tutor
+                if (tutorId != null)
                 {
                     newCourse = setTutorToCourse(newCourse, tutorId);
+
+                    // Process Tags
+                    if (tagTitles != null)
+                    {
+                        for (String tagTitle : tagTitles)
+                        {
+                            newCourse = addTagToCourse(newCourse, tagTitle);
+                        }
+
+                        courseRepository.saveAndFlush(newCourse);
+                        return newCourse;
+                    }
+                    else
+                    {
+                        throw new CreateNewCourseException("TagTitles cannot be null");
+                    }
                 }
-                catch (AccountNotFoundException | CourseNotFoundException | UpdateCourseException ex)
+                else
                 {
-                    // Since we are still in a creation step, these generic exceptions will probably not happen / can kinda be ignored
-                    // e.g. acc not found, tutor already exists
+                    throw new CreateNewCourseException("TutorId cannot be null");
                 }
             }
-
-            // Process Tags
-            if (tagTitles != null)
+            else
             {
-                for (String tagTitle : tagTitles)
-                {
-                    try
-                    {
-                        newCourse = addTagToCourse(newCourse, tagTitle);
-                    }
-                    catch (TagNotFoundException | CourseNotFoundException | UpdateCourseException ex)
-                    {
-                        // Since we are still in a creation step, these generic exceptions will probably not happen / can kinda be ignored
-                        // e.g. acc not found, duplicate tag exception
-                        continue;
-                    }
-                }
+                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
-
-            courseRepository.saveAndFlush(newCourse);
-            return newCourse;
         }
-        else
+        catch (DataAccessException ex)
         {
-            throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            throw new UnknownPersistenceException(ex.getMessage());
         }
     }
 
