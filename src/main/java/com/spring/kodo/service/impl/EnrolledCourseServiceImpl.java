@@ -11,6 +11,7 @@ import com.spring.kodo.service.EnrolledCourseService;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
@@ -42,32 +43,55 @@ public class EnrolledCourseServiceImpl implements EnrolledCourseService
     }
 
     @Override
-    public EnrolledCourse createNewEnrolledCourse(Long studentId, Long courseId) throws InputDataValidationException, CourseNotFoundException, AccountNotFoundException, CreateNewEnrolledCourseException
+    public EnrolledCourse createNewEnrolledCourse(Long studentId, Long courseId) throws InputDataValidationException, CourseNotFoundException, AccountNotFoundException, CreateNewEnrolledCourseException, UnknownPersistenceException
     {
-        EnrolledCourse newEnrolledCourse = new EnrolledCourse();
-        Set<ConstraintViolation<EnrolledCourse>> constraintViolations = validator.validate(newEnrolledCourse);
-        if (constraintViolations.isEmpty())
+        try
         {
-            Course course = courseService.getCourseByCourseId(courseId);
-            Account student = accountService.getAccountByAccountId(studentId);
-
-            for (EnrolledCourse enrolledCourse : student.getEnrolledCourses())
+            EnrolledCourse newEnrolledCourse = new EnrolledCourse();
+            Set<ConstraintViolation<EnrolledCourse>> constraintViolations = validator.validate(newEnrolledCourse);
+            if (constraintViolations.isEmpty())
             {
-                if (enrolledCourse.getParentCourse().equals(course))
+                if (studentId != null)
                 {
-                    throw new CreateNewEnrolledCourseException("The student with ID " + studentId + " is already enrolled to course with ID " + courseId);
+                    Account student = accountService.getAccountByAccountId(studentId);
+                    
+                    if (courseId != null)
+                    {
+                        Course course = courseService.getCourseByCourseId(courseId);
+
+                        for (EnrolledCourse enrolledCourse : student.getEnrolledCourses())
+                        {
+                            if (enrolledCourse.getParentCourse().equals(course))
+                            {
+                                throw new CreateNewEnrolledCourseException("The student with ID " + studentId + " is already enrolled to course with ID " + courseId);
+                            }
+                        }
+
+                        newEnrolledCourse.setParentCourse(course);
+                        course.getEnrollment().add(newEnrolledCourse);
+
+                        enrolledCourseRepository.saveAndFlush(newEnrolledCourse);
+                        return newEnrolledCourse;
+                    }
+                    else
+                    {
+                        throw new CreateNewEnrolledCourseException("Course ID cannot be null");
+                    }
                 }
+                else
+                {
+                    throw new CreateNewEnrolledCourseException("Student ID cannot be null");
+                }
+
             }
-
-            newEnrolledCourse.setParentCourse(course);
-            course.getEnrollment().add(newEnrolledCourse);
-
-            enrolledCourseRepository.saveAndFlush(newEnrolledCourse);
-            return newEnrolledCourse;
+            else
+            {
+                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
         }
-        else
+        catch (DataAccessException ex)
         {
-            throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            throw new UnknownPersistenceException(ex.getMessage());
         }
     }
 
