@@ -5,15 +5,14 @@ import com.spring.kodo.entity.QuizQuestion;
 import com.spring.kodo.entity.QuizQuestionOption;
 import com.spring.kodo.repository.QuizQuestionOptionRepository;
 import com.spring.kodo.repository.QuizQuestionRepository;
+import com.spring.kodo.service.QuizQuestionOptionService;
 import com.spring.kodo.service.QuizQuestionService;
 import com.spring.kodo.service.QuizService;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.enumeration.QuestionType;
-import com.spring.kodo.util.exception.CreateQuizQuestionException;
-import com.spring.kodo.util.exception.InputDataValidationException;
-import com.spring.kodo.util.exception.QuizNotFoundException;
-import com.spring.kodo.util.exception.QuizQuestionNotFoundException;
+import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
@@ -30,10 +29,10 @@ public class QuizQuestionServiceImpl implements QuizQuestionService
     private QuizQuestionRepository quizQuestionRepository;
 
     @Autowired
-    private QuizQuestionOptionRepository quizQuestionOptionRepository;
+    private QuizService quizService;
 
     @Autowired
-    private QuizService quizService;
+    private QuizQuestionOptionService quizQuestionOptionService;
 
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -45,34 +44,34 @@ public class QuizQuestionServiceImpl implements QuizQuestionService
     }
 
     @Override
-    public QuizQuestion createNewQuizQuestion(QuizQuestion newQuizQuestion, Long quizId, List<QuizQuestionOption> quizQuestionOptions) throws CreateQuizQuestionException, InputDataValidationException
+    public QuizQuestion createNewQuizQuestion(QuizQuestion newQuizQuestion, Long quizId) throws CreateQuizQuestionException, InputDataValidationException, UnknownPersistenceException
     {
-        Set<ConstraintViolation<QuizQuestion>> constraintViolations = validator.validate(newQuizQuestion);
-        if (constraintViolations.isEmpty())
+        try
         {
-            try
+            Set<ConstraintViolation<QuizQuestion>> constraintViolations = validator.validate(newQuizQuestion);
+            if (constraintViolations.isEmpty())
             {
-                Quiz quiz = quizService.getQuizByQuizId(quizId);
-                quiz.getQuizQuestions().add(newQuizQuestion);
-                newQuizQuestion.setQuiz(quiz);
-
-                for (QuizQuestionOption quizQuestionOption : quizQuestionOptions)
+                try
                 {
-                    newQuizQuestion.getQuizQuestionOptions().add(quizQuestionOption);
-                    quizQuestionOptionRepository.save(quizQuestionOption);
+                    Quiz quiz = quizService.getQuizByQuizId(quizId);
+                    newQuizQuestion.setQuiz(quiz);
+
+                    quizQuestionRepository.saveAndFlush(newQuizQuestion);
+                    return newQuizQuestion;
+                }
+                catch (QuizNotFoundException ex)
+                {
+                    throw new CreateQuizQuestionException(ex.getMessage());
                 }
             }
-            catch (QuizNotFoundException ex)
+            else
             {
-                throw new CreateQuizQuestionException(ex.getMessage());
+                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
-
-            quizQuestionRepository.saveAndFlush(newQuizQuestion);
-            return newQuizQuestion;
         }
-        else
+        catch (DataAccessException ex)
         {
-            throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            throw new UnknownPersistenceException(ex.getMessage());
         }
     }
 
@@ -106,7 +105,6 @@ public class QuizQuestionServiceImpl implements QuizQuestionService
         }
     }
 
-
     @Override
     public QuizQuestion getQuizQuestionByQuestionType(QuestionType questionType) throws QuizQuestionNotFoundException
     {
@@ -126,5 +124,91 @@ public class QuizQuestionServiceImpl implements QuizQuestionService
     public List<QuizQuestion> getAllQuizQuestions()
     {
         return quizQuestionRepository.findAll();
+    }
+
+    @Override
+    public QuizQuestion addQuizQuestionOptionToQuizQuestion(QuizQuestion quizQuestion, QuizQuestionOption quizQuestionOption) throws UpdateQuizQuestionException, QuizQuestionNotFoundException, QuizQuestionOptionNotFoundException
+    {
+        if (quizQuestion != null)
+        {
+            if (quizQuestion.getQuizQuestionId() != null)
+            {
+                quizQuestion = getQuizQuestionByQuizQuestionId(quizQuestion.getQuizQuestionId());
+
+                if (quizQuestionOption != null)
+                {
+                    if (quizQuestionOption.getQuizQuestionOptionId() != null)
+                    {
+                        quizQuestionOption = quizQuestionOptionService.getQuizQuestionOptionByQuizQuestionOptionId(quizQuestionOption.getQuizQuestionOptionId());
+                        quizQuestion.getQuizQuestionOptions().add(quizQuestionOption);
+
+                        quizQuestionRepository.saveAndFlush(quizQuestion);
+                        return quizQuestion;
+                    }
+                    else
+                    {
+                        throw new UpdateQuizQuestionException("QuizQuestionOption ID cannot be null");
+                    }
+                }
+                else
+                {
+                    throw new UpdateQuizQuestionException("QuizQuestionOption cannot be null");
+                }
+            }
+            else
+            {
+                throw new UpdateQuizQuestionException("QuizQuestion ID cannot be null");
+            }
+        }
+        else
+        {
+            throw new UpdateQuizQuestionException("QuizQuestion cannot be null");
+        }
+    }
+
+    @Override
+    public QuizQuestion addQuizQuestionOptionsToQuizQuestion(QuizQuestion quizQuestion, List<QuizQuestionOption> quizQuestionOptions) throws UpdateQuizQuestionException, QuizQuestionNotFoundException, QuizQuestionOptionNotFoundException
+    {
+        if (quizQuestion != null)
+        {
+            if (quizQuestion.getQuizQuestionId() != null)
+            {
+                quizQuestion = getQuizQuestionByQuizQuestionId(quizQuestion.getQuizQuestionId());
+
+                for (int i = 0; i < quizQuestionOptions.size(); i++)
+                {
+                    QuizQuestionOption quizQuestionOption = quizQuestionOptions.get(i);
+                    if (quizQuestionOption != null)
+                    {
+                        if (quizQuestionOption.getQuizQuestionOptionId() != null)
+                        {
+                            quizQuestionOption = quizQuestionOptionService.getQuizQuestionOptionByQuizQuestionOptionId(quizQuestionOption.getQuizQuestionOptionId());
+                            quizQuestion.getQuizQuestionOptions().add(quizQuestionOption);
+
+                            quizQuestionOptions.set(i, quizQuestionOption);
+                        }
+                        else
+                        {
+                            throw new UpdateQuizQuestionException("QuizQuestionOption ID cannot be null");
+                        }
+                    }
+                    else
+                    {
+                        throw new UpdateQuizQuestionException("QuizQuestionOption cannot be null");
+                    }
+                }
+
+                quizQuestionRepository.saveAndFlush(quizQuestion);
+                return quizQuestion;
+            }
+            else
+            {
+                throw new UpdateQuizQuestionException("QuizQuestion ID cannot be null");
+            }
+        }
+        else
+        {
+            throw new UpdateQuizQuestionException("QuizQuestion cannot be null");
+        }
     }
 }

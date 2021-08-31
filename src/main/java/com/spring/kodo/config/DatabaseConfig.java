@@ -228,10 +228,12 @@ public class DatabaseConfig
                 for (int j = 0; j < QUIZ_QUESTION_COUNT; j++, quizQuestionIndex++, quizQuestionOptionIndex += QUIZ_QUESTION_OPTION_COUNT)
                 {
                     quizService.addQuizQuestionToQuiz(
-                            quiz,
-                            quizQuestions.get(quizQuestionIndex),
-                            quizQuestionOptions.subList(quizQuestionOptionIndex, quizQuestionOptionIndex + QUIZ_QUESTION_OPTION_COUNT)
-                    );
+                            quizService.createNewQuiz(quiz),
+                            quizQuestionService.addQuizQuestionOptionsToQuizQuestion(
+                                    quizQuestionService.createNewQuizQuestion(quizQuestions.get(quizQuestionIndex), quiz.getContentId()),
+                                    quizQuestionOptionService.createNewQuizQuestionOptions(
+                                            quizQuestionOptions.subList(quizQuestionOptionIndex, quizQuestionOptionIndex + QUIZ_QUESTION_OPTION_COUNT)
+                                    )));
                 }
 
                 // StudentAttempt Creation

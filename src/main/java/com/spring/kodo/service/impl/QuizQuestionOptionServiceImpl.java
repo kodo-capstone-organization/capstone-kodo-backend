@@ -1,23 +1,28 @@
 package com.spring.kodo.service.impl;
 
+import com.spring.kodo.entity.Quiz;
+import com.spring.kodo.entity.QuizQuestion;
 import com.spring.kodo.entity.QuizQuestionOption;
 import com.spring.kodo.repository.QuizQuestionOptionRepository;
 import com.spring.kodo.service.QuizQuestionOptionService;
-import com.spring.kodo.util.exception.InputDataValidationException;
-import com.spring.kodo.util.exception.QuizQuestionOptionNotFoundException;
+import com.spring.kodo.util.MessageFormatterUtil;
+import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class QuizQuestionOptionServiceImpl implements QuizQuestionOptionService
 {
     @Autowired
-    private QuizQuestionOptionRepository quizQuestionRepository;
+    private QuizQuestionOptionRepository newQuizQuestionOptionRepository;
 
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -29,15 +34,58 @@ public class QuizQuestionOptionServiceImpl implements QuizQuestionOptionService
     }
 
     @Override
-    public QuizQuestionOption createNewQuizQuestionOption(QuizQuestionOption quizQuestionOption) throws InputDataValidationException
+    public QuizQuestionOption createNewQuizQuestionOption(QuizQuestionOption newQuizQuestionOption) throws InputDataValidationException, UnknownPersistenceException
     {
-        return null;
+        try
+        {
+            Set<ConstraintViolation<QuizQuestionOption>> constraintViolations = validator.validate(newQuizQuestionOption);
+            if (constraintViolations.isEmpty())
+            {
+                newQuizQuestionOptionRepository.saveAndFlush(newQuizQuestionOption);
+                return newQuizQuestionOption;
+            }
+            else
+            {
+                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
+        }
+        catch (DataAccessException ex)
+        {
+            throw new UnknownPersistenceException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public List<QuizQuestionOption> createNewQuizQuestionOptions(List<QuizQuestionOption> newQuizQuestionOptions) throws InputDataValidationException, UnknownPersistenceException
+    {
+        try
+        {
+            for (int i = 0; i < newQuizQuestionOptions.size(); i++)
+            {
+                QuizQuestionOption newQuizQuestionOption = newQuizQuestionOptions.get(i);
+                Set<ConstraintViolation<QuizQuestionOption>> constraintViolations = validator.validate(newQuizQuestionOption);
+                if (constraintViolations.isEmpty())
+                {
+                    newQuizQuestionOptionRepository.saveAndFlush(newQuizQuestionOption);
+                    newQuizQuestionOptions.set(i, newQuizQuestionOption);
+                }
+                else
+                {
+                    throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                }
+            }
+            return newQuizQuestionOptions;
+        }
+        catch (DataAccessException ex)
+        {
+            throw new UnknownPersistenceException(ex.getMessage());
+        }
     }
 
     @Override
     public QuizQuestionOption getQuizQuestionOptionByQuizQuestionOptionId(Long quizQuestionId) throws QuizQuestionOptionNotFoundException
     {
-        QuizQuestionOption quizQuestion = quizQuestionRepository.findById(quizQuestionId).orElse(null);
+        QuizQuestionOption quizQuestion = newQuizQuestionOptionRepository.findById(quizQuestionId).orElse(null);
 
         if (quizQuestion != null)
         {
@@ -52,7 +100,7 @@ public class QuizQuestionOptionServiceImpl implements QuizQuestionOptionService
     @Override
     public QuizQuestionOption getQuizQuestionOptionByLeftContent(String leftContent) throws QuizQuestionOptionNotFoundException
     {
-        QuizQuestionOption quizQuestion = quizQuestionRepository.findByLeftContent(leftContent).orElse(null);
+        QuizQuestionOption quizQuestion = newQuizQuestionOptionRepository.findByLeftContent(leftContent).orElse(null);
 
         if (quizQuestion != null)
         {
@@ -67,7 +115,7 @@ public class QuizQuestionOptionServiceImpl implements QuizQuestionOptionService
     @Override
     public QuizQuestionOption getQuizQuestionOptionByRightContent(String rightContent) throws QuizQuestionOptionNotFoundException
     {
-        QuizQuestionOption quizQuestion = quizQuestionRepository.findByRightContent(rightContent).orElse(null);
+        QuizQuestionOption quizQuestion = newQuizQuestionOptionRepository.findByRightContent(rightContent).orElse(null);
 
         if (quizQuestion != null)
         {
@@ -82,6 +130,6 @@ public class QuizQuestionOptionServiceImpl implements QuizQuestionOptionService
     @Override
     public List<QuizQuestionOption> getAllQuizQuestionOptions()
     {
-        return quizQuestionRepository.findAll();
+        return newQuizQuestionOptionRepository.findAll();
     }
 }

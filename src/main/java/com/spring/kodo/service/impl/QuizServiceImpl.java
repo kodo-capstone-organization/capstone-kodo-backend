@@ -25,12 +25,6 @@ public class QuizServiceImpl implements QuizService
     private QuizRepository quizRepository;
 
     @Autowired
-    private QuizQuestionRepository quizQuestionRepository;
-
-    @Autowired
-    private LessonService lessonService;
-
-    @Autowired
     private QuizQuestionService quizQuestionService;
 
     private final ValidatorFactory validatorFactory;
@@ -80,26 +74,88 @@ public class QuizServiceImpl implements QuizService
     }
 
     @Override
-    public Quiz addQuizQuestionToQuiz(Quiz quiz, QuizQuestion quizQuestion, List<QuizQuestionOption> quizQuestionOptions) throws QuizNotFoundException, UpdateQuizException
+    public Quiz addQuizQuestionToQuiz(Quiz quiz, QuizQuestion quizQuestion) throws QuizNotFoundException, UpdateQuizException, QuizQuestionNotFoundException
     {
-        quiz = getQuizByQuizId(quiz.getContentId());
-        if (!quiz.getQuizQuestions().contains(quizQuestion))
+        if (quiz != null)
         {
-            try
+            if (quiz.getContentId() != null)
             {
-                quizQuestionService.createNewQuizQuestion(quizQuestion, quiz.getContentId(), quizQuestionOptions);
+                quiz = getQuizByQuizId(quiz.getContentId());
+
+                if (quizQuestion != null)
+                {
+                    if (quizQuestion.getQuizQuestionId() != null)
+                    {
+                        quizQuestion = quizQuestionService.getQuizQuestionByQuizQuestionId(quizQuestion.getQuizQuestionId());
+                        quiz.getQuizQuestions().add(quizQuestion);
+
+                        quizRepository.saveAndFlush(quiz);
+                        return quiz;
+                    }
+                    else
+                    {
+                        throw new UpdateQuizException("QuizQuestion ID cannot be null");
+                    }
+                }
+                else
+                {
+                    throw new UpdateQuizException("QuizQuestion cannot be null");
+                }
             }
-            catch (CreateQuizQuestionException | InputDataValidationException ex)
+            else
             {
-                throw new UpdateQuizException(ex.getMessage());
+                throw new UpdateQuizException("Quiz ID cannot be null");
             }
         }
         else
         {
-            throw new UpdateQuizException("Quiz: " + quiz.getName() + " already has question with Content: " + quizQuestion.getContent());
+            throw new UpdateQuizException("Quiz cannot be null");
         }
+    }
 
-        quizRepository.saveAndFlush(quiz);
-        return quiz;
+    @Override
+    public Quiz addQuizQuestionsToQuiz(Quiz quiz, List<QuizQuestion> quizQuestions) throws QuizNotFoundException, UpdateQuizException, QuizQuestionNotFoundException
+    {
+        if (quiz != null)
+        {
+            if (quiz.getContentId() != null)
+            {
+                quiz = getQuizByQuizId(quiz.getContentId());
+
+                for (int i = 0; i < quizQuestions.size(); i++)
+                {
+                    QuizQuestion quizQuestion = quizQuestions.get(i);
+                    if (quizQuestion != null)
+                    {
+                        if (quizQuestion.getQuizQuestionId() != null)
+                        {
+                            quizQuestion = quizQuestionService.getQuizQuestionByQuizQuestionId(quizQuestion.getQuizQuestionId());
+                            quiz.getQuizQuestions().add(quizQuestion);
+
+                            quizQuestions.set(i, quizQuestion);
+                        }
+                        else
+                        {
+                            throw new UpdateQuizException("QuizQuestion ID cannot be null");
+                        }
+                    }
+                    else
+                    {
+                        throw new UpdateQuizException("QuizQuestion cannot be null");
+                    }
+                }
+
+                quizRepository.saveAndFlush(quiz);
+                return quiz;
+            }
+            else
+            {
+                throw new UpdateQuizException("Quiz ID cannot be null");
+            }
+        }
+        else
+        {
+            throw new UpdateQuizException("Quiz cannot be null");
+        }
     }
 }

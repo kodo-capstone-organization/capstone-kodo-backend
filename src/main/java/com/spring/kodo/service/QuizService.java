@@ -15,5 +15,7 @@ public interface QuizService
 
     List<Quiz> getAllQuizzes();
 
-    Quiz addQuizQuestionToQuiz(Quiz quiz, QuizQuestion quizQuestion, List<QuizQuestionOption> quizQuestionOptions) throws QuizNotFoundException, UpdateQuizException;
+    Quiz addQuizQuestionToQuiz(Quiz quiz, QuizQuestion quizQuestion) throws QuizNotFoundException, UpdateQuizException, UnknownPersistenceException, QuizQuestionNotFoundException;
+
+    Quiz addQuizQuestionsToQuiz(Quiz quiz, List<QuizQuestion> quizQuestions) throws QuizNotFoundException, UpdateQuizException, QuizQuestionNotFoundException;
 }
