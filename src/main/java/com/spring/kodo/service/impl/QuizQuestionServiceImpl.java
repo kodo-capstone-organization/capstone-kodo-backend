@@ -3,7 +3,6 @@ package com.spring.kodo.service.impl;
 import com.spring.kodo.entity.Quiz;
 import com.spring.kodo.entity.QuizQuestion;
 import com.spring.kodo.entity.QuizQuestionOption;
-import com.spring.kodo.repository.QuizQuestionOptionRepository;
 import com.spring.kodo.repository.QuizQuestionRepository;
 import com.spring.kodo.service.QuizQuestionOptionService;
 import com.spring.kodo.service.QuizQuestionService;

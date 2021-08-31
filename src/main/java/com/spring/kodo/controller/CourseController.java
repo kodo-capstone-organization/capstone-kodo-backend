@@ -1,6 +1,9 @@
 package com.spring.kodo.controller;
 
+import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Course;
+import com.spring.kodo.restentity.CreateNewAccountReq;
+import com.spring.kodo.restentity.CreateNewCourseReq;
 import com.spring.kodo.service.CourseService;
 import com.spring.kodo.service.FileService;
 import com.spring.kodo.util.exception.*;
@@ -46,6 +49,37 @@ public class CourseController
         }
     }
 
-    
-  
+    @PostMapping("/createNewCourse")
+    public Course createNewCourse(
+            @RequestPart(name = "course", required = true) CreateNewCourseReq createNewCourseReq
+    )
+    {
+        if (createNewCourseReq != null)
+        {
+            logger.info("HIT account/createNewCourse | POST | Received : " + createNewCourseReq);
+            try
+            {
+                Course newCourse = new Course(createNewCourseReq.getName(), createNewCourseReq.getDescription(), createNewCourseReq.getPrice(), createNewCourseReq.getBannerUrl());
+                newCourse = this.courseService.createNewCourse(newCourse, createNewCourseReq.getTutorId(), createNewCourseReq.getTagTitles());
+
+                return newCourse;
+            }
+            catch (InputDataValidationException | TagNameExistsException | CreateNewCourseException | UpdateCourseException ex)
+            {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+            }
+            catch (TagNotFoundException | AccountNotFoundException | CourseNotFoundException ex)
+            {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+            }
+            catch (UnknownPersistenceException ex)
+            {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+            }
+        }
+        else
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Create New Course Request");
+        }
+    }
 }

@@ -6,11 +6,10 @@ import com.spring.kodo.repository.ForumCategoryRepository;
 import com.spring.kodo.service.ForumCategoryService;
 import com.spring.kodo.service.ForumThreadService;
 import com.spring.kodo.util.MessageFormatterUtil;
+import com.spring.kodo.util.exception.ForumCategoryNotFoundException;
 import com.spring.kodo.util.exception.ForumThreadNotFoundException;
 import com.spring.kodo.util.exception.InputDataValidationException;
-import com.spring.kodo.util.exception.ForumCategoryNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;

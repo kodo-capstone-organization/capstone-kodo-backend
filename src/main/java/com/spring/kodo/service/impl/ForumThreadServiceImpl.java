@@ -5,8 +5,8 @@ import com.spring.kodo.entity.ForumPost;
 import com.spring.kodo.entity.ForumThread;
 import com.spring.kodo.repository.ForumThreadRepository;
 import com.spring.kodo.service.ForumCategoryService;
-import com.spring.kodo.service.ForumThreadService;
 import com.spring.kodo.service.ForumPostService;
+import com.spring.kodo.service.ForumThreadService;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.ForumCategoryNotFoundException;
 import com.spring.kodo.util.exception.ForumPostNotFoundException;
@@ -23,7 +23,8 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-public class ForumThreadServiceImpl implements ForumThreadService {
+public class ForumThreadServiceImpl implements ForumThreadService
+{
     @Autowired // With this annotation, we do not to populate ForumThreadRepository in this class' constructor
     private ForumThreadRepository forumThreadRepository;
     @Autowired
@@ -41,7 +42,7 @@ public class ForumThreadServiceImpl implements ForumThreadService {
     }
 
     @Override
-    public ForumThread createNewForumThread (ForumThread newForumThread) throws InputDataValidationException
+    public ForumThread createNewForumThread(ForumThread newForumThread) throws InputDataValidationException
     {
         Set<ConstraintViolation<ForumThread>> constraintViolations = validator.validate(newForumThread);
         if (constraintViolations.isEmpty())
@@ -70,7 +71,8 @@ public class ForumThreadServiceImpl implements ForumThreadService {
     }
 
     @Override
-    public ForumThread getForumThreadByName(String name) throws ForumThreadNotFoundException {
+    public ForumThread getForumThreadByName(String name) throws ForumThreadNotFoundException
+    {
         ForumThread forumThread = forumThreadRepository.findByName(name).orElse(null);
 
         if (forumThread != null)
@@ -86,7 +88,7 @@ public class ForumThreadServiceImpl implements ForumThreadService {
     @Override
     public List<ForumThread> getAllForumThreadsOfAForumCategory(Long forumCategoryId) throws ForumCategoryNotFoundException
     {
-        ForumCategory forumCategory =  forumCategoryService.getForumCategoryByForumCategoryId(forumCategoryId);
+        ForumCategory forumCategory = forumCategoryService.getForumCategoryByForumCategoryId(forumCategoryId);
         return forumCategory.getForumThreads();
     }
 
@@ -94,7 +96,7 @@ public class ForumThreadServiceImpl implements ForumThreadService {
     @Override
     public ForumThread updateForumThread(Long forumThreadId, ForumThread updatedForumThread) throws ForumThreadNotFoundException
     {
-        ForumThread forumThreadToUpdate  = forumThreadRepository.findById(forumThreadId).orElse(null);
+        ForumThread forumThreadToUpdate = forumThreadRepository.findById(forumThreadId).orElse(null);
 
         if (forumThreadToUpdate != null)
         {
@@ -114,10 +116,14 @@ public class ForumThreadServiceImpl implements ForumThreadService {
 
         if (forumThreadToDelete != null)
         {
-            for (ForumPost post : forumThreadToDelete.getForumPosts()) {
-                try {
+            for (ForumPost post : forumThreadToDelete.getForumPosts())
+            {
+                try
+                {
                     forumPostService.deleteForumPost(post.getForumPostId());
-                } catch (ForumPostNotFoundException e) {
+                }
+                catch (ForumPostNotFoundException e)
+                {
                     e.printStackTrace();
                 }
             }

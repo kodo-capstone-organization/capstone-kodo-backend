@@ -1,9 +1,8 @@
 package com.spring.kodo.service.impl;
 
-import com.spring.kodo.entity.*;
-import com.spring.kodo.repository.QuizQuestionRepository;
+import com.spring.kodo.entity.Quiz;
+import com.spring.kodo.entity.QuizQuestion;
 import com.spring.kodo.repository.QuizRepository;
-import com.spring.kodo.service.LessonService;
 import com.spring.kodo.service.QuizQuestionService;
 import com.spring.kodo.service.QuizService;
 import com.spring.kodo.util.MessageFormatterUtil;

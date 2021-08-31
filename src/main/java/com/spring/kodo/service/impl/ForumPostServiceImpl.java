@@ -17,7 +17,8 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-public class ForumPostServiceImpl implements ForumPostService {
+public class ForumPostServiceImpl implements ForumPostService
+{
 
     @Autowired // With this annotation, we do not to populate ForumPostRepository in this class' constructor
     private ForumPostRepository forumPostRepository;
@@ -70,7 +71,7 @@ public class ForumPostServiceImpl implements ForumPostService {
     @Override
     public ForumPost updateForumPost(Long forumPostId, ForumPost updatedForumPost) throws ForumPostNotFoundException
     {
-        ForumPost forumPostToUpdate  = forumPostRepository.findById(forumPostId).orElse(null);
+        ForumPost forumPostToUpdate = forumPostRepository.findById(forumPostId).orElse(null);
 
         if (forumPostToUpdate != null)
         {
@@ -84,7 +85,7 @@ public class ForumPostServiceImpl implements ForumPostService {
     }
 
     @Override
-    public Boolean deleteForumPost (Long forumPostId) throws ForumPostNotFoundException
+    public Boolean deleteForumPost(Long forumPostId) throws ForumPostNotFoundException
     {
         ForumPost forumPostToDelete = forumPostRepository.findById(forumPostId).orElse(null);
 

@@ -1,10 +1,13 @@
 package com.spring.kodo.service.impl;
 
-import com.spring.kodo.entity.*;
-import com.spring.kodo.repository.StudentAttemptAnswerRepository;
-import com.spring.kodo.repository.StudentAttemptQuestionRepository;
+import com.spring.kodo.entity.Quiz;
+import com.spring.kodo.entity.QuizQuestion;
+import com.spring.kodo.entity.StudentAttempt;
+import com.spring.kodo.entity.StudentAttemptQuestion;
 import com.spring.kodo.repository.StudentAttemptRepository;
-import com.spring.kodo.service.*;
+import com.spring.kodo.service.QuizService;
+import com.spring.kodo.service.StudentAttemptQuestionService;
+import com.spring.kodo.service.StudentAttemptService;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;

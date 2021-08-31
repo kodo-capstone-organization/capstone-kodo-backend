@@ -1,12 +1,12 @@
 package com.spring.kodo.service.impl;
 
-import com.spring.kodo.entity.Quiz;
-import com.spring.kodo.entity.QuizQuestion;
 import com.spring.kodo.entity.QuizQuestionOption;
 import com.spring.kodo.repository.QuizQuestionOptionRepository;
 import com.spring.kodo.service.QuizQuestionOptionService;
 import com.spring.kodo.util.MessageFormatterUtil;
-import com.spring.kodo.util.exception.*;
+import com.spring.kodo.util.exception.InputDataValidationException;
+import com.spring.kodo.util.exception.QuizQuestionOptionNotFoundException;
+import com.spring.kodo.util.exception.UnknownPersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;

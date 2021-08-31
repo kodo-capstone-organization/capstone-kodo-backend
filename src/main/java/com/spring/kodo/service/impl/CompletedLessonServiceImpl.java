@@ -1,13 +1,10 @@
 package com.spring.kodo.service.impl;
 
-import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.CompletedLesson;
 import com.spring.kodo.repository.CompletedLessonRepository;
 import com.spring.kodo.service.CompletedLessonService;
-import com.spring.kodo.util.exception.AccountNotFoundException;
 import com.spring.kodo.util.exception.CompletedLessonNotFoundException;
 import com.spring.kodo.util.exception.InputDataValidationException;
-import com.spring.kodo.util.exception.LessonNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

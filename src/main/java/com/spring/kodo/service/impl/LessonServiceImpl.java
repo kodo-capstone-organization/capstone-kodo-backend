@@ -1,8 +1,16 @@
 package com.spring.kodo.service.impl;
 
-import com.spring.kodo.entity.*;
+import com.spring.kodo.entity.Content;
+import com.spring.kodo.entity.Lesson;
+import com.spring.kodo.entity.Multimedia;
+import com.spring.kodo.entity.Quiz;
 import com.spring.kodo.repository.LessonRepository;
-import com.spring.kodo.service.*;
+import com.spring.kodo.service.CourseService;
+import com.spring.kodo.service.LessonService;
+import com.spring.kodo.service.MultimediaService;
+import com.spring.kodo.service.QuizService;
+import com.spring.kodo.util.MessageFormatterUtil;
+import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -13,9 +21,6 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.List;
 import java.util.Set;
-
-import com.spring.kodo.util.MessageFormatterUtil;
-import com.spring.kodo.util.exception.*;
 
 @Service
 public class LessonServiceImpl implements LessonService

@@ -1,18 +1,14 @@
 package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.Content;
-import com.spring.kodo.entity.Lesson;
 import com.spring.kodo.entity.Multimedia;
 import com.spring.kodo.repository.MultimediaRepository;
-import com.spring.kodo.service.ContentService;
 import com.spring.kodo.service.FileService;
-import com.spring.kodo.service.LessonService;
 import com.spring.kodo.service.MultimediaService;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.enumeration.MultimediaType;
-import com.spring.kodo.util.exception.LessonNotFoundException;
-import com.spring.kodo.util.exception.MultimediaNotFoundException;
 import com.spring.kodo.util.exception.InputDataValidationException;
+import com.spring.kodo.util.exception.MultimediaNotFoundException;
 import com.spring.kodo.util.exception.UnknownPersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;

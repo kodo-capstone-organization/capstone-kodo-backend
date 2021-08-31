@@ -1,9 +1,7 @@
 package com.spring.kodo.service.impl;
 
-import com.spring.kodo.entity.QuizQuestion;
 import com.spring.kodo.entity.QuizQuestionOption;
 import com.spring.kodo.entity.StudentAttemptAnswer;
-import com.spring.kodo.entity.StudentAttemptQuestion;
 import com.spring.kodo.repository.StudentAttemptAnswerRepository;
 import com.spring.kodo.service.QuizQuestionOptionService;
 import com.spring.kodo.service.StudentAttemptAnswerService;
