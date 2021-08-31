@@ -1,6 +1,9 @@
 package com.spring.kodo.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,11 +16,13 @@ public class EnrolledCourse
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long enrolledCourseId;
 
-    @Size(min = 0, max = 5)
+    @Column(nullable = false)
+    @NotNull
+    @Min(0)
+    @Max(5)
     private int courseRating;
 
     @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
     private Course parentCourse;
 
     @OneToMany(targetEntity = CompletedLesson.class, fetch = FetchType.LAZY)

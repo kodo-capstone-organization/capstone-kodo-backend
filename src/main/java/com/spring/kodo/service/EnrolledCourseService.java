@@ -1,14 +1,13 @@
 package com.spring.kodo.service;
 
 import com.spring.kodo.entity.EnrolledCourse;
-import com.spring.kodo.util.exception.EnrolledCourseNotFoundException;
-import com.spring.kodo.util.exception.InputDataValidationException;
+import com.spring.kodo.util.exception.*;
 
 import java.util.List;
 
 public interface EnrolledCourseService
 {
-    EnrolledCourse createNewEnrolledCourse(EnrolledCourse enrolledCourse) throws InputDataValidationException;
+    EnrolledCourse createNewEnrolledCourse(Long studentId, Long courseId) throws InputDataValidationException, CourseNotFoundException, AccountNotFoundException, CreateNewEnrolledCourseException;
 
     EnrolledCourse getEnrolledCourseByEnrolledCourseId(Long enrolledCourseId) throws EnrolledCourseNotFoundException;
 

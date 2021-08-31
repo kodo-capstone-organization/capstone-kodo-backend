@@ -73,7 +73,11 @@ public class Account
     private List<Tag> interests;
 
     @OneToMany(targetEntity = EnrolledCourse.class, fetch = FetchType.LAZY)
-    @JoinColumn
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "account_id", referencedColumnName="accountId"),
+            inverseJoinColumns = @JoinColumn(name = "enrolled_course_id", referencedColumnName = "enrolledCourseId"),
+            uniqueConstraints = @UniqueConstraint(columnNames = { "account_id", "enrolled_course_id" })
+    )
     private List<EnrolledCourse> enrolledCourses;
 
     @JsonManagedReference

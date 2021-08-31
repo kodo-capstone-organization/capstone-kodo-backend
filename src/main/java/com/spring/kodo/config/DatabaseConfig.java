@@ -4,7 +4,7 @@ import com.spring.kodo.entity.*;
 import com.spring.kodo.service.*;
 import com.spring.kodo.util.enumeration.MultimediaType;
 import com.spring.kodo.util.enumeration.QuestionType;
-import com.spring.kodo.util.exception.InputDataValidationException;
+import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +23,9 @@ import java.util.stream.Collectors;
 @Configuration
 public class DatabaseConfig
 {
+    @Autowired
+    private EnrolledCourseService enrolledCourseService;
+
     @Autowired
     private StudentAttemptAnswerService studentAttemptAnswerService;
 
@@ -233,9 +236,21 @@ public class DatabaseConfig
                 // StudentAttempt Creation
                 for (int j = 0; j < STUDENT_ATTEMPT_COUNT; j++)
                 {
+                    Account student = accounts.get(getRandomNumber(STUDENT_FIRST_INDEX, STUDENT_LAST_INDEX));
+
+                    try
+                    {
+                        EnrolledCourse enrolledCourse = enrolledCourseService.createNewEnrolledCourse(student.getAccountId(), course.getCourseId());
+
+                        accountService.addEnrolledCourseToAccount(student, enrolledCourse);
+                    }
+                    catch (InputDataValidationException | CourseNotFoundException | AccountNotFoundException | CreateNewEnrolledCourseException ex)
+                    {
+                    }
+
                     StudentAttempt studentAttempt = studentAttemptService.createNewStudentAttempt(
                             quiz.getContentId(),
-                            accounts.get(getRandomNumber(STUDENT_FIRST_INDEX, STUDENT_LAST_INDEX)).getAccountId()
+                            student.getAccountId()
                     );
 
                     for (StudentAttemptQuestion studentAttemptQuestion : studentAttempt.getStudentAttemptQuestions())
@@ -270,6 +285,9 @@ public class DatabaseConfig
 
         List<Long> courseIds = courseService.getAllCourses().stream().map(Course::getCourseId).collect(Collectors.toList());
         System.out.println(">> Added Courses with courseIds: " + courseIds);
+
+        List<Long> enrolledCourseIds = enrolledCourseService.getAllEnrolledCourses().stream().map(EnrolledCourse::getEnrolledCourseId).collect(Collectors.toList());
+        System.out.println(">> Added EnrolledCourses with enrolledCourseIds: " + enrolledCourseIds);
 
         List<Long> lessonIds = lessonService.getAllLessons().stream().map(Lesson::getLessonId).collect(Collectors.toList());
         System.out.println(">> Added Lessons with lessonIds: " + lessonIds);
