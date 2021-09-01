@@ -1,14 +1,17 @@
 package com.spring.kodo.service.impl;
 
+import com.spring.kodo.restentity.StripePaymentReq;
 import com.spring.kodo.service.StripeService;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Account;
 import com.stripe.model.AccountLink;
 import com.stripe.model.PaymentIntent;
+import com.stripe.model.checkout.Session;
 import com.stripe.param.AccountCreateParams;
 import com.stripe.param.AccountLinkCreateParams;
 import com.stripe.param.PaymentIntentCreateParams.PaymentMethodOptions;
+import com.stripe.param.checkout.SessionCreateParams;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -48,8 +51,8 @@ public class StripeServiceImpl implements StripeService
                 AccountLinkCreateParams
                         .builder()
                         .setAccount(account.getId())
-                        .setRefreshUrl("")
-                        .setReturnUrl("")
+                        .setRefreshUrl("http://localhost:8080")
+                        .setReturnUrl("http://localhost:8080")
                         .setType(AccountLinkCreateParams.Type.ACCOUNT_ONBOARDING)
                         .build();
 
@@ -57,22 +60,32 @@ public class StripeServiceImpl implements StripeService
     }
 
     @Override
-    public PaymentIntent createPaymentIntent(String connectedStripeAccountId, BigDecimal amount) throws StripeException {
+    public String createStripeSession(StripePaymentReq stripePaymentReq) throws StripeException {
         Stripe.apiKey = stripeApiKey;
 
-        ArrayList<String> paymentMethodTypes = new ArrayList<String>();
-        paymentMethodTypes.add("card");
+        SessionCreateParams params =
+                SessionCreateParams.builder()
+                        .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+                        .addLineItem(
+                                SessionCreateParams.LineItem.builder()
+                                        .setName(stripePaymentReq.getTutorName())
+                                        .setAmount(stripePaymentReq.getAmount().longValue())
+                                        .setCurrency("sgd")
+                                        .setQuantity(1L)
+                                        .build())
+                        .setPaymentIntentData(
+                                SessionCreateParams.PaymentIntentData.builder()
+                                        .setApplicationFeeAmount(stripePaymentReq.getAmount().multiply(KODO_PLATFORM_FEE_PERCENTAGE).longValue())
+                                        .setTransferData(
+                                                SessionCreateParams.PaymentIntentData.TransferData.builder()
+                                                        .setDestination(stripePaymentReq.getTutorStripeAccountId())
+                                                        .build())
+                                        .build())
+                        .setMode(SessionCreateParams.Mode.PAYMENT)
+                        .setSuccessUrl("https://example.com/success")
+                        .setCancelUrl("https://example.com/cancel")
+                        .build();
 
-        Map<String, Object> params = new HashMap<>();
-        params.put("payment_method_types", paymentMethodTypes);
-        params.put("amount", amount);
-        params.put("currency", "sgd");
-        params.put("application_fee_amount", amount.multiply(KODO_PLATFORM_FEE_PERCENTAGE));
-
-        Map<String, Object> transferDataParams = new HashMap<>();
-        transferDataParams.put("destination", connectedStripeAccountId);
-        params.put("transfer_data", transferDataParams);
-
-        return PaymentIntent.create(params);
+        return Session.create(params).getUrl();
     }
 }

@@ -1,5 +1,6 @@
 package com.spring.kodo.service;
 
+import com.spring.kodo.restentity.StripePaymentReq;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Account;
 import com.stripe.model.AccountLink;
@@ -13,5 +14,5 @@ public interface StripeService
 
     AccountLink createStripeAccountLink(Account account) throws StripeException;
 
-    PaymentIntent createPaymentIntent(String connectedStripeAccountId, BigDecimal amount) throws StripeException;
+    String createStripeSession(StripePaymentReq stripePaymentReq) throws StripeException;
 }

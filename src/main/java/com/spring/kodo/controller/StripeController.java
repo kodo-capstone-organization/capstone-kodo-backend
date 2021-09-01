@@ -1,5 +1,6 @@
 package com.spring.kodo.controller;
 
+import com.spring.kodo.restentity.StripePaymentReq;
 import com.spring.kodo.service.AccountService;
 import com.spring.kodo.service.StripeService;
 import com.spring.kodo.util.exception.AccountNotFoundException;
@@ -10,10 +11,7 @@ import com.stripe.model.PaymentIntent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
@@ -29,7 +27,7 @@ public class StripeController
     StripeService stripeService;
 
     @PostMapping("/createStripeAccount")
-    public ResponseEntity createStripeAccount(@RequestPart(name="accountId", required=true) Long accountId)
+    public ResponseEntity createStripeAccount(@RequestParam(name="accountId", required=true) Long accountId)
     {
         try
         {
@@ -45,20 +43,19 @@ public class StripeController
         catch (AccountNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        } catch (StripeException e)
+        } catch (StripeException ex)
         {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error with Stripe Usage");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
     }
 
-    @PostMapping("/createPaymentIntent")
-    public ResponseEntity createPaymentIntent(@RequestPart(name="tutorStripeAccountId", required=true) String tutorStripeAccountId,
-                                              @RequestPart(name="amount", required=true) BigDecimal amount)
+    @PostMapping("/createStripeSession")
+    public ResponseEntity createStripeSession(@RequestPart(name="stripePaymentReq", required=true) StripePaymentReq stripePaymentReq)
     {
         try
         {
-            PaymentIntent paymentIntent = this.stripeService.createPaymentIntent(tutorStripeAccountId, amount);
-            return ResponseEntity.status(HttpStatus.OK).body(paymentIntent.getClientSecret());
+            String url = this.stripeService.createStripeSession(stripePaymentReq);
+            return ResponseEntity.status(HttpStatus.OK).body(url);
         } catch (StripeException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error with Stripe Usage");
         }
