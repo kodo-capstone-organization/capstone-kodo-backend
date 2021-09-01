@@ -83,7 +83,7 @@ public class DatabaseConfig
     private final Integer STUDENT_COUNT = 50;
     private final Integer PREFIXED_STUDENT_COUNT = 2;
 
-    private final Integer LESSON_COUNT = 5;
+    private final Integer LESSON_COUNT = 1;
     private final Integer QUIZ_QUESTION_COUNT = 5;
     private final Integer QUIZ_QUESTION_OPTION_COUNT = 4;
     private final Integer STUDENT_ATTEMPT_COUNT = 3;

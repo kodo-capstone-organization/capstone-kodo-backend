@@ -28,7 +28,6 @@ public class ForumPost
     @OneToOne(optional = true, targetEntity = ForumPost.class, fetch = FetchType.LAZY)
     private ForumPost reply;
 
-    @JsonBackReference
     @ManyToOne(optional = false)
     private Account account;
 
