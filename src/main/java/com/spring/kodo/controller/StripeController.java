@@ -56,8 +56,8 @@ public class StripeController
         {
             String url = this.stripeService.createStripeSession(stripePaymentReq);
             return ResponseEntity.status(HttpStatus.OK).body(url);
-        } catch (StripeException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error with Stripe Usage");
+        } catch (StripeException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
     }
 }
