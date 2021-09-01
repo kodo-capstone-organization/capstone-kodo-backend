@@ -12,4 +12,6 @@ public interface StudentAttemptService
     StudentAttempt getStudentAttemptByStudentAttemptId(Long studentAttemptId) throws StudentAttemptNotFoundException;
 
     List<StudentAttempt> getAllStudentAttempts();
+
+    Long deleteStudentAttemptByStudentAttemptId(Long studentAttemptId) throws StudentAttemptNotFoundException;
 }

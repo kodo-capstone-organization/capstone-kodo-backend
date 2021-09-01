@@ -107,4 +107,13 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
     {
         return studentAttemptRepository.findAll();
     }
+
+    @Override
+    public Long deleteStudentAttemptByStudentAttemptId(Long studentAttemptId) throws StudentAttemptNotFoundException
+    {
+        StudentAttempt studentAttempt = getStudentAttemptByStudentAttemptId(studentAttemptId);
+        studentAttemptRepository.delete(studentAttempt);
+
+        return studentAttemptId;
+    }
 }

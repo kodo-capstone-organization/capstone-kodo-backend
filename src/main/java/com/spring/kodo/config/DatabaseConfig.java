@@ -11,7 +11,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 
+import javax.persistence.EntityManager;
+import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -188,6 +192,7 @@ public class DatabaseConfig
         int quizQuestionOptionIndex = 0;
         int multimediaIndex = 0;
 
+        Account tutor;
         Account student;
         Course course;
         Tag tag;
@@ -208,15 +213,19 @@ public class DatabaseConfig
                 && quizQuestionOptionIndex < quizQuestionOptions.size()
                 && multimediaIndex < multimedias.size())
         {
+            tutor = accounts.get(getRandomNumber(TUTOR_FIRST_INDEX, TUTOR_LAST_INDEX));
             course = courses.get(courseIndex++);
             tag = tags.get(tagIndex++);
 
             // Course Creation
-            courseService.createNewCourse(
+            course = courseService.createNewCourse(
                     course,
-                    accounts.get(getRandomNumber(TUTOR_FIRST_INDEX, TUTOR_LAST_INDEX)).getAccountId(),
+                    tutor.getAccountId(),
                     Arrays.asList(tag.getTitle())
             );
+
+            // Link Account - Course
+            tutor = accountService.addCourseToAccount(tutor, course);
 
             for (int i = 0; i < LESSON_COUNT; i++, lessonIndex++, quizIndex++, multimediaIndex++)
             {

@@ -38,7 +38,6 @@ public class Course
     @Size(min = 0, max = 512)
     private String bannerUrl;
 
-    @JsonBackReference
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Account tutor;

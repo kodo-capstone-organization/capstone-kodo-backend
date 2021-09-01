@@ -85,7 +85,6 @@ public class Account
     )
     private List<EnrolledCourse> enrolledCourses;
 
-    @JsonManagedReference
     @OneToMany(targetEntity = Course.class, mappedBy = "tutor", fetch = FetchType.LAZY)
     private List<Course> courses;
 

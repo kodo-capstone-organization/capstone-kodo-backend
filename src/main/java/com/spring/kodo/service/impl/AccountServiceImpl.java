@@ -34,14 +34,19 @@ public class AccountServiceImpl implements AccountService
 
     @Autowired
     private TagService tagService;
+
     @Autowired
     private EnrolledCourseService enrolledCourseService;
+
     @Autowired
     private CourseService courseService;
+
     @Autowired
     private ForumThreadService forumThreadService;
+
     @Autowired
     private ForumPostService forumPostService;
+
     @Autowired
     private StudentAttemptService studentAttemptService;
 
@@ -312,117 +317,271 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
-    public Account addEnrolledCourseToAccount(Account account, EnrolledCourse enrolledCourse) throws AccountNotFoundException, EnrolledCourseNotFoundException, UpdateAccountException
+    public Account addEnrolledCourseToAccount(Account account, EnrolledCourse enrolledCourse) throws UpdateAccountException, AccountNotFoundException, EnrolledCourseNotFoundException
     {
-
-        account = getAccountByAccountId(account.getAccountId());
-        enrolledCourse = enrolledCourseService.getEnrolledCourseByEnrolledCourseId(enrolledCourse.getEnrolledCourseId());
-
-        if (!account.getEnrolledCourses().contains(enrolledCourse))
+        if (account != null)
         {
-            account.getEnrolledCourses().add(enrolledCourse);
+            if (account.getAccountId() != null)
+            {
+                account = getAccountByAccountId(account.getAccountId());
+                if (enrolledCourse != null)
+                {
+                    if (enrolledCourse.getEnrolledCourseId() != null)
+                    {
+                        enrolledCourse = enrolledCourseService.getEnrolledCourseByEnrolledCourseId(enrolledCourse.getEnrolledCourseId());
+
+                        if (!account.getEnrolledCourses().contains(enrolledCourse))
+                        {
+                            account.getEnrolledCourses().add(enrolledCourse);
+
+                            accountRepository.save(account);
+                            return account;
+                        }
+                        else
+                        {
+                            throw new UpdateAccountException("Account with ID " + account.getAccountId() + " already contains EnrolledCourse with ID " + enrolledCourse.getEnrolledCourseId());
+                        }
+                    }
+                    else
+                    {
+                        throw new UpdateAccountException("EnrolledCourse ID cannot be null");
+                    }
+                }
+                else
+                {
+                    throw new UpdateAccountException("EnrolledCourse cannot be null");
+                }
+            }
+            else
+            {
+                throw new UpdateAccountException("Account ID cannot be null");
+            }
         }
         else
         {
-            throw new UpdateAccountException("Unable to add enrolled course for course: " + enrolledCourse.getParentCourse() +
-                    " to account with ID: " + account.getAccountId() + " as this account is already enrolled in this course");
+            throw new UpdateAccountException("Account cannot be null");
         }
-
-        accountRepository.saveAndFlush(account);
-        return account;
     }
 
     @Override
-    public Account addCourseToAccount(Account account, Course course) throws AccountNotFoundException, UpdateAccountException, CourseNotFoundException
+    public Account addCourseToAccount(Account account, Course course) throws UpdateAccountException, AccountNotFoundException, CourseNotFoundException
     {
-
-        // BIDRECTIONAL!!!
-        account = getAccountByAccountId(account.getAccountId());
-        course = courseService.getCourseByCourseId(course.getCourseId());
-
-        if (!account.getCourses().contains(course))
+        if (account != null)
         {
-            account.getCourses().add(course);
-            course.setTutor(account);
+            if (account.getAccountId() != null)
+            {
+                account = getAccountByAccountId(account.getAccountId());
+                if (course != null)
+                {
+                    if (course.getCourseId() != null)
+                    {
+                        course = courseService.getCourseByCourseId(course.getCourseId());
+
+                        if (!account.getCourses().contains(course))
+                        {
+                            account.getCourses().add(course);
+
+                            accountRepository.save(account);
+                            return account;
+                        }
+                        else
+                        {
+                            throw new UpdateAccountException("Account with ID " + account.getAccountId() + " already contains Course with ID " + course.getCourseId());
+                        }
+                    }
+                    else
+                    {
+                        throw new UpdateAccountException("Course ID cannot be null");
+                    }
+                }
+                else
+                {
+                    throw new UpdateAccountException("Course cannot be null");
+                }
+            }
+            else
+            {
+                throw new UpdateAccountException("Account ID cannot be null");
+            }
         }
         else
         {
-            throw new UpdateAccountException("Unable to add course: " + course.getName() +
-                    " to tutor with account ID: " + account.getAccountId() + " as this account is already the tutor of this course");
+            throw new UpdateAccountException("Account cannot be null");
         }
-
-        accountRepository.saveAndFlush(account);
-        courseRepository.saveAndFlush(course);
-
-        return account;
     }
 
     @Override
-    public Account addForumThreadToAccount(Account account, ForumThread forumThread) throws AccountNotFoundException, UpdateAccountException, ForumThreadNotFoundException
+    public Account addForumThreadToAccount(Account account, ForumThread forumThread) throws UpdateAccountException, AccountNotFoundException, ForumThreadNotFoundException
     {
-        account = getAccountByAccountId(account.getAccountId());
-        forumThread = forumThreadService.getForumThreadByForumThreadId(forumThread.getForumThreadId());
-
-        if (!account.getForumThreads().contains(forumThread))
+        if (account != null)
         {
-            account.getForumThreads().add(forumThread);
+            if (account.getAccountId() != null)
+            {
+                account = getAccountByAccountId(account.getAccountId());
+                if (forumThread != null)
+                {
+                    if (forumThread.getForumThreadId() != null)
+                    {
+                        forumThread = forumThreadService.getForumThreadByForumThreadId(forumThread.getForumThreadId());
+
+                        if (!account.getForumThreads().contains(forumThread))
+                        {
+                            account.getForumThreads().add(forumThread);
+
+                            accountRepository.save(account);
+                            return account;
+                        }
+                        else
+                        {
+                            throw new UpdateAccountException("Account with ID " + account.getAccountId() + " already contains ForumThread with ID " + forumThread.getForumThreadId());
+                        }
+                    }
+                    else
+                    {
+                        throw new UpdateAccountException("ForumThread ID cannot be null");
+                    }
+                }
+                else
+                {
+                    throw new UpdateAccountException("ForumThread cannot be null");
+                }
+            }
+            else
+            {
+                throw new UpdateAccountException("Account ID cannot be null");
+            }
         }
         else
         {
-            throw new UpdateAccountException("Forum thread is already associated to account");
+            throw new UpdateAccountException("Account cannot be null");
         }
-
-        accountRepository.saveAndFlush(account);
-        return account;
     }
 
     @Override
-    public Account addForumPostToAccount(Account account, ForumPost forumPost) throws AccountNotFoundException, ForumPostNotFoundException, UpdateAccountException
+    public Account addForumPostToAccount(Account account, ForumPost forumPost) throws UpdateAccountException, AccountNotFoundException, ForumPostNotFoundException
     {
-        account = getAccountByAccountId(account.getAccountId());
-        forumPost = forumPostService.getForumPostByForumPostId(forumPost.getForumPostId());
-
-        if (!account.getForumPosts().contains(forumPost))
+        if (account != null)
         {
-            account.getForumPosts().add(forumPost);
-            forumPost.setAccount(account);
+            if (account.getAccountId() != null)
+            {
+                account = getAccountByAccountId(account.getAccountId());
+                if (forumPost != null)
+                {
+                    if (forumPost.getForumPostId() != null)
+                    {
+                        forumPost = forumPostService.getForumPostByForumPostId(forumPost.getForumPostId());
+
+                        if (!account.getForumPosts().contains(forumPost))
+                        {
+                            account.getForumPosts().add(forumPost);
+
+                            accountRepository.save(account);
+                            return account;
+                        }
+                        else
+                        {
+                            throw new UpdateAccountException("Account with ID " + account.getAccountId() + " already contains ForumPost with ID " + forumPost.getForumPostId());
+                        }
+                    }
+                    else
+                    {
+                        throw new UpdateAccountException("ForumPost ID cannot be null");
+                    }
+                }
+                else
+                {
+                    throw new UpdateAccountException("ForumPost cannot be null");
+                }
+            }
+            else
+            {
+                throw new UpdateAccountException("Account ID cannot be null");
+            }
         }
         else
         {
-            throw new UpdateAccountException("Unable to add forumPost: " + forumPost.getForumPostId() +
-                    " to account account ID: " + account.getAccountId() + " as this account is already the creator of this post");
+            throw new UpdateAccountException("Account cannot be null");
         }
-
-        accountRepository.saveAndFlush(account);
-        forumPostRepository.saveAndFlush(forumPost);
-
-        return account;
     }
 
     @Override
-    public Account addStudentAttemptToAccount(Account account, StudentAttempt studentAttempt) throws AccountNotFoundException, StudentAttemptNotFoundException, UpdateAccountException
+    public Account addStudentAttemptToAccount(Account account, StudentAttempt studentAttempt) throws UpdateAccountException, AccountNotFoundException, StudentAttemptNotFoundException
     {
-
-        account = getAccountByAccountId(account.getAccountId());
-        studentAttempt = studentAttemptService.getStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId());
-
-        if (account.getStudentAttempts().contains(studentAttempt))
+        if (account != null)
         {
-            throw new UpdateAccountException("This attempt has already been recorded.");
-        }
-        else if (accountRepository.getNumberOfStudentAttemptsByStudentForQuiz(studentAttempt.getQuiz().getContentId(), account.getAccountId()) >= studentAttempt.getQuiz().getMaxAttemptsPerStudent())
-        {
-            studentAttemptRepository.delete(studentAttempt); // clean up
-            throw new UpdateAccountException("This account has ran out of attempts for quiz: " + studentAttempt.getQuiz().getName() + ". Attempt is thus deleted");
+            if (account.getAccountId() != null)
+            {
+                account = getAccountByAccountId(account.getAccountId());
+                if (studentAttempt != null)
+                {
+                    if (studentAttempt.getStudentAttemptId() != null)
+                    {
+                        studentAttempt = studentAttemptService.getStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId());
+
+                        if (!account.getStudentAttempts().contains(studentAttempt))
+                        {
+                            if (accountRepository.getNumberOfStudentAttemptsByStudentForQuiz(studentAttempt.getQuiz().getContentId(), account.getAccountId()) < studentAttempt.getQuiz().getMaxAttemptsPerStudent())
+                            {
+                                account.getStudentAttempts().add(studentAttempt);
+
+                                accountRepository.save(account);
+                                return account;
+                            }
+                            else
+                            {
+                                studentAttemptService.deleteStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId()); // Needs work
+                                throw new UpdateAccountException("This account has ran out of attempts for quiz: " + studentAttempt.getQuiz().getName() + ". Attempt is thus deleted");
+                            }
+                        }
+                        else
+                        {
+                            throw new UpdateAccountException("Account with ID " + account.getAccountId() + " already contains StudentAttempt with ID " + studentAttempt.getStudentAttemptId());
+                        }
+                    }
+                    else
+                    {
+                        throw new UpdateAccountException("StudentAttempt ID cannot be null");
+                    }
+                }
+                else
+                {
+                    throw new UpdateAccountException("StudentAttempt cannot be null");
+                }
+            }
+            else
+            {
+                throw new UpdateAccountException("Account ID cannot be null");
+            }
         }
         else
         {
-            account.getStudentAttempts().add(studentAttempt);
+            throw new UpdateAccountException("Account cannot be null");
         }
-
-        accountRepository.saveAndFlush(account);
-        return account;
     }
+
+//    @Override
+//    public Account addStudentAttemptToAccount(Account account, StudentAttempt studentAttempt) throws AccountNotFoundException, StudentAttemptNotFoundException, UpdateAccountException
+//    {
+//        account = getAccountByAccountId(account.getAccountId());
+//        studentAttempt = studentAttemptService.getStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId());
+//
+//        if (account.getStudentAttempts().contains(studentAttempt))
+//        {
+//            throw new UpdateAccountException("This attempt has already been recorded.");
+//        }
+//        else if (accountRepository.getNumberOfStudentAttemptsByStudentForQuiz(studentAttempt.getQuiz().getContentId(), account.getAccountId()) >= studentAttempt.getQuiz().getMaxAttemptsPerStudent())
+//        {
+//            studentAttemptRepository.delete(studentAttempt); // clean up
+//            throw new UpdateAccountException("This account has ran out of attempts for quiz: " + studentAttempt.getQuiz().getName() + ". Attempt is thus deleted");
+//        }
+//        else
+//        {
+//            account.getStudentAttempts().add(studentAttempt);
+//        }
+//
+//        accountRepository.saveAndFlush(account);
+//        return account;
+//    }
 
     @Override
     public Long deactivateAccount(Long deactivatingAccountId, Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException
