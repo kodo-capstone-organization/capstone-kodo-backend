@@ -224,9 +224,11 @@ public class DatabaseConfig
                 quiz = quizzes.get(quizIndex);
                 multimedia = multimedias.get(multimediaIndex);
 
-                // Lesson Creation (To Split)
-                // Link Course - Lesson (To Split)
-                courseService.addLessonToCourse(course, lesson);
+                // Lesson Creation
+                lesson = lessonService.createNewLesson(lesson);
+
+                // Link Course - Lesson
+                course = courseService.addLessonToCourse(course, lesson);
 
                 for (int j = 0; j < QUIZ_QUESTION_COUNT; j++, quizQuestionIndex++, quizQuestionOptionIndex += QUIZ_QUESTION_OPTION_COUNT)
                 {
@@ -245,7 +247,7 @@ public class DatabaseConfig
                 }
 
                 // Link Lesson - Quiz
-                lessonService.addContentToLesson(lesson, quiz);
+                lesson = lessonService.addContentToLesson(lesson, quiz);
 
                 // StudentAttempt Creation
                 for (int j = 0; j < STUDENT_ATTEMPT_COUNT; j++)
@@ -256,13 +258,13 @@ public class DatabaseConfig
                     enrolledCourse = enrolledCourseService.createNewEnrolledCourse(student.getAccountId(), course.getCourseId());
 
                     // Link Student (Account) - EnrolledCourse
-                    accountService.addEnrolledCourseToAccount(student, enrolledCourse);
+                    student = accountService.addEnrolledCourseToAccount(student, enrolledCourse);
 
                     // Create StudentAttempt
                     StudentAttempt studentAttempt = studentAttemptService.createNewStudentAttempt(quiz.getContentId());
 
                     // Link Student (Account) - StudentAttempt
-                    accountService.addStudentAttemptToAccount(student, studentAttempt);
+                    student = accountService.addStudentAttemptToAccount(student, studentAttempt);
 
                     // StudentAttemptQuestion Creation
                     for (StudentAttemptQuestion studentAttemptQuestion : studentAttempt.getStudentAttemptQuestions())
@@ -278,14 +280,14 @@ public class DatabaseConfig
                         studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption.getQuizQuestionOptionId());
 
                         // Link StudentAttemptQuestion - StudentAttemptAnswer
-                        studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
+                        studentAttemptQuestion = studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
                     }
 
                     // CompletedLesson Creation
                     completedLesson = completedLessonService.createNewCompletedLesson(lesson.getLessonId());
 
                     // Link EnrolledCourse - CompletedLesson
-                    enrolledCourseService.addCompletedLessonToEnrolledCourse(enrolledCourse, completedLesson);
+                    enrolledCourse = enrolledCourseService.addCompletedLessonToEnrolledCourse(enrolledCourse, completedLesson);
                 }
 
                 // Multimedia Creation

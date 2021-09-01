@@ -161,26 +161,100 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
-    public Course addLessonToCourse(Course course, Lesson lesson) throws CourseNotFoundException, InputDataValidationException, UpdateCourseException, UnknownPersistenceException
+    public Course addTagToCourse(Course course, Tag tag) throws UpdateCourseException, CourseNotFoundException, TagNotFoundException
     {
-        if (course != null && !course.getLessons().contains(lesson))
+        if (course != null)
         {
-            lesson = lessonService.createNewLesson(lesson);
+            if (course.getCourseId() != null)
+            {
+                course = getCourseByCourseId(course.getCourseId());
+                if (tag != null)
+                {
+                    if (tag.getTagId() != null)
+                    {
+                        tag = tagService.getTagByTagId(tag.getTagId());
 
-            course = getCourseByCourseId(course.getCourseId());
-            course.getLessons().add(lesson);
+                        if (!course.getCourseTags().contains(tag))
+                        {
+                            course.getCourseTags().add(tag);
 
-            courseRepository.saveAndFlush(course);
-            return course;
+                            courseRepository.save(course);
+                            return course;
+                        }
+                        else
+                        {
+                            throw new UpdateCourseException("Course with ID " + course.getCourseId() + " already contains Tag with ID " + tag.getTagId());
+                        }
+                    }
+                    else
+                    {
+                        throw new UpdateCourseException("Tag ID cannot be null");
+                    }
+                }
+                else
+                {
+                    throw new UpdateCourseException("Tag cannot be null");
+                }
+            }
+            else
+            {
+                throw new UpdateCourseException("Course ID cannot be null");
+            }
         }
         else
         {
-            throw new UpdateCourseException("Unable to add lesson with name: " + lesson.getName() +
-                    " to course with ID: " + course.getCourseId() + " as tag is already linked to this course");
+            throw new UpdateCourseException("Course cannot be null");
         }
     }
 
-    private Course setTutorToCourse(Course course, Long tutorId) throws CourseNotFoundException, AccountNotFoundException, UpdateCourseException
+    @Override
+    public Course addLessonToCourse(Course course, Lesson lesson) throws UpdateCourseException, CourseNotFoundException, LessonNotFoundException
+    {
+        if (course != null)
+        {
+            if (course.getCourseId() != null)
+            {
+                course = getCourseByCourseId(course.getCourseId());
+                if (lesson != null)
+                {
+                    if (lesson.getLessonId() != null)
+                    {
+                        lesson = lessonService.getLessonByLessonId(lesson.getLessonId());
+
+                        if (!course.getLessons().contains(lesson))
+                        {
+                            course.getLessons().add(lesson);
+
+                            courseRepository.save(course);
+                            return course;
+                        }
+                        else
+                        {
+                            throw new UpdateCourseException("Course with ID " + course.getCourseId() + " already contains Lesson with ID " + lesson.getLessonId());
+                        }
+                    }
+                    else
+                    {
+                        throw new UpdateCourseException("Lesson ID cannot be null");
+                    }
+                }
+                else
+                {
+                    throw new UpdateCourseException("Lesson cannot be null");
+                }
+            }
+            else
+            {
+                throw new UpdateCourseException("Course ID cannot be null");
+            }
+        }
+        else
+        {
+            throw new UpdateCourseException("Course cannot be null");
+        }
+    }
+
+    private Course setTutorToCourse(Course course, Long tutorId) throws AccountNotFoundException, UpdateCourseException
     {
         Account tutor = accountService.getAccountByAccountId(tutorId);
 
