@@ -27,6 +27,11 @@ public class EnrolledCourse
 
     @OneToMany(targetEntity = CompletedLesson.class, fetch = FetchType.LAZY)
     @JoinColumn
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "enrolled_course_id", referencedColumnName="enrolledCourseId"),
+            inverseJoinColumns = @JoinColumn(name = "completed_lesson_id", referencedColumnName = "completedLessonId"),
+            uniqueConstraints = @UniqueConstraint(columnNames = { "enrolled_course_id", "completed_lesson_id" })
+    )
     private List<CompletedLesson> completedLessons;
 
     public EnrolledCourse()

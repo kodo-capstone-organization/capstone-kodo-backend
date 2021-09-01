@@ -37,7 +37,7 @@ public class QuizServiceImpl implements QuizService
     }
 
     @Override
-    public Quiz createNewQuiz(Quiz newQuiz) throws UnknownPersistenceException, CreateQuizException, InputDataValidationException
+    public Quiz createNewQuiz(Quiz newQuiz) throws UnknownPersistenceException, CreateNewQuizException, InputDataValidationException
     {
         try
         {
@@ -57,7 +57,7 @@ public class QuizServiceImpl implements QuizService
             }
             else
             {
-                throw new CreateQuizException("New Quiz cannot be null");
+                throw new CreateNewQuizException("New Quiz cannot be null");
             }
         }
         catch (DataAccessException ex)

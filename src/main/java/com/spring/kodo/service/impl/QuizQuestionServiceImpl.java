@@ -43,7 +43,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService
     }
 
     @Override
-    public QuizQuestion createNewQuizQuestion(QuizQuestion newQuizQuestion, Long quizId) throws CreateQuizQuestionException, InputDataValidationException, UnknownPersistenceException
+    public QuizQuestion createNewQuizQuestion(QuizQuestion newQuizQuestion, Long quizId) throws CreateNewQuizQuestionException, InputDataValidationException, UnknownPersistenceException
     {
         try
         {
@@ -60,7 +60,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService
                 }
                 catch (QuizNotFoundException ex)
                 {
-                    throw new CreateQuizQuestionException(ex.getMessage());
+                    throw new CreateNewQuizQuestionException(ex.getMessage());
                 }
             }
             else

@@ -18,6 +18,9 @@ public class StudentAttempt
     @NotNull
     private LocalDateTime dateTimeOfAttempt;
 
+    @Column(nullable = true)
+    private LocalDateTime dateTimeOfCompletion;
+
     @ManyToOne(optional = false)
     private Quiz quiz;
 
@@ -51,6 +54,16 @@ public class StudentAttempt
         this.dateTimeOfAttempt = dateTimeOfAttempt;
     }
 
+    public LocalDateTime getDateTimeOfCompletion()
+    {
+        return dateTimeOfCompletion;
+    }
+
+    public void setDateTimeOfCompletion(LocalDateTime dateTimeOfCompletion)
+    {
+        this.dateTimeOfCompletion = dateTimeOfCompletion;
+    }
+
     public Quiz getQuiz()
     {
         return quiz;
@@ -77,6 +90,7 @@ public class StudentAttempt
         return "StudentAttempt{" +
                 "studentAttemptId=" + studentAttemptId +
                 ", dateTimeOfAttempt=" + dateTimeOfAttempt +
+                ", dateTimeOfCompletion=" + dateTimeOfCompletion +
                 ", quiz=" + quiz +
                 ", studentAttemptQuestions=" + studentAttemptQuestions +
                 '}';

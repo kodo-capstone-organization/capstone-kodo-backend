@@ -153,7 +153,7 @@ public class LessonServiceImpl implements LessonService
                 {
                     content = quizService.createNewQuiz((Quiz) content);
                 }
-                catch (CreateQuizException | InputDataValidationException ex)
+                catch (CreateNewQuizException | InputDataValidationException ex)
                 {
                     throw new UpdateContentException(ex.getMessage());
                 }

@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface QuizQuestionService
 {
-    QuizQuestion createNewQuizQuestion(QuizQuestion newQuizQuestion, Long quizId) throws CreateQuizQuestionException, InputDataValidationException, UnknownPersistenceException;
+    QuizQuestion createNewQuizQuestion(QuizQuestion newQuizQuestion, Long quizId) throws CreateNewQuizQuestionException, InputDataValidationException, UnknownPersistenceException;
 
     QuizQuestion getQuizQuestionByQuizQuestionId(Long quizId) throws QuizQuestionNotFoundException;
 

@@ -1,15 +1,13 @@
 package com.spring.kodo.service;
 
 import com.spring.kodo.entity.CompletedLesson;
-import com.spring.kodo.util.exception.CompletedLessonNotFoundException;
-import com.spring.kodo.util.exception.InputDataValidationException;
-import com.spring.kodo.util.exception.LessonNotFoundException;
+import com.spring.kodo.util.exception.*;
 
 import java.util.List;
 
 public interface CompletedLessonService
 {
-    CompletedLesson createNewCompletedLesson(CompletedLesson completedLesson) throws InputDataValidationException;
+    CompletedLesson createNewCompletedLesson(Long parentLessonId) throws InputDataValidationException, UnknownPersistenceException, CreateNewCompletedLessonException, LessonNotFoundException;
 
     CompletedLesson getCompletedLessonByCompletedLessonId(Long completedLessonId) throws CompletedLessonNotFoundException;
 

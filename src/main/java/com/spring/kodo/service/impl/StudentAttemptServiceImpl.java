@@ -43,7 +43,7 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
     }
 
     @Override
-    public StudentAttempt createNewStudentAttempt(Long quizId) throws CreateStudentAttemptException, QuizNotFoundException, InputDataValidationException, CreateStudentAttemptQuestionException, QuizQuestionNotFoundException, UnknownPersistenceException
+    public StudentAttempt createNewStudentAttempt(Long quizId) throws CreateNewStudentAttemptException, QuizNotFoundException, InputDataValidationException, CreateNewStudentAttemptQuestionException, QuizQuestionNotFoundException, UnknownPersistenceException
     {
         try
         {
@@ -72,7 +72,7 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
                 }
                 else
                 {
-                    throw new CreateStudentAttemptException("Quiz ID cannot be null");
+                    throw new CreateNewStudentAttemptException("Quiz ID cannot be null");
                 }
             }
             else

@@ -37,7 +37,7 @@ public class StudentAttemptAnswerServiceImpl implements StudentAttemptAnswerServ
     }
 
     @Override
-    public StudentAttemptAnswer createNewStudentAttemptAnswer(Long quizQuestionOptionId) throws InputDataValidationException, CreateStudentAttemptAnswerException, QuizQuestionOptionNotFoundException, UnknownPersistenceException
+    public StudentAttemptAnswer createNewStudentAttemptAnswer(Long quizQuestionOptionId) throws InputDataValidationException, CreateNewStudentAttemptAnswerException, QuizQuestionOptionNotFoundException, UnknownPersistenceException
     {
         try
         {
@@ -57,7 +57,7 @@ public class StudentAttemptAnswerServiceImpl implements StudentAttemptAnswerServ
                 }
                 else
                 {
-                    throw new CreateStudentAttemptAnswerException("QuizQuestionOptionId cannot be null");
+                    throw new CreateNewStudentAttemptAnswerException("QuizQuestionOptionId cannot be null");
                 }
             }
             else

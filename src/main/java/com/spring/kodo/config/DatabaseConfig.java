@@ -24,6 +24,9 @@ import java.util.stream.Collectors;
 public class DatabaseConfig
 {
     @Autowired
+    private CompletedLessonService completedLessonService;
+
+    @Autowired
     private EnrolledCourseService enrolledCourseService;
 
     @Autowired
@@ -185,13 +188,16 @@ public class DatabaseConfig
         int quizQuestionOptionIndex = 0;
         int multimediaIndex = 0;
 
+        Account student;
         Course course;
         Tag tag;
         Lesson lesson;
         Quiz quiz;
         QuizQuestion quizQuestion;
         QuizQuestionOption quizQuestionOption;
+        EnrolledCourse enrolledCourse;
         StudentAttemptAnswer studentAttemptAnswer;
+        CompletedLesson completedLesson;
         Multimedia multimedia;
 
         while (courseIndex < courses.size()
@@ -218,42 +224,47 @@ public class DatabaseConfig
                 quiz = quizzes.get(quizIndex);
                 multimedia = multimedias.get(multimediaIndex);
 
-                // Lesson Creation
+                // Lesson Creation (To Split)
+                // Link Course - Lesson (To Split)
                 courseService.addLessonToCourse(course, lesson);
 
-                // Quiz Creation
-                lessonService.addContentToLesson(lesson, quiz);
-
-                // QuizQuestion Creation
                 for (int j = 0; j < QUIZ_QUESTION_COUNT; j++, quizQuestionIndex++, quizQuestionOptionIndex += QUIZ_QUESTION_OPTION_COUNT)
                 {
+                    // Link Quiz - QuizQuestion
                     quizService.addQuizQuestionToQuiz(
+                            // Quiz Creation
                             quizService.createNewQuiz(quiz),
+                            // Link QuizQuestion - QuizQuestionOptions
                             quizQuestionService.addQuizQuestionOptionsToQuizQuestion(
+                                    // QuizQuestion Creation
                                     quizQuestionService.createNewQuizQuestion(quizQuestions.get(quizQuestionIndex), quiz.getContentId()),
+                                    // QuizQuestionOptions Creation
                                     quizQuestionOptionService.createNewQuizQuestionOptions(
                                             quizQuestionOptions.subList(quizQuestionOptionIndex, quizQuestionOptionIndex + QUIZ_QUESTION_OPTION_COUNT)
                                     )));
                 }
 
+                // Link Lesson - Quiz
+                lessonService.addContentToLesson(lesson, quiz);
+
                 // StudentAttempt Creation
                 for (int j = 0; j < STUDENT_ATTEMPT_COUNT; j++)
                 {
-                    Account student = accounts.get(getRandomNumber(STUDENT_FIRST_INDEX, STUDENT_LAST_INDEX));
+                    student = accounts.get(getRandomNumber(STUDENT_FIRST_INDEX, STUDENT_LAST_INDEX));
 
-                    try
-                    {
-                        EnrolledCourse enrolledCourse = enrolledCourseService.createNewEnrolledCourse(student.getAccountId(), course.getCourseId());
+                    // Create EnrolledCourse
+                    enrolledCourse = enrolledCourseService.createNewEnrolledCourse(student.getAccountId(), course.getCourseId());
 
-                        accountService.addEnrolledCourseToAccount(student, enrolledCourse);
-                    }
-                    catch (InputDataValidationException | CourseNotFoundException | AccountNotFoundException | CreateNewEnrolledCourseException ex)
-                    {
-                    }
+                    // Link Student (Account) - EnrolledCourse
+                    accountService.addEnrolledCourseToAccount(student, enrolledCourse);
 
+                    // Create StudentAttempt
                     StudentAttempt studentAttempt = studentAttemptService.createNewStudentAttempt(quiz.getContentId());
+
+                    // Link Student (Account) - StudentAttempt
                     accountService.addStudentAttemptToAccount(student, studentAttempt);
 
+                    // StudentAttemptQuestion Creation
                     for (StudentAttemptQuestion studentAttemptQuestion : studentAttempt.getStudentAttemptQuestions())
                     {
                         quizQuestion = studentAttemptQuestion.getQuizQuestion();
@@ -263,9 +274,18 @@ public class DatabaseConfig
                                         quizQuestion.getQuizQuestionOptions().size() - 1)
                         );
 
+                        // Create StudentAttemptAnswer
                         studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption.getQuizQuestionOptionId());
+
+                        // Link StudentAttemptQuestion - StudentAttemptAnswer
                         studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
                     }
+
+                    // CompletedLesson Creation
+                    completedLesson = completedLessonService.createNewCompletedLesson(lesson.getLessonId());
+
+                    // Link EnrolledCourse - CompletedLesson
+                    enrolledCourseService.addCompletedLessonToEnrolledCourse(enrolledCourse, completedLesson);
                 }
 
                 // Multimedia Creation
@@ -311,6 +331,9 @@ public class DatabaseConfig
 
         List<Long> studentAttemptAnswerIds = studentAttemptAnswerService.getAllStudentAttemptAnswers().stream().map(StudentAttemptAnswer::getStudentAttemptAnswerId).collect(Collectors.toList());
         System.out.println(">> Added StudentAttemptAnswers with studentAttemptIds: " + studentAttemptAnswerIds);
+
+        List<Long> completedLessonIds = completedLessonService.getAllCompletedLessons().stream().map(CompletedLesson::getCompletedLessonId).collect(Collectors.toList());
+        System.out.println(">> Added CompletedLessons with completedLessonIds: " + completedLessonIds);
     }
 
     private List<Account> addAccounts()
