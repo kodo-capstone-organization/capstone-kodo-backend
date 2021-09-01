@@ -329,7 +329,7 @@ public class DatabaseConfig
         accounts.add(new Account("tutor1", "password", "Tutor Trisha", "I am Tutor 1", "tutor1@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/18700b5a-4890-430f-9bab-1d312862c030.gif?generation=1630266710675423&alt=media", false));
         for (int i = PREFIXED_TUTOR_COUNT + 1; i <= TUTOR_COUNT; i++)
         {
-            accounts.add(new Account("tutor" + i, "password", "Tutor " + i, "I am Tutor " + i, "tutor" + i + "@gmail.com", "https://student" + i + ".com", false));
+            accounts.add(new Account("tutor" + i, "password", "Tutor " + i, "I am Tutor " + i, "tutor" + i + "@gmail.com", "https://tutor" + i + ".com", false));
         }
 
         return accounts;
