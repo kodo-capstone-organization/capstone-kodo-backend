@@ -254,6 +254,13 @@ public class CourseServiceImpl implements CourseService
         }
     }
 
+    @Override
+    public List<Course> searchCourseByKeyword(String keyword) {
+        List<Course> courses = courseRepository.findCourseByKeyword(keyword).get();
+        return courses;
+    }
+
+
     private Course setTutorToCourse(Course course, Long tutorId) throws AccountNotFoundException, UpdateCourseException
     {
         Account tutor = accountService.getAccountByAccountId(tutorId);
@@ -271,4 +278,5 @@ public class CourseServiceImpl implements CourseService
 
         return course;
     }
+
 }

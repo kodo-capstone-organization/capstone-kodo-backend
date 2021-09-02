@@ -32,4 +32,6 @@ public interface CourseService
     Course addTagToCourse(Course course, Tag tag) throws UpdateCourseException, CourseNotFoundException, TagNotFoundException;
 
     Course addLessonToCourse(Course course, Lesson lesson) throws UpdateCourseException, CourseNotFoundException, LessonNotFoundException;
+
+    List<Course> searchCourseByKeyword(String keyword);
 }
