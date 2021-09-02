@@ -26,7 +26,7 @@ public interface AccountRepository extends JpaRepository<Account, Long>
 
     Optional<Account> findByEmail(String email);
 
-    @Query(value = "SELECT * FROM Account a WHERE a.account_id IN (SELECT ac.account_id FROM Account_Courses AS ac WHERE ac.course_id = :courseId);", nativeQuery = true)
+    @Query(value = "SELECT * FROM Account a JOIN Account_Courses ac ON a.account_id = ac.account_id WHERE ac.course_id = :courseId", nativeQuery = true)
     Optional<Account> findByCourseId(@Param("courseId") Long courseId);
 
     // TODO check if legit works
