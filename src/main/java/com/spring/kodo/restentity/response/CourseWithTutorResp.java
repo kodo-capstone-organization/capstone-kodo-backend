@@ -9,6 +9,7 @@ import java.util.List;
 
 public class CourseWithTutorResp
 {
+    private Long courseId;
     private String name;
     private String description;
     private BigDecimal price;
@@ -21,8 +22,9 @@ public class CourseWithTutorResp
     {
     }
 
-    public CourseWithTutorResp(String name, String description, BigDecimal price, String bannerUrl, List<EnrolledCourse> enrollment, List<Tag> courseTags, Account tutor)
+    public CourseWithTutorResp(Long courseId, String name, String description, BigDecimal price, String bannerUrl, List<EnrolledCourse> enrollment, List<Tag> courseTags, Account tutor)
     {
+        this.courseId = courseId;
         this.name = name;
         this.description = description;
         this.price = price;
@@ -30,6 +32,14 @@ public class CourseWithTutorResp
         this.enrollment = enrollment;
         this.courseTags = courseTags;
         this.tutor = tutor;
+    }
+
+    public Long getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(Long courseId) {
+        this.courseId = courseId;
     }
 
     public String getName()

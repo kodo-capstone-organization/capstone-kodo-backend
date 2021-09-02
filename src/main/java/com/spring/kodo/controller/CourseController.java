@@ -52,6 +52,7 @@ public class CourseController
                 tutor = this.accountService.getAccountByCourseId(courseId);
 
                 courseWithTutorResp = new CourseWithTutorResp(
+                        course.getCourseId(),
                         course.getName(),
                         course.getDescription(),
                         course.getPrice(),
@@ -81,6 +82,7 @@ public class CourseController
             Account tutor = this.accountService.getAccountByCourseId(courseId);
 
             CourseWithTutorResp courseWithTutorResp = new CourseWithTutorResp(
+                    course.getCourseId(),
                     course.getName(),
                     course.getDescription(),
                     course.getPrice(),
