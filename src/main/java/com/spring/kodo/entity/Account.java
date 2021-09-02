@@ -18,7 +18,7 @@ import java.util.List;
 
 @Entity
 @Table
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "courses", "forumPosts"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "forumPosts"})
 public class Account
 {
     @Id
@@ -87,7 +87,12 @@ public class Account
     )
     private List<EnrolledCourse> enrolledCourses;
 
-    @OneToMany(targetEntity = Course.class, mappedBy = "tutor", fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = Course.class, fetch = FetchType.LAZY)
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "account_id", referencedColumnName="accountId"),
+            inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "courseId"),
+            uniqueConstraints = @UniqueConstraint(columnNames = { "account_id", "course_id" })
+    )
     private List<Course> courses;
 
     @OneToMany(targetEntity = ForumThread.class, fetch = FetchType.LAZY)

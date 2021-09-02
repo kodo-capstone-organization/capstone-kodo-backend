@@ -40,10 +40,6 @@ public class Course
     @Size(min = 0, max = 512)
     private String bannerUrl;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
-    private Account tutor;
-
     @OneToMany(targetEntity = EnrolledCourse.class, mappedBy = "parentCourse", fetch = FetchType.LAZY)
     private List<EnrolledCourse> enrollment;
 
@@ -146,16 +142,6 @@ public class Course
         this.bannerUrl = bannerUrl;
     }
 
-    public Account getTutor()
-    {
-        return tutor;
-    }
-
-    public void setTutor(Account tutor)
-    {
-        this.tutor = tutor;
-    }
-
     public List<EnrolledCourse> getEnrollment()
     {
         return enrollment;
@@ -205,7 +191,6 @@ public class Course
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", bannerUrl='" + bannerUrl + '\'' +
-                ", tutor=" + tutor +
                 ", enrollment=" + enrollment +
                 ", lessons=" + lessons +
                 ", courseTags=" + courseTags +
