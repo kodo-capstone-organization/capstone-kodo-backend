@@ -67,21 +67,21 @@ public class CourseServiceImpl implements CourseService
 //                {
 //                    newCourse = setTutorToCourse(newCourse, tutorId);
 
-                    // Process Tags
-                    if (tagTitles != null)
+                // Process Tags
+                if (tagTitles != null)
+                {
+                    for (String tagTitle : tagTitles)
                     {
-                        for (String tagTitle : tagTitles)
-                        {
-                            newCourse = addTagToCourse(newCourse, tagTitle);
-                        }
+                        newCourse = addTagToCourse(newCourse, tagTitle);
+                    }
 
-                        courseRepository.saveAndFlush(newCourse);
-                        return newCourse;
-                    }
-                    else
-                    {
-                        throw new CreateNewCourseException("TagTitles cannot be null");
-                    }
+                    courseRepository.saveAndFlush(newCourse);
+                    return newCourse;
+                }
+                else
+                {
+                    throw new CreateNewCourseException("TagTitles cannot be null");
+                }
 //                }
 //                else
 //                {
@@ -136,10 +136,21 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
-    public List<Course> getAllCoursesOfATutor(Long accountId) throws AccountNotFoundException
+    public List<Course> getAllCoursesByTagTitle(String tagTitle)
     {
-        Account account = accountService.getAccountByAccountId(accountId);
-        return account.getCourses();
+        return courseRepository.findCoursesByTagTitle(tagTitle);
+    }
+
+    @Override
+    public List<Course> getAllCoursesByKeyword(String keyword)
+    {
+        return courseRepository.findCoursesByKeyword(keyword);
+    }
+
+    @Override
+    public List<Course> getAllCoursesByTutorId(Long tutorId)
+    {
+        return courseRepository.findCoursesByTutorId(tutorId);
     }
 
     @Override
@@ -253,14 +264,6 @@ public class CourseServiceImpl implements CourseService
             throw new UpdateCourseException("Course cannot be null");
         }
     }
-
-    @Override
-    public List<Course> searchCourseByKeyword(String keyword) {
-        List<Course> courses = courseRepository.findCourseByKeyword(keyword).get();
-        return courses;
-    }
-
-
 
 //    private Course setTutorToCourse(Course course, Long tutorId) throws AccountNotFoundException, UpdateCourseException
 //    {

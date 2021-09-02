@@ -14,9 +14,12 @@ public interface CourseRepository extends JpaRepository<Course, Long>
 {
     Optional<Course> findByName(String name);
 
-    //@Query(value="SELECT * FROM Course c WHERE c.name LIKE %:keyword%", nativeQuery = true)
-    //@Query(value="select * from Users u where u.first_name like %:keyword% or u.last_name like %:keyword%", nativeQuery=true)
-    //List<UserEntity> findUsersByKeyword(@Param("keyword") String keyword);
     @Query("SELECT c FROM Course c WHERE c.name LIKE %:keyword%")
-    Optional<List<Course>> findCourseByKeyword(@Param("keyword") String keyword);
+    List<Course> findCoursesByKeyword(@Param("keyword") String keyword);
+
+    @Query(value = "SELECT * FROM Tag t JOIN Course_Course_Tags cct JOIN Course c ON t.tag_id = cct.tag_id AND c.course_id = cct.course_id WHERE t.title = :tagTitle", nativeQuery = true)
+    List<Course> findCoursesByTagTitle(@Param("tagTitle") String tagTitle);
+
+    @Query("SELECT a.courses FROM Account a WHERE a.accountId = :tutorId")
+    List<Course> findCoursesByTutorId(@Param("tutorId") Long tutorId);
 }
