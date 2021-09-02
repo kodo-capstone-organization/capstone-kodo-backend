@@ -136,20 +136,31 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
-    public List<Course> getAllCoursesByTagTitle(String tagTitle)
+    public List<Course> getAllCoursesByTagTitle(String tagTitle) throws TagNotFoundException
     {
+        tagService.getTagByTitle(tagTitle);
         return courseRepository.findCoursesByTagTitle(tagTitle);
     }
 
     @Override
-    public List<Course> getAllCoursesByKeyword(String keyword)
+    public List<Course> getAllCoursesByKeyword(String keyword) throws CourseWithKeywordNotFoundException
     {
-        return courseRepository.findCoursesByKeyword(keyword);
+        List<Course> courses = courseRepository.findCoursesByKeyword(keyword);
+
+        if (courses.size() > 0)
+        {
+            return courses;
+        }
+        else
+        {
+            throw new CourseWithKeywordNotFoundException("Courses with the keyword " + keyword + " cannot be found");
+        }
     }
 
     @Override
-    public List<Course> getAllCoursesByTutorId(Long tutorId)
+    public List<Course> getAllCoursesByTutorId(Long tutorId) throws AccountNotFoundException
     {
+        accountService.getAccountByAccountId(tutorId);
         return courseRepository.findCoursesByTutorId(tutorId);
     }
 

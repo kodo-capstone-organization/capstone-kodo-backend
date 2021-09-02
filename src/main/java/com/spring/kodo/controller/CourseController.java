@@ -98,14 +98,14 @@ public class CourseController
         }
     }
 
-    @GetMapping("/searchCourseByKeyword/{keyword}")
-    public List<Course> searchCourseByKeyword(@PathVariable String keyword)
+    @GetMapping("/getCourseByKeyword/{keyword}")
+    public List<Course> getCourseByKeyword(@PathVariable String keyword)
     {
         try
         {
             return this.courseService.getAllCoursesByKeyword(keyword);
         }
-        catch (Exception ex)
+        catch (CourseWithKeywordNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }

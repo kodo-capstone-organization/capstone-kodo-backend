@@ -25,11 +25,11 @@ public interface CourseService
 
     List<Course> getAllCourses();
 
-    List<Course> getAllCoursesByTagTitle(String tagTitle);
+    List<Course> getAllCoursesByTagTitle(String tagTitle) throws TagNotFoundException;
 
-    List<Course> getAllCoursesByKeyword(String keyword);
+    List<Course> getAllCoursesByKeyword(String keyword) throws CourseWithKeywordNotFoundException;
 
-    List<Course> getAllCoursesByTutorId(Long tutorId);
+    List<Course> getAllCoursesByTutorId(Long tutorId) throws AccountNotFoundException;
 
     Course addTagToCourse(Course course, String tagTitle) throws CourseNotFoundException, TagNotFoundException, UpdateCourseException, TagNameExistsException, UnknownPersistenceException, InputDataValidationException;
 
