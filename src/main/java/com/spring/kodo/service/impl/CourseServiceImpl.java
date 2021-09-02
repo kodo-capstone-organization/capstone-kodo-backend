@@ -63,9 +63,9 @@ public class CourseServiceImpl implements CourseService
             if (constraintViolations.isEmpty())
             {
                 // Process Account Tutor
-                if (tutorId != null)
-                {
-                    newCourse = setTutorToCourse(newCourse, tutorId);
+//                if (tutorId != null)
+//                {
+//                    newCourse = setTutorToCourse(newCourse, tutorId);
 
                     // Process Tags
                     if (tagTitles != null)
@@ -82,11 +82,11 @@ public class CourseServiceImpl implements CourseService
                     {
                         throw new CreateNewCourseException("TagTitles cannot be null");
                     }
-                }
-                else
-                {
-                    throw new CreateNewCourseException("TutorId cannot be null");
-                }
+//                }
+//                else
+//                {
+//                    throw new CreateNewCourseException("TutorId cannot be null");
+//                }
             }
             else
             {
@@ -261,22 +261,22 @@ public class CourseServiceImpl implements CourseService
     }
 
 
-    private Course setTutorToCourse(Course course, Long tutorId) throws AccountNotFoundException, UpdateCourseException
-    {
-        Account tutor = accountService.getAccountByAccountId(tutorId);
 
-        if (course.getTutor() == null)
-        {
-            course.setTutor(tutor);
-            tutor.getCourses().add(course);
-        }
-        else
-        {
-            throw new UpdateCourseException("Unable to add tutor with name: " + tutor.getName() +
-                    " to course with Name: " + course.getName() + " as there is already a tutor linked to this course");
-        }
-
-        return course;
-    }
-
+//    private Course setTutorToCourse(Course course, Long tutorId) throws AccountNotFoundException, UpdateCourseException
+//    {
+//        Account tutor = accountService.getAccountByAccountId(tutorId);
+//
+//        if (course.getTutor() == null)
+//        {
+//            course.setTutor(tutor);
+//            tutor.getCourses().add(course);
+//        }
+//        else
+//        {
+//            throw new UpdateCourseException("Unable to add tutor with name: " + tutor.getName() +
+//                    " to course with Name: " + course.getName() + " as there is already a tutor linked to this course");
+//        }
+//
+//        return course;
+//    }
 }
