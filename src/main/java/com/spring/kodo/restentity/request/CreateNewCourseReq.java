@@ -1,4 +1,4 @@
-package com.spring.kodo.restentity;
+package com.spring.kodo.restentity.request;
 
 import java.math.BigDecimal;
 import java.util.List;

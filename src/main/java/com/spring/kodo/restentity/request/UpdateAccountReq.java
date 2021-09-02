@@ -1,4 +1,4 @@
-package com.spring.kodo.restentity;
+package com.spring.kodo.restentity.request;
 
 import com.spring.kodo.entity.Account;
 

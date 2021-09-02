@@ -1,9 +1,8 @@
 package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.Account;
-import com.spring.kodo.entity.Course;
-import com.spring.kodo.restentity.CreateNewAccountReq;
-import com.spring.kodo.restentity.UpdateAccountReq;
+import com.spring.kodo.restentity.request.CreateNewAccountReq;
+import com.spring.kodo.restentity.request.UpdateAccountReq;
 import com.spring.kodo.service.FileService;
 import com.spring.kodo.util.exception.*;
 import com.spring.kodo.service.AccountService;
@@ -17,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/account")

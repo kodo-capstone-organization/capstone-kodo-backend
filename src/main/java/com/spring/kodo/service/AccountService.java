@@ -17,6 +17,8 @@ public interface AccountService
 
     Account getAccountByEmail(String email) throws AccountNotFoundException;
 
+    Account getAccountByCourseId(Long courseId) throws AccountNotFoundException;
+
     Account updateAccount(
             Account account,
             List<String> tagTitles,

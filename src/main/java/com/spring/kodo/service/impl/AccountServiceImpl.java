@@ -155,6 +155,21 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
+    public Account getAccountByCourseId(Long courseId) throws AccountNotFoundException
+    {
+        Account account = accountRepository.findByCourseId(courseId).orElse(null);
+
+        if (account != null)
+        {
+            return account;
+        }
+        else
+        {
+            throw new AccountNotFoundException("Account with Course ID: " + courseId + " does not exist!");
+        }
+    }
+
+    @Override
     public List<Account> getAllAccounts()
     {
         List<Account> accounts = accountRepository.findAll();
