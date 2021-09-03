@@ -122,9 +122,13 @@ public class CourseController
 //                    newCourse = this.courseService.updateCourse(newCourse, ...null for other relationfields);
 //                }
 
+                // Important! Adding course to tutor account
+                Account tutor = this.accountService.getAccountByAccountId(createNewCourseReq.getTutorId());
+                this.accountService.addCourseToAccount(tutor, newCourse);
+
                 return newCourse;
             }
-            catch (InputDataValidationException | TagNameExistsException | CreateNewCourseException | UpdateCourseException ex)
+            catch (InputDataValidationException | TagNameExistsException | CreateNewCourseException | UpdateCourseException | UpdateAccountException ex)
             {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
             }
