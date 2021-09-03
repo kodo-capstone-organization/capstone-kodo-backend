@@ -33,45 +33,6 @@ public class CourseController
     @Autowired
     private FileService fileService;
 
-    @GetMapping("/getAllCourses")
-    public List<CourseWithTutorResp> getAllCourses()
-    {
-        try
-        {
-            List<CourseWithTutorResp> courseWithTutorResps = new ArrayList<>();
-
-            List<Course> courses = this.courseService.getAllCourses();
-
-            Long courseId;
-            Account tutor;
-            CourseWithTutorResp courseWithTutorResp;
-
-            for (Course course : courses)
-            {
-                courseId = course.getCourseId();
-                tutor = this.accountService.getAccountByCourseId(courseId);
-
-                courseWithTutorResp = new CourseWithTutorResp(
-                        course.getName(),
-                        course.getDescription(),
-                        course.getPrice(),
-                        course.getBannerUrl(),
-                        course.getEnrollment(),
-                        course.getCourseTags(),
-                        tutor
-                );
-
-                courseWithTutorResps.add(courseWithTutorResp);
-            }
-
-            return courseWithTutorResps;
-        }
-        catch (AccountNotFoundException ex)
-        {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        }
-    }
-
     @GetMapping("/getCourseByCourseId/{courseId}")
     public CourseWithTutorResp getCourseByCourseId(@PathVariable Long courseId)
     {
@@ -98,14 +59,49 @@ public class CourseController
         }
     }
 
-    @GetMapping("/getCourseByKeyword/{keyword}")
-    public List<Course> getCourseByKeyword(@PathVariable String keyword)
+    @GetMapping("/getAllCourses")
+    public List<CourseWithTutorResp> getAllCourses()
     {
         try
         {
-            return this.courseService.getAllCoursesByKeyword(keyword);
+            List<Course> courses = this.courseService.getAllCourses();
+            List<CourseWithTutorResp> courseWithTutorResps = getAllCoursesWithTutorsByCourses(courses);
+
+            return courseWithTutorResps;
         }
-        catch (CourseWithKeywordNotFoundException ex)
+        catch (AccountNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
+    @GetMapping("/getAllCoursesByTagTitle/{tagTitle}")
+    public List<CourseWithTutorResp> getAllCoursesByTagTitle(@PathVariable String tagTitle)
+    {
+        try
+        {
+            List<Course> courses = this.courseService.getAllCoursesByTagTitle(tagTitle);
+            List<CourseWithTutorResp> courseWithTutorResps = getAllCoursesWithTutorsByCourses(courses);
+
+            return courseWithTutorResps;
+        }
+        catch (TagNotFoundException | AccountNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
+    @GetMapping("/getAllCoursesByKeyword/{keyword}")
+    public List<CourseWithTutorResp> getAllCoursesByKeyword(@PathVariable String keyword)
+    {
+        try
+        {
+            List<Course> courses = this.courseService.getAllCoursesByKeyword(keyword);
+            List<CourseWithTutorResp> courseWithTutorResps = getAllCoursesWithTutorsByCourses(courses);
+
+            return courseWithTutorResps;
+        }
+        catch (CourseWithKeywordNotFoundException | AccountNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
@@ -143,5 +139,34 @@ public class CourseController
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Create New Course Request");
         }
+    }
+
+    private List<CourseWithTutorResp> getAllCoursesWithTutorsByCourses(List<Course> courses) throws AccountNotFoundException
+    {
+        List<CourseWithTutorResp> courseWithTutorResps = new ArrayList<>();
+
+        Long courseId;
+        Account tutor;
+        CourseWithTutorResp courseWithTutorResp;
+
+        for (Course course : courses)
+        {
+            courseId = course.getCourseId();
+            tutor = this.accountService.getAccountByCourseId(courseId);
+
+            courseWithTutorResp = new CourseWithTutorResp(
+                    course.getName(),
+                    course.getDescription(),
+                    course.getPrice(),
+                    course.getBannerUrl(),
+                    course.getEnrollment(),
+                    course.getCourseTags(),
+                    tutor
+            );
+
+            courseWithTutorResps.add(courseWithTutorResp);
+        }
+
+        return courseWithTutorResps;
     }
 }
