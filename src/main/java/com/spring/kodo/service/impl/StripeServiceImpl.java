@@ -1,15 +1,13 @@
 package com.spring.kodo.service.impl;
 
+import com.google.api.client.util.IOUtils;
 import com.google.gson.JsonSyntaxException;
 import com.spring.kodo.restentity.StripePaymentReq;
 import com.spring.kodo.service.inter.StripeService;
 import com.stripe.Stripe;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
-import com.stripe.model.Account;
-import com.stripe.model.AccountLink;
-import com.stripe.model.Event;
-import com.stripe.model.EventDataObjectDeserializer;
+import com.stripe.model.*;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
 import com.stripe.param.AccountCreateParams;
@@ -30,7 +28,7 @@ public class StripeServiceImpl implements StripeService
     @Value("${STRIPE_API_KEY}")
     private String stripeApiKey;
 
-    @Value("${STRIPE_ENDPOINT_SECRET")
+    @Value("${STRIPE_ENDPOINT_SECRET}")
     private String stripeEndpointSecret;
 
     @Override
@@ -101,19 +99,12 @@ public class StripeServiceImpl implements StripeService
 
         Event event = null;
 
-        event = Webhook.constructEvent(
-                    payload, header, endpointSecret
-            );
+        event = Webhook.constructEvent(payload, header, endpointSecret);
 
         if (event.getType().equals("checkout.session.completed"))
         {
-            EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
-            Session session = null;
-            if (dataObjectDeserializer.getObject().isPresent())
-            {
-                session = (Session) dataObjectDeserializer.getObject().get();
-                handleCompletedCheckoutSession(session);
-            }
+            Session session = (Session) event.getData().getObject();
+            handleCompletedCheckoutSession(session);
         }
     }
 
@@ -121,7 +112,6 @@ public class StripeServiceImpl implements StripeService
     public void handleCompletedCheckoutSession(Session session)
     {
         // Update Transaction entity
-
         System.out.println(session);
     }
 }

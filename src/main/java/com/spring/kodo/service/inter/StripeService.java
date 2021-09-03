@@ -9,7 +9,6 @@ import com.stripe.model.AccountLink;
 import com.stripe.model.checkout.Session;
 
 import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
 
 public interface StripeService
 {

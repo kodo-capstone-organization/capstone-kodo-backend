@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping(path="/stripe")
@@ -62,12 +63,12 @@ public class StripeController
     }
 
     @PostMapping("/successfulStripeCheckout")
-    public ResponseEntity successfulStripeCheckout(@RequestBody(required=true) String payload, @RequestHeader HttpServletRequest request)
+    public ResponseEntity successfulStripeCheckout(@RequestBody(required=true) String payload, HttpServletRequest request)
     {
         try
         {
             stripeService.handleSuccessfulStripeCheckout(payload, request);
-            return ResponseEntity.status(HttpStatus.OK).body("Successful checkout");
+            return ResponseEntity.status(HttpStatus.OK).build();
         } catch (SignatureVerificationException ex) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
