@@ -4,7 +4,7 @@ import com.spring.kodo.entity.*;
 import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.enumeration.MultimediaType;
 import com.spring.kodo.util.enumeration.QuestionType;
-import com.spring.kodo.util.exception.*;
+import com.spring.kodo.util.exception.InputDataValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +21,15 @@ import java.util.stream.Collectors;
 @Configuration
 public class DatabaseConfig
 {
+    @Autowired
+    private ForumPostService forumPostService;
+
+    @Autowired
+    private ForumThreadService forumThreadService;
+
+    @Autowired
+    private ForumCategoryService forumCategoryService;
+
     @Autowired
     private CompletedLessonService completedLessonService;
 
@@ -82,6 +91,10 @@ public class DatabaseConfig
     private final Integer QUIZ_QUESTION_OPTION_COUNT = 4;
     private final Integer STUDENT_ATTEMPT_COUNT = 3;
 
+    private final Integer FORUM_CATEGORY_COUNT = 3;
+    private final Integer FORUM_THREAD_COUNT = 3;
+    private final Integer FORUM_POST_COUNT = 3;
+
     // Don't Edit these
     private final Integer ADMIN_FIRST_INDEX = 0; // 0
     private final Integer ADMIN_LAST_INDEX = ADMIN_FIRST_INDEX + PREFIXED_ADMIN_COUNT; // 1
@@ -138,6 +151,9 @@ public class DatabaseConfig
         List<QuizQuestion> quizQuestions = addQuizQuestions();
         List<QuizQuestionOption> quizQuestionOptions = addQuizQuestionOptions();
         List<Multimedia> multimedias = addMultimedias();
+        List<ForumCategory> forumCategories = addForumCategories();
+        List<ForumThread> forumThreads = addForumThreads();
+        List<ForumPost> forumPosts = addForumPosts();
 
         // Create data set to Database
         System.out.println("\n===== 1.2. Creating Data Lists to Database =====");
@@ -471,6 +487,59 @@ public class DatabaseConfig
         return multimedias;
     }
 
+    private List<ForumCategory> addForumCategories()
+    {
+        List<ForumCategory> forumCategories = new ArrayList<>();
+
+        for (String language : PROGRAMMING_LANGUAGES)
+        {
+            for (int i = 1; i <= FORUM_CATEGORY_COUNT; i++)
+            {
+                forumCategories.add(new ForumCategory("Discussion on " + language + " Tips #" + i, "A very informative description on " + language + " tips #" + i));
+            }
+        }
+
+        return forumCategories;
+    }
+
+    private List<ForumThread> addForumThreads()
+    {
+        List<ForumThread> forumThreads = new ArrayList<>();
+
+        for (String language : PROGRAMMING_LANGUAGES)
+        {
+            for (int i = 1; i <= FORUM_CATEGORY_COUNT; i++)
+            {
+                for (int j = 1; j <= FORUM_THREAD_COUNT; j++)
+                {
+                    forumThreads.add(new ForumThread("Thread #" + j + " on " + language + " Tips #" + i, "Thread #" + j + " description on " + language + " Tips #" + i));
+                }
+            }
+        }
+
+        return forumThreads;
+    }
+
+    private List<ForumPost> addForumPosts()
+    {
+        List<ForumPost> forumPosts = new ArrayList<>();
+
+        for (String language : PROGRAMMING_LANGUAGES)
+        {
+            for (int i = 1; i <= FORUM_CATEGORY_COUNT; i++)
+            {
+                for (int j = 1; j <= FORUM_THREAD_COUNT; j++)
+                {
+                    for (int k = 1; k <= FORUM_POST_COUNT; k++)
+                    {
+                        forumPosts.add(new ForumPost("Post #" + k + " on " + language));
+                    }
+                }
+            }
+        }
+
+        return forumPosts;
+    }
 
     private int getRandomNumber(int min, int max)
     {
