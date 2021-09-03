@@ -2,7 +2,7 @@ package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.Tag;
 import com.spring.kodo.repository.TagRepository;
-import com.spring.kodo.service.TagService;
+import com.spring.kodo.service.inter.TagService;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.InputDataValidationException;
 import com.spring.kodo.util.exception.TagNameExistsException;

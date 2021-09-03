@@ -2,7 +2,7 @@ package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.Tag;
 import com.spring.kodo.util.exception.TagNotFoundException;
-import com.spring.kodo.service.TagService;
+import com.spring.kodo.service.inter.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;

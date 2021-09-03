@@ -5,7 +5,7 @@ import com.spring.kodo.repository.AccountRepository;
 import com.spring.kodo.repository.CourseRepository;
 import com.spring.kodo.repository.ForumPostRepository;
 import com.spring.kodo.repository.StudentAttemptRepository;
-import com.spring.kodo.service.*;
+import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.cryptography.CryptographicHelper;
 import com.spring.kodo.util.exception.*;

@@ -1,7 +1,7 @@
 package com.spring.kodo.config;
 
 import com.spring.kodo.entity.*;
-import com.spring.kodo.service.*;
+import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.enumeration.MultimediaType;
 import com.spring.kodo.util.enumeration.QuestionType;
 import com.spring.kodo.util.exception.*;
@@ -11,17 +11,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 
-import javax.persistence.EntityManager;
-import javax.sql.DataSource;
 import java.math.BigDecimal;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Configuration

@@ -2,7 +2,7 @@ package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.Content;
 import com.spring.kodo.repository.ContentRepository;
-import com.spring.kodo.service.ContentService;
+import com.spring.kodo.service.inter.ContentService;
 import com.spring.kodo.util.exception.ContentNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

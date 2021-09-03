@@ -2,7 +2,7 @@ package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.ForumPost;
 import com.spring.kodo.repository.ForumPostRepository;
-import com.spring.kodo.service.ForumPostService;
+import com.spring.kodo.service.inter.ForumPostService;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.ForumPostNotFoundException;
 import com.spring.kodo.util.exception.InputDataValidationException;

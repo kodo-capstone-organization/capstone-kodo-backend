@@ -1,14 +1,13 @@
 package com.spring.kodo.service.impl;
 
-import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Course;
 import com.spring.kodo.entity.Lesson;
 import com.spring.kodo.entity.Tag;
 import com.spring.kodo.repository.CourseRepository;
-import com.spring.kodo.service.AccountService;
-import com.spring.kodo.service.CourseService;
-import com.spring.kodo.service.LessonService;
-import com.spring.kodo.service.TagService;
+import com.spring.kodo.service.inter.AccountService;
+import com.spring.kodo.service.inter.CourseService;
+import com.spring.kodo.service.inter.LessonService;
+import com.spring.kodo.service.inter.TagService;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;

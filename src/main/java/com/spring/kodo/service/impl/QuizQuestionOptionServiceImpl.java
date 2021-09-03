@@ -2,7 +2,7 @@ package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.QuizQuestionOption;
 import com.spring.kodo.repository.QuizQuestionOptionRepository;
-import com.spring.kodo.service.QuizQuestionOptionService;
+import com.spring.kodo.service.inter.QuizQuestionOptionService;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.InputDataValidationException;
 import com.spring.kodo.util.exception.QuizQuestionOptionNotFoundException;

@@ -5,10 +5,9 @@ import com.spring.kodo.entity.Lesson;
 import com.spring.kodo.entity.Multimedia;
 import com.spring.kodo.entity.Quiz;
 import com.spring.kodo.repository.LessonRepository;
-import com.spring.kodo.service.CourseService;
-import com.spring.kodo.service.LessonService;
-import com.spring.kodo.service.MultimediaService;
-import com.spring.kodo.service.QuizService;
+import com.spring.kodo.service.inter.LessonService;
+import com.spring.kodo.service.inter.MultimediaService;
+import com.spring.kodo.service.inter.QuizService;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +27,6 @@ public class LessonServiceImpl implements LessonService
 
     @Autowired // With this annotation, we do not to populate LessonRepository in this class' constructor
     private LessonRepository lessonRepository;
-
-    @Autowired
-    private CourseService courseService;
 
     @Autowired
     private QuizService quizService;
