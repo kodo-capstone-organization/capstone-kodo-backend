@@ -14,6 +14,8 @@ public interface ForumThreadService {
 
     ForumThread getForumThreadByName(String name) throws ForumThreadNotFoundException;
 
+    List<ForumThread> getAllForumThreads();
+
     List<ForumThread> getAllForumThreadsOfAForumCategory(Long forumCategoryId) throws ForumCategoryNotFoundException;
 
     ForumThread updateForumThread(Long forumThreadId, ForumThread updatedForumThread) throws ForumThreadNotFoundException;

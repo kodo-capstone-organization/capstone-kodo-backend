@@ -164,7 +164,10 @@ public class DatabaseConfig
                 quizzes,
                 quizQuestions,
                 quizQuestionOptions,
-                multimedias
+                multimedias,
+                forumCategories,
+                forumThreads,
+                forumPosts
         );
 
         // Print Ids of saved data list
@@ -184,7 +187,10 @@ public class DatabaseConfig
             List<Quiz> quizzes,
             List<QuizQuestion> quizQuestions,
             List<QuizQuestionOption> quizQuestionOptions,
-            List<Multimedia> multimedias
+            List<Multimedia> multimedias,
+            List<ForumCategory> forumCategories,
+            List<ForumThread> forumThreads,
+            List<ForumPost> forumPosts
     ) throws Exception
     {
         // Create Accounts w Tags
@@ -197,6 +203,9 @@ public class DatabaseConfig
         int courseIndex = 0;
         int tagIndex = 0;
         int lessonIndex = 0;
+        int forumCategoryIndex = 0;
+        int forumThreadIndex = 0;
+        int forumPostIndex = 0;
         int quizIndex = 0;
         int quizQuestionIndex = 0;
         int quizQuestionOptionIndex = 0;
@@ -214,10 +223,16 @@ public class DatabaseConfig
         StudentAttemptAnswer studentAttemptAnswer;
         CompletedLesson completedLesson;
         Multimedia multimedia;
+        ForumCategory forumCategory;
+        ForumThread forumThread;
+        ForumPost forumPost;
 
         while (courseIndex < courses.size()
                 && tagIndex < tags.size()
                 && lessonIndex < lessons.size()
+                && forumCategoryIndex < forumCategories.size()
+                && forumThreadIndex < forumThreads.size()
+                && forumPostIndex < forumPosts.size()
                 && quizIndex < quizzes.size()
                 && quizQuestionIndex < quizQuestions.size()
                 && quizQuestionOptionIndex < quizQuestionOptions.size()
@@ -248,6 +263,25 @@ public class DatabaseConfig
 
                 // Link Course - Lesson
                 course = courseService.addLessonToCourse(course, lesson);
+
+                // ForumCategory Creation
+                for (int j = 0; j < FORUM_CATEGORY_COUNT; j++, forumCategoryIndex++)
+                {
+                    forumCategory = forumCategoryService.createNewForumCategory(forumCategories.get(forumCategoryIndex));
+                    courseService.addForumCategoryToCourse(course, forumCategory);
+
+                    for (int k = 0; k < FORUM_THREAD_COUNT; k++, forumThreadIndex++)
+                    {
+                        forumThread = forumThreadService.createNewForumThread(forumThreads.get(forumThreadIndex), (long) getRandomNumber(STUDENT_FIRST_INDEX, STUDENT_LAST_INDEX));
+                        forumCategoryService.addForumThreadToForumCategory(forumCategory, forumThread);
+
+                        for (int l = 0; l < FORUM_POST_COUNT; l++, forumPostIndex++)
+                        {
+                            forumPost = forumPostService.createNewForumPost(forumPosts.get(forumPostIndex), (long) getRandomNumber(STUDENT_FIRST_INDEX, STUDENT_LAST_INDEX));
+                            forumThreadService.addForumPostToForumThread(forumThread, forumPost);
+                        }
+                    }
+                }
 
                 for (int j = 0; j < QUIZ_QUESTION_COUNT; j++, quizQuestionIndex++, quizQuestionOptionIndex += QUIZ_QUESTION_OPTION_COUNT)
                 {
@@ -325,6 +359,15 @@ public class DatabaseConfig
 
         List<Long> courseIds = courseService.getAllCourses().stream().map(Course::getCourseId).collect(Collectors.toList());
         System.out.println(">> Added Courses with courseIds: " + courseIds);
+
+        List<Long> forumCategoryIds = forumCategoryService.getAllForumCategories().stream().map(ForumCategory::getForumCategoryId).collect(Collectors.toList());
+        System.out.println(">> Added ForumCategories with forumCategoryIds: " + forumCategoryIds);
+
+        List<Long> forumThreadIds = forumThreadService.getAllForumThreads().stream().map(ForumThread::getForumThreadId).collect(Collectors.toList());
+        System.out.println(">> Added ForumThreads with forumThreadIds: " + forumThreadIds);
+
+        List<Long> forumPostIds = forumPostService.getAllForumPosts().stream().map(ForumPost::getForumPostId).collect(Collectors.toList());
+        System.out.println(">> Added ForumPosts with forumPostIds: " + forumPostIds);
 
         List<Long> enrolledCourseIds = enrolledCourseService.getAllEnrolledCourses().stream().map(EnrolledCourse::getEnrolledCourseId).collect(Collectors.toList());
         System.out.println(">> Added EnrolledCourses with enrolledCourseIds: " + enrolledCourseIds);

@@ -15,6 +15,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -102,6 +103,12 @@ public class ForumCategoryServiceImpl implements ForumCategoryService
         {
             throw new ForumCategoryNotFoundException("Forum Category with ID: " + forumCategoryId + " does not exist!");
         }
+    }
+
+    @Override
+    public List<ForumCategory> getAllForumCategories()
+    {
+        return forumCategoryRepository.findAll();
     }
 
     @Override

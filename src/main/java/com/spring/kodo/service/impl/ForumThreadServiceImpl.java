@@ -102,8 +102,13 @@ public class ForumThreadServiceImpl implements ForumThreadService
     }
 
     @Override
-    public List<ForumThread> getAllForumThreadsOfAForumCategory(Long forumCategoryId) throws
-            ForumCategoryNotFoundException
+    public List<ForumThread> getAllForumThreads()
+    {
+        return forumThreadRepository.findAll();
+    }
+
+    @Override
+    public List<ForumThread> getAllForumThreadsOfAForumCategory(Long forumCategoryId) throws ForumCategoryNotFoundException
     {
         ForumCategory forumCategory = forumCategoryService.getForumCategoryByForumCategoryId(forumCategoryId);
         return forumCategory.getForumThreads();

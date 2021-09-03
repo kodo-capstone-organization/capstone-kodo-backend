@@ -1,9 +1,10 @@
 package com.spring.kodo.service.inter;
 
-import com.spring.kodo.entity.*;
 import com.spring.kodo.entity.Course;
+import com.spring.kodo.entity.ForumCategory;
+import com.spring.kodo.entity.Lesson;
+import com.spring.kodo.entity.Tag;
 import com.spring.kodo.util.exception.*;
-import com.spring.kodo.util.exception.CourseNotFoundException;
 
 import java.util.List;
 
@@ -36,4 +37,6 @@ public interface CourseService
     Course addTagToCourse(Course course, Tag tag) throws UpdateCourseException, CourseNotFoundException, TagNotFoundException;
 
     Course addLessonToCourse(Course course, Lesson lesson) throws UpdateCourseException, CourseNotFoundException, LessonNotFoundException;
+
+    Course addForumCategoryToCourse(Course course, ForumCategory forumCategory) throws UpdateCourseException, CourseNotFoundException, ForumCategoryNotFoundException;
 }

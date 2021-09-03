@@ -1,15 +1,14 @@
 package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.Course;
+import com.spring.kodo.entity.ForumCategory;
 import com.spring.kodo.entity.Lesson;
 import com.spring.kodo.entity.Tag;
 import com.spring.kodo.repository.CourseRepository;
-import com.spring.kodo.service.inter.AccountService;
-import com.spring.kodo.service.inter.CourseService;
-import com.spring.kodo.service.inter.LessonService;
-import com.spring.kodo.service.inter.TagService;
+import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.*;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -26,6 +25,9 @@ public class CourseServiceImpl implements CourseService
 {
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private ForumCategoryService forumCategoryService;
 
     @Autowired
     private LessonService lessonService;
@@ -262,6 +264,53 @@ public class CourseServiceImpl implements CourseService
                 else
                 {
                     throw new UpdateCourseException("Lesson cannot be null");
+                }
+            }
+            else
+            {
+                throw new UpdateCourseException("Course ID cannot be null");
+            }
+        }
+        else
+        {
+            throw new UpdateCourseException("Course cannot be null");
+        }
+    }
+
+    @Override
+    public Course addForumCategoryToCourse(Course course, ForumCategory forumCategory) throws UpdateCourseException, CourseNotFoundException, ForumCategoryNotFoundException
+    {
+        if (course != null)
+        {
+            if (course.getCourseId() != null)
+            {
+                course = getCourseByCourseId(course.getCourseId());
+                if (forumCategory != null)
+                {
+                    if (forumCategory.getForumCategoryId() != null)
+                    {
+                        forumCategory = forumCategoryService.getForumCategoryByForumCategoryId(forumCategory.getForumCategoryId());
+
+                        if (!course.getForumCategories().contains(forumCategory))
+                        {
+                            course.getForumCategories().add(forumCategory);
+
+                            courseRepository.save(course);
+                            return course;
+                        }
+                        else
+                        {
+                            throw new UpdateCourseException("Course with ID " + course.getCourseId() + " already contains ForumCategory with ID " + forumCategory.getForumCategoryId());
+                        }
+                    }
+                    else
+                    {
+                        throw new UpdateCourseException("ForumCategory ID cannot be null");
+                    }
+                }
+                else
+                {
+                    throw new UpdateCourseException("ForumCategory cannot be null");
                 }
             }
             else
