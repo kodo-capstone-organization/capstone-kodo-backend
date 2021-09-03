@@ -41,15 +41,7 @@ public class CourseController
             Course course = this.courseService.getCourseByCourseId(courseId);
             Account tutor = this.accountService.getAccountByCourseId(courseId);
 
-            CourseWithTutorResp courseWithTutorResp = new CourseWithTutorResp(
-                    course.getName(),
-                    course.getDescription(),
-                    course.getPrice(),
-                    course.getBannerUrl(),
-                    course.getEnrollment(),
-                    course.getCourseTags(),
-                    tutor
-            );
+            CourseWithTutorResp courseWithTutorResp = createCourseWithtutorResp(course, tutor);
 
             return courseWithTutorResp;
         }
@@ -154,19 +146,26 @@ public class CourseController
             courseId = course.getCourseId();
             tutor = this.accountService.getAccountByCourseId(courseId);
 
-            courseWithTutorResp = new CourseWithTutorResp(
-                    course.getName(),
-                    course.getDescription(),
-                    course.getPrice(),
-                    course.getBannerUrl(),
-                    course.getEnrollment(),
-                    course.getCourseTags(),
-                    tutor
-            );
-
+            courseWithTutorResp = createCourseWithtutorResp(course, tutor);
             courseWithTutorResps.add(courseWithTutorResp);
         }
 
         return courseWithTutorResps;
+    }
+
+    private CourseWithTutorResp createCourseWithtutorResp(Course course, Account tutor)
+    {
+        CourseWithTutorResp courseWithTutorResp = new CourseWithTutorResp(
+                course.getCourseId(),
+                course.getName(),
+                course.getDescription(),
+                course.getPrice(),
+                course.getBannerUrl(),
+                course.getEnrollment(),
+                course.getCourseTags(),
+                tutor
+        );
+
+        return courseWithTutorResp;
     }
 }
