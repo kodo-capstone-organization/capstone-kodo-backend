@@ -1,5 +1,7 @@
 package com.spring.kodo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -10,6 +12,7 @@ import java.util.List;
 
 @Entity
 @Table
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ForumThread
 {
     @Id
@@ -30,7 +33,11 @@ public class ForumThread
     @NotNull
     private LocalDateTime timeStamp;
 
+    @ManyToOne(optional = false)
+    private Account account;
+
     @OneToMany(targetEntity = ForumPost.class, fetch = FetchType.LAZY)
+    @JoinColumn
     private List<ForumPost> forumPosts;
 
     public ForumThread()
@@ -42,16 +49,9 @@ public class ForumThread
     public ForumThread(String name, String description)
     {
         this();
+
         this.name = name;
         this.description = description;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Long getForumThreadId()
@@ -62,6 +62,16 @@ public class ForumThread
     public void setForumThreadId(Long forumThreadId)
     {
         this.forumThreadId = forumThreadId;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
     }
 
     public String getDescription()
@@ -84,6 +94,16 @@ public class ForumThread
         this.timeStamp = timeStamp;
     }
 
+    public Account getAccount()
+    {
+        return account;
+    }
+
+    public void setAccount(Account account)
+    {
+        this.account = account;
+    }
+
     public List<ForumPost> getForumPosts()
     {
         return forumPosts;
@@ -99,8 +119,10 @@ public class ForumThread
     {
         return "ForumThread{" +
                 "forumThreadId=" + forumThreadId +
+                ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", timeStamp=" + timeStamp +
+                ", account=" + account +
                 ", forumPosts=" + forumPosts +
                 '}';
     }

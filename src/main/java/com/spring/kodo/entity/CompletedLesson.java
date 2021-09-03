@@ -1,21 +1,30 @@
 package com.spring.kodo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Entity
 @Table
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class CompletedLesson
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long completedLessonId;
 
+    @Column(nullable = false)
+    @NotNull
+    private LocalDateTime dateTimeOfCompletion;
+
     @ManyToOne(targetEntity = Lesson.class, optional = false)
-    @JoinColumn(nullable = false)
     private Lesson parentLesson;
 
     public CompletedLesson()
     {
+        this.dateTimeOfCompletion = LocalDateTime.now();
     }
 
     public Long getCompletedLessonId()
@@ -26,6 +35,16 @@ public class CompletedLesson
     public void setCompletedLessonId(Long completedLessonId)
     {
         this.completedLessonId = completedLessonId;
+    }
+
+    public LocalDateTime getDateTimeOfCompletion()
+    {
+        return dateTimeOfCompletion;
+    }
+
+    public void setDateTimeOfCompletion(LocalDateTime dateTimeOfCompletion)
+    {
+        this.dateTimeOfCompletion = dateTimeOfCompletion;
     }
 
     public Lesson getParentLesson()
@@ -43,6 +62,7 @@ public class CompletedLesson
     {
         return "CompletedLesson{" +
                 "completedLessonId=" + completedLessonId +
+                ", dateTimeOfCompletion=" + dateTimeOfCompletion +
                 ", parentLesson=" + parentLesson +
                 '}';
     }

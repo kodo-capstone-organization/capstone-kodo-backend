@@ -1,5 +1,8 @@
 package com.spring.kodo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -8,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ForumPost
 {
     @Id
@@ -27,7 +31,6 @@ public class ForumPost
     private ForumPost reply;
 
     @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
     private Account account;
 
     public ForumPost()

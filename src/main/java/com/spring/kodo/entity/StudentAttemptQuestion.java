@@ -1,11 +1,14 @@
 package com.spring.kodo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class StudentAttemptQuestion
 {
     @Id
@@ -13,10 +16,14 @@ public class StudentAttemptQuestion
     private Long studentAttemptQuestionId;
 
     @ManyToOne(optional = false, targetEntity = QuizQuestion.class, fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
     private QuizQuestion quizQuestion;
 
     @OneToMany(targetEntity = StudentAttemptAnswer.class, fetch = FetchType.LAZY)
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "student_attempt_question_id", referencedColumnName="studentAttemptQuestionId"),
+            inverseJoinColumns = @JoinColumn(name = "student_attempt_answer_id", referencedColumnName = "studentAttemptAnswerId"),
+            uniqueConstraints = @UniqueConstraint(columnNames = { "student_attempt_question_id", "student_attempt_answer_id" })
+    )
     private List<StudentAttemptAnswer> studentAttemptAnswers;
 
     public StudentAttemptQuestion()

@@ -1,5 +1,7 @@
 package com.spring.kodo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -7,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class StudentAttemptAnswer
 {
     @Id
@@ -17,13 +20,12 @@ public class StudentAttemptAnswer
     @NotNull
     private LocalDateTime dateTimeOfAttempt;
 
-    @Column
+    @Column(nullable = false)
     @NotNull
     @Min(0)
     private Integer marks;
 
     @ManyToOne(optional = false, targetEntity = QuizQuestionOption.class, fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
     private QuizQuestionOption quizQuestionOption;
 
     public StudentAttemptAnswer()

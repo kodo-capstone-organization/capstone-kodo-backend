@@ -1,5 +1,7 @@
 package com.spring.kodo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.*;
@@ -10,6 +12,7 @@ import java.util.List;
 
 @Entity
 @Table
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "enrollment"})
 public class Course
 {
     @Id
@@ -37,20 +40,27 @@ public class Course
     @Size(min = 0, max = 512)
     private String bannerUrl;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
-    private Account tutor;
-
     @OneToMany(targetEntity = EnrolledCourse.class, mappedBy = "parentCourse", fetch = FetchType.LAZY)
     private List<EnrolledCourse> enrollment;
 
     @OneToMany(targetEntity = Lesson.class, fetch = FetchType.LAZY)
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "course_id", referencedColumnName="courseId"),
+            inverseJoinColumns = @JoinColumn(name = "lesson_id", referencedColumnName = "lessonId"),
+            uniqueConstraints = @UniqueConstraint(columnNames = { "course_id", "lesson_id" })
+    )
     private List<Lesson> lessons;
 
     @ManyToMany(targetEntity = Tag.class, fetch = FetchType.LAZY)
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "course_id", referencedColumnName="courseId"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "tagId"),
+            uniqueConstraints = @UniqueConstraint(columnNames = { "course_id", "tag_id" })
+    )
     private List<Tag> courseTags;
 
     @OneToMany(targetEntity = ForumCategory.class, fetch = FetchType.LAZY)
+    @JoinColumn
     private List<ForumCategory> forumCategories;
 
     public Course()
@@ -132,16 +142,6 @@ public class Course
         this.bannerUrl = bannerUrl;
     }
 
-    public Account getTutor()
-    {
-        return tutor;
-    }
-
-    public void setTutor(Account tutor)
-    {
-        this.tutor = tutor;
-    }
-
     public List<EnrolledCourse> getEnrollment()
     {
         return enrollment;
@@ -191,7 +191,6 @@ public class Course
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", bannerUrl='" + bannerUrl + '\'' +
-                ", tutor=" + tutor +
                 ", enrollment=" + enrollment +
                 ", lessons=" + lessons +
                 ", courseTags=" + courseTags +

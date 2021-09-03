@@ -1,14 +1,16 @@
 package com.spring.kodo.service.impl;
 
-import com.google.cloud.storage.*;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage;
 import com.spring.kodo.config.GCSConfig;
-import com.spring.kodo.service.FileService;
+import com.spring.kodo.service.inter.FileService;
 import com.spring.kodo.util.exception.FileUploadToGCSException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.UUID;
 
 @Service

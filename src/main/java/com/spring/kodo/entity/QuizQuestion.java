@@ -1,5 +1,6 @@
 package com.spring.kodo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.spring.kodo.util.enumeration.QuestionType;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Entity
 @Table
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class QuizQuestion
 {
     @Id
@@ -37,6 +39,7 @@ public class QuizQuestion
     private Quiz quiz;
 
     @OneToMany(targetEntity = QuizQuestionOption.class, fetch = FetchType.LAZY)
+    @JoinColumn
     private List<QuizQuestionOption> quizQuestionOptions;
 
     public QuizQuestion()

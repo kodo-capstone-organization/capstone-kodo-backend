@@ -1,5 +1,7 @@
 package com.spring.kodo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.spring.kodo.util.MessageFormatterUtil;
@@ -16,6 +18,7 @@ import java.util.List;
 
 @Entity
 @Table
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "forumPosts"})
 public class Account
 {
     @Id
@@ -72,21 +75,35 @@ public class Account
     private String stripeAccountId;
 
     @ManyToMany(targetEntity = Tag.class, fetch = FetchType.LAZY)
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "account_id", referencedColumnName="accountId"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "tagId"),
+            uniqueConstraints = @UniqueConstraint(columnNames = { "account_id", "tag_id" })
+    )
     private List<Tag> interests;
 
     @OneToMany(targetEntity = EnrolledCourse.class, fetch = FetchType.LAZY)
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "account_id", referencedColumnName="accountId"),
+            inverseJoinColumns = @JoinColumn(name = "enrolled_course_id", referencedColumnName = "enrolledCourseId"),
+            uniqueConstraints = @UniqueConstraint(columnNames = { "account_id", "enrolled_course_id" })
+    )
     private List<EnrolledCourse> enrolledCourses;
 
-    @OneToMany(targetEntity = Course.class, mappedBy = "tutor", fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = Course.class, fetch = FetchType.LAZY)
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "account_id", referencedColumnName="accountId"),
+            inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "courseId"),
+            uniqueConstraints = @UniqueConstraint(columnNames = { "account_id", "course_id" })
+    )
     private List<Course> courses;
 
-    @OneToMany(targetEntity = ForumThread.class, fetch = FetchType.LAZY)
-    private List<ForumThread> forumThreads;
-
-    @OneToMany(targetEntity = ForumPost.class, mappedBy = "account", fetch = FetchType.LAZY)
-    private List<ForumPost> forumPosts;
-
-    @ManyToMany(targetEntity = StudentAttempt.class, fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = StudentAttempt.class, fetch = FetchType.LAZY)
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "account_id", referencedColumnName="accountId"),
+            inverseJoinColumns = @JoinColumn(name = "student_attempt_id", referencedColumnName = "studentAttemptId"),
+            uniqueConstraints = @UniqueConstraint(columnNames = { "account_id", "student_attempt_id" })
+    )
     private List<StudentAttempt> studentAttempts;
 
     public Account()
@@ -94,8 +111,6 @@ public class Account
         this.salt = CryptographicHelper.generateRandomString(64);
         this.enrolledCourses = new ArrayList<>();
         this.courses = new ArrayList<>();
-        this.forumThreads = new ArrayList<>();
-        this.forumPosts = new ArrayList<>();
         this.interests = new ArrayList<>();
         this.studentAttempts = new ArrayList<>();
         this.isActive = true;
@@ -270,26 +285,6 @@ public class Account
         this.courses = courses;
     }
 
-    public List<ForumThread> getForumThreads()
-    {
-        return forumThreads;
-    }
-
-    public void setForumThreads(List<ForumThread> forumThreads)
-    {
-        this.forumThreads = forumThreads;
-    }
-
-    public List<ForumPost> getForumPosts()
-    {
-        return forumPosts;
-    }
-
-    public void setForumPosts(List<ForumPost> forumPosts)
-    {
-        this.forumPosts = forumPosts;
-    }
-
     public List<StudentAttempt> getStudentAttempts()
     {
         return studentAttempts;
@@ -320,8 +315,6 @@ public class Account
                 ", isActive=" + isActive +
                 ", enrolledCourses=" + enrolledCourses +
                 ", courses=" + courses +
-                ", forumThreads=" + forumThreads +
-                ", forumPosts=" + forumPosts +
                 ", interests=" + interests +
                 ", studentAttempts=" + studentAttempts +
                 '}';

@@ -1,5 +1,6 @@
 package com.spring.kodo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.enumeration.MultimediaType;
 import org.hibernate.validator.constraints.URL;
@@ -12,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Multimedia extends Content
 {
     @Column(length = 512)

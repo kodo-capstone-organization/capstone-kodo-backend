@@ -1,16 +1,14 @@
-package com.spring.kodo.service;
+package com.spring.kodo.service.inter;
 
 import com.spring.kodo.entity.Content;
 import com.spring.kodo.entity.Lesson;
-import com.spring.kodo.util.exception.LessonNotFoundException;
-import com.spring.kodo.util.exception.InputDataValidationException;
-import com.spring.kodo.util.exception.UpdateContentException;
+import com.spring.kodo.util.exception.*;
 
 import java.util.List;
 
 public interface LessonService
 {
-    Lesson createNewLesson(Lesson lesson) throws InputDataValidationException;
+    Lesson createNewLesson(Lesson newLesson) throws InputDataValidationException, CourseNotFoundException, UnknownPersistenceException;
 
     Lesson getLessonByLessonId(Long lessonId) throws LessonNotFoundException;
 
@@ -22,5 +20,5 @@ public interface LessonService
 
     Boolean deleteLesson(Long lessonId) throws LessonNotFoundException;
 
-    Lesson addContentToLesson(Lesson lesson, Content content) throws LessonNotFoundException, UpdateContentException;
+    Lesson addContentToLesson(Lesson lesson, Content content) throws LessonNotFoundException, UpdateContentException, UnknownPersistenceException;
 }

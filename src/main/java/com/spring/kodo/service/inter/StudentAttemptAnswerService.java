@@ -1,14 +1,13 @@
-package com.spring.kodo.service;
+package com.spring.kodo.service.inter;
 
 import com.spring.kodo.entity.StudentAttemptAnswer;
-import com.spring.kodo.util.exception.InputDataValidationException;
-import com.spring.kodo.util.exception.StudentAttemptAnswerNotFoundException;
+import com.spring.kodo.util.exception.*;
 
 import java.util.List;
 
 public interface StudentAttemptAnswerService
 {
-    StudentAttemptAnswer createNewStudentAttemptAnswer(StudentAttemptAnswer studentAttemptAnswer) throws InputDataValidationException;
+    StudentAttemptAnswer createNewStudentAttemptAnswer(Long quizQuestionOptionId) throws InputDataValidationException, CreateNewStudentAttemptAnswerException, QuizQuestionOptionNotFoundException, UnknownPersistenceException;
 
     StudentAttemptAnswer getStudentAttemptAnswerByStudentAttemptAnswerId(Long studentAttemptAnswerId) throws StudentAttemptAnswerNotFoundException;
 

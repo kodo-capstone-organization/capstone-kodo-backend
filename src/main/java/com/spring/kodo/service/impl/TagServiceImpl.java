@@ -1,12 +1,15 @@
 package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.Tag;
+import com.spring.kodo.repository.TagRepository;
+import com.spring.kodo.service.inter.TagService;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.InputDataValidationException;
+import com.spring.kodo.util.exception.TagNameExistsException;
 import com.spring.kodo.util.exception.TagNotFoundException;
-import com.spring.kodo.repository.TagRepository;
-import com.spring.kodo.service.TagService;
+import com.spring.kodo.util.exception.UnknownPersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
@@ -33,16 +36,31 @@ public class TagServiceImpl implements TagService
 
 
     @Override
-    public Tag createNewTag(Tag newTag) throws InputDataValidationException
+    public Tag createNewTag(Tag newTag) throws TagNameExistsException, UnknownPersistenceException, InputDataValidationException
     {
-        Set<ConstraintViolation<Tag>> constraintViolations = validator.validate(newTag);
-        if(constraintViolations.isEmpty())
+        try
         {
-            return tagRepository.save(newTag);
+            Set<ConstraintViolation<Tag>> constraintViolations = validator.validate(newTag);
+            if (constraintViolations.isEmpty())
+            {
+                tagRepository.saveAndFlush(newTag);
+                return newTag;
+            }
+            else
+            {
+                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
         }
-        else
+        catch (DataAccessException ex)
         {
-            throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
+            {
+                throw new TagNameExistsException("Tag Name is already in use!");
+            }
+            else
+            {
+                throw new UnknownPersistenceException(ex.getMessage());
+            }
         }
     }
 
@@ -62,7 +80,7 @@ public class TagServiceImpl implements TagService
     }
 
     @Override
-    public Tag getTagByTitle (String tagTitle) throws TagNotFoundException
+    public Tag getTagByTitle(String tagTitle) throws TagNotFoundException
     {
         Tag tag = tagRepository.findByTitle(tagTitle).orElse(null);
 
@@ -78,7 +96,7 @@ public class TagServiceImpl implements TagService
 
 
     @Override
-    public Tag getTagByTitleOrCreateNew(String tagTitle) throws InputDataValidationException
+    public Tag getTagByTitleOrCreateNew(String tagTitle) throws TagNameExistsException, UnknownPersistenceException, InputDataValidationException
     {
         Tag tag = null;
         try

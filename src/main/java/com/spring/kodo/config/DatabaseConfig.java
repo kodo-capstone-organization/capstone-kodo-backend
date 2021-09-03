@@ -1,7 +1,7 @@
 package com.spring.kodo.config;
 
 import com.spring.kodo.entity.*;
-import com.spring.kodo.service.*;
+import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.enumeration.MultimediaType;
 import com.spring.kodo.util.enumeration.QuestionType;
 import com.spring.kodo.util.exception.InputDataValidationException;
@@ -16,13 +16,26 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Configuration
 public class DatabaseConfig
 {
+    @Autowired
+    private ForumPostService forumPostService;
+
+    @Autowired
+    private ForumThreadService forumThreadService;
+
+    @Autowired
+    private ForumCategoryService forumCategoryService;
+
+    @Autowired
+    private CompletedLessonService completedLessonService;
+
+    @Autowired
+    private EnrolledCourseService enrolledCourseService;
+
     @Autowired
     private StudentAttemptAnswerService studentAttemptAnswerService;
 
@@ -73,10 +86,14 @@ public class DatabaseConfig
     private final Integer STUDENT_COUNT = 50;
     private final Integer PREFIXED_STUDENT_COUNT = 2;
 
-    private final Integer LESSON_COUNT = 5;
+    private final Integer LESSON_COUNT = 1;
     private final Integer QUIZ_QUESTION_COUNT = 5;
     private final Integer QUIZ_QUESTION_OPTION_COUNT = 4;
     private final Integer STUDENT_ATTEMPT_COUNT = 3;
+
+    private final Integer FORUM_CATEGORY_COUNT = 3;
+    private final Integer FORUM_THREAD_COUNT = 3;
+    private final Integer FORUM_POST_COUNT = 3;
 
     // Don't Edit these
     private final Integer ADMIN_FIRST_INDEX = 0; // 0
@@ -134,6 +151,9 @@ public class DatabaseConfig
         List<QuizQuestion> quizQuestions = addQuizQuestions();
         List<QuizQuestionOption> quizQuestionOptions = addQuizQuestionOptions();
         List<Multimedia> multimedias = addMultimedias();
+        List<ForumCategory> forumCategories = addForumCategories();
+        List<ForumThread> forumThreads = addForumThreads();
+        List<ForumPost> forumPosts = addForumPosts();
 
         // Create data set to Database
         System.out.println("\n===== 1.2. Creating Data Lists to Database =====");
@@ -144,7 +164,10 @@ public class DatabaseConfig
                 quizzes,
                 quizQuestions,
                 quizQuestionOptions,
-                multimedias
+                multimedias,
+                forumCategories,
+                forumThreads,
+                forumPosts
         );
 
         // Print Ids of saved data list
@@ -164,7 +187,10 @@ public class DatabaseConfig
             List<Quiz> quizzes,
             List<QuizQuestion> quizQuestions,
             List<QuizQuestionOption> quizQuestionOptions,
-            List<Multimedia> multimedias
+            List<Multimedia> multimedias,
+            List<ForumCategory> forumCategories,
+            List<ForumThread> forumThreads,
+            List<ForumPost> forumPosts
     ) throws Exception
     {
         // Create Accounts w Tags
@@ -177,36 +203,54 @@ public class DatabaseConfig
         int courseIndex = 0;
         int tagIndex = 0;
         int lessonIndex = 0;
+        int forumCategoryIndex = 0;
+        int forumThreadIndex = 0;
+        int forumPostIndex = 0;
         int quizIndex = 0;
         int quizQuestionIndex = 0;
         int quizQuestionOptionIndex = 0;
         int multimediaIndex = 0;
 
+        Account tutor;
+        Account student;
         Course course;
         Tag tag;
         Lesson lesson;
         Quiz quiz;
         QuizQuestion quizQuestion;
         QuizQuestionOption quizQuestionOption;
+        EnrolledCourse enrolledCourse;
+        StudentAttemptAnswer studentAttemptAnswer;
+        CompletedLesson completedLesson;
         Multimedia multimedia;
+        ForumCategory forumCategory;
+        ForumThread forumThread;
+        ForumPost forumPost;
 
         while (courseIndex < courses.size()
                 && tagIndex < tags.size()
                 && lessonIndex < lessons.size()
+                && forumCategoryIndex < forumCategories.size()
+                && forumThreadIndex < forumThreads.size()
+                && forumPostIndex < forumPosts.size()
                 && quizIndex < quizzes.size()
                 && quizQuestionIndex < quizQuestions.size()
                 && quizQuestionOptionIndex < quizQuestionOptions.size()
                 && multimediaIndex < multimedias.size())
         {
+            tutor = accounts.get(getRandomNumber(TUTOR_FIRST_INDEX, TUTOR_LAST_INDEX));
             course = courses.get(courseIndex++);
             tag = tags.get(tagIndex++);
 
             // Course Creation
-            courseService.createNewCourse(
+            course = courseService.createNewCourse(
                     course,
-                    accounts.get(getRandomNumber(TUTOR_FIRST_INDEX, TUTOR_LAST_INDEX)).getAccountId(),
+                    tutor.getAccountId(),
                     Arrays.asList(tag.getTitle())
             );
+
+            // Link Account - Course
+            tutor = accountService.addCourseToAccount(tutor, course);
 
             for (int i = 0; i < LESSON_COUNT; i++, lessonIndex++, quizIndex++, multimediaIndex++)
             {
@@ -215,43 +259,88 @@ public class DatabaseConfig
                 multimedia = multimedias.get(multimediaIndex);
 
                 // Lesson Creation
-                courseService.addLessonToCourse(course, lesson);
+                lesson = lessonService.createNewLesson(lesson);
 
-                // Quiz Creation
-                lessonService.addContentToLesson(lesson, quiz);
+                // Link Course - Lesson
+                course = courseService.addLessonToCourse(course, lesson);
 
-                // QuizQuestion Creation
+                // ForumCategory Creation
+                for (int j = 0; j < FORUM_CATEGORY_COUNT; j++, forumCategoryIndex++)
+                {
+                    forumCategory = forumCategoryService.createNewForumCategory(forumCategories.get(forumCategoryIndex));
+                    courseService.addForumCategoryToCourse(course, forumCategory);
+
+                    for (int k = 0; k < FORUM_THREAD_COUNT; k++, forumThreadIndex++)
+                    {
+                        forumThread = forumThreadService.createNewForumThread(forumThreads.get(forumThreadIndex), (long) getRandomNumber(STUDENT_FIRST_INDEX, STUDENT_LAST_INDEX));
+                        forumCategoryService.addForumThreadToForumCategory(forumCategory, forumThread);
+
+                        for (int l = 0; l < FORUM_POST_COUNT; l++, forumPostIndex++)
+                        {
+                            forumPost = forumPostService.createNewForumPost(forumPosts.get(forumPostIndex), (long) getRandomNumber(STUDENT_FIRST_INDEX, STUDENT_LAST_INDEX));
+                            forumThreadService.addForumPostToForumThread(forumThread, forumPost);
+                        }
+                    }
+                }
+
                 for (int j = 0; j < QUIZ_QUESTION_COUNT; j++, quizQuestionIndex++, quizQuestionOptionIndex += QUIZ_QUESTION_OPTION_COUNT)
                 {
+                    // Link Quiz - QuizQuestion
                     quizService.addQuizQuestionToQuiz(
-                            quiz,
-                            quizQuestions.get(quizQuestionIndex),
-                            quizQuestionOptions.subList(quizQuestionOptionIndex, quizQuestionOptionIndex + QUIZ_QUESTION_OPTION_COUNT)
-                    );
+                            // Quiz Creation
+                            quizService.createNewQuiz(quiz),
+                            // Link QuizQuestion - QuizQuestionOptions
+                            quizQuestionService.addQuizQuestionOptionsToQuizQuestion(
+                                    // QuizQuestion Creation
+                                    quizQuestionService.createNewQuizQuestion(quizQuestions.get(quizQuestionIndex), quiz.getContentId()),
+                                    // QuizQuestionOptions Creation
+                                    quizQuestionOptionService.createNewQuizQuestionOptions(
+                                            quizQuestionOptions.subList(quizQuestionOptionIndex, quizQuestionOptionIndex + QUIZ_QUESTION_OPTION_COUNT)
+                                    )));
                 }
+
+                // Link Lesson - Quiz
+                lesson = lessonService.addContentToLesson(lesson, quiz);
 
                 // StudentAttempt Creation
                 for (int j = 0; j < STUDENT_ATTEMPT_COUNT; j++)
                 {
-                    StudentAttempt studentAttempt = studentAttemptService.createNewStudentAttempt(
-                            quiz.getContentId(),
-                            accounts.get(getRandomNumber(STUDENT_FIRST_INDEX, STUDENT_LAST_INDEX)).getAccountId()
-                    );
+                    student = accounts.get(getRandomNumber(STUDENT_FIRST_INDEX, STUDENT_LAST_INDEX));
 
+                    // Create EnrolledCourse
+                    enrolledCourse = enrolledCourseService.createNewEnrolledCourse(student.getAccountId(), course.getCourseId());
+
+                    // Link Student (Account) - EnrolledCourse
+                    student = accountService.addEnrolledCourseToAccount(student, enrolledCourse);
+
+                    // Create StudentAttempt
+                    StudentAttempt studentAttempt = studentAttemptService.createNewStudentAttempt(quiz.getContentId());
+
+                    // Link Student (Account) - StudentAttempt
+                    student = accountService.addStudentAttemptToAccount(student, studentAttempt);
+
+                    // StudentAttemptQuestion Creation
                     for (StudentAttemptQuestion studentAttemptQuestion : studentAttempt.getStudentAttemptQuestions())
                     {
-                        quizQuestionOption = studentAttemptQuestion.getQuizQuestion().getQuizQuestionOptions().get(
+                        quizQuestion = studentAttemptQuestion.getQuizQuestion();
+                        quizQuestionOption = quizQuestion.getQuizQuestionOptions().get(
                                 getRandomNumber(
                                         0,
-                                        studentAttemptQuestion.getQuizQuestion().getQuizQuestionOptions().size() - 1)
+                                        quizQuestion.getQuizQuestionOptions().size() - 1)
                         );
 
-                        studentAttemptService.addStudentAttemptAnswerToStudentAttemptQuestion(
-                                studentAttemptQuestion.getStudentAttemptQuestionId(),
-                                Arrays.asList(quizQuestionOption.getQuizQuestionOptionId())
-                        );
+                        // Create StudentAttemptAnswer
+                        studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption.getQuizQuestionOptionId());
+
+                        // Link StudentAttemptQuestion - StudentAttemptAnswer
+                        studentAttemptQuestion = studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
                     }
 
+                    // CompletedLesson Creation
+                    completedLesson = completedLessonService.createNewCompletedLesson(lesson.getLessonId());
+
+                    // Link EnrolledCourse - CompletedLesson
+                    enrolledCourse = enrolledCourseService.addCompletedLessonToEnrolledCourse(enrolledCourse, completedLesson);
                 }
 
                 // Multimedia Creation
@@ -270,6 +359,18 @@ public class DatabaseConfig
 
         List<Long> courseIds = courseService.getAllCourses().stream().map(Course::getCourseId).collect(Collectors.toList());
         System.out.println(">> Added Courses with courseIds: " + courseIds);
+
+        List<Long> forumCategoryIds = forumCategoryService.getAllForumCategories().stream().map(ForumCategory::getForumCategoryId).collect(Collectors.toList());
+        System.out.println(">> Added ForumCategories with forumCategoryIds: " + forumCategoryIds);
+
+        List<Long> forumThreadIds = forumThreadService.getAllForumThreads().stream().map(ForumThread::getForumThreadId).collect(Collectors.toList());
+        System.out.println(">> Added ForumThreads with forumThreadIds: " + forumThreadIds);
+
+        List<Long> forumPostIds = forumPostService.getAllForumPosts().stream().map(ForumPost::getForumPostId).collect(Collectors.toList());
+        System.out.println(">> Added ForumPosts with forumPostIds: " + forumPostIds);
+
+        List<Long> enrolledCourseIds = enrolledCourseService.getAllEnrolledCourses().stream().map(EnrolledCourse::getEnrolledCourseId).collect(Collectors.toList());
+        System.out.println(">> Added EnrolledCourses with enrolledCourseIds: " + enrolledCourseIds);
 
         List<Long> lessonIds = lessonService.getAllLessons().stream().map(Lesson::getLessonId).collect(Collectors.toList());
         System.out.println(">> Added Lessons with lessonIds: " + lessonIds);
@@ -294,6 +395,9 @@ public class DatabaseConfig
 
         List<Long> studentAttemptAnswerIds = studentAttemptAnswerService.getAllStudentAttemptAnswers().stream().map(StudentAttemptAnswer::getStudentAttemptAnswerId).collect(Collectors.toList());
         System.out.println(">> Added StudentAttemptAnswers with studentAttemptIds: " + studentAttemptAnswerIds);
+
+        List<Long> completedLessonIds = completedLessonService.getAllCompletedLessons().stream().map(CompletedLesson::getCompletedLessonId).collect(Collectors.toList());
+        System.out.println(">> Added CompletedLessons with completedLessonIds: " + completedLessonIds);
     }
 
     private List<Account> addAccounts()
@@ -312,7 +416,7 @@ public class DatabaseConfig
         accounts.add(new Account("tutor1", "password", "Tutor Trisha", "I am Tutor 1", "tutor1@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/18700b5a-4890-430f-9bab-1d312862c030.gif?generation=1630266710675423&alt=media", false));
         for (int i = PREFIXED_TUTOR_COUNT + 1; i <= TUTOR_COUNT; i++)
         {
-            accounts.add(new Account("tutor" + i, "password", "Tutor " + i, "I am Tutor " + i, "tutor" + i + "@gmail.com", "https://student" + i + ".com", false));
+            accounts.add(new Account("tutor" + i, "password", "Tutor " + i, "I am Tutor " + i, "tutor" + i + "@gmail.com", "https://tutor" + i + ".com", false));
         }
 
         return accounts;
@@ -426,6 +530,59 @@ public class DatabaseConfig
         return multimedias;
     }
 
+    private List<ForumCategory> addForumCategories()
+    {
+        List<ForumCategory> forumCategories = new ArrayList<>();
+
+        for (String language : PROGRAMMING_LANGUAGES)
+        {
+            for (int i = 1; i <= FORUM_CATEGORY_COUNT; i++)
+            {
+                forumCategories.add(new ForumCategory("Discussion on " + language + " Tips #" + i, "A very informative description on " + language + " tips #" + i));
+            }
+        }
+
+        return forumCategories;
+    }
+
+    private List<ForumThread> addForumThreads()
+    {
+        List<ForumThread> forumThreads = new ArrayList<>();
+
+        for (String language : PROGRAMMING_LANGUAGES)
+        {
+            for (int i = 1; i <= FORUM_CATEGORY_COUNT; i++)
+            {
+                for (int j = 1; j <= FORUM_THREAD_COUNT; j++)
+                {
+                    forumThreads.add(new ForumThread("Thread #" + j + " on " + language + " Tips #" + i, "Thread #" + j + " description on " + language + " Tips #" + i));
+                }
+            }
+        }
+
+        return forumThreads;
+    }
+
+    private List<ForumPost> addForumPosts()
+    {
+        List<ForumPost> forumPosts = new ArrayList<>();
+
+        for (String language : PROGRAMMING_LANGUAGES)
+        {
+            for (int i = 1; i <= FORUM_CATEGORY_COUNT; i++)
+            {
+                for (int j = 1; j <= FORUM_THREAD_COUNT; j++)
+                {
+                    for (int k = 1; k <= FORUM_POST_COUNT; k++)
+                    {
+                        forumPosts.add(new ForumPost("Post #" + k + " on " + language));
+                    }
+                }
+            }
+        }
+
+        return forumPosts;
+    }
 
     private int getRandomNumber(int min, int max)
     {

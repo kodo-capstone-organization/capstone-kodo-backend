@@ -1,20 +1,17 @@
 package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.Content;
-import com.spring.kodo.entity.Lesson;
 import com.spring.kodo.entity.Multimedia;
 import com.spring.kodo.repository.MultimediaRepository;
-import com.spring.kodo.service.ContentService;
-import com.spring.kodo.service.FileService;
-import com.spring.kodo.service.LessonService;
-import com.spring.kodo.service.MultimediaService;
+import com.spring.kodo.service.inter.FileService;
+import com.spring.kodo.service.inter.MultimediaService;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.enumeration.MultimediaType;
-import com.spring.kodo.util.exception.LessonNotFoundException;
-import com.spring.kodo.util.exception.MultimediaNotFoundException;
 import com.spring.kodo.util.exception.InputDataValidationException;
+import com.spring.kodo.util.exception.MultimediaNotFoundException;
 import com.spring.kodo.util.exception.UnknownPersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
@@ -31,13 +28,7 @@ public class MultimediaServiceImpl implements MultimediaService
     private MultimediaRepository multimediaRepository;
 
     @Autowired
-    private ContentService contentService;
-
-    @Autowired
     private FileService fileService;
-
-    @Autowired
-    private LessonService lessonService;
 
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -49,18 +40,24 @@ public class MultimediaServiceImpl implements MultimediaService
     }
 
     @Override
-    public Multimedia createNewMultimedia(Multimedia multimedia) throws InputDataValidationException, UnknownPersistenceException
+    public Multimedia createNewMultimedia(Multimedia newMultimedia) throws InputDataValidationException, UnknownPersistenceException
     {
-        // Multimedia inherits from content
-        // Constraint violation checks on child also checks parent variables
-        Set<ConstraintViolation<Content>> constraintViolations = validator.validate(multimedia);
-        if(constraintViolations.isEmpty())
+        try
         {
-            return (Multimedia) contentService.createNewContent(multimedia);
+            Set<ConstraintViolation<Content>> constraintViolations = validator.validate(newMultimedia);
+            if (constraintViolations.isEmpty())
+            {
+                multimediaRepository.saveAndFlush(newMultimedia);
+                return newMultimedia;
+            }
+            else
+            {
+                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
         }
-        else
+        catch (DataAccessException ex)
         {
-            throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            throw new UnknownPersistenceException(ex.getMessage());
         }
     }
 
@@ -116,7 +113,7 @@ public class MultimediaServiceImpl implements MultimediaService
     }
 
     @Override  // File handling should have been done before calling this method
-    public Multimedia updateMultimedia (Multimedia multimedia)
+    public Multimedia updateMultimedia(Multimedia multimedia)
     {
         return multimediaRepository.saveAndFlush(multimedia);
     }

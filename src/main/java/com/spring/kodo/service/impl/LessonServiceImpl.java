@@ -1,13 +1,18 @@
 package com.spring.kodo.service.impl;
 
-import com.spring.kodo.entity.*;
+import com.spring.kodo.entity.Content;
+import com.spring.kodo.entity.Lesson;
+import com.spring.kodo.entity.Multimedia;
+import com.spring.kodo.entity.Quiz;
 import com.spring.kodo.repository.LessonRepository;
-import com.spring.kodo.service.ContentService;
-import com.spring.kodo.service.MultimediaService;
-import com.spring.kodo.service.QuizService;
+import com.spring.kodo.service.inter.LessonService;
+import com.spring.kodo.service.inter.MultimediaService;
+import com.spring.kodo.service.inter.QuizService;
+import com.spring.kodo.util.MessageFormatterUtil;
+import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
-import com.spring.kodo.service.LessonService;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -15,9 +20,6 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.List;
 import java.util.Set;
-
-import com.spring.kodo.util.MessageFormatterUtil;
-import com.spring.kodo.util.exception.*;
 
 @Service
 public class LessonServiceImpl implements LessonService
@@ -42,17 +44,24 @@ public class LessonServiceImpl implements LessonService
     }
 
     @Override
-    // Add Long courseId
-    public Lesson createNewLesson(Lesson newLesson) throws InputDataValidationException
+    public Lesson createNewLesson(Lesson newLesson) throws InputDataValidationException, UnknownPersistenceException
     {
-        Set<ConstraintViolation<Lesson>> constraintViolations = validator.validate(newLesson);
-        if (constraintViolations.isEmpty())
+        try
         {
-            return lessonRepository.saveAndFlush(newLesson);
+            Set<ConstraintViolation<Lesson>> constraintViolations = validator.validate(newLesson);
+            if (constraintViolations.isEmpty())
+            {
+                lessonRepository.saveAndFlush(newLesson);
+                return newLesson;
+            }
+            else
+            {
+                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
         }
-        else
+        catch (DataAccessException ex)
         {
-            throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            throw new UnknownPersistenceException(ex.getMessage());
         }
     }
 
@@ -128,7 +137,7 @@ public class LessonServiceImpl implements LessonService
         }
     }
 
-    public Lesson addContentToLesson(Lesson lesson, Content content) throws LessonNotFoundException, UpdateContentException
+    public Lesson addContentToLesson(Lesson lesson, Content content) throws LessonNotFoundException, UpdateContentException, UnknownPersistenceException
     {
         lesson = getLessonByLessonId(lesson.getLessonId());
 
@@ -140,7 +149,7 @@ public class LessonServiceImpl implements LessonService
                 {
                     content = quizService.createNewQuiz((Quiz) content);
                 }
-                catch (CreateQuizException | InputDataValidationException ex)
+                catch (CreateNewQuizException | InputDataValidationException ex)
                 {
                     throw new UpdateContentException(ex.getMessage());
                 }

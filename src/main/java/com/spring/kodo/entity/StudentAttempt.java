@@ -1,5 +1,7 @@
 package com.spring.kodo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -8,6 +10,7 @@ import java.util.List;
 
 @Entity
 @Table
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class StudentAttempt
 {
     @Id
@@ -18,11 +21,18 @@ public class StudentAttempt
     @NotNull
     private LocalDateTime dateTimeOfAttempt;
 
+    @Column(nullable = true)
+    private LocalDateTime dateTimeOfCompletion;
+
     @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
     private Quiz quiz;
 
     @OneToMany(targetEntity = StudentAttemptQuestion.class, fetch = FetchType.LAZY)
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "student_attempt_id", referencedColumnName="studentAttemptId"),
+            inverseJoinColumns = @JoinColumn(name = "student_attempt_question_id", referencedColumnName = "studentAttemptQuestionId"),
+            uniqueConstraints = @UniqueConstraint(columnNames = { "student_attempt_id", "student_attempt_question_id" })
+    )
     private List<StudentAttemptQuestion> studentAttemptQuestions;
 
     public StudentAttempt()
@@ -51,6 +61,16 @@ public class StudentAttempt
         this.dateTimeOfAttempt = dateTimeOfAttempt;
     }
 
+    public LocalDateTime getDateTimeOfCompletion()
+    {
+        return dateTimeOfCompletion;
+    }
+
+    public void setDateTimeOfCompletion(LocalDateTime dateTimeOfCompletion)
+    {
+        this.dateTimeOfCompletion = dateTimeOfCompletion;
+    }
+
     public Quiz getQuiz()
     {
         return quiz;
@@ -77,6 +97,7 @@ public class StudentAttempt
         return "StudentAttempt{" +
                 "studentAttemptId=" + studentAttemptId +
                 ", dateTimeOfAttempt=" + dateTimeOfAttempt +
+                ", dateTimeOfCompletion=" + dateTimeOfCompletion +
                 ", quiz=" + quiz +
                 ", studentAttemptQuestions=" + studentAttemptQuestions +
                 '}';

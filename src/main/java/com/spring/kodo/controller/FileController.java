@@ -1,6 +1,6 @@
 package com.spring.kodo.controller;
 
-import com.spring.kodo.service.FileService;
+import com.spring.kodo.service.inter.FileService;
 import com.spring.kodo.util.exception.FileUploadToGCSException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

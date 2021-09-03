@@ -1,14 +1,14 @@
 package com.spring.kodo.service.impl;
 
-import com.spring.kodo.entity.*;
-import com.spring.kodo.repository.QuizQuestionRepository;
+import com.spring.kodo.entity.Quiz;
+import com.spring.kodo.entity.QuizQuestion;
 import com.spring.kodo.repository.QuizRepository;
-import com.spring.kodo.service.LessonService;
-import com.spring.kodo.service.QuizQuestionService;
-import com.spring.kodo.service.QuizService;
+import com.spring.kodo.service.inter.QuizQuestionService;
+import com.spring.kodo.service.inter.QuizService;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
@@ -25,12 +25,6 @@ public class QuizServiceImpl implements QuizService
     private QuizRepository quizRepository;
 
     @Autowired
-    private QuizQuestionRepository quizQuestionRepository;
-
-    @Autowired
-    private LessonService lessonService;
-
-    @Autowired
     private QuizQuestionService quizQuestionService;
 
     private final ValidatorFactory validatorFactory;
@@ -43,18 +37,32 @@ public class QuizServiceImpl implements QuizService
     }
 
     @Override
-    public Quiz createNewQuiz(Quiz newQuiz) throws InputDataValidationException, CreateQuizException
+    public Quiz createNewQuiz(Quiz newQuiz) throws UnknownPersistenceException, CreateNewQuizException, InputDataValidationException
     {
-        Set<ConstraintViolation<Quiz>> constraintViolations = validator.validate(newQuiz);
-        if (constraintViolations.isEmpty())
+        try
         {
-            // Persist before adding in quizQuestions
-            quizRepository.saveAndFlush(newQuiz);
-            return newQuiz;
+            if (newQuiz != null)
+            {
+                Set<ConstraintViolation<Quiz>> constraintViolations = validator.validate(newQuiz);
+                if (constraintViolations.isEmpty())
+                {
+                    // Persist before adding in quizQuestions
+                    quizRepository.saveAndFlush(newQuiz);
+                    return newQuiz;
+                }
+                else
+                {
+                    throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                }
+            }
+            else
+            {
+                throw new CreateNewQuizException("New Quiz cannot be null");
+            }
         }
-        else
+        catch (DataAccessException ex)
         {
-            throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            throw new UnknownPersistenceException(ex.getMessage());
         }
     }
 
@@ -80,26 +88,88 @@ public class QuizServiceImpl implements QuizService
     }
 
     @Override
-    public Quiz addQuizQuestionToQuiz(Quiz quiz, QuizQuestion quizQuestion, List<QuizQuestionOption> quizQuestionOptions) throws QuizNotFoundException, UpdateQuizException
+    public Quiz addQuizQuestionToQuiz(Quiz quiz, QuizQuestion quizQuestion) throws QuizNotFoundException, UpdateQuizException, QuizQuestionNotFoundException
     {
-        quiz = getQuizByQuizId(quiz.getContentId());
-        if (!quiz.getQuizQuestions().contains(quizQuestion))
+        if (quiz != null)
         {
-            try
+            if (quiz.getContentId() != null)
             {
-                quizQuestionService.createNewQuizQuestion(quizQuestion, quiz.getContentId(), quizQuestionOptions);
+                quiz = getQuizByQuizId(quiz.getContentId());
+
+                if (quizQuestion != null)
+                {
+                    if (quizQuestion.getQuizQuestionId() != null)
+                    {
+                        quizQuestion = quizQuestionService.getQuizQuestionByQuizQuestionId(quizQuestion.getQuizQuestionId());
+                        quiz.getQuizQuestions().add(quizQuestion);
+
+                        quizRepository.saveAndFlush(quiz);
+                        return quiz;
+                    }
+                    else
+                    {
+                        throw new UpdateQuizException("QuizQuestion ID cannot be null");
+                    }
+                }
+                else
+                {
+                    throw new UpdateQuizException("QuizQuestion cannot be null");
+                }
             }
-            catch (CreateQuizQuestionException | InputDataValidationException ex)
+            else
             {
-                throw new UpdateQuizException(ex.getMessage());
+                throw new UpdateQuizException("Quiz ID cannot be null");
             }
         }
         else
         {
-            throw new UpdateQuizException("Quiz: " + quiz.getName() + " already has question with Content: " + quizQuestion.getContent());
+            throw new UpdateQuizException("Quiz cannot be null");
         }
+    }
 
-        quizRepository.saveAndFlush(quiz);
-        return quiz;
+    @Override
+    public Quiz addQuizQuestionsToQuiz(Quiz quiz, List<QuizQuestion> quizQuestions) throws QuizNotFoundException, UpdateQuizException, QuizQuestionNotFoundException
+    {
+        if (quiz != null)
+        {
+            if (quiz.getContentId() != null)
+            {
+                quiz = getQuizByQuizId(quiz.getContentId());
+
+                for (int i = 0; i < quizQuestions.size(); i++)
+                {
+                    QuizQuestion quizQuestion = quizQuestions.get(i);
+                    if (quizQuestion != null)
+                    {
+                        if (quizQuestion.getQuizQuestionId() != null)
+                        {
+                            quizQuestion = quizQuestionService.getQuizQuestionByQuizQuestionId(quizQuestion.getQuizQuestionId());
+                            quiz.getQuizQuestions().add(quizQuestion);
+
+                            quizQuestions.set(i, quizQuestion);
+                        }
+                        else
+                        {
+                            throw new UpdateQuizException("QuizQuestion ID cannot be null");
+                        }
+                    }
+                    else
+                    {
+                        throw new UpdateQuizException("QuizQuestion cannot be null");
+                    }
+                }
+
+                quizRepository.saveAndFlush(quiz);
+                return quiz;
+            }
+            else
+            {
+                throw new UpdateQuizException("Quiz ID cannot be null");
+            }
+        }
+        else
+        {
+            throw new UpdateQuizException("Quiz cannot be null");
+        }
     }
 }

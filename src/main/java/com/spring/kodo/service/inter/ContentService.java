@@ -1,4 +1,4 @@
-package com.spring.kodo.service;
+package com.spring.kodo.service.inter;
 
 import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Content;
@@ -11,8 +11,6 @@ import java.util.List;
 
 public interface ContentService
 {
-    Content createNewContent(Content content) throws InputDataValidationException, UnknownPersistenceException;
-
     Content getContentByContentId(Long contentId) throws ContentNotFoundException;
 
     Content getContentByName(String name) throws ContentNotFoundException;
