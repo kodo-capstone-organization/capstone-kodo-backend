@@ -1,8 +1,10 @@
 package com.spring.kodo.service.impl;
 
+import com.spring.kodo.entity.Course;
 import com.spring.kodo.entity.ForumCategory;
 import com.spring.kodo.entity.ForumThread;
 import com.spring.kodo.repository.ForumCategoryRepository;
+import com.spring.kodo.service.inter.CourseService;
 import com.spring.kodo.service.inter.ForumCategoryService;
 import com.spring.kodo.service.inter.ForumThreadService;
 import com.spring.kodo.util.MessageFormatterUtil;
@@ -23,6 +25,10 @@ public class ForumCategoryServiceImpl implements ForumCategoryService
 {
     @Autowired // With this annotation, we do not to populate ForumCategoryRepository in this class' constructor
     private ForumCategoryRepository forumCategoryRepository;
+
+    @Autowired
+    private CourseService courseService;
+
     @Autowired
     private ForumThreadService forumThreadService;
 
@@ -36,13 +42,16 @@ public class ForumCategoryServiceImpl implements ForumCategoryService
     }
 
     @Override
-    public ForumCategory createNewForumCategory(ForumCategory newForumCategory) throws InputDataValidationException, UnknownPersistenceException
+    public ForumCategory createNewForumCategory(ForumCategory newForumCategory, Long courseId) throws InputDataValidationException, UnknownPersistenceException, CourseNotFoundException
     {
         try
         {
             Set<ConstraintViolation<ForumCategory>> constraintViolations = validator.validate(newForumCategory);
             if (constraintViolations.isEmpty())
             {
+                Course course = courseService.getCourseByCourseId(courseId);
+                newForumCategory.setCourse(course);
+
                 forumCategoryRepository.saveAndFlush(newForumCategory);
                 return newForumCategory;
             }

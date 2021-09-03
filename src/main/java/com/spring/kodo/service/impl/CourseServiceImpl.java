@@ -277,52 +277,52 @@ public class CourseServiceImpl implements CourseService
         }
     }
 
-    @Override
-    public Course addForumCategoryToCourse(Course course, ForumCategory forumCategory) throws UpdateCourseException, CourseNotFoundException, ForumCategoryNotFoundException
-    {
-        if (course != null)
-        {
-            if (course.getCourseId() != null)
-            {
-                course = getCourseByCourseId(course.getCourseId());
-                if (forumCategory != null)
-                {
-                    if (forumCategory.getForumCategoryId() != null)
-                    {
-                        forumCategory = forumCategoryService.getForumCategoryByForumCategoryId(forumCategory.getForumCategoryId());
-
-                        if (!course.getForumCategories().contains(forumCategory))
-                        {
-                            course.getForumCategories().add(forumCategory);
-
-                            courseRepository.save(course);
-                            return course;
-                        }
-                        else
-                        {
-                            throw new UpdateCourseException("Course with ID " + course.getCourseId() + " already contains ForumCategory with ID " + forumCategory.getForumCategoryId());
-                        }
-                    }
-                    else
-                    {
-                        throw new UpdateCourseException("ForumCategory ID cannot be null");
-                    }
-                }
-                else
-                {
-                    throw new UpdateCourseException("ForumCategory cannot be null");
-                }
-            }
-            else
-            {
-                throw new UpdateCourseException("Course ID cannot be null");
-            }
-        }
-        else
-        {
-            throw new UpdateCourseException("Course cannot be null");
-        }
-    }
+//    @Override
+//    public Course addForumCategoryToCourse(Course course, ForumCategory forumCategory) throws UpdateCourseException, CourseNotFoundException, ForumCategoryNotFoundException
+//    {
+//        if (course != null)
+//        {
+//            if (course.getCourseId() != null)
+//            {
+//                course = getCourseByCourseId(course.getCourseId());
+//                if (forumCategory != null)
+//                {
+//                    if (forumCategory.getForumCategoryId() != null)
+//                    {
+//                        forumCategory = forumCategoryService.getForumCategoryByForumCategoryId(forumCategory.getForumCategoryId());
+//
+//                        if (!course.getForumCategories().contains(forumCategory))
+//                        {
+//                            course.getForumCategories().add(forumCategory);
+//
+//                            courseRepository.save(course);
+//                            return course;
+//                        }
+//                        else
+//                        {
+//                            throw new UpdateCourseException("Course with ID " + course.getCourseId() + " already contains ForumCategory with ID " + forumCategory.getForumCategoryId());
+//                        }
+//                    }
+//                    else
+//                    {
+//                        throw new UpdateCourseException("ForumCategory ID cannot be null");
+//                    }
+//                }
+//                else
+//                {
+//                    throw new UpdateCourseException("ForumCategory cannot be null");
+//                }
+//            }
+//            else
+//            {
+//                throw new UpdateCourseException("Course ID cannot be null");
+//            }
+//        }
+//        else
+//        {
+//            throw new UpdateCourseException("Course cannot be null");
+//        }
+//    }
 
 //    private Course setTutorToCourse(Course course, Long tutorId) throws AccountNotFoundException, UpdateCourseException
 //    {
