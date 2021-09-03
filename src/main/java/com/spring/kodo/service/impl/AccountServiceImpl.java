@@ -244,33 +244,6 @@ public class AccountServiceImpl implements AccountService
 //                        }
 //                    }
 
-                    // Update forumThreads - Unidirectional
-                    if (forumThreadIds != null)
-                    {
-                        accountToUpdate.getForumThreads().clear();
-                        for (Long forumThreadId : forumThreadIds)
-                        {
-                            ForumThread forumThread = forumThreadService.getForumThreadByForumThreadId(forumThreadId);
-                            addForumThreadToAccount(accountToUpdate, forumThread);
-                        }
-                    }
-
-                    // Update forumPosts (as an account) - Bidirectional
-                    if (forumPostIds != null)
-                    {
-                        for (ForumPost forumPost : accountToUpdate.getForumPosts())
-                        {
-                            forumPost.setAccount(null);
-                        }
-
-                        accountToUpdate.getForumPosts().clear();
-                        for (Long forumPostId : forumPostIds)
-                        {
-                            ForumPost forumPost = forumPostService.getForumPostByForumPostId(forumPostId);
-                            addForumPostToAccount(accountToUpdate, forumPost);
-                        }
-                    }
-
                     // Update studentAttempts - Unidirectional
                     if (studentAttemptIds != null)
                     {
@@ -412,100 +385,6 @@ public class AccountServiceImpl implements AccountService
                 else
                 {
                     throw new UpdateAccountException("Course cannot be null");
-                }
-            }
-            else
-            {
-                throw new UpdateAccountException("Account ID cannot be null");
-            }
-        }
-        else
-        {
-            throw new UpdateAccountException("Account cannot be null");
-        }
-    }
-
-    @Override
-    public Account addForumThreadToAccount(Account account, ForumThread forumThread) throws UpdateAccountException, AccountNotFoundException, ForumThreadNotFoundException
-    {
-        if (account != null)
-        {
-            if (account.getAccountId() != null)
-            {
-                account = getAccountByAccountId(account.getAccountId());
-                if (forumThread != null)
-                {
-                    if (forumThread.getForumThreadId() != null)
-                    {
-                        forumThread = forumThreadService.getForumThreadByForumThreadId(forumThread.getForumThreadId());
-
-                        if (!account.getForumThreads().contains(forumThread))
-                        {
-                            account.getForumThreads().add(forumThread);
-
-                            accountRepository.save(account);
-                            return account;
-                        }
-                        else
-                        {
-                            throw new UpdateAccountException("Account with ID " + account.getAccountId() + " already contains ForumThread with ID " + forumThread.getForumThreadId());
-                        }
-                    }
-                    else
-                    {
-                        throw new UpdateAccountException("ForumThread ID cannot be null");
-                    }
-                }
-                else
-                {
-                    throw new UpdateAccountException("ForumThread cannot be null");
-                }
-            }
-            else
-            {
-                throw new UpdateAccountException("Account ID cannot be null");
-            }
-        }
-        else
-        {
-            throw new UpdateAccountException("Account cannot be null");
-        }
-    }
-
-    @Override
-    public Account addForumPostToAccount(Account account, ForumPost forumPost) throws UpdateAccountException, AccountNotFoundException, ForumPostNotFoundException
-    {
-        if (account != null)
-        {
-            if (account.getAccountId() != null)
-            {
-                account = getAccountByAccountId(account.getAccountId());
-                if (forumPost != null)
-                {
-                    if (forumPost.getForumPostId() != null)
-                    {
-                        forumPost = forumPostService.getForumPostByForumPostId(forumPost.getForumPostId());
-
-                        if (!account.getForumPosts().contains(forumPost))
-                        {
-                            account.getForumPosts().add(forumPost);
-
-                            accountRepository.save(account);
-                            return account;
-                        }
-                        else
-                        {
-                            throw new UpdateAccountException("Account with ID " + account.getAccountId() + " already contains ForumPost with ID " + forumPost.getForumPostId());
-                        }
-                    }
-                    else
-                    {
-                        throw new UpdateAccountException("ForumPost ID cannot be null");
-                    }
-                }
-                else
-                {
-                    throw new UpdateAccountException("ForumPost cannot be null");
                 }
             }
             else

@@ -41,10 +41,6 @@ public interface AccountService
 
     Account addCourseToAccount(Account account, Course course) throws UpdateAccountException, AccountNotFoundException, CourseNotFoundException;
 
-    Account addForumThreadToAccount(Account account, ForumThread forumThread) throws UpdateAccountException, AccountNotFoundException, ForumThreadNotFoundException;
-
-    Account addForumPostToAccount(Account account, ForumPost forumPost) throws UpdateAccountException, AccountNotFoundException, ForumPostNotFoundException;
-
     Account addStudentAttemptToAccount(Account account, StudentAttempt studentAttempt) throws UpdateAccountException, AccountNotFoundException, StudentAttemptNotFoundException;
 
     Long deactivateAccount(Long deactivatingAccountId, Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException;

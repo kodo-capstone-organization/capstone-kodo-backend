@@ -95,14 +95,6 @@ public class Account
     )
     private List<Course> courses;
 
-    @OneToMany(targetEntity = ForumThread.class, fetch = FetchType.LAZY)
-    @JoinColumn
-    private List<ForumThread> forumThreads;
-
-    @JsonManagedReference
-    @OneToMany(targetEntity = ForumPost.class, mappedBy = "account", fetch = FetchType.LAZY)
-    private List<ForumPost> forumPosts;
-
     @OneToMany(targetEntity = StudentAttempt.class, fetch = FetchType.LAZY)
     @JoinTable(
             joinColumns = @JoinColumn(name = "account_id", referencedColumnName="accountId"),
@@ -116,8 +108,6 @@ public class Account
         this.salt = CryptographicHelper.generateRandomString(64);
         this.enrolledCourses = new ArrayList<>();
         this.courses = new ArrayList<>();
-        this.forumThreads = new ArrayList<>();
-        this.forumPosts = new ArrayList<>();
         this.interests = new ArrayList<>();
         this.studentAttempts = new ArrayList<>();
         this.isActive = true;
@@ -292,26 +282,6 @@ public class Account
         this.courses = courses;
     }
 
-    public List<ForumThread> getForumThreads()
-    {
-        return forumThreads;
-    }
-
-    public void setForumThreads(List<ForumThread> forumThreads)
-    {
-        this.forumThreads = forumThreads;
-    }
-
-    public List<ForumPost> getForumPosts()
-    {
-        return forumPosts;
-    }
-
-    public void setForumPosts(List<ForumPost> forumPosts)
-    {
-        this.forumPosts = forumPosts;
-    }
-
     public List<StudentAttempt> getStudentAttempts()
     {
         return studentAttempts;
@@ -338,8 +308,6 @@ public class Account
                 ", isActive=" + isActive +
                 ", enrolledCourses=" + enrolledCourses +
                 ", courses=" + courses +
-                ", forumThreads=" + forumThreads +
-                ", forumPosts=" + forumPosts +
                 ", interests=" + interests +
                 ", studentAttempts=" + studentAttempts +
                 '}';

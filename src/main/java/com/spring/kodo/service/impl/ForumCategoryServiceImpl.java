@@ -6,10 +6,9 @@ import com.spring.kodo.repository.ForumCategoryRepository;
 import com.spring.kodo.service.inter.ForumCategoryService;
 import com.spring.kodo.service.inter.ForumThreadService;
 import com.spring.kodo.util.MessageFormatterUtil;
-import com.spring.kodo.util.exception.ForumCategoryNotFoundException;
-import com.spring.kodo.util.exception.ForumThreadNotFoundException;
-import com.spring.kodo.util.exception.InputDataValidationException;
+import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
@@ -36,16 +35,23 @@ public class ForumCategoryServiceImpl implements ForumCategoryService
     }
 
     @Override
-    public ForumCategory createNewForumCategory(ForumCategory newForumCategory) throws InputDataValidationException
+    public ForumCategory createNewForumCategory(ForumCategory newForumCategory) throws InputDataValidationException, UnknownPersistenceException
     {
-        Set<ConstraintViolation<ForumCategory>> constraintViolations = validator.validate(newForumCategory);
-        if (constraintViolations.isEmpty())
+        try
         {
-            return forumCategoryRepository.saveAndFlush(newForumCategory);
+            Set<ConstraintViolation<ForumCategory>> constraintViolations = validator.validate(newForumCategory);
+            if (constraintViolations.isEmpty())
+            {
+                return forumCategoryRepository.saveAndFlush(newForumCategory);
+            }
+            else
+            {
+                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
         }
-        else
+        catch (DataAccessException ex)
         {
-            throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            throw new UnknownPersistenceException(ex.getMessage());
         }
     }
 
@@ -121,6 +127,53 @@ public class ForumCategoryServiceImpl implements ForumCategoryService
         else
         {
             throw new ForumCategoryNotFoundException("Forum Category with ID: " + forumCategoryId + " does not exist!");
+        }
+    }
+
+    @Override
+    public ForumCategory addForumThreadToForumCategory(ForumCategory forumCategory, ForumThread forumThread) throws UpdateForumCategoryException, ForumCategoryNotFoundException, ForumThreadNotFoundException
+    {
+        if (forumCategory != null)
+        {
+            if (forumCategory.getForumCategoryId() != null)
+            {
+                forumCategory = getForumCategoryByForumCategoryId(forumCategory.getForumCategoryId());
+                if (forumThread != null)
+                {
+                    if (forumThread.getForumThreadId() != null)
+                    {
+                        forumThread = forumThreadService.getForumThreadByForumThreadId(forumThread.getForumThreadId());
+
+                        if (!forumCategory.getForumThreads().contains(forumThread))
+                        {
+                            forumCategory.getForumThreads().add(forumThread);
+
+                            forumCategoryRepository.save(forumCategory);
+                            return forumCategory;
+                        }
+                        else
+                        {
+                            throw new UpdateForumCategoryException("ForumCategory with ID " + forumCategory.getForumCategoryId() + " already contains ForumThread with ID " + forumThread.getForumThreadId());
+                        }
+                    }
+                    else
+                    {
+                        throw new UpdateForumCategoryException("ForumThread ID cannot be null");
+                    }
+                }
+                else
+                {
+                    throw new UpdateForumCategoryException("ForumThread cannot be null");
+                }
+            }
+            else
+            {
+                throw new UpdateForumCategoryException("ForumCategory ID cannot be null");
+            }
+        }
+        else
+        {
+            throw new UpdateForumCategoryException("ForumCategory cannot be null");
         }
     }
 }

@@ -1,12 +1,12 @@
 package com.spring.kodo.service.inter;
 
 import com.spring.kodo.entity.ForumCategory;
-import com.spring.kodo.util.exception.InputDataValidationException;
-import com.spring.kodo.util.exception.ForumCategoryNotFoundException;
+import com.spring.kodo.entity.ForumThread;
+import com.spring.kodo.util.exception.*;
 
 public interface ForumCategoryService {
 
-    ForumCategory createNewForumCategory (ForumCategory newForumCategory) throws InputDataValidationException;
+    ForumCategory createNewForumCategory (ForumCategory newForumCategory) throws InputDataValidationException, UnknownPersistenceException;
 
     ForumCategory getForumCategoryByForumCategoryId(Long forumCategoryId) throws ForumCategoryNotFoundException;
 
@@ -16,4 +16,5 @@ public interface ForumCategoryService {
 
     Boolean deleteForumCategory(Long forumCategoryId) throws ForumCategoryNotFoundException;
 
+    ForumCategory addForumThreadToForumCategory(ForumCategory forumCategory, ForumThread forumThread) throws UpdateForumCategoryException, ForumCategoryNotFoundException, ForumThreadNotFoundException;
 }

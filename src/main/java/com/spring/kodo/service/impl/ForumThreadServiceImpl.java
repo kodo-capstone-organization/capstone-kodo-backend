@@ -8,11 +8,9 @@ import com.spring.kodo.service.inter.ForumCategoryService;
 import com.spring.kodo.service.inter.ForumPostService;
 import com.spring.kodo.service.inter.ForumThreadService;
 import com.spring.kodo.util.MessageFormatterUtil;
-import com.spring.kodo.util.exception.ForumCategoryNotFoundException;
-import com.spring.kodo.util.exception.ForumPostNotFoundException;
-import com.spring.kodo.util.exception.ForumThreadNotFoundException;
-import com.spring.kodo.util.exception.InputDataValidationException;
+import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
@@ -42,16 +40,23 @@ public class ForumThreadServiceImpl implements ForumThreadService
     }
 
     @Override
-    public ForumThread createNewForumThread(ForumThread newForumThread) throws InputDataValidationException
+    public ForumThread createNewForumThread(ForumThread newForumThread) throws InputDataValidationException, UnknownPersistenceException
     {
-        Set<ConstraintViolation<ForumThread>> constraintViolations = validator.validate(newForumThread);
-        if (constraintViolations.isEmpty())
+        try
         {
-            return forumThreadRepository.saveAndFlush(newForumThread);
+            Set<ConstraintViolation<ForumThread>> constraintViolations = validator.validate(newForumThread);
+            if (constraintViolations.isEmpty())
+            {
+                return forumThreadRepository.saveAndFlush(newForumThread);
+            }
+            else
+            {
+                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
         }
-        else
+        catch (DataAccessException ex)
         {
-            throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            throw new UnknownPersistenceException(ex.getMessage());
         }
     }
 
@@ -86,7 +91,8 @@ public class ForumThreadServiceImpl implements ForumThreadService
     }
 
     @Override
-    public List<ForumThread> getAllForumThreadsOfAForumCategory(Long forumCategoryId) throws ForumCategoryNotFoundException
+    public List<ForumThread> getAllForumThreadsOfAForumCategory(Long forumCategoryId) throws
+            ForumCategoryNotFoundException
     {
         ForumCategory forumCategory = forumCategoryService.getForumCategoryByForumCategoryId(forumCategoryId);
         return forumCategory.getForumThreads();
@@ -94,7 +100,8 @@ public class ForumThreadServiceImpl implements ForumThreadService
 
     //only updating attributes, not relationships
     @Override
-    public ForumThread updateForumThread(Long forumThreadId, ForumThread updatedForumThread) throws ForumThreadNotFoundException
+    public ForumThread updateForumThread(Long forumThreadId, ForumThread updatedForumThread) throws
+            ForumThreadNotFoundException
     {
         ForumThread forumThreadToUpdate = forumThreadRepository.findById(forumThreadId).orElse(null);
 
@@ -133,6 +140,53 @@ public class ForumThreadServiceImpl implements ForumThreadService
         else
         {
             throw new ForumThreadNotFoundException("Forum Thread with ID: " + forumThreadId + " does not exist!");
+        }
+    }
+
+    @Override
+    public ForumThread addForumPostToForumThread(ForumThread forumThread, ForumPost forumPost) throws UpdateForumThreadException, ForumThreadNotFoundException, ForumPostNotFoundException
+    {
+        if (forumThread != null)
+        {
+            if (forumThread.getForumThreadId() != null)
+            {
+                forumThread = getForumThreadByForumThreadId(forumThread.getForumThreadId());
+                if (forumPost != null)
+                {
+                    if (forumPost.getForumPostId() != null)
+                    {
+                        forumPost = forumPostService.getForumPostByForumPostId(forumPost.getForumPostId());
+
+                        if (!forumThread.getForumPosts().contains(forumPost))
+                        {
+                            forumThread.getForumPosts().add(forumPost);
+
+                            forumThreadRepository.save(forumThread);
+                            return forumThread;
+                        }
+                        else
+                        {
+                            throw new UpdateForumThreadException("ForumThread with ID " + forumThread.getForumThreadId() + " already contains ForumPost with ID " + forumPost.getForumPostId());
+                        }
+                    }
+                    else
+                    {
+                        throw new UpdateForumThreadException("ForumPost ID cannot be null");
+                    }
+                }
+                else
+                {
+                    throw new UpdateForumThreadException("ForumPost cannot be null");
+                }
+            }
+            else
+            {
+                throw new UpdateForumThreadException("ForumThread ID cannot be null");
+            }
+        }
+        else
+        {
+            throw new UpdateForumThreadException("ForumThread cannot be null");
         }
     }
 }

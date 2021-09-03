@@ -1,12 +1,17 @@
 package com.spring.kodo.service.impl;
 
+import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.ForumPost;
 import com.spring.kodo.repository.ForumPostRepository;
+import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.ForumPostService;
 import com.spring.kodo.util.MessageFormatterUtil;
+import com.spring.kodo.util.exception.AccountNotFoundException;
 import com.spring.kodo.util.exception.ForumPostNotFoundException;
 import com.spring.kodo.util.exception.InputDataValidationException;
+import com.spring.kodo.util.exception.UnknownPersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
@@ -23,6 +28,9 @@ public class ForumPostServiceImpl implements ForumPostService
     @Autowired // With this annotation, we do not to populate ForumPostRepository in this class' constructor
     private ForumPostRepository forumPostRepository;
 
+    @Autowired
+    private AccountService accountService;
+
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
 
@@ -33,16 +41,26 @@ public class ForumPostServiceImpl implements ForumPostService
     }
 
     @Override
-    public ForumPost createNewForumPost(ForumPost newForumPost) throws InputDataValidationException
+    public ForumPost createNewForumPost(ForumPost newForumPost, Long accountId) throws InputDataValidationException, UnknownPersistenceException, AccountNotFoundException
     {
-        Set<ConstraintViolation<ForumPost>> constraintViolations = validator.validate(newForumPost);
-        if (constraintViolations.isEmpty())
+        try
         {
-            return forumPostRepository.saveAndFlush(newForumPost);
+            Set<ConstraintViolation<ForumPost>> constraintViolations = validator.validate(newForumPost);
+            if (constraintViolations.isEmpty())
+            {
+                Account account = accountService.getAccountByAccountId(accountId);
+                newForumPost.setAccount(account);
+
+                return forumPostRepository.saveAndFlush(newForumPost);
+            }
+            else
+            {
+                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
         }
-        else
+        catch (DataAccessException ex)
         {
-            throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            throw new UnknownPersistenceException(ex.getMessage());
         }
     }
 

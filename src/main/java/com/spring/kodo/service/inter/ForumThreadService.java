@@ -1,15 +1,14 @@
 package com.spring.kodo.service.inter;
 
+import com.spring.kodo.entity.ForumPost;
 import com.spring.kodo.entity.ForumThread;
-import com.spring.kodo.util.exception.ForumCategoryNotFoundException;
-import com.spring.kodo.util.exception.ForumThreadNotFoundException;
-import com.spring.kodo.util.exception.InputDataValidationException;
+import com.spring.kodo.util.exception.*;
 
 import java.util.List;
 
 public interface ForumThreadService {
 
-    ForumThread createNewForumThread (ForumThread newForumThread) throws InputDataValidationException;
+    ForumThread createNewForumThread (ForumThread newForumThread) throws InputDataValidationException, UnknownPersistenceException;
 
     ForumThread getForumThreadByForumThreadId(Long forumThreadId) throws ForumThreadNotFoundException;
 
@@ -21,4 +20,5 @@ public interface ForumThreadService {
 
     Boolean deleteForumThread(Long forumThreadId) throws ForumThreadNotFoundException;
 
+    ForumThread addForumPostToForumThread(ForumThread forumThread, ForumPost forumPost) throws UpdateForumThreadException, ForumThreadNotFoundException, ForumPostNotFoundException;
 }
