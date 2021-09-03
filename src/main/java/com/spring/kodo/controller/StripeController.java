@@ -4,6 +4,7 @@ import com.spring.kodo.restentity.StripePaymentReq;
 import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.StripeService;
 import com.spring.kodo.util.exception.AccountNotFoundException;
+import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Account;
 import com.stripe.model.AccountLink;
@@ -12,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping(path="/stripe")
@@ -54,6 +57,18 @@ public class StripeController
             String url = this.stripeService.createStripeSession(stripePaymentReq);
             return ResponseEntity.status(HttpStatus.OK).body(url);
         } catch (StripeException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
+    }
+
+    @PostMapping("/successfulStripeCheckout")
+    public ResponseEntity successfulStripeCheckout(@RequestBody(required=true) String payload, @RequestHeader HttpServletRequest request)
+    {
+        try
+        {
+            stripeService.handleSuccessfulStripeCheckout(payload, request);
+            return ResponseEntity.status(HttpStatus.OK).body("Successful checkout");
+        } catch (SignatureVerificationException ex) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
     }
