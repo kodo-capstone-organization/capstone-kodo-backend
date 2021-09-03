@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
@@ -101,7 +102,8 @@ public class CourseController
 
     @PostMapping("/createNewCourse")
     public Course createNewCourse(
-            @RequestPart(name = "course", required = true) CreateNewCourseReq createNewCourseReq
+            @RequestPart(name = "course", required = true) CreateNewCourseReq createNewCourseReq,
+            @RequestPart(name = "bannerPicture", required = false) MultipartFile bannerPicture
     )
     {
         if (createNewCourseReq != null)
@@ -109,8 +111,16 @@ public class CourseController
             logger.info("HIT account/createNewCourse | POST | Received : " + createNewCourseReq);
             try
             {
-                Course newCourse = new Course(createNewCourseReq.getName(), createNewCourseReq.getDescription(), createNewCourseReq.getPrice(), createNewCourseReq.getBannerUrl());
+                Course newCourse = new Course(createNewCourseReq.getName(), createNewCourseReq.getDescription(), createNewCourseReq.getPrice(), "");
                 newCourse = this.courseService.createNewCourse(newCourse, createNewCourseReq.getTutorId(), createNewCourseReq.getTagTitles());
+
+                // TODO: courseService.updateCourse
+//                if (bannerPicture != null)
+//                {
+//                    String bannerPictureURL = fileService.upload(bannerPicture);
+//                    newCourse.setBannerUrl(bannerPictureURL);
+//                    newCourse = this.courseService.updateCourse(newCourse, ...null for other relationfields);
+//                }
 
                 return newCourse;
             }
