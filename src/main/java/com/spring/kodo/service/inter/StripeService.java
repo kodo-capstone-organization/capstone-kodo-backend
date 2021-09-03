@@ -1,4 +1,4 @@
-package com.spring.kodo.service;
+package com.spring.kodo.service.inter;
 
 import com.spring.kodo.restentity.StripePaymentReq;
 import com.stripe.exception.StripeException;
