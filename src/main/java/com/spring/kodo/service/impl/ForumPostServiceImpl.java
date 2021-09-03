@@ -51,7 +51,8 @@ public class ForumPostServiceImpl implements ForumPostService
                 Account account = accountService.getAccountByAccountId(accountId);
                 newForumPost.setAccount(account);
 
-                return forumPostRepository.saveAndFlush(newForumPost);
+                forumPostRepository.saveAndFlush(newForumPost);
+                return newForumPost;
             }
             else
             {

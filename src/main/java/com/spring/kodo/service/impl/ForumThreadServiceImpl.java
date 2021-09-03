@@ -1,9 +1,11 @@
 package com.spring.kodo.service.impl;
 
+import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.ForumCategory;
 import com.spring.kodo.entity.ForumPost;
 import com.spring.kodo.entity.ForumThread;
 import com.spring.kodo.repository.ForumThreadRepository;
+import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.ForumCategoryService;
 import com.spring.kodo.service.inter.ForumPostService;
 import com.spring.kodo.service.inter.ForumThreadService;
@@ -25,8 +27,13 @@ public class ForumThreadServiceImpl implements ForumThreadService
 {
     @Autowired // With this annotation, we do not to populate ForumThreadRepository in this class' constructor
     private ForumThreadRepository forumThreadRepository;
+
+    @Autowired
+    private AccountService accountService;
+
     @Autowired
     private ForumCategoryService forumCategoryService;
+
     @Autowired
     private ForumPostService forumPostService;
 
@@ -40,14 +47,18 @@ public class ForumThreadServiceImpl implements ForumThreadService
     }
 
     @Override
-    public ForumThread createNewForumThread(ForumThread newForumThread) throws InputDataValidationException, UnknownPersistenceException
+    public ForumThread createNewForumThread(ForumThread newForumThread, Long accountId) throws InputDataValidationException, UnknownPersistenceException, AccountNotFoundException
     {
         try
         {
             Set<ConstraintViolation<ForumThread>> constraintViolations = validator.validate(newForumThread);
             if (constraintViolations.isEmpty())
             {
-                return forumThreadRepository.saveAndFlush(newForumThread);
+                Account account = accountService.getAccountByAccountId(accountId);
+                newForumThread.setAccount(account);
+
+                forumThreadRepository.saveAndFlush(newForumThread);
+                return newForumThread;
             }
             else
             {

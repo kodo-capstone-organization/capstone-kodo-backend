@@ -42,7 +42,8 @@ public class ForumCategoryServiceImpl implements ForumCategoryService
             Set<ConstraintViolation<ForumCategory>> constraintViolations = validator.validate(newForumCategory);
             if (constraintViolations.isEmpty())
             {
-                return forumCategoryRepository.saveAndFlush(newForumCategory);
+                forumCategoryRepository.saveAndFlush(newForumCategory);
+                return newForumCategory;
             }
             else
             {

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ForumThreadService {
 
-    ForumThread createNewForumThread (ForumThread newForumThread) throws InputDataValidationException, UnknownPersistenceException;
+    ForumThread createNewForumThread(ForumThread newForumThread, Long accountId) throws InputDataValidationException, UnknownPersistenceException, AccountNotFoundException;
 
     ForumThread getForumThreadByForumThreadId(Long forumThreadId) throws ForumThreadNotFoundException;
 
