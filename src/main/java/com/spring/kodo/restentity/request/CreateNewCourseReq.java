@@ -8,7 +8,6 @@ public class CreateNewCourseReq
     private String name;
     private String description;
     private BigDecimal price;
-    private String bannerUrl;
     private Long tutorId;
     private List<String> tagTitles;
 
@@ -16,12 +15,11 @@ public class CreateNewCourseReq
     {
     }
 
-    public CreateNewCourseReq(String name, String description, BigDecimal price, String bannerUrl, Long tutorId, List<String> tagTitles)
+    public CreateNewCourseReq(String name, String description, BigDecimal price, Long tutorId, List<String> tagTitles)
     {
         this.name = name;
         this.description = description;
         this.price = price;
-        this.bannerUrl = bannerUrl;
         this.tutorId = tutorId;
         this.tagTitles = tagTitles;
     }
@@ -54,16 +52,6 @@ public class CreateNewCourseReq
     public void setPrice(BigDecimal price)
     {
         this.price = price;
-    }
-
-    public String getBannerUrl()
-    {
-        return bannerUrl;
-    }
-
-    public void setBannerUrl(String bannerUrl)
-    {
-        this.bannerUrl = bannerUrl;
     }
 
     public Long getTutorId()

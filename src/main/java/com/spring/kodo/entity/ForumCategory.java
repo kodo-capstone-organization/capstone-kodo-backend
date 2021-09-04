@@ -31,6 +31,9 @@ public class ForumCategory
     @JoinColumn
     private List<ForumThread> forumThreads;
 
+    @ManyToOne(targetEntity = Course.class, fetch = FetchType.LAZY)
+    private Course course;
+
     public ForumCategory()
     {
         this.forumThreads = new ArrayList<>();
@@ -84,6 +87,16 @@ public class ForumCategory
         this.forumThreads = forumThreads;
     }
 
+    public Course getCourse()
+    {
+        return course;
+    }
+
+    public void setCourse(Course course)
+    {
+        this.course = course;
+    }
+
     @Override
     public String toString()
     {
@@ -92,6 +105,7 @@ public class ForumCategory
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", forumThreads=" + forumThreads +
+                ", course=" + course +
                 '}';
     }
 }

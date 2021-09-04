@@ -267,8 +267,8 @@ public class DatabaseConfig
                 // ForumCategory Creation
                 for (int j = 0; j < FORUM_CATEGORY_COUNT; j++, forumCategoryIndex++)
                 {
-                    forumCategory = forumCategoryService.createNewForumCategory(forumCategories.get(forumCategoryIndex));
-                    courseService.addForumCategoryToCourse(course, forumCategory);
+                    forumCategory = forumCategoryService.createNewForumCategory(forumCategories.get(forumCategoryIndex), course.getCourseId());
+//                    courseService.addForumCategoryToCourse(course, forumCategory);
 
                     for (int k = 0; k < FORUM_THREAD_COUNT; k++, forumThreadIndex++)
                     {
