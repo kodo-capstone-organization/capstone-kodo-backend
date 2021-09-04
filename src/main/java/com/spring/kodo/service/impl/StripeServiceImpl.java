@@ -70,10 +70,10 @@ public class StripeServiceImpl implements StripeService
         SessionCreateParams params =
                 SessionCreateParams.builder()
                         .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+                        .putMetadata("courseId", stripePaymentReq.getCourseId().toString())
                         .addLineItem(
                                 SessionCreateParams.LineItem.builder()
                                         .setName(stripePaymentReq.getTutorName())
-                                        .setDescription(stripePaymentReq.getCourseId().toString())
                                         .setAmount(stripePaymentReq.getAmount().longValue() * 100)
                                         .setCurrency("sgd")
                                         .setQuantity(1L)
