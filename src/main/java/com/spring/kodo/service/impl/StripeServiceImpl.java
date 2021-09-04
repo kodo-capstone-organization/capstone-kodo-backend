@@ -1,8 +1,7 @@
 package com.spring.kodo.service.impl;
 
-import com.google.api.client.util.IOUtils;
 import com.google.gson.JsonSyntaxException;
-import com.spring.kodo.restentity.StripePaymentReq;
+import com.spring.kodo.restentity.request.StripePaymentReq;
 import com.spring.kodo.service.inter.StripeService;
 import com.stripe.Stripe;
 import com.stripe.exception.SignatureVerificationException;
