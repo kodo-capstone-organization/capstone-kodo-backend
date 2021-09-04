@@ -12,6 +12,8 @@ public interface EnrolledCourseService
 
     EnrolledCourse getEnrolledCourseByEnrolledCourseId(Long enrolledCourseId) throws EnrolledCourseNotFoundException;
 
+    EnrolledCourse getEnrolledCourseByStudentIdAndCourseName(Long studentId, String courseName) throws EnrolledCourseNotFoundException;
+
     List<EnrolledCourse> getAllEnrolledCourses();
 
     EnrolledCourse addCompletedLessonToEnrolledCourse(EnrolledCourse enrolledCourse, CompletedLesson completedLesson) throws UpdateEnrolledCourseException, EnrolledCourseNotFoundException, CompletedLessonNotFoundException;

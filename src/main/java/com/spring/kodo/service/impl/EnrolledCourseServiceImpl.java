@@ -65,7 +65,8 @@ public class EnrolledCourseServiceImpl implements EnrolledCourseService
 
                         for (EnrolledCourse enrolledCourse : student.getEnrolledCourses())
                         {
-                            if (enrolledCourse.getParentCourse().equals(course))
+//                            if (enrolledCourse.getParentCourse().equals(course))
+                            if (enrolledCourse.getParentCourse().getCourseId().equals(course.getCourseId()))
                             {
                                 throw new CreateNewEnrolledCourseException("The student with ID " + studentId + " is already enrolled to course with ID " + courseId);
                             }
@@ -112,6 +113,22 @@ public class EnrolledCourseServiceImpl implements EnrolledCourseService
             throw new EnrolledCourseNotFoundException("EnrolledCourse with ID: " + enrolledCourseId + " does not exist!");
         }
     }
+
+    @Override
+    public EnrolledCourse getEnrolledCourseByStudentIdAndCourseName(Long studentId, String courseName) throws EnrolledCourseNotFoundException
+    {
+        EnrolledCourse enrolledCourse = enrolledCourseRepository.findByStudentIdAndCourseName(studentId, courseName).orElse(null);
+
+        if (enrolledCourse != null)
+        {
+            return enrolledCourse;
+        }
+        else
+        {
+            throw new EnrolledCourseNotFoundException("EnrolledCourse with Account ID " + studentId + " and Course Name: " + courseName + " does not exist!");
+        }
+    }
+
 
     @Override
     public List<EnrolledCourse> getAllEnrolledCourses()
