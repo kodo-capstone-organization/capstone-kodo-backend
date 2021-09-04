@@ -8,18 +8,28 @@ public class StripePaymentReq
 
     private Long tutorId;
     private String tutorName;
+    private Long courseId;
 
     private BigDecimal amount;
     private String tutorStripeAccountId;
 
     public StripePaymentReq(){}
 
-    public StripePaymentReq(Long studentId, Long tutorId, String tutorName, BigDecimal amount, String tutorStripeAccountId) {
+    public StripePaymentReq(Long studentId, Long tutorId, Long courseId, String tutorName, BigDecimal amount, String tutorStripeAccountId) {
         this.studentId = studentId;
         this.tutorId = tutorId;
+        this.courseId = courseId;
         this.tutorName = tutorName;
         this.amount = amount;
         this.tutorStripeAccountId = tutorStripeAccountId;
+    }
+
+    public Long getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(Long courseId) {
+        this.courseId = courseId;
     }
 
     public Long getStudentId() {

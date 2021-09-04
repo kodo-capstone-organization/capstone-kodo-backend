@@ -265,6 +265,7 @@ public class AccountServiceImpl implements AccountService
                     accountToUpdate.setDisplayPictureUrl(account.getDisplayPictureUrl());
                     accountToUpdate.setIsAdmin(account.getIsAdmin());
                     accountToUpdate.setIsActive(account.getIsActive());
+                    accountToUpdate.setStripeAccountId(account.getStripeAccountId());
 
                     return accountRepository.saveAndFlush(accountToUpdate);
                 }

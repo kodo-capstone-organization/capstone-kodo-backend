@@ -30,6 +30,9 @@ public class StripeServiceImpl implements StripeService
     @Value("${STRIPE_ENDPOINT_SECRET}")
     private String stripeEndpointSecret;
 
+    @Value("${MAIN_APP_URL}")
+    private String mainAppUrl;
+
     @Override
     public Account createNewStripeAccount() throws StripeException
     {
@@ -52,8 +55,8 @@ public class StripeServiceImpl implements StripeService
                 AccountLinkCreateParams
                         .builder()
                         .setAccount(account.getId())
-                        .setRefreshUrl("http://localhost:8080")
-                        .setReturnUrl("http://localhost:8080")
+                        .setRefreshUrl(mainAppUrl.concat("")) // TODO: Add refresh URL
+                        .setReturnUrl(mainAppUrl.concat("")) // TODO: Add return URL
                         .setType(AccountLinkCreateParams.Type.ACCOUNT_ONBOARDING)
                         .build();
 
@@ -70,7 +73,8 @@ public class StripeServiceImpl implements StripeService
                         .addLineItem(
                                 SessionCreateParams.LineItem.builder()
                                         .setName(stripePaymentReq.getTutorName())
-                                        .setAmount(stripePaymentReq.getAmount().longValue())
+                                        .setDescription(stripePaymentReq.getCourseId().toString())
+                                        .setAmount(stripePaymentReq.getAmount().longValue() * 100)
                                         .setCurrency("sgd")
                                         .setQuantity(1L)
                                         .build())
@@ -83,8 +87,8 @@ public class StripeServiceImpl implements StripeService
                                                         .build())
                                         .build())
                         .setMode(SessionCreateParams.Mode.PAYMENT)
-                        .setSuccessUrl("https://example.com/success")
-                        .setCancelUrl("https://example.com/cancel")
+                        .setSuccessUrl(mainAppUrl) // TODO: Add success url
+                        .setCancelUrl(mainAppUrl) // TODO: Add cancel url
                         .build();
 
         return Session.create(params).getUrl();

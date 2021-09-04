@@ -3,7 +3,7 @@ package com.spring.kodo.controller;
 import com.spring.kodo.restentity.request.StripePaymentReq;
 import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.StripeService;
-import com.spring.kodo.util.exception.AccountNotFoundException;
+import com.spring.kodo.util.exception.*;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Account;
@@ -32,20 +32,28 @@ public class StripeController
         try
         {
             com.spring.kodo.entity.Account account = this.accountService.getAccountByAccountId(accountId);
-            if (account.getStripeAccountId() != null)
+            if (account.getStripeAccountId() == null)
             {
-                return ResponseEntity.status(HttpStatus.OK).body(account.getStripeAccountId());
+                Account stripeAccount = this.stripeService.createNewStripeAccount();
+                AccountLink accountLink = this.stripeService.createStripeAccountLink(stripeAccount);
+
+                account.setStripeAccountId(stripeAccount.getId());
+                accountService.updateAccount(account, null, null, null, null, null, null);
+                return ResponseEntity.status(HttpStatus.OK).body(accountLink.getUrl());
             }
-            Account stripeAccount = this.stripeService.createNewStripeAccount();
-            AccountLink accountLink = this.stripeService.createStripeAccountLink(stripeAccount);
-            return ResponseEntity.status(HttpStatus.OK).body(stripeAccount.getId());
+            throw new AccountExistsException("User has an existing Stripe account connected to his Kodo account");
         }
-        catch (AccountNotFoundException ex)
-        {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        } catch (StripeException ex)
+        catch (StripeException | AccountExistsException | InputDataValidationException | TagNameExistsException ex)
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
+        catch (AccountNotFoundException | TagNotFoundException | UpdateAccountException | EnrolledCourseNotFoundException | CourseNotFoundException | StudentAttemptNotFoundException | ForumThreadNotFoundException | ForumPostNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+        catch (UnknownPersistenceException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
         }
     }
 
@@ -56,7 +64,8 @@ public class StripeController
         {
             String url = this.stripeService.createStripeSession(stripePaymentReq);
             return ResponseEntity.status(HttpStatus.OK).body(url);
-        } catch (StripeException ex) {
+        }
+        catch (StripeException ex) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
     }
@@ -68,7 +77,8 @@ public class StripeController
         {
             stripeService.handleSuccessfulStripeCheckout(payload, request);
             return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (SignatureVerificationException ex) {
+        }
+        catch (SignatureVerificationException ex) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
     }
