@@ -413,7 +413,10 @@ public class DatabaseConfig
             accounts.add(new Account("student" + i, "password", "Student " + i, "I am Student " + i, "student" + i + "@gmail.com", "https://student" + i + ".com", false));
         }
 
-        accounts.add(new Account("tutor1", "password", "Tutor Trisha", "I am Tutor 1", "tutor1@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/18700b5a-4890-430f-9bab-1d312862c030.gif?generation=1630266710675423&alt=media", false));
+        accounts.add(new Account("tutor1", "password", "Tutor Trisha", "Hello! I am Tutor Trisha Toh. My greatest passion in life is teaching. I was born and raised in Singapore, " +
+                "and experienced great success at school and at university due to amazing and unforgettable teachers. This is the foundation of my commitment to helping out my students, whatever their abilities may be. " +
+                "Currently, I am studying a masters degree specializing in Frontend Engineering.",
+                "tutor1@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/18700b5a-4890-430f-9bab-1d312862c030.gif?generation=1630266710675423&alt=media", false));
         for (int i = PREFIXED_TUTOR_COUNT + 1; i <= TUTOR_COUNT; i++)
         {
             accounts.add(new Account("tutor" + i, "password", "Tutor " + i, "I am Tutor " + i, "tutor" + i + "@gmail.com", "https://tutor" + i + ".com", false));
