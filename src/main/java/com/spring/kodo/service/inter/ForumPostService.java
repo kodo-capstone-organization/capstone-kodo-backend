@@ -16,7 +16,7 @@ public interface ForumPostService {
 
     List<ForumPost> getAllForumPosts();
 
-    ForumPost updateForumPost(Long forumPostId, ForumPost updatedForumPost) throws ForumPostNotFoundException;
+    ForumPost updateForumPost(ForumPost updatedForumPost) throws ForumPostNotFoundException, InputDataValidationException;
 
     Boolean deleteForumPost (Long forumPostId) throws ForumPostNotFoundException;
 }
