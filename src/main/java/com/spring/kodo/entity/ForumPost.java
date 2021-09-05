@@ -45,6 +45,11 @@ public class ForumPost
         this.message = message;
     }
 
+    public ForumPost(String message, LocalDateTime timeStamp) {
+        this.message = message;
+        this.timeStamp = timeStamp;
+    }
+
     public Long getForumPostId()
     {
         return forumPostId;

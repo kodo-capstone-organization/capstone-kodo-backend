@@ -71,6 +71,9 @@ public class Account
     @NotNull
     private Boolean isActive;
 
+    @Column(nullable = true)
+    private String stripeAccountId;
+
     @ManyToMany(targetEntity = Tag.class, fetch = FetchType.LAZY)
     @JoinTable(
             joinColumns = @JoinColumn(name = "account_id", referencedColumnName="accountId"),
@@ -291,6 +294,10 @@ public class Account
     {
         this.studentAttempts = studentAttempts;
     }
+
+    public String getStripeAccountId() { return stripeAccountId; }
+
+    public void setStripeAccountId(String stripeAccountId) { this.stripeAccountId = stripeAccountId; }
 
     @Override
     public String toString()

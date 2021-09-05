@@ -71,6 +71,11 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.stripe</groupId>
+			<artifactId>stripe-java</artifactId>
+			<version>20.70.0</version>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>

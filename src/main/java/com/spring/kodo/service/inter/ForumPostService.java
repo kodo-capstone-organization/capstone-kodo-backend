@@ -1,10 +1,7 @@
 package com.spring.kodo.service.inter;
 
 import com.spring.kodo.entity.ForumPost;
-import com.spring.kodo.util.exception.AccountNotFoundException;
-import com.spring.kodo.util.exception.ForumPostNotFoundException;
-import com.spring.kodo.util.exception.InputDataValidationException;
-import com.spring.kodo.util.exception.UnknownPersistenceException;
+import com.spring.kodo.util.exception.*;
 
 import java.util.List;
 
@@ -16,7 +13,9 @@ public interface ForumPostService {
 
     List<ForumPost> getAllForumPosts();
 
-    ForumPost updateForumPost(Long forumPostId, ForumPost updatedForumPost) throws ForumPostNotFoundException;
+    List<ForumPost> getAllForumPostsOfAForumThread(Long forumThreadId) throws ForumThreadNotFoundException;
 
-    Boolean deleteForumPost (Long forumPostId) throws ForumPostNotFoundException;
+    ForumPost updateForumPost(ForumPost updatedForumPost) throws ForumPostNotFoundException, InputDataValidationException;
+
+    Boolean deleteForumPost(Long forumPostId) throws ForumPostNotFoundException;
 }
