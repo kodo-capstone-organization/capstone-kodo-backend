@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,15 +25,17 @@ public class EnrolledCourse
     @Max(5)
     private int courseRating;
 
+    @Column(nullable = true)
+    private LocalDateTime dateTimeOfCompletion;
+
     @ManyToOne(optional = false)
     private Course parentCourse;
 
     @OneToMany(targetEntity = EnrolledLesson.class, fetch = FetchType.LAZY)
-    @JoinColumn
     @JoinTable(
-            joinColumns = @JoinColumn(name = "enrolled_course_id", referencedColumnName="enrolledCourseId"),
+            joinColumns = @JoinColumn(name = "enrolled_course_id", referencedColumnName = "enrolledCourseId"),
             inverseJoinColumns = @JoinColumn(name = "enrolled_lesson_id", referencedColumnName = "enrolledLessonId"),
-            uniqueConstraints = @UniqueConstraint(columnNames = { "enrolled_course_id", "enrolled_lesson_id" })
+            uniqueConstraints = @UniqueConstraint(columnNames = {"enrolled_course_id", "enrolled_lesson_id"})
     )
     private List<EnrolledLesson> enrolledLessons;
 
@@ -68,6 +71,16 @@ public class EnrolledCourse
         this.courseRating = courseRating;
     }
 
+    public LocalDateTime getDateTimeOfCompletion()
+    {
+        return dateTimeOfCompletion;
+    }
+
+    public void setDateTimeOfCompletion(LocalDateTime dateTimeOfCompletion)
+    {
+        this.dateTimeOfCompletion = dateTimeOfCompletion;
+    }
+
     public Course getParentCourse()
     {
         return parentCourse;
@@ -78,12 +91,12 @@ public class EnrolledCourse
         this.parentCourse = parentCourse;
     }
 
-    public List<EnrolledLesson> getCompletedLessons()
+    public List<EnrolledLesson> getEnrolledLessons()
     {
         return enrolledLessons;
     }
 
-    public void setCompletedLessons(List<EnrolledLesson> enrolledLessons)
+    public void setEnrolledLessons(List<EnrolledLesson> enrolledLessons)
     {
         this.enrolledLessons = enrolledLessons;
     }
@@ -94,6 +107,7 @@ public class EnrolledCourse
         return "EnrolledCourse{" +
                 "enrolledCourseId=" + enrolledCourseId +
                 ", courseRating=" + courseRating +
+                ", dateTimeOfCompletion=" + dateTimeOfCompletion +
                 ", parentCourse=" + parentCourse +
                 ", enrolledLessons=" + enrolledLessons +
                 '}';

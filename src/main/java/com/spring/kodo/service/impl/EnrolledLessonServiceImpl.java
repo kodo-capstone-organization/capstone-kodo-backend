@@ -1,8 +1,10 @@
 package com.spring.kodo.service.impl;
 
+import com.spring.kodo.entity.EnrolledContent;
 import com.spring.kodo.entity.EnrolledLesson;
 import com.spring.kodo.entity.Lesson;
 import com.spring.kodo.repository.EnrolledLessonRepository;
+import com.spring.kodo.service.inter.EnrolledContentService;
 import com.spring.kodo.service.inter.EnrolledLessonService;
 import com.spring.kodo.service.inter.LessonService;
 import com.spring.kodo.util.MessageFormatterUtil;
@@ -25,6 +27,9 @@ public class EnrolledLessonServiceImpl implements EnrolledLessonService
     private EnrolledLessonRepository enrolledLessonRepository;
 
     @Autowired
+    private EnrolledContentService enrolledContentService;
+
+    @Autowired
     private LessonService lessonService;
 
     private final ValidatorFactory validatorFactory;
@@ -37,7 +42,7 @@ public class EnrolledLessonServiceImpl implements EnrolledLessonService
     }
 
     @Override
-    public EnrolledLesson createNewEnrolledLesson(Long parentLessonId) throws InputDataValidationException, UnknownPersistenceException, CreateNewCompletedLessonException, LessonNotFoundException
+    public EnrolledLesson createNewEnrolledLesson(Long parentLessonId) throws InputDataValidationException, UnknownPersistenceException, CreateNewEnrolledLessonException, LessonNotFoundException
     {
         try
         {
@@ -56,7 +61,7 @@ public class EnrolledLessonServiceImpl implements EnrolledLessonService
                 }
                 else
                 {
-                    throw new CreateNewCompletedLessonException("EnrolledLesson ID cannot be null");
+                    throw new CreateNewEnrolledLessonException("EnrolledLesson ID cannot be null");
                 }
             }
             else
@@ -71,7 +76,7 @@ public class EnrolledLessonServiceImpl implements EnrolledLessonService
     }
 
     @Override
-    public EnrolledLesson getEnrolledLessonByEnrolledLessonId(Long enrolledLessonId) throws CompletedLessonNotFoundException
+    public EnrolledLesson getEnrolledLessonByEnrolledLessonId(Long enrolledLessonId) throws EnrolledLessonNotFoundException
     {
         EnrolledLesson enrolledLesson = enrolledLessonRepository.findById(enrolledLessonId).orElse(null);
 
@@ -81,7 +86,7 @@ public class EnrolledLessonServiceImpl implements EnrolledLessonService
         }
         else
         {
-            throw new CompletedLessonNotFoundException("EnrolledLesson with ID: " + enrolledLessonId + " does not exist!");
+            throw new EnrolledLessonNotFoundException("EnrolledLesson with ID: " + enrolledLessonId + " does not exist!");
         }
     }
 
@@ -89,5 +94,52 @@ public class EnrolledLessonServiceImpl implements EnrolledLessonService
     public List<EnrolledLesson> getAllEnrolledLessons()
     {
         return enrolledLessonRepository.findAll();
+    }
+
+    @Override
+    public EnrolledLesson addEnrolledContentToEnrolledLesson(EnrolledLesson enrolledLesson, EnrolledContent enrolledContent) throws UpdateEnrolledLessonException, EnrolledLessonNotFoundException, EnrolledContentNotFoundException
+    {
+        if (enrolledLesson != null)
+        {
+            if (enrolledLesson.getEnrolledLessonId() != null)
+            {
+                enrolledLesson = getEnrolledLessonByEnrolledLessonId(enrolledLesson.getEnrolledLessonId());
+                if (enrolledContent != null)
+                {
+                    if (enrolledContent.getEnrolledContentId() != null)
+                    {
+                        enrolledContent = enrolledContentService.getEnrolledContentByEnrolledContentId(enrolledContent.getEnrolledContentId());
+
+                        if (!enrolledLesson.getEnrolledContents().contains(enrolledContent))
+                        {
+                            enrolledLesson.getEnrolledContents().add(enrolledContent);
+
+                            enrolledLessonRepository.save(enrolledLesson);
+                            return enrolledLesson;
+                        }
+                        else
+                        {
+                            throw new UpdateEnrolledLessonException("EnrolledLesson with ID " + enrolledLesson.getEnrolledLessonId() + " already contains EnrolledContent with ID " + enrolledContent.getEnrolledContentId());
+                        }
+                    }
+                    else
+                    {
+                        throw new UpdateEnrolledLessonException("EnrolledContent ID cannot be null");
+                    }
+                }
+                else
+                {
+                    throw new UpdateEnrolledLessonException("EnrolledContent cannot be null");
+                }
+            }
+            else
+            {
+                throw new UpdateEnrolledLessonException("EnrolledLesson ID cannot be null");
+            }
+        }
+        else
+        {
+            throw new UpdateEnrolledLessonException("EnrolledLesson cannot be null");
+        }
     }
 }

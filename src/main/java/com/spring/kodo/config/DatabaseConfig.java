@@ -31,6 +31,9 @@ public class DatabaseConfig
     private ForumCategoryService forumCategoryService;
 
     @Autowired
+    private EnrolledContentService enrolledContentService;
+
+    @Autowired
     private EnrolledLessonService enrolledLessonService;
 
     @Autowired
@@ -86,10 +89,11 @@ public class DatabaseConfig
     private List<QuizQuestionOption> quizQuestionOptions;
     private List<Multimedia> multimedias;
     private List<EnrolledCourse> enrolledCourses;
+    private List<EnrolledLesson> enrolledLessons;
+    private List<EnrolledContent> enrolledContents;
     private List<StudentAttempt> studentAttempts;
     private List<StudentAttemptQuestion> studentAttemptQuestions;
     private List<StudentAttemptAnswer> studentAttemptAnswers;
-    private List<EnrolledLesson> enrolledLessons;
     private List<ForumCategory> forumCategories;
     private List<ForumThread> forumThreads;
     private List<ForumPost> forumPosts;
@@ -98,9 +102,9 @@ public class DatabaseConfig
     private final Integer PROGRAMMING_LANGUAGES_COUNT = 14; // Current max is 14
 
     private final Integer TUTOR_COUNT = 5;
-    private final Integer STUDENT_COUNT = 10;
+    private final Integer STUDENT_COUNT = 20;
 
-    private final Integer LESSON_COUNT = 2;
+    private final Integer LESSON_COUNT = 3;
     private final Integer QUIZ_COUNT = 1;
     private final Integer QUIZ_QUESTION_COUNT = 5;
     private final Integer QUIZ_QUESTION_OPTION_COUNT = 4;
@@ -155,6 +159,7 @@ public class DatabaseConfig
         multimedias = new ArrayList<>();
         enrolledCourses = new ArrayList<>();
         enrolledLessons = new ArrayList<>();
+        enrolledContents = new ArrayList<>();
         studentAttempts = new ArrayList<>();
         studentAttemptQuestions = new ArrayList<>();
         studentAttemptAnswers = new ArrayList<>();
@@ -205,7 +210,7 @@ public class DatabaseConfig
         createQuizQuestions();
         createQuizQuestionOptions();
         createMultimedias();
-        createEnrolledCoursesAndEnrolledLessons();
+        createEnrolledCoursesAndEnrolledLessonsEnrolledContents();
         createStudentAttemptsAndStudentAttemptQuestions();
         createStudentAttemptAnswers();
         createForumCategories();
@@ -407,12 +412,13 @@ public class DatabaseConfig
         System.out.printf(">> Created Multimedias (%d)\n", multimedias.size());
     }
 
-    private void createEnrolledCoursesAndEnrolledLessons() throws Exception
+    private void createEnrolledCoursesAndEnrolledLessonsEnrolledContents() throws Exception
     {
         Account student;
         Course course;
         EnrolledCourse enrolledCourse;
         EnrolledLesson enrolledLesson;
+        EnrolledContent enrolledContent;
 
         int studentIndex = STUDENT_FIRST_INDEX;
         int courseIndex = 0;
@@ -431,10 +437,17 @@ public class DatabaseConfig
                 {
                     enrolledLesson = enrolledLessonService.createNewEnrolledLesson(lesson.getLessonId());
                     enrolledCourseService.addEnrolledLessonToEnrolledCourse(enrolledCourse, enrolledLesson);
+
+                    for (Content content : lesson.getContents())
+                    {
+                        enrolledContent = enrolledContentService.createNewEnrolledContent(content.getContentId());
+                        enrolledLessonService.addEnrolledContentToEnrolledLesson(enrolledLesson, enrolledContent);
+                    }
                 }
             }
             catch (Exception ex)
             {
+                i--;
             }
 
             if (studentIndex == STUDENT_SIZE - 1)
@@ -450,9 +463,11 @@ public class DatabaseConfig
 
         enrolledCourses = enrolledCourseService.getAllEnrolledCourses();
         enrolledLessons = enrolledLessonService.getAllEnrolledLessons();
+        enrolledContents = enrolledContentService.getAllEnrolledContents();
 
         System.out.printf(">> Created EnrolledCourses (%d)\n", enrolledCourses.size());
         System.out.printf(">> Created EnrolledLessons (%d)\n", enrolledLessons.size());
+        System.out.printf(">> Created EnrolledContents (%d)\n", enrolledContents.size());
     }
 
     private void createStudentAttemptsAndStudentAttemptQuestions() throws Exception
@@ -605,6 +620,7 @@ public class DatabaseConfig
 
         accounts.add(new Account("student1", "password", "Student Samuel", "I am Student Samuel", "studentsamuel@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/cba20ec5-5739-4853-b425-ba39647cd8cc.gif?generation=1630266661221190&alt=media", false));
         accounts.add(new Account("student2", "password", "Student Sunny", "I am Student Sunny", "studentsunny@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/46a24305-9b12-4445-b779-5ee1d56b94d7.gif?generation=1630266556687403&alt=media", false));
+
         for (int i = 3; i <= STUDENT_COUNT + 2; i++)
         {
             accounts.add(new Account("student" + i, "password", "Student " + i, "I am Student " + i, "student" + i + "@gmail.com", "https://student" + i + ".com", false));

@@ -137,7 +137,7 @@ public class EnrolledCourseServiceImpl implements EnrolledCourseService
     }
 
     @Override
-    public EnrolledCourse addEnrolledLessonToEnrolledCourse(EnrolledCourse enrolledCourse, EnrolledLesson enrolledLesson) throws UpdateEnrolledCourseException, EnrolledCourseNotFoundException, CompletedLessonNotFoundException
+    public EnrolledCourse addEnrolledLessonToEnrolledCourse(EnrolledCourse enrolledCourse, EnrolledLesson enrolledLesson) throws UpdateEnrolledCourseException, EnrolledCourseNotFoundException, EnrolledLessonNotFoundException
     {
         if (enrolledCourse != null)
         {
@@ -150,9 +150,9 @@ public class EnrolledCourseServiceImpl implements EnrolledCourseService
                     {
                         enrolledLesson = enrolledLessonService.getEnrolledLessonByEnrolledLessonId(enrolledLesson.getEnrolledLessonId());
 
-                        if (!enrolledCourse.getCompletedLessons().contains(enrolledLesson))
+                        if (!enrolledCourse.getEnrolledLessons().contains(enrolledLesson))
                         {
-                            enrolledCourse.getCompletedLessons().add(enrolledLesson);
+                            enrolledCourse.getEnrolledLessons().add(enrolledLesson);
 
                             enrolledCourseRepository.saveAndFlush(enrolledCourse);
                             return enrolledCourse;
