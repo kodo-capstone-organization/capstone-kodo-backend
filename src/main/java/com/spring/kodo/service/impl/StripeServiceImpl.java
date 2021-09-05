@@ -30,7 +30,7 @@ public class StripeServiceImpl implements StripeService
     @Value("${STRIPE_ENDPOINT_SECRET}")
     private String stripeEndpointSecret;
 
-    @Value("${MAIN_APP_URL}")
+    @Value("${FE_MAIN_APP_URL}")
     private String mainAppUrl;
 
     @Override
@@ -56,7 +56,7 @@ public class StripeServiceImpl implements StripeService
                         .builder()
                         .setAccount(account.getId())
                         .setRefreshUrl(mainAppUrl.concat("")) // TODO: Add refresh URL
-                        .setReturnUrl(mainAppUrl.concat("")) // TODO: Add return URL
+                        .setReturnUrl(mainAppUrl.concat("profile")) // Redirect to profile page
                         .setType(AccountLinkCreateParams.Type.ACCOUNT_ONBOARDING)
                         .build();
 
