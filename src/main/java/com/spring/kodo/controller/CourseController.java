@@ -177,6 +177,7 @@ public class CourseController
                 course.getBannerUrl(),
                 course.getEnrollment(),
                 course.getCourseTags(),
+                course.getLessons(),
                 tutor
         );
 

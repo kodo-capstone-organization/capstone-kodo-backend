@@ -2,6 +2,7 @@ package com.spring.kodo.restentity.response;
 
 import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.EnrolledCourse;
+import com.spring.kodo.entity.Lesson;
 import com.spring.kodo.entity.Tag;
 
 import java.math.BigDecimal;
@@ -16,13 +17,14 @@ public class CourseWithTutorResp
     private String bannerUrl;
     private List<EnrolledCourse> enrollment;
     private List<Tag> courseTags;
+    private List<Lesson> lessons;
     private Account tutor;
 
     public CourseWithTutorResp()
     {
     }
 
-    public CourseWithTutorResp(Long courseId, String name, String description, BigDecimal price, String bannerUrl, List<EnrolledCourse> enrollment, List<Tag> courseTags, Account tutor)
+    public CourseWithTutorResp(Long courseId, String name, String description, BigDecimal price, String bannerUrl, List<EnrolledCourse> enrollment, List<Tag> courseTags, List<Lesson> lessons, Account tutor)
     {
         this.courseId = courseId;
         this.name = name;
@@ -31,6 +33,7 @@ public class CourseWithTutorResp
         this.bannerUrl = bannerUrl;
         this.enrollment = enrollment;
         this.courseTags = courseTags;
+        this.lessons = lessons;
         this.tutor = tutor;
     }
 
@@ -100,6 +103,16 @@ public class CourseWithTutorResp
     public void setCourseTags(List<Tag> courseTags)
     {
         this.courseTags = courseTags;
+    }
+
+    public List<Lesson> getLessons()
+    {
+        return lessons;
+    }
+
+    public void setLessons(List<Lesson> lessons)
+    {
+        this.lessons = lessons;
     }
 
     public Account getTutor()
