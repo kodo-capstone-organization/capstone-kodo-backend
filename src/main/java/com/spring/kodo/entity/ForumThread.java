@@ -49,7 +49,14 @@ public class ForumThread
     public ForumThread(String name, String description)
     {
         this();
+        this.name = name;
+        this.description = description;
+    }
 
+    public ForumThread(String name, String description, LocalDateTime timeStamp)
+    {
+        this();
+        this.timeStamp = timeStamp;
         this.name = name;
         this.description = description;
     }

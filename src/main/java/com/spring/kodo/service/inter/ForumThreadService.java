@@ -18,9 +18,9 @@ public interface ForumThreadService {
 
     List<ForumThread> getAllForumThreadsOfAForumCategory(Long forumCategoryId) throws ForumCategoryNotFoundException;
 
-    ForumThread updateForumThread(Long forumThreadId, ForumThread updatedForumThread) throws ForumThreadNotFoundException;
+    ForumThread updateForumThread(ForumThread updatedForumThread) throws ForumThreadNotFoundException, InputDataValidationException;
 
-    Boolean deleteForumThread(Long forumThreadId) throws ForumThreadNotFoundException;
+    Boolean deleteForumThread(Long forumThreadId) throws ForumThreadNotFoundException, ForumPostNotFoundException;
 
     ForumThread addForumPostToForumThread(ForumThread forumThread, ForumPost forumPost) throws UpdateForumThreadException, ForumThreadNotFoundException, ForumPostNotFoundException;
 }
