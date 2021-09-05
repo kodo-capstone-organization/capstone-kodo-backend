@@ -6,7 +6,6 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,18 +27,18 @@ public class EnrolledCourse
     @ManyToOne(optional = false)
     private Course parentCourse;
 
-    @OneToMany(targetEntity = CompletedLesson.class, fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = EnrolledLesson.class, fetch = FetchType.LAZY)
     @JoinColumn
     @JoinTable(
             joinColumns = @JoinColumn(name = "enrolled_course_id", referencedColumnName="enrolledCourseId"),
-            inverseJoinColumns = @JoinColumn(name = "completed_lesson_id", referencedColumnName = "completedLessonId"),
-            uniqueConstraints = @UniqueConstraint(columnNames = { "enrolled_course_id", "completed_lesson_id" })
+            inverseJoinColumns = @JoinColumn(name = "enrolled_lesson_id", referencedColumnName = "enrolledLessonId"),
+            uniqueConstraints = @UniqueConstraint(columnNames = { "enrolled_course_id", "enrolled_lesson_id" })
     )
-    private List<CompletedLesson> completedLessons;
+    private List<EnrolledLesson> enrolledLessons;
 
     public EnrolledCourse()
     {
-        this.completedLessons = new ArrayList<>();
+        this.enrolledLessons = new ArrayList<>();
     }
 
     public EnrolledCourse(int courseRating)
@@ -79,14 +78,14 @@ public class EnrolledCourse
         this.parentCourse = parentCourse;
     }
 
-    public List<CompletedLesson> getCompletedLessons()
+    public List<EnrolledLesson> getCompletedLessons()
     {
-        return completedLessons;
+        return enrolledLessons;
     }
 
-    public void setCompletedLessons(List<CompletedLesson> completedLessons)
+    public void setCompletedLessons(List<EnrolledLesson> enrolledLessons)
     {
-        this.completedLessons = completedLessons;
+        this.enrolledLessons = enrolledLessons;
     }
 
     @Override
@@ -96,7 +95,7 @@ public class EnrolledCourse
                 "enrolledCourseId=" + enrolledCourseId +
                 ", courseRating=" + courseRating +
                 ", parentCourse=" + parentCourse +
-                ", completedLessons=" + completedLessons +
+                ", enrolledLessons=" + enrolledLessons +
                 '}';
     }
 }

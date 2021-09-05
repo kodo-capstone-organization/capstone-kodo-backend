@@ -1,9 +1,9 @@
 package com.spring.kodo.service.impl;
 
-import com.spring.kodo.entity.CompletedLesson;
+import com.spring.kodo.entity.EnrolledLesson;
 import com.spring.kodo.entity.Lesson;
-import com.spring.kodo.repository.CompletedLessonRepository;
-import com.spring.kodo.service.inter.CompletedLessonService;
+import com.spring.kodo.repository.EnrolledLessonRepository;
+import com.spring.kodo.service.inter.EnrolledLessonService;
 import com.spring.kodo.service.inter.LessonService;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.*;
@@ -19,10 +19,10 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-public class CompletedLessonServiceImpl implements CompletedLessonService
+public class EnrolledLessonServiceImpl implements EnrolledLessonService
 {
     @Autowired
-    private CompletedLessonRepository completedLessonRepository;
+    private EnrolledLessonRepository enrolledLessonRepository;
 
     @Autowired
     private LessonService lessonService;
@@ -30,33 +30,33 @@ public class CompletedLessonServiceImpl implements CompletedLessonService
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
 
-    public CompletedLessonServiceImpl()
+    public EnrolledLessonServiceImpl()
     {
         validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.getValidator();
     }
 
     @Override
-    public CompletedLesson createNewCompletedLesson(Long parentLessonId) throws InputDataValidationException, UnknownPersistenceException, CreateNewCompletedLessonException, LessonNotFoundException
+    public EnrolledLesson createNewEnrolledLesson(Long parentLessonId) throws InputDataValidationException, UnknownPersistenceException, CreateNewCompletedLessonException, LessonNotFoundException
     {
         try
         {
-            CompletedLesson newCompletedLesson = new CompletedLesson();
+            EnrolledLesson newEnrolledLesson = new EnrolledLesson();
 
-            Set<ConstraintViolation<CompletedLesson>> constraintViolations = validator.validate(newCompletedLesson);
+            Set<ConstraintViolation<EnrolledLesson>> constraintViolations = validator.validate(newEnrolledLesson);
             if (constraintViolations.isEmpty())
             {
                 if (parentLessonId != null)
                 {
                     Lesson parentLesson = lessonService.getLessonByLessonId(parentLessonId);
-                    newCompletedLesson.setParentLesson(parentLesson);
+                    newEnrolledLesson.setParentLesson(parentLesson);
 
-                    completedLessonRepository.saveAndFlush(newCompletedLesson);
-                    return newCompletedLesson;
+                    enrolledLessonRepository.saveAndFlush(newEnrolledLesson);
+                    return newEnrolledLesson;
                 }
                 else
                 {
-                    throw new CreateNewCompletedLessonException("CompletedLessonId cannot be null");
+                    throw new CreateNewCompletedLessonException("EnrolledLesson ID cannot be null");
                 }
             }
             else
@@ -71,23 +71,23 @@ public class CompletedLessonServiceImpl implements CompletedLessonService
     }
 
     @Override
-    public CompletedLesson getCompletedLessonByCompletedLessonId(Long completedLessonId) throws CompletedLessonNotFoundException
+    public EnrolledLesson getEnrolledLessonByEnrolledLessonId(Long enrolledLessonId) throws CompletedLessonNotFoundException
     {
-        CompletedLesson completedLesson = completedLessonRepository.findById(completedLessonId).orElse(null);
+        EnrolledLesson enrolledLesson = enrolledLessonRepository.findById(enrolledLessonId).orElse(null);
 
-        if (completedLesson != null)
+        if (enrolledLesson != null)
         {
-            return completedLesson;
+            return enrolledLesson;
         }
         else
         {
-            throw new CompletedLessonNotFoundException("CompletedLesson with ID: " + completedLessonId + " does not exist!");
+            throw new CompletedLessonNotFoundException("EnrolledLesson with ID: " + enrolledLessonId + " does not exist!");
         }
     }
 
     @Override
-    public List<CompletedLesson> getAllCompletedLessons()
+    public List<EnrolledLesson> getAllEnrolledLessons()
     {
-        return completedLessonRepository.findAll();
+        return enrolledLessonRepository.findAll();
     }
 }

@@ -31,7 +31,7 @@ public class DatabaseConfig
     private ForumCategoryService forumCategoryService;
 
     @Autowired
-    private CompletedLessonService completedLessonService;
+    private EnrolledLessonService enrolledLessonService;
 
     @Autowired
     private EnrolledCourseService enrolledCourseService;
@@ -89,7 +89,7 @@ public class DatabaseConfig
     private List<StudentAttempt> studentAttempts;
     private List<StudentAttemptQuestion> studentAttemptQuestions;
     private List<StudentAttemptAnswer> studentAttemptAnswers;
-    private List<CompletedLesson> completedLessons;
+    private List<EnrolledLesson> enrolledLessons;
     private List<ForumCategory> forumCategories;
     private List<ForumThread> forumThreads;
     private List<ForumPost> forumPosts;
@@ -100,7 +100,7 @@ public class DatabaseConfig
     private final Integer TUTOR_COUNT = 5;
     private final Integer STUDENT_COUNT = 10;
 
-    private final Integer LESSON_COUNT = 1;
+    private final Integer LESSON_COUNT = 2;
     private final Integer QUIZ_COUNT = 1;
     private final Integer QUIZ_QUESTION_COUNT = 5;
     private final Integer QUIZ_QUESTION_OPTION_COUNT = 4;
@@ -154,10 +154,10 @@ public class DatabaseConfig
         quizQuestionOptions = new ArrayList<>();
         multimedias = new ArrayList<>();
         enrolledCourses = new ArrayList<>();
+        enrolledLessons = new ArrayList<>();
         studentAttempts = new ArrayList<>();
         studentAttemptQuestions = new ArrayList<>();
         studentAttemptAnswers = new ArrayList<>();
-        completedLessons = new ArrayList<>();
         forumCategories = new ArrayList<>();
         forumThreads = new ArrayList<>();
         forumPosts = new ArrayList<>();
@@ -205,10 +205,9 @@ public class DatabaseConfig
         createQuizQuestions();
         createQuizQuestionOptions();
         createMultimedias();
-        createEnrolledCourse();
+        createEnrolledCoursesAndEnrolledLessons();
         createStudentAttemptsAndStudentAttemptQuestions();
         createStudentAttemptAnswers();
-        createCompletedLessons();
         createForumCategories();
         createForumThreads();
         createForumPosts();
@@ -408,10 +407,12 @@ public class DatabaseConfig
         System.out.printf(">> Created Multimedias (%d)\n", multimedias.size());
     }
 
-    private void createEnrolledCourse() throws Exception
+    private void createEnrolledCoursesAndEnrolledLessons() throws Exception
     {
         Account student;
+        Course course;
         EnrolledCourse enrolledCourse;
+        EnrolledLesson enrolledLesson;
 
         int studentIndex = STUDENT_FIRST_INDEX;
         int courseIndex = 0;
@@ -421,8 +422,16 @@ public class DatabaseConfig
             try
             {
                 student = accounts.get(studentIndex);
-                enrolledCourse = enrolledCourseService.createNewEnrolledCourse(student.getAccountId(), courses.get(courseIndex).getCourseId());
+                course = courses.get(courseIndex);
+
+                enrolledCourse = enrolledCourseService.createNewEnrolledCourse(student.getAccountId(), course.getCourseId());
                 accountService.addEnrolledCourseToAccount(student, enrolledCourse);
+
+                for (Lesson lesson : course.getLessons())
+                {
+                    enrolledLesson = enrolledLessonService.createNewEnrolledLesson(lesson.getLessonId());
+                    enrolledCourseService.addEnrolledLessonToEnrolledCourse(enrolledCourse, enrolledLesson);
+                }
             }
             catch (Exception ex)
             {
@@ -440,8 +449,10 @@ public class DatabaseConfig
         }
 
         enrolledCourses = enrolledCourseService.getAllEnrolledCourses();
+        enrolledLessons = enrolledLessonService.getAllEnrolledLessons();
 
         System.out.printf(">> Created EnrolledCourses (%d)\n", enrolledCourses.size());
+        System.out.printf(">> Created EnrolledLessons (%d)\n", enrolledLessons.size());
     }
 
     private void createStudentAttemptsAndStudentAttemptQuestions() throws Exception
@@ -493,13 +504,6 @@ public class DatabaseConfig
         studentAttemptAnswers = studentAttemptAnswerService.getAllStudentAttemptAnswers();
 
         System.out.printf(">> Created StudentAttemptAnswers (%d)\n", studentAttemptAnswers.size());
-    }
-
-    private void createCompletedLessons() throws Exception
-    {
-        completedLessons = completedLessonService.getAllCompletedLessons();
-
-        System.out.printf(">> Created CompletedLessons (%d)\n", completedLessons.size());
     }
 
     private void createForumCategories() throws Exception

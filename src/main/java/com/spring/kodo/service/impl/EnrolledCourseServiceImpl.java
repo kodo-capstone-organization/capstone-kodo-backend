@@ -1,12 +1,12 @@
 package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.Account;
-import com.spring.kodo.entity.CompletedLesson;
+import com.spring.kodo.entity.EnrolledLesson;
 import com.spring.kodo.entity.Course;
 import com.spring.kodo.entity.EnrolledCourse;
 import com.spring.kodo.repository.EnrolledCourseRepository;
 import com.spring.kodo.service.inter.AccountService;
-import com.spring.kodo.service.inter.CompletedLessonService;
+import com.spring.kodo.service.inter.EnrolledLessonService;
 import com.spring.kodo.service.inter.CourseService;
 import com.spring.kodo.service.inter.EnrolledCourseService;
 import com.spring.kodo.util.MessageFormatterUtil;
@@ -29,7 +29,7 @@ public class EnrolledCourseServiceImpl implements EnrolledCourseService
     private EnrolledCourseRepository enrolledCourseRepository;
 
     @Autowired
-    private CompletedLessonService completedLessonService;
+    private EnrolledLessonService enrolledLessonService;
 
     @Autowired
     private AccountService accountService;
@@ -137,39 +137,39 @@ public class EnrolledCourseServiceImpl implements EnrolledCourseService
     }
 
     @Override
-    public EnrolledCourse addCompletedLessonToEnrolledCourse(EnrolledCourse enrolledCourse, CompletedLesson completedLesson) throws UpdateEnrolledCourseException, EnrolledCourseNotFoundException, CompletedLessonNotFoundException
+    public EnrolledCourse addEnrolledLessonToEnrolledCourse(EnrolledCourse enrolledCourse, EnrolledLesson enrolledLesson) throws UpdateEnrolledCourseException, EnrolledCourseNotFoundException, CompletedLessonNotFoundException
     {
         if (enrolledCourse != null)
         {
             if (enrolledCourse.getEnrolledCourseId() != null)
             {
                 enrolledCourse = getEnrolledCourseByEnrolledCourseId(enrolledCourse.getEnrolledCourseId());
-                if (completedLesson != null)
+                if (enrolledLesson != null)
                 {
-                    if (completedLesson.getCompletedLessonId() != null)
+                    if (enrolledLesson.getEnrolledLessonId() != null)
                     {
-                        completedLesson = completedLessonService.getCompletedLessonByCompletedLessonId(completedLesson.getCompletedLessonId());
+                        enrolledLesson = enrolledLessonService.getEnrolledLessonByEnrolledLessonId(enrolledLesson.getEnrolledLessonId());
 
-                        if (!enrolledCourse.getCompletedLessons().contains(completedLesson))
+                        if (!enrolledCourse.getCompletedLessons().contains(enrolledLesson))
                         {
-                            enrolledCourse.getCompletedLessons().add(completedLesson);
+                            enrolledCourse.getCompletedLessons().add(enrolledLesson);
 
                             enrolledCourseRepository.saveAndFlush(enrolledCourse);
                             return enrolledCourse;
                         }
                         else
                         {
-                            throw new UpdateEnrolledCourseException("EnrolledCourse with ID " + enrolledCourse.getEnrolledCourseId() + " already contains CompletedLesson with ID " + completedLesson.getCompletedLessonId());
+                            throw new UpdateEnrolledCourseException("EnrolledCourse with ID " + enrolledCourse.getEnrolledCourseId() + " already contains EnrolledLesson with ID " + enrolledLesson.getEnrolledLessonId());
                         }
                     }
                     else
                     {
-                        throw new UpdateEnrolledCourseException("CompletedLesson ID cannot be null");
+                        throw new UpdateEnrolledCourseException("EnrolledLesson ID cannot be null");
                     }
                 }
                 else
                 {
-                    throw new UpdateEnrolledCourseException("CompletedLesson cannot be null");
+                    throw new UpdateEnrolledCourseException("EnrolledLesson cannot be null");
                 }
             }
             else

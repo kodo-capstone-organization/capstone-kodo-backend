@@ -1,6 +1,6 @@
 package com.spring.kodo.service.inter;
 
-import com.spring.kodo.entity.CompletedLesson;
+import com.spring.kodo.entity.EnrolledLesson;
 import com.spring.kodo.entity.EnrolledCourse;
 import com.spring.kodo.util.exception.*;
 
@@ -16,5 +16,5 @@ public interface EnrolledCourseService
 
     List<EnrolledCourse> getAllEnrolledCourses();
 
-    EnrolledCourse addCompletedLessonToEnrolledCourse(EnrolledCourse enrolledCourse, CompletedLesson completedLesson) throws UpdateEnrolledCourseException, EnrolledCourseNotFoundException, CompletedLessonNotFoundException;
+    EnrolledCourse addEnrolledLessonToEnrolledCourse(EnrolledCourse enrolledCourse, EnrolledLesson enrolledLesson) throws UpdateEnrolledCourseException, EnrolledCourseNotFoundException, CompletedLessonNotFoundException;
 }

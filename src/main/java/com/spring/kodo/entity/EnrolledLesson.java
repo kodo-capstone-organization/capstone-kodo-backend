@@ -9,11 +9,11 @@ import java.time.LocalDateTime;
 @Entity
 @Table
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class CompletedLesson
+public class EnrolledLesson
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long completedLessonId;
+    private Long enrolledLessonId;
 
     @Column(nullable = false)
     @NotNull
@@ -22,19 +22,19 @@ public class CompletedLesson
     @ManyToOne(targetEntity = Lesson.class, optional = false)
     private Lesson parentLesson;
 
-    public CompletedLesson()
+    public EnrolledLesson()
     {
         this.dateTimeOfCompletion = LocalDateTime.now();
     }
 
-    public Long getCompletedLessonId()
+    public Long getEnrolledLessonId()
     {
-        return completedLessonId;
+        return enrolledLessonId;
     }
 
-    public void setCompletedLessonId(Long completedLessonId)
+    public void setEnrolledLessonId(Long completedLessonId)
     {
-        this.completedLessonId = completedLessonId;
+        this.enrolledLessonId = completedLessonId;
     }
 
     public LocalDateTime getDateTimeOfCompletion()
@@ -60,8 +60,8 @@ public class CompletedLesson
     @Override
     public String toString()
     {
-        return "CompletedLesson{" +
-                "completedLessonId=" + completedLessonId +
+        return "EnrolledLesson{" +
+                "enrolledLessonId=" + enrolledLessonId +
                 ", dateTimeOfCompletion=" + dateTimeOfCompletion +
                 ", parentLesson=" + parentLesson +
                 '}';
