@@ -37,7 +37,11 @@ public class ForumThread
     private Account account;
 
     @OneToMany(targetEntity = ForumPost.class, fetch = FetchType.LAZY)
-    @JoinColumn
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "forum_thread_id", referencedColumnName="forumThreadId"),
+            inverseJoinColumns = @JoinColumn(name = "forum_post_id", referencedColumnName = "forumPostId"),
+            uniqueConstraints = @UniqueConstraint(columnNames = { "forum_thread_id", "forum_post_id" })
+    )
     private List<ForumPost> forumPosts;
 
     public ForumThread()

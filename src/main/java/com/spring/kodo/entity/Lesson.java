@@ -35,7 +35,11 @@ public class Lesson
     private Integer sequence;
 
     @OneToMany(targetEntity = Content.class, fetch = FetchType.LAZY)
-    @JoinColumn
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "lesson_id", referencedColumnName="lessonId"),
+            inverseJoinColumns = @JoinColumn(name = "content_id", referencedColumnName = "contentId"),
+            uniqueConstraints = @UniqueConstraint(columnNames = { "lesson_id", "content_id" })
+    )
     private List<Content> contents;
 
     public Lesson()

@@ -1,14 +1,12 @@
 package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.Course;
-import com.spring.kodo.entity.ForumCategory;
 import com.spring.kodo.entity.Lesson;
 import com.spring.kodo.entity.Tag;
 import com.spring.kodo.repository.CourseRepository;
 import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.*;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -131,6 +129,21 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
+    public Course getCourseByLessonId(Long lessonId) throws CourseNotFoundException
+    {
+        Course course = courseRepository.findByLessonId(lessonId).orElse(null);
+
+        if (course != null)
+        {
+            return course;
+        }
+        else
+        {
+            throw new CourseNotFoundException("Course with Lesson ID: " + lessonId + " does not exist!");
+        }
+    }
+
+    @Override
     public List<Course> getAllCourses()
     {
         return courseRepository.findAll();
@@ -140,13 +153,13 @@ public class CourseServiceImpl implements CourseService
     public List<Course> getAllCoursesByTagTitle(String tagTitle) throws TagNotFoundException
     {
         tagService.getTagByTitle(tagTitle);
-        return courseRepository.findCoursesByTagTitle(tagTitle);
+        return courseRepository.findAllCoursesByTagTitle(tagTitle);
     }
 
     @Override
     public List<Course> getAllCoursesByKeyword(String keyword) throws CourseWithKeywordNotFoundException
     {
-        List<Course> courses = courseRepository.findCoursesByKeyword(keyword);
+        List<Course> courses = courseRepository.findAllCoursesByKeyword(keyword);
 
         if (courses.size() > 0)
         {
@@ -162,7 +175,7 @@ public class CourseServiceImpl implements CourseService
     public List<Course> getAllCoursesByTutorId(Long tutorId) throws AccountNotFoundException
     {
         accountService.getAccountByAccountId(tutorId);
-        return courseRepository.findCoursesByTutorId(tutorId);
+        return courseRepository.findAllCoursesByTutorId(tutorId);
     }
 
     @Override

@@ -28,7 +28,11 @@ public class ForumCategory
     private String description;
 
     @OneToMany(targetEntity = ForumThread.class, fetch = FetchType.LAZY)
-    @JoinColumn
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "forum_category_id", referencedColumnName="forumCategoryId"),
+            inverseJoinColumns = @JoinColumn(name = "forum_thread_id", referencedColumnName = "forumThreadId"),
+            uniqueConstraints = @UniqueConstraint(columnNames = { "forum_category_id", "forum_thread_id" })
+    )
     private List<ForumThread> forumThreads;
 
     @ManyToOne(targetEntity = Course.class, fetch = FetchType.LAZY)

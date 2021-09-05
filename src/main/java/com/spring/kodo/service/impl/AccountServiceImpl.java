@@ -170,6 +170,36 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
+    public Account getAccountByEnrolledCourseId(Long enrolledCourseId) throws AccountNotFoundException
+    {
+        Account account = accountRepository.findByEnrolledCourseId(enrolledCourseId).orElse(null);
+
+        if (account != null)
+        {
+            return account;
+        }
+        else
+        {
+            throw new AccountNotFoundException("Account with EnrolledCourse ID: " + enrolledCourseId + " does not exist!");
+        }
+    }
+
+    @Override
+    public Account getAccountByStudentAttemptId(Long studentAttemptId) throws AccountNotFoundException
+    {
+        Account account = accountRepository.findByStudentAttemptId(studentAttemptId).orElse(null);
+
+        if (account != null)
+        {
+            return account;
+        }
+        else
+        {
+            throw new AccountNotFoundException("Account with StudentAttempt ID: " + studentAttemptId + " does not exist!");
+        }
+    }
+
+    @Override
     public List<Account> getAllAccounts()
     {
         List<Account> accounts = accountRepository.findAll();

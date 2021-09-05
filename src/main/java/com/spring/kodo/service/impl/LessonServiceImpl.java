@@ -96,6 +96,21 @@ public class LessonServiceImpl implements LessonService
     }
 
     @Override
+    public Lesson getLessonByContentId(Long contentId) throws LessonNotFoundException
+    {
+        Lesson lesson = lessonRepository.findByContentId(contentId).orElse(null);
+
+        if (lesson != null)
+        {
+            return lesson;
+        }
+        else
+        {
+            throw new LessonNotFoundException("Lesson with Content ID: " + contentId + " does not exist!");
+        }
+    }
+
+    @Override
     public List<Lesson> getAllLessons()
     {
         return lessonRepository.findAll();

@@ -19,6 +19,10 @@ public interface AccountService
 
     Account getAccountByCourseId(Long courseId) throws AccountNotFoundException;
 
+    Account getAccountByEnrolledCourseId(Long enrolledCourseId) throws AccountNotFoundException;
+
+    Account getAccountByStudentAttemptId(Long studentAttemptId) throws AccountNotFoundException;
+
     Account updateAccount(
             Account account,
             List<String> tagTitles,

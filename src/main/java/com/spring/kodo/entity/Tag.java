@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Locale;
 
 @Entity
 @Table
@@ -27,7 +28,7 @@ public class Tag
 
     public Tag(String title)
     {
-        this.title = title;
+        this.title = title.toLowerCase(Locale.ROOT);
     }
 
     public Long getTagId()

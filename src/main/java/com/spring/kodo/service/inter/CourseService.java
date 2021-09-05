@@ -22,6 +22,8 @@ public interface CourseService
 
     Course getCourseByCourseId(Long courseId) throws CourseNotFoundException;
 
+    Course getCourseByLessonId(Long lessonId) throws CourseNotFoundException;
+
     Course getCourseByName(String name) throws CourseNotFoundException;
 
     List<Course> getAllCourses();

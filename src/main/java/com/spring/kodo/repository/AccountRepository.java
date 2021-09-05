@@ -29,6 +29,12 @@ public interface AccountRepository extends JpaRepository<Account, Long>
     @Query(value = "SELECT * FROM Account a JOIN Account_Courses ac ON a.account_id = ac.account_id WHERE ac.course_id = :courseId", nativeQuery = true)
     Optional<Account> findByCourseId(@Param("courseId") Long courseId);
 
+    @Query(value = "SELECT * FROM Account a JOIN Account_Enrolled_Courses aec ON a.account_id = aec.account_id WHERE aec.enrolled_course_id = :enrolledCourseId", nativeQuery = true)
+    Optional<Account> findByEnrolledCourseId(@Param("enrolledCourseId") Long enrolledCourseId);
+
+    @Query(value = "SELECT * FROM Account a JOIN Account_Student_Attempts asa ON a.account_id = asa.account_id WHERE asa.student_attempt_id = :studentAttemptId", nativeQuery = true)
+    Optional<Account> findByStudentAttemptId(@Param("studentAttemptId") Long studentAttemptId);
+
     // TODO check if legit works
     @Query("SELECT COUNT(sa) FROM Account a JOIN a.studentAttempts sa WHERE a.accountId = :accountId AND sa.quiz.contentId = :quizContentId")
     Long getNumberOfStudentAttemptsByStudentForQuiz(

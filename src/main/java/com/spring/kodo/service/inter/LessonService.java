@@ -14,6 +14,8 @@ public interface LessonService
 
     Lesson getLessonByName(String name) throws LessonNotFoundException;
 
+    Lesson getLessonByContentId(Long contentId) throws LessonNotFoundException;
+
     List<Lesson> getAllLessons();
 
     Lesson updateLesson(Long lessonId, Lesson updatedLesson) throws LessonNotFoundException;
