@@ -3,7 +3,7 @@ package com.spring.kodo.restentity.request;
 import com.spring.kodo.entity.ForumPost;
 
 public class UpdateForumPostReq {
-    ForumPost forumPost;
+    private ForumPost forumPost;
 
     public UpdateForumPostReq(ForumPost forumPost) {
         this.forumPost = forumPost;

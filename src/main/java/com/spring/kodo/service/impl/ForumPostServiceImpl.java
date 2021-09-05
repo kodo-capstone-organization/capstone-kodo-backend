@@ -2,14 +2,13 @@ package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.ForumPost;
+import com.spring.kodo.entity.ForumThread;
 import com.spring.kodo.repository.ForumPostRepository;
 import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.ForumPostService;
+import com.spring.kodo.service.inter.ForumThreadService;
 import com.spring.kodo.util.MessageFormatterUtil;
-import com.spring.kodo.util.exception.AccountNotFoundException;
-import com.spring.kodo.util.exception.ForumPostNotFoundException;
-import com.spring.kodo.util.exception.InputDataValidationException;
-import com.spring.kodo.util.exception.UnknownPersistenceException;
+import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -30,6 +29,9 @@ public class ForumPostServiceImpl implements ForumPostService {
     @Autowired
     private AccountService accountService;
 
+    @Autowired
+    private ForumThreadService forumThreadService;
+
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
 
@@ -45,7 +47,6 @@ public class ForumPostServiceImpl implements ForumPostService {
             if (constraintViolations.isEmpty()) {
                 Account account = accountService.getAccountByAccountId(accountId);
                 newForumPost.setAccount(account);
-
                 forumPostRepository.saveAndFlush(newForumPost);
                 return newForumPost;
             } else {
@@ -70,6 +71,12 @@ public class ForumPostServiceImpl implements ForumPostService {
     @Override
     public List<ForumPost> getAllForumPosts() {
         return forumPostRepository.findAll();
+    }
+
+    @Override
+    public List<ForumPost> getAllForumPostsOfAForumThread(Long forumThreadId) throws ForumThreadNotFoundException {
+        ForumThread forumThread = forumThreadService.getForumThreadByForumThreadId(forumThreadId);
+        return forumThread.getForumPosts();
     }
 
     //only updating attributes, not relationships

@@ -55,6 +55,15 @@ public class ForumPostController {
         }
     }
 
+    @GetMapping("/getAllForumPostsOfAForumThread/{forumThreadId}")
+    public List<ForumPost> getAllForumPostsOfAForumThread(@PathVariable Long forumThreadId) {
+        try {
+            return this.forumPostService.getAllForumPostsOfAForumThread(forumThreadId);
+        } catch (ForumThreadNotFoundException ex) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @GetMapping("/getAllForumPosts")
     public List<ForumPost> getAllForumPosts() {
         return this.forumPostService.getAllForumPosts();
