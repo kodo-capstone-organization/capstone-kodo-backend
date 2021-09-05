@@ -182,14 +182,14 @@ public class LessonServiceImpl implements LessonService
             }
 
             lesson.getContents().add(content);
+
+            lessonRepository.saveAndFlush(lesson);
+            return lesson;
         }
         else
         {
             throw new UpdateContentException("Unable to add content with name: " + content.getName() +
                     " to lesson with ID: " + lesson.getLessonId() + " as content is already linked to this course");
         }
-
-        lessonRepository.saveAndFlush(lesson);
-        return lesson;
     }
 }

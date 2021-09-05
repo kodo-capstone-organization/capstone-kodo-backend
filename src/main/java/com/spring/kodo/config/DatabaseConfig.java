@@ -105,6 +105,9 @@ public class DatabaseConfig
     private final Integer STUDENT_COUNT = 20;
 
     private final Integer LESSON_COUNT = 3;
+
+    private final Integer MULTIMEDIA_COUNT = 2;
+
     private final Integer QUIZ_COUNT = 1;
     private final Integer QUIZ_QUESTION_COUNT = 5;
     private final Integer QUIZ_QUESTION_OPTION_COUNT = 4;
@@ -394,16 +397,22 @@ public class DatabaseConfig
 
     private void createMultimedias() throws Exception
     {
+        Lesson lesson;
         Multimedia multimedia;
 
         int multimediaIndex = 0;
 
         for (int i = 0; i < courses.size(); i++)
         {
-            for (int j = 0; j < LESSON_COUNT; j++, multimediaIndex++)
+            for (int j = 0; j < LESSON_COUNT; j++)
             {
-                multimedia = multimediaService.createNewMultimedia(multimedias.get(multimediaIndex));
-                lessonService.addContentToLesson(lessons.get(j), multimedia);
+                lesson = lessons.get(j);
+
+                for (int k = 0; k < MULTIMEDIA_COUNT; k++, multimediaIndex++)
+                {
+                    multimedia = multimediaService.createNewMultimedia(multimedias.get(multimediaIndex));
+                    lessonService.addContentToLesson(lesson, multimedia);
+                }
             }
         }
 
@@ -721,7 +730,8 @@ public class DatabaseConfig
         {
             for (int i = 1; i <= LESSON_COUNT; i++)
             {
-                multimedias.add(new Multimedia(language + " Multimedia #" + i, "A very interesting " + ordinal(i) + " multimedia on " + language, "https://" + language + "multimedia" + i, MultimediaType.PDF));
+                multimedias.add(new Multimedia(language + " Multimedia #" + i + "-1", "A very interesting " + ordinal(i) + " PDF on " + language, "http://www.africau.edu/images/default/sample.pdf", MultimediaType.PDF));
+                multimedias.add(new Multimedia(language + " Multimedia #" + i + "-2", "A very interesting " + ordinal(i) + " video on " + language, "https://www.youtube.com/watch?v=T8y_RsF4TSw&list=RDmvkbCZfwWzA&index=16", MultimediaType.VIDEO));
             }
         }
     }
