@@ -42,6 +42,12 @@ public class Lesson
     )
     private List<Content> contents;
 
+    @Transient
+    private List<Multimedia> multimedias;
+
+    @Transient
+    private List<Quiz> quizzes;
+
     public Lesson()
     {
         this.contents = new ArrayList<>();
@@ -104,6 +110,14 @@ public class Lesson
     public void setContents(List<Content> contents)
     {
         this.contents = contents;
+    }
+
+    public List<Multimedia> getMultimedias() {
+        return contents.stream().filter(content -> content instanceof Multimedia).map(content -> (Multimedia) content).toList();
+    }
+
+    public List<Quiz> getQuizzes() {
+        return contents.stream().filter(content -> content instanceof Quiz).map(content -> (Quiz) content).toList();
     }
 
     @Override
