@@ -6,6 +6,7 @@ import com.spring.kodo.util.enumeration.MultimediaType;
 import com.spring.kodo.util.enumeration.QuestionType;
 import com.spring.kodo.util.exception.InputDataValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
@@ -21,6 +22,9 @@ import java.util.stream.Collectors;
 @Configuration
 public class DatabaseConfig
 {
+    @Value("${CONFIG_PROFILE_TYPE}")
+    private String configProfileType;
+
     @Autowired
     private ForumPostService forumPostService;
 
@@ -176,6 +180,11 @@ public class DatabaseConfig
     @EventListener(ApplicationReadyEvent.class)
     public void loadDataOnStartup() throws Exception
     {
+        // Stop Heroku from updating Google Cloud SQL on every git change
+        if (configProfileType.equals("prod")) {
+            return;
+        }
+
         System.out.println("\n===== Application started on port: " + env.getProperty("local.server.port") + " =====");
         System.out.println("\n===== 0. Checking settings =====");
         if (PROGRAMMING_LANGUAGES_COUNT <= PROGRAMMING_LANGUAGES.size())
