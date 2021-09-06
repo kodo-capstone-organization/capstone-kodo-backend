@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +28,6 @@ public interface CourseRepository extends JpaRepository<Course, Long>
     @Query("SELECT a.courses FROM Account a WHERE a.accountId = :tutorId")
     List<Course> findAllCoursesByTutorId(@Param("tutorId") Long tutorId);
 
-    @Query("SELECT c FROM Course c WHERE c.courseTags IN :allTags")
-    List<Course> findAllCoursesToRecommend(@Param("allTags") LinkedHashSet<Tag> allTags);
+    @Query("SELECT c FROM Course c WHERE c.courseTags IN (:allTags)")
+    List<Course> findAllCoursesToRecommend(@Param("allTags") HashSet<Tag> allTags);
 }

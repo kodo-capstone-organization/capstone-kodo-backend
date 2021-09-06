@@ -91,8 +91,6 @@ public class CourseController {
             return allCoursesToRecommend;
         } catch (AccountNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        } catch (Exception ex) {
-            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, ex.getMessage());
         }
     }
 
