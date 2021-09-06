@@ -80,7 +80,7 @@ public class StripeServiceImpl implements StripeService
                                         .build())
                         .setPaymentIntentData(
                                 SessionCreateParams.PaymentIntentData.builder()
-                                        .setApplicationFeeAmount(stripePaymentReq.getAmount().multiply(KODO_PLATFORM_FEE_PERCENTAGE).longValue())
+                                        .setApplicationFeeAmount(stripePaymentReq.getAmount().multiply(KODO_PLATFORM_FEE_PERCENTAGE).longValue() * 100)
                                         .setTransferData(
                                                 SessionCreateParams.PaymentIntentData.TransferData.builder()
                                                         .setDestination(stripePaymentReq.getTutorStripeAccountId())
