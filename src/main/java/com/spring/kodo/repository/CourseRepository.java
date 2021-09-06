@@ -1,11 +1,13 @@
 package com.spring.kodo.repository;
 
 import com.spring.kodo.entity.Course;
+import com.spring.kodo.entity.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,4 +27,7 @@ public interface CourseRepository extends JpaRepository<Course, Long>
 
     @Query("SELECT a.courses FROM Account a WHERE a.accountId = :tutorId")
     List<Course> findAllCoursesByTutorId(@Param("tutorId") Long tutorId);
+
+    @Query("SELECT c FROM Course c WHERE c.courseTags IN :allTags")
+    List<Course> findAllCoursesToRecommend(@Param("allTags") LinkedHashSet<Tag> allTags);
 }

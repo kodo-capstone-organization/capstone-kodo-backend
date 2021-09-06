@@ -34,6 +34,8 @@ public interface CourseService
 
     List<Course> getAllCoursesByTutorId(Long tutorId) throws AccountNotFoundException;
 
+    List<Course> getAllCoursesToRecommend (Long accountId) throws AccountNotFoundException;
+
     Course addTagToCourse(Course course, String tagTitle) throws CourseNotFoundException, TagNotFoundException, UpdateCourseException, TagNameExistsException, UnknownPersistenceException, InputDataValidationException;
 
     Course addTagToCourse(Course course, Tag tag) throws UpdateCourseException, CourseNotFoundException, TagNotFoundException;
