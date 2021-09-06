@@ -22,7 +22,7 @@ import java.math.BigDecimal;
 public class StripeServiceImpl implements StripeService
 {
 
-    static final BigDecimal KODO_PLATFORM_FEE_PERCENTAGE = new BigDecimal(0.2);
+    static final BigDecimal KODO_PLATFORM_FEE_PERCENTAGE = new BigDecimal(0.35);
 
     @Value("${STRIPE_API_KEY}")
     private String stripeApiKey;
