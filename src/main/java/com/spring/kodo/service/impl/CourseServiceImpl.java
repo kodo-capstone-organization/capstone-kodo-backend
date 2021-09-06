@@ -291,10 +291,11 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
-    public List<Course> getAllCoursesToRecommend (Long accountId) throws AccountNotFoundException {
+    public List<Course> getAllCoursesToRecommend (Long accountId) throws AccountNotFoundException, Exception {
 
         LinkedHashSet<Tag> allTagsToRecommend = new LinkedHashSet<>();
         Account account = accountService.getAccountByAccountId(accountId);
+        List<Course> allCoursesToRecommend = new ArrayList<>();
 
         //get interests related to this account
         allTagsToRecommend.addAll(account.getInterests());
@@ -306,7 +307,12 @@ public class CourseServiceImpl implements CourseService
         }
 
         //use entire tag list to find courses
-        List<Course> allCoursesToRecommend = courseRepository.findAllCoursesToRecommend(allTagsToRecommend);
+        try {
+            allCoursesToRecommend = courseRepository.findAllCoursesToRecommend(allTagsToRecommend);
+        } catch (Exception ex) {
+            throw new Exception ("This is the query problem");
+        }
+
 
         //remove courses that user is already enrolled in
         for (EnrolledCourse enrolledCourse : enrolledCourses) {
