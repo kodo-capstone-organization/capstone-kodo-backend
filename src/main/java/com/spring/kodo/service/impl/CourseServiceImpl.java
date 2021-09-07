@@ -1,8 +1,6 @@
 package com.spring.kodo.service.impl;
 
-import com.spring.kodo.entity.Course;
-import com.spring.kodo.entity.Lesson;
-import com.spring.kodo.entity.Tag;
+import com.spring.kodo.entity.*;
 import com.spring.kodo.repository.CourseRepository;
 import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.MessageFormatterUtil;
@@ -15,6 +13,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -289,6 +289,37 @@ public class CourseServiceImpl implements CourseService
             throw new UpdateCourseException("Course cannot be null");
         }
     }
+
+    @Override
+    public List<Course> getAllCoursesToRecommend(Long accountId) throws AccountNotFoundException
+    {
+
+        HashSet<Tag> allTagsToRecommend = new HashSet<>();
+        List<Course> allCoursesToRecommend = new ArrayList<>();
+        Account account = accountService.getAccountByAccountId(accountId);
+
+        //get interests related to this account
+        allTagsToRecommend.addAll(account.getInterests());
+
+        //get tags for all enrolled courses
+        List<EnrolledCourse> enrolledCourses = account.getEnrolledCourses();
+        for (EnrolledCourse singleEnrolledCourse : enrolledCourses)
+        {
+            allTagsToRecommend.addAll(singleEnrolledCourse.getParentCourse().getCourseTags());
+        }
+
+        //use entire tag list to find courses
+        allCoursesToRecommend.addAll(courseRepository.findAllCoursesToRecommend(allTagsToRecommend));
+
+        //remove courses that user is already enrolled in
+        for (EnrolledCourse enrolledCourse : enrolledCourses)
+        {
+            allCoursesToRecommend.remove(enrolledCourse.getParentCourse());
+        }
+
+        return allCoursesToRecommend;
+    }
+
 
 //    @Override
 //    public Course addForumCategoryToCourse(Course course, ForumCategory forumCategory) throws UpdateCourseException, CourseNotFoundException, ForumCategoryNotFoundException

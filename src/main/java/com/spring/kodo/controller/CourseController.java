@@ -100,6 +100,21 @@ public class CourseController
         }
     }
 
+
+    @GetMapping("/getAllCoursesToRecommend/{accountId}")
+    public List<Course> getAllCoursesToRecommend(@PathVariable Long accountId)
+    {
+        try
+        {
+            List<Course> allCoursesToRecommend = this.courseService.getAllCoursesToRecommend(accountId);
+            return allCoursesToRecommend;
+        }
+        catch (AccountNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @PostMapping("/createNewCourse")
     public Course createNewCourse(
             @RequestPart(name = "course", required = true) CreateNewCourseReq createNewCourseReq,
