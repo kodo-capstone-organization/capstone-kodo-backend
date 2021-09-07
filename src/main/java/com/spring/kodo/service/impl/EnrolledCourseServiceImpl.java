@@ -1,14 +1,14 @@
 package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.Account;
-import com.spring.kodo.entity.EnrolledLesson;
 import com.spring.kodo.entity.Course;
 import com.spring.kodo.entity.EnrolledCourse;
+import com.spring.kodo.entity.EnrolledLesson;
 import com.spring.kodo.repository.EnrolledCourseRepository;
 import com.spring.kodo.service.inter.AccountService;
-import com.spring.kodo.service.inter.EnrolledLessonService;
 import com.spring.kodo.service.inter.CourseService;
 import com.spring.kodo.service.inter.EnrolledCourseService;
+import com.spring.kodo.service.inter.EnrolledLessonService;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +19,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -115,6 +116,21 @@ public class EnrolledCourseServiceImpl implements EnrolledCourseService
     }
 
     @Override
+    public EnrolledCourse getEnrolledCourseByEnrolledLessonId(Long enrolledLessonId) throws EnrolledCourseNotFoundException
+    {
+        EnrolledCourse enrolledCourse = enrolledCourseRepository.findByEnrolledLessonId(enrolledLessonId).orElse(null);
+
+        if (enrolledCourse != null)
+        {
+            return enrolledCourse;
+        }
+        else
+        {
+            throw new EnrolledCourseNotFoundException("EnrolledLesson with ID: " + enrolledLessonId + " does not exist!");
+        }
+    }
+
+    @Override
     public EnrolledCourse getEnrolledCourseByStudentIdAndCourseName(Long studentId, String courseName) throws EnrolledCourseNotFoundException
     {
         EnrolledCourse enrolledCourse = enrolledCourseRepository.findByStudentIdAndCourseName(studentId, courseName).orElse(null);
@@ -181,5 +197,34 @@ public class EnrolledCourseServiceImpl implements EnrolledCourseService
         {
             throw new UpdateEnrolledCourseException("EnrolledCourse cannot be null");
         }
+    }
+
+    @Override
+    public EnrolledCourse checkDateTimeOfCompletionOfEnrolledCourseByEnrolledLessonId(Long enrolledLessonId) throws EnrolledCourseNotFoundException
+    {
+        EnrolledCourse enrolledCourse = getEnrolledCourseByEnrolledLessonId(enrolledLessonId);
+
+        boolean setDateTimeOfCompletion = true;
+
+        for (EnrolledLesson enrolledLesson : enrolledCourse.getEnrolledLessons())
+        {
+            if (enrolledLesson.getDateTimeOfCompletion() == null)
+            {
+                setDateTimeOfCompletion = false;
+                break;
+            }
+        }
+
+        if (setDateTimeOfCompletion)
+        {
+            enrolledCourse.setDateTimeOfCompletion(LocalDateTime.now());
+        }
+        else
+        {
+            enrolledCourse.setDateTimeOfCompletion(null);
+        }
+
+        enrolledCourseRepository.save(enrolledCourse);
+        return enrolledCourse;
     }
 }

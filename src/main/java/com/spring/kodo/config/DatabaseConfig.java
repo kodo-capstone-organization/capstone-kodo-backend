@@ -123,6 +123,8 @@ public class DatabaseConfig
     private final Integer FORUM_THREAD_COUNT = 3;
     private final Integer FORUM_POST_COUNT = 3;
 
+    private final Integer COMPLETE_CONTENT_PER_STUDENT = 3;
+
     // Don't Edit these
     private final Integer PREFIXED_ADMIN_COUNT = 1;
     private final Integer PREFIXED_TUTOR_COUNT = 1;
@@ -228,6 +230,7 @@ public class DatabaseConfig
         createForumCategories();
         createForumThreads();
         createForumPosts();
+        completeContent();
 
         System.out.println("\n===== Init Data Fully Loaded to Database =====");
 
@@ -785,6 +788,45 @@ public class DatabaseConfig
                 }
             }
         }
+    }
+
+    private void completeContent() throws Exception
+    {
+        int completedContent = 0;
+        int completedContentCounter = 0;
+
+        Account student;
+
+        for (int i = STUDENT_FIRST_INDEX; i < STUDENT_SIZE; i++)
+        {
+            student = accounts.get(i);
+
+            for (EnrolledCourse enrolledCourse : student.getEnrolledCourses())
+            {
+                for (EnrolledLesson enrolledLesson : enrolledCourse.getEnrolledLessons())
+                {
+                    for (EnrolledContent enrolledContent : enrolledLesson.getEnrolledContents())
+                    {
+                        if (COMPLETE_CONTENT_PER_STUDENT == completedContentCounter)
+                        {
+                            completedContentCounter = 0;
+                            break;
+                        }
+
+                        enrolledContent = enrolledContentService.setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId(true, student.getAccountId(), enrolledContent.getParentContent().getContentId());
+
+                        if (enrolledContent.getDateTimeOfCompletion() != null)
+                        {
+                            completedContent++;
+                        }
+
+                        completedContentCounter++;
+                    }
+                }
+            }
+        }
+
+        System.out.printf(">> Completed EnrolledContent (%d)\n", completedContent);
     }
 
     private int getRandomNumber(int min, int max)

@@ -1,6 +1,7 @@
 package com.spring.kodo.service.inter;
 
 import com.spring.kodo.entity.EnrolledContent;
+import com.spring.kodo.entity.EnrolledCourse;
 import com.spring.kodo.entity.EnrolledLesson;
 import com.spring.kodo.util.exception.*;
 
@@ -12,7 +13,11 @@ public interface EnrolledLessonService
 
     EnrolledLesson getEnrolledLessonByEnrolledLessonId(Long enrolledLessonId) throws EnrolledLessonNotFoundException;
 
+    EnrolledLesson getEnrolledLessonByEnrolledContentId(Long enrolledContentId) throws EnrolledLessonNotFoundException;
+
     List<EnrolledLesson> getAllEnrolledLessons();
 
     EnrolledLesson addEnrolledContentToEnrolledLesson(EnrolledLesson enrolledLesson, EnrolledContent enrolledContent) throws UpdateEnrolledLessonException, EnrolledLessonNotFoundException, EnrolledContentNotFoundException;
+
+    EnrolledLesson checkDateTimeOfCompletionOfEnrolledLessonByEnrolledContentId(Long enrolledContentId) throws EnrolledLessonNotFoundException;
 }

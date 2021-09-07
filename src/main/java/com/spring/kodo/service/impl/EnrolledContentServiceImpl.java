@@ -1,10 +1,14 @@
 package com.spring.kodo.service.impl;
 
-import com.spring.kodo.entity.EnrolledContent;
 import com.spring.kodo.entity.Content;
+import com.spring.kodo.entity.EnrolledContent;
+import com.spring.kodo.entity.EnrolledCourse;
+import com.spring.kodo.entity.EnrolledLesson;
 import com.spring.kodo.repository.EnrolledContentRepository;
-import com.spring.kodo.service.inter.EnrolledContentService;
 import com.spring.kodo.service.inter.ContentService;
+import com.spring.kodo.service.inter.EnrolledContentService;
+import com.spring.kodo.service.inter.EnrolledCourseService;
+import com.spring.kodo.service.inter.EnrolledLessonService;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +19,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -23,6 +28,12 @@ public class EnrolledContentServiceImpl implements EnrolledContentService
 {
     @Autowired
     private EnrolledContentRepository enrolledContentRepository;
+
+    @Autowired
+    private EnrolledCourseService enrolledCourseService;
+
+    @Autowired
+    private EnrolledLessonService enrolledLessonService;
 
     @Autowired
     private ContentService lessonService;
@@ -86,8 +97,61 @@ public class EnrolledContentServiceImpl implements EnrolledContentService
     }
 
     @Override
+    public EnrolledContent getEnrolledContentByAccountIdAndContentId(Long accountId, Long contentId) throws EnrolledContentNotFoundException
+    {
+        EnrolledContent enrolledContent = enrolledContentRepository.findByAccountIdAndContentId(accountId, contentId).orElse(null);
+
+        if (enrolledContent != null)
+        {
+            return enrolledContent;
+        }
+        else
+        {
+            throw new EnrolledContentNotFoundException("EnrolledContent with Account ID: " + accountId + " and Content ID: " + contentId + " does not exist!");
+        }
+    }
+
+    @Override
     public List<EnrolledContent> getAllEnrolledContents()
     {
         return enrolledContentRepository.findAll();
+    }
+
+    @Override
+    public EnrolledContent setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(boolean complete, Long enrolledContentId) throws EnrolledContentNotFoundException, EnrolledLessonNotFoundException, EnrolledCourseNotFoundException
+    {
+        EnrolledContent enrolledContent = getEnrolledContentByEnrolledContentId(enrolledContentId);
+
+        enrolledContent = setDateTimeOfCompletionOfEnrolledContentByEnrolledContent(complete, enrolledContent);
+
+        return enrolledContent;
+    }
+
+    @Override
+    public EnrolledContent setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId(boolean complete, Long accountId, Long contentId) throws EnrolledContentNotFoundException, EnrolledLessonNotFoundException, EnrolledCourseNotFoundException
+    {
+        EnrolledContent enrolledContent = getEnrolledContentByAccountIdAndContentId(accountId, contentId);
+
+        enrolledContent = setDateTimeOfCompletionOfEnrolledContentByEnrolledContent(complete, enrolledContent);
+
+        return enrolledContent;
+    }
+
+    private EnrolledContent setDateTimeOfCompletionOfEnrolledContentByEnrolledContent(boolean complete, EnrolledContent enrolledContent) throws EnrolledLessonNotFoundException, EnrolledCourseNotFoundException
+    {
+        if (complete)
+        {
+            enrolledContent.setDateTimeOfCompletion(LocalDateTime.now());
+        }
+        else
+        {
+            enrolledContent.setDateTimeOfCompletion(null);
+        }
+
+        EnrolledLesson enrolledLesson = enrolledLessonService.checkDateTimeOfCompletionOfEnrolledLessonByEnrolledContentId(enrolledContent.getEnrolledContentId());
+        EnrolledCourse enrolledCourse = enrolledCourseService.checkDateTimeOfCompletionOfEnrolledCourseByEnrolledLessonId(enrolledLesson.getEnrolledLessonId());
+
+        enrolledContentRepository.save(enrolledContent);
+        return enrolledContent;
     }
 }

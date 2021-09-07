@@ -17,6 +17,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -91,6 +92,21 @@ public class EnrolledLessonServiceImpl implements EnrolledLessonService
     }
 
     @Override
+    public EnrolledLesson getEnrolledLessonByEnrolledContentId(Long enrolledContentId) throws EnrolledLessonNotFoundException
+    {
+        EnrolledLesson enrolledLesson = enrolledLessonRepository.findByEnrolledContentId(enrolledContentId).orElse(null);
+
+        if (enrolledLesson != null)
+        {
+            return enrolledLesson;
+        }
+        else
+        {
+            throw new EnrolledLessonNotFoundException("EnrolledContent with ID: " + enrolledContentId + " does not exist!");
+        }
+    }
+
+    @Override
     public List<EnrolledLesson> getAllEnrolledLessons()
     {
         return enrolledLessonRepository.findAll();
@@ -141,5 +157,34 @@ public class EnrolledLessonServiceImpl implements EnrolledLessonService
         {
             throw new UpdateEnrolledLessonException("EnrolledLesson cannot be null");
         }
+    }
+
+    @Override
+    public EnrolledLesson checkDateTimeOfCompletionOfEnrolledLessonByEnrolledContentId(Long enrolledContentId) throws EnrolledLessonNotFoundException
+    {
+        EnrolledLesson enrolledLesson = getEnrolledLessonByEnrolledContentId(enrolledContentId);
+
+        boolean setDateTimeOfCompletion = true;
+
+        for (EnrolledContent enrolledContent : enrolledLesson.getEnrolledContents())
+        {
+            if (enrolledContent.getDateTimeOfCompletion() == null)
+            {
+                setDateTimeOfCompletion = false;
+                break;
+            }
+        }
+
+        if (setDateTimeOfCompletion)
+        {
+            enrolledLesson.setDateTimeOfCompletion(LocalDateTime.now());
+        }
+        else
+        {
+            enrolledLesson.setDateTimeOfCompletion(null);
+        }
+
+        enrolledLessonRepository.save(enrolledLesson);
+        return enrolledLesson;
     }
 }
