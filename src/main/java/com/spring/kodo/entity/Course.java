@@ -2,6 +2,7 @@ package com.spring.kodo.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.spring.kodo.util.MessageFormatterUtil;
 import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.*;
@@ -130,6 +131,11 @@ public class Course
     public String getBannerUrl()
     {
         return bannerUrl;
+    }
+
+    public String getBannerPictureFilename()
+    {
+        return MessageFormatterUtil.getGCSObjectNameFromMediaLink(getBannerUrl());
     }
 
     public void setBannerUrl(String bannerUrl)

@@ -7,6 +7,7 @@ import com.spring.kodo.service.inter.QuizQuestionService;
 import com.spring.kodo.service.inter.QuizService;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.*;
+import org.apache.http.MethodNotSupportedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -171,5 +172,12 @@ public class QuizServiceImpl implements QuizService
         {
             throw new UpdateQuizException("Quiz cannot be null");
         }
+    }
+
+    // TODO: Implementation
+    @Override
+    public Quiz updateQuiz(Quiz quiz) throws MethodNotSupportedException
+    {
+        throw new MethodNotSupportedException("Yet to be implemented");
     }
 }

@@ -1,7 +1,6 @@
 package com.spring.kodo.service.inter;
 
 import com.spring.kodo.entity.Multimedia;
-import com.spring.kodo.entity.Tag;
 import com.spring.kodo.util.enumeration.MultimediaType;
 import com.spring.kodo.util.exception.*;
 

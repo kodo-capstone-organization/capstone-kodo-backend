@@ -222,7 +222,7 @@ public class Account
 
     public String getDisplayPictureFilename()
     {
-        return MessageFormatterUtil.getGCSObjectNameFromMediaLink(this.displayPictureUrl);
+        return MessageFormatterUtil.getGCSObjectNameFromMediaLink(getDisplayPictureUrl());
     }
 
     public String getDisplayPictureUrl()

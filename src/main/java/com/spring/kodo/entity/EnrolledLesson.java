@@ -3,7 +3,6 @@ package com.spring.kodo.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,7 +18,7 @@ public class EnrolledLesson
     @Column(nullable = true)
     private LocalDateTime dateTimeOfCompletion;
 
-    @ManyToOne(targetEntity = Lesson.class, optional = false)
+    @ManyToOne(targetEntity = Lesson.class, optional = true)
     private Lesson parentLesson;
 
     @OneToMany(targetEntity = EnrolledContent.class, fetch = FetchType.LAZY)

@@ -1,12 +1,11 @@
 package com.spring.kodo.controller;
 
-import com.spring.kodo.entity.Account;
-import com.spring.kodo.entity.Course;
+import com.spring.kodo.entity.*;
 import com.spring.kodo.restentity.request.CreateNewCourseReq;
+import com.spring.kodo.restentity.request.UpdateCourseReq;
+import com.spring.kodo.restentity.request.UpdateLessonReq;
 import com.spring.kodo.restentity.response.CourseWithTutorResp;
-import com.spring.kodo.service.inter.AccountService;
-import com.spring.kodo.service.inter.CourseService;
-import com.spring.kodo.service.inter.FileService;
+import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +32,9 @@ public class CourseController
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private LessonController lessonController;
 
     @GetMapping("/getCourseByCourseId/{courseId}")
     public CourseWithTutorResp getCourseByCourseId(@PathVariable Long courseId)
@@ -123,19 +125,19 @@ public class CourseController
     {
         if (createNewCourseReq != null)
         {
-            logger.info("HIT account/createNewCourse | POST | Received : " + createNewCourseReq);
+            logger.info("HIT course/createNewCourse | POST | Received : " + createNewCourseReq);
             try
             {
                 Course newCourse = new Course(createNewCourseReq.getName(), createNewCourseReq.getDescription(), createNewCourseReq.getPrice(), "");
                 newCourse = this.courseService.createNewCourse(newCourse, createNewCourseReq.getTutorId(), createNewCourseReq.getTagTitles());
 
-                // TODO: courseService.updateCourse
-//                if (bannerPicture != null)
-//                {
-//                    String bannerPictureURL = fileService.upload(bannerPicture);
-//                    newCourse.setBannerUrl(bannerPictureURL);
-//                    newCourse = this.courseService.updateCourse(newCourse, ...null for other relationfields);
-//                }
+                // Handle banner picture upload
+                if (bannerPicture != null)
+                {
+                    String bannerPictureURL = fileService.upload(bannerPicture);
+                    newCourse.setBannerUrl(bannerPictureURL);
+                    newCourse = this.courseService.updateCourse(newCourse, null, null, null);
+                }
 
                 // Important! Adding course to tutor account
                 Account tutor = this.accountService.getAccountByAccountId(createNewCourseReq.getTutorId());
@@ -143,11 +145,11 @@ public class CourseController
 
                 return newCourse;
             }
-            catch (InputDataValidationException | TagNameExistsException | CreateNewCourseException | UpdateCourseException | UpdateAccountException ex)
+            catch (InputDataValidationException | TagNameExistsException | CreateNewCourseException | UpdateCourseException | UpdateAccountException | FileUploadToGCSException ex)
             {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
             }
-            catch (TagNotFoundException | AccountNotFoundException | CourseNotFoundException ex)
+            catch (TagNotFoundException | AccountNotFoundException | CourseNotFoundException | EnrolledCourseNotFoundException | LessonNotFoundException ex)
             {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
             }
@@ -159,6 +161,63 @@ public class CourseController
         else
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Create New Course Request");
+        }
+    }
+
+    @PutMapping("/updateCourse")
+    public Course updateCourse(
+            @RequestPart(name="updateCourseReq", required = true) UpdateCourseReq updateCourseReq,
+            @RequestPart(name="bannerPicture", required = false) MultipartFile updatedBannerPicture
+    )
+    {
+        if (updateCourseReq != null)
+        {
+            logger.info("HIT course/updateCourse | PUT");
+            try
+            {
+                // Update all lessons and their contents first
+                List<Long> updatedLessonIds = lessonController.updateLessonsInACourse(updateCourseReq.getUpdateLessonReqs());
+
+                // Update course
+                Course updatedCourse = this.courseService.updateCourse(
+                        updateCourseReq.getCourse(),
+                        updateCourseReq.getEnrolledCourseIds(),
+                        updatedLessonIds,
+                        updateCourseReq.getCourseTagTitles());
+
+                // Check if banner picture is also updated
+                if (updatedBannerPicture != null)
+                {
+                    // Delete existing file in cloud
+                    String currentBannerPictureFilename = updatedCourse.getBannerPictureFilename();
+                    if (currentBannerPictureFilename != "")
+                    {
+                        Boolean isDeleted = fileService.delete(currentBannerPictureFilename);
+                        if (!isDeleted)
+                        {
+                            System.err.println("Unable to delete previous banner picture: " + currentBannerPictureFilename + ". Proceeding to overwrite with new picture");
+                        }
+                    }
+                    // Upload new file
+                    String updatedBannerPictureURL = fileService.upload(updatedBannerPicture);
+                    updatedCourse.setBannerUrl(updatedBannerPictureURL);
+                    updatedCourse = courseService.updateCourse(updatedCourse, null, null, null);
+                }
+
+                return updatedCourse;
+            }
+            catch (TagNotFoundException | EnrolledCourseNotFoundException | CourseNotFoundException | ContentNotFoundException | LessonNotFoundException | MultimediaNotFoundException ex)
+            {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+            }
+            catch (UnknownPersistenceException | InputDataValidationException | TagNameExistsException | FileUploadToGCSException | UpdateContentException | CreateNewQuizException | MultimediaExistsException | UpdateCourseException ex)
+            {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+            }
+        }
+        else
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Update Course Request");
         }
     }
 

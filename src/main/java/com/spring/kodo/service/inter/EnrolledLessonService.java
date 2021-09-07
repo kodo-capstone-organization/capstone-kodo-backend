@@ -17,6 +17,8 @@ public interface EnrolledLessonService
 
     List<EnrolledLesson> getAllEnrolledLessons();
 
+    List<EnrolledLesson> getAllEnrolledLessonsByParentLessonId(Long parentLessonId);
+
     EnrolledLesson addEnrolledContentToEnrolledLesson(EnrolledLesson enrolledLesson, EnrolledContent enrolledContent) throws UpdateEnrolledLessonException, EnrolledLessonNotFoundException, EnrolledContentNotFoundException;
 
     EnrolledLesson checkDateTimeOfCompletionOfEnrolledLessonByEnrolledContentId(Long enrolledContentId) throws EnrolledLessonNotFoundException;

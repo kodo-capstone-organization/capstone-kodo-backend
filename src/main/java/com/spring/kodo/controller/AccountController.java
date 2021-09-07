@@ -111,21 +111,20 @@ public class AccountController
 
                 if (updatedDisplayPicture != null)
                 {
-                    // Delete existing file in cloud
+                    // Delete existing file in cloud if exists
                     String currentDisplayPictureFilename = updatedAccount.getDisplayPictureFilename();
-                    Boolean isDeleted = fileService.delete(currentDisplayPictureFilename);
-
-                    if (isDeleted)
+                    if (currentDisplayPictureFilename != "")
                     {
-                        // Upload new file
-                        String updatedDisplayPictureURL = fileService.upload(updatedDisplayPicture);
-                        updatedAccount.setDisplayPictureUrl(updatedDisplayPictureURL);
-                        updatedAccount = accountService.updateAccount(updatedAccount, null, null, null, null, null, null);
+                        Boolean isDeleted = fileService.delete(currentDisplayPictureFilename);
+                        if (!isDeleted)
+                        {
+                            System.err.println("Unable to delete previous display picture: " + currentDisplayPictureFilename + ". Proceeding to overwrite with new picture");
+                        }
                     }
-                    else
-                    {
-                        throw new UpdateAccountException("Unable to replace display picture");
-                    }
+                    // Upload new file
+                    String updatedDisplayPictureURL = fileService.upload(updatedDisplayPicture);
+                    updatedAccount.setDisplayPictureUrl(updatedDisplayPictureURL);
+                    updatedAccount = accountService.updateAccount(updatedAccount, null, null, null, null, null, null);
                 }
 
                 return updatedAccount;

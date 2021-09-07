@@ -218,10 +218,8 @@ public class AccountServiceImpl implements AccountService
     )
             throws AccountNotFoundException, TagNotFoundException,
             UpdateAccountException, EnrolledCourseNotFoundException,
-            CourseNotFoundException, StudentAttemptNotFoundException,
-            ForumThreadNotFoundException, ForumPostNotFoundException,
-            TagNameExistsException, UnknownPersistenceException,
-            InputDataValidationException
+            StudentAttemptNotFoundException, TagNameExistsException,
+            UnknownPersistenceException, InputDataValidationException
     {
 
         if (account != null && account.getAccountId() != null)
@@ -257,22 +255,6 @@ public class AccountServiceImpl implements AccountService
                             addEnrolledCourseToAccount(accountToUpdate, enrolledCourse);
                         }
                     }
-
-                    // Update courses (as a tutor) - Bidirectional, 1-to-many
-//                    if (courseIds != null)
-//                    {
-//                        for (Course course : accountToUpdate.getCourses())
-//                        {
-//                            course.setTutor(null);
-//                        }
-//
-//                        accountToUpdate.getCourses().clear();
-//                        for (Long courseId : courseIds)
-//                        {
-//                            Course course = courseService.getCourseByCourseId(courseId);
-//                            addCourseToAccount(accountToUpdate, course);
-//                        }
-//                    }
 
                     // Update studentAttempts - Unidirectional
                     if (studentAttemptIds != null)

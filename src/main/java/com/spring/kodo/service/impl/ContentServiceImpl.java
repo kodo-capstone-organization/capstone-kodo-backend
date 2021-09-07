@@ -1,9 +1,15 @@
 package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.Content;
+import com.spring.kodo.entity.Multimedia;
+import com.spring.kodo.entity.Quiz;
 import com.spring.kodo.repository.ContentRepository;
 import com.spring.kodo.service.inter.ContentService;
+import com.spring.kodo.service.inter.MultimediaService;
+import com.spring.kodo.service.inter.QuizService;
 import com.spring.kodo.util.exception.ContentNotFoundException;
+import com.spring.kodo.util.exception.UpdateContentException;
+import org.apache.http.MethodNotSupportedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +23,12 @@ public class ContentServiceImpl implements ContentService
 {
     @Autowired
     private ContentRepository contentRepository;
+
+    @Autowired
+    private QuizService quizService;
+
+    @Autowired
+    private MultimediaService multimediaService;
 
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -61,5 +73,38 @@ public class ContentServiceImpl implements ContentService
     public List<Content> getAllContents()
     {
         return contentRepository.findAll();
+    }
+
+    @Override
+    public Content updateContent(Content content) throws UpdateContentException, ContentNotFoundException {
+
+        if (content != null)
+        {
+            if (content instanceof Quiz)
+            {
+                try
+                {
+                    // TODO: remove try catch once method is implemented
+                    return this.quizService.updateQuiz((Quiz) content);
+                }
+                catch (MethodNotSupportedException e)
+                {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+            else if (content instanceof Multimedia)
+            {
+                return this.multimediaService.updateMultimedia((Multimedia) content);
+            }
+            else
+            {
+                throw new UpdateContentException("Invalid content type");
+            }
+        }
+        else
+        {
+            throw new ContentNotFoundException("Content with ID");
+        }
     }
 }

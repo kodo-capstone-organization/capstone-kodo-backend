@@ -113,6 +113,12 @@ public class EnrolledLessonServiceImpl implements EnrolledLessonService
     }
 
     @Override
+    public List<EnrolledLesson> getAllEnrolledLessonsByParentLessonId(Long parentLessonId)
+    {
+        return enrolledLessonRepository.findAllEnrolledLessonsByParentLessonId(parentLessonId);
+    }
+
+    @Override
     public EnrolledLesson addEnrolledContentToEnrolledLesson(EnrolledLesson enrolledLesson, EnrolledContent enrolledContent) throws UpdateEnrolledLessonException, EnrolledLessonNotFoundException, EnrolledContentNotFoundException
     {
         if (enrolledLesson != null)

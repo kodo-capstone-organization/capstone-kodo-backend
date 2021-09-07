@@ -2,10 +2,7 @@ package com.spring.kodo.service.inter;
 
 import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Content;
-import com.spring.kodo.util.exception.AccountNotFoundException;
-import com.spring.kodo.util.exception.ContentNotFoundException;
-import com.spring.kodo.util.exception.InputDataValidationException;
-import com.spring.kodo.util.exception.UnknownPersistenceException;
+import com.spring.kodo.util.exception.*;
 
 import java.util.List;
 
@@ -16,4 +13,6 @@ public interface ContentService
     Content getContentByName(String name) throws ContentNotFoundException;
 
     List<Content> getAllContents();
+
+    Content updateContent(Content content) throws UpdateContentException, ContentNotFoundException;
 }

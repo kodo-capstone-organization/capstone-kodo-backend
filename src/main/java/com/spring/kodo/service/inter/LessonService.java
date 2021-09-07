@@ -18,9 +18,9 @@ public interface LessonService
 
     List<Lesson> getAllLessons();
 
-    Lesson updateLesson(Long lessonId, Lesson updatedLesson) throws LessonNotFoundException;
+    Lesson updateLesson(Lesson lesson, List<Long> contentIds) throws LessonNotFoundException, UpdateContentException, UnknownPersistenceException, ContentNotFoundException, InputDataValidationException;
 
-    Boolean deleteLesson(Long lessonId) throws LessonNotFoundException;
+    Boolean deleteLesson(Long lessonId) throws LessonNotFoundException, CourseNotFoundException, TagNotFoundException, EnrolledCourseNotFoundException, UpdateCourseException, TagNameExistsException, InputDataValidationException, UnknownPersistenceException;
 
-    Lesson addContentToLesson(Lesson lesson, Content content) throws LessonNotFoundException, UpdateContentException, UnknownPersistenceException;
+    Lesson addContentToLesson(Lesson lesson, Content content) throws LessonNotFoundException, UpdateContentException, UnknownPersistenceException, ContentNotFoundException;
 }

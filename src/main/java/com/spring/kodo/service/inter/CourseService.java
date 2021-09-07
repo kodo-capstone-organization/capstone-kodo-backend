@@ -1,6 +1,7 @@
 package com.spring.kodo.service.inter;
 
 import com.spring.kodo.entity.Course;
+import com.spring.kodo.entity.EnrolledCourse;
 import com.spring.kodo.entity.Lesson;
 import com.spring.kodo.entity.Tag;
 import com.spring.kodo.util.exception.*;
@@ -33,7 +34,16 @@ public interface CourseService
 
     List<Course> getAllCoursesByTutorId(Long tutorId) throws AccountNotFoundException;
 
+    Course addEnrolledCourseToCourse(Course course, EnrolledCourse enrolledCourse) throws CourseNotFoundException, UpdateCourseException, EnrolledCourseNotFoundException;
+
     List<Course> getAllCoursesToRecommend(Long accountId) throws AccountNotFoundException;
+
+    Course updateCourse(
+            Course course,
+            List<Long> enrolledCourseIds,
+            List<Long> lessonIds,
+            List<String> courseTagTitles
+    ) throws InputDataValidationException, CourseNotFoundException, UpdateCourseException, TagNameExistsException, UnknownPersistenceException, TagNotFoundException, LessonNotFoundException, EnrolledCourseNotFoundException;
 
     Course addTagToCourse(Course course, String tagTitle) throws CourseNotFoundException, TagNotFoundException, UpdateCourseException, TagNameExistsException, UnknownPersistenceException, InputDataValidationException;
 

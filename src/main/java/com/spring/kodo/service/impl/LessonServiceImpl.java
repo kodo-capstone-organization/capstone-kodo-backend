@@ -1,13 +1,8 @@
 package com.spring.kodo.service.impl;
 
-import com.spring.kodo.entity.Content;
-import com.spring.kodo.entity.Lesson;
-import com.spring.kodo.entity.Multimedia;
-import com.spring.kodo.entity.Quiz;
+import com.spring.kodo.entity.*;
 import com.spring.kodo.repository.LessonRepository;
-import com.spring.kodo.service.inter.LessonService;
-import com.spring.kodo.service.inter.MultimediaService;
-import com.spring.kodo.service.inter.QuizService;
+import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +15,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class LessonServiceImpl implements LessonService
@@ -29,10 +25,13 @@ public class LessonServiceImpl implements LessonService
     private LessonRepository lessonRepository;
 
     @Autowired
-    private QuizService quizService;
+    private ContentService contentService;
 
     @Autowired
-    private MultimediaService multimediaService;
+    private EnrolledLessonService enrolledLessonService;
+
+    @Autowired
+    private CourseService courseService;
 
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -116,33 +115,67 @@ public class LessonServiceImpl implements LessonService
         return lessonRepository.findAll();
     }
 
-    //only updating attributes, not relationships
     @Override
-    public Lesson updateLesson(Long lessonId, Lesson updatedLesson) throws LessonNotFoundException
-    {
-        Lesson lessonToUpdate = lessonRepository.findById(lessonId).orElse(null);
+    public Lesson updateLesson(Lesson lesson, List<Long> contentIds) throws LessonNotFoundException, UpdateContentException, UnknownPersistenceException, ContentNotFoundException, InputDataValidationException {
 
-        if (lessonToUpdate != null)
+        if (lesson != null && lesson.getLessonId() != null)
         {
-            lessonToUpdate.setName(updatedLesson.getName());
-            lessonToUpdate.setDescription(updatedLesson.getDescription());
-            lessonToUpdate.setSequence(updatedLesson.getSequence());
-            lessonRepository.saveAndFlush(lessonToUpdate);
-            return lessonToUpdate;
+            Lesson lessonToUpdate = null;
+            Set<ConstraintViolation<Lesson>> constraintViolations = validator.validate(lesson);
+
+            if (constraintViolations.isEmpty())
+            {
+                lessonToUpdate = getLessonByLessonId(lesson.getLessonId());
+
+                // Update Content (quiz / multimedia) Unidirectional
+                // TODO: Deletion of removed content
+                if (contentIds != null)
+                {
+                    lessonToUpdate.getContents().clear();
+                    for (Long contentId: contentIds)
+                    {
+                        Content content = contentService.getContentByContentId(contentId);
+                        addContentToLesson(lessonToUpdate, content);
+                    }
+                }
+
+                // Update non-relational fields
+                lessonToUpdate.setName(lesson.getName());
+                lessonToUpdate.setDescription(lesson.getDescription());
+                lessonToUpdate.setSequence(lesson.getSequence());
+                return lessonRepository.saveAndFlush(lessonToUpdate);
+            }
+            else
+            {
+                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
         }
         else
         {
-            throw new LessonNotFoundException("Lesson with ID: " + lessonId + " does not exist!");
+            throw new LessonNotFoundException("Lesson ID not provided for Lesson to be updated");
         }
     }
 
     @Override
-    public Boolean deleteLesson(Long lessonId) throws LessonNotFoundException
-    {
-        Lesson lessonToDelete = lessonRepository.findById(lessonId).orElse(null);
+    public Boolean deleteLesson(Long lessonId) throws LessonNotFoundException, CourseNotFoundException, TagNotFoundException, EnrolledCourseNotFoundException, UpdateCourseException, TagNameExistsException, InputDataValidationException, UnknownPersistenceException {
+        Lesson lessonToDelete = getLessonByLessonId(lessonId);
 
         if (lessonToDelete != null)
         {
+            // Check for enrolled lessons and un-set parent lesson
+            List<EnrolledLesson> enrolledLessons = enrolledLessonService.getAllEnrolledLessonsByParentLessonId(lessonId);
+            for (EnrolledLesson enrolledLesson: enrolledLessons)
+            {
+                enrolledLesson.setParentLesson(null);
+                // TODO: enrolledLessonService.updateEnrolledLesson()
+            }
+
+            // Check for course with the lesson
+            Course courseWithLesson = courseService.getCourseByLessonId(lessonId);
+            List<Lesson> newLessons = courseWithLesson.getLessons();
+            newLessons.remove(lessonToDelete);
+            courseService.updateCourse(courseWithLesson, null, newLessons.stream().map(Lesson::getLessonId).collect(Collectors.toList()), null);
+
             lessonRepository.deleteById(lessonId);
             return true;
         }
@@ -152,44 +185,21 @@ public class LessonServiceImpl implements LessonService
         }
     }
 
-    public Lesson addContentToLesson(Lesson lesson, Content content) throws LessonNotFoundException, UpdateContentException, UnknownPersistenceException
+    public Lesson addContentToLesson(Lesson lesson, Content content) throws LessonNotFoundException, UpdateContentException, ContentNotFoundException
     {
         lesson = getLessonByLessonId(lesson.getLessonId());
+        content = contentService.getContentByContentId(content.getContentId());
 
         if (!lesson.getContents().contains(content))
         {
-            if (content instanceof Quiz)
-            {
-                try
-                {
-                    content = quizService.createNewQuiz((Quiz) content);
-                }
-                catch (CreateNewQuizException | InputDataValidationException ex)
-                {
-                    throw new UpdateContentException(ex.getMessage());
-                }
-            }
-            else if (content instanceof Multimedia)
-            {
-                try
-                {
-                    content = multimediaService.createNewMultimedia((Multimedia) content);
-                }
-                catch (InputDataValidationException | MultimediaExistsException | UnknownPersistenceException ex)
-                {
-                    throw new UpdateContentException(ex.getMessage());
-                }
-            }
-
             lesson.getContents().add(content);
-
-            lessonRepository.saveAndFlush(lesson);
-            return lesson;
         }
         else
         {
             throw new UpdateContentException("Unable to add content with name: " + content.getName() +
                     " to lesson with ID: " + lesson.getLessonId() + " as content is already linked to this course");
         }
+
+        return lessonRepository.saveAndFlush(lesson);
     }
 }
