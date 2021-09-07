@@ -41,5 +41,7 @@ public interface CourseService
 
     Course addLessonToCourse(Course course, Lesson lesson) throws UpdateCourseException, CourseNotFoundException, LessonNotFoundException;
 
+    Double getCourseRating(Long courseId) throws CourseNotFoundException;
+
 //    Course addForumCategoryToCourse(Course course, ForumCategory forumCategory) throws UpdateCourseException, CourseNotFoundException, ForumCategoryNotFoundException;
 }

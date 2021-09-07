@@ -320,6 +320,13 @@ public class CourseServiceImpl implements CourseService
         return allCoursesToRecommend;
     }
 
+    @Override
+    public Double getCourseRating(Long courseId) throws CourseNotFoundException
+    {
+        getCourseByCourseId(courseId);
+
+        return courseRepository.getCourseRatingByCourseId(courseId);
+    }
 
 //    @Override
 //    public Course addForumCategoryToCourse(Course course, ForumCategory forumCategory) throws UpdateCourseException, CourseNotFoundException, ForumCategoryNotFoundException
