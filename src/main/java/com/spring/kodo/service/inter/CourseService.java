@@ -6,6 +6,7 @@ import com.spring.kodo.entity.Lesson;
 import com.spring.kodo.entity.Tag;
 import com.spring.kodo.util.exception.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface CourseService
@@ -52,6 +53,10 @@ public interface CourseService
     Course addLessonToCourse(Course course, Lesson lesson) throws UpdateCourseException, CourseNotFoundException, LessonNotFoundException;
 
     Double getCourseRating(Long courseId) throws CourseNotFoundException;
+
+    BigDecimal getTotalEarningsByCourseId(Long courseId) throws CourseNotFoundException;
+
+    BigDecimal getTotalEarningsByCourseIdAndYear(Long courseId, Integer year) throws CourseNotFoundException;
 
 //    Course addForumCategoryToCourse(Course course, ForumCategory forumCategory) throws UpdateCourseException, CourseNotFoundException, ForumCategoryNotFoundException;
 }
