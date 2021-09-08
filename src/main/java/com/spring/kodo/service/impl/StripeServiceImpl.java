@@ -13,6 +13,7 @@ import com.stripe.net.Webhook;
 import com.stripe.param.AccountCreateParams;
 import com.stripe.param.AccountLinkCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -69,6 +70,8 @@ public class StripeServiceImpl implements StripeService
                 SessionCreateParams.builder()
                         .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
                         .putMetadata("courseId", stripePaymentReq.getCourseId().toString())
+                        .putMetadata("studentId", stripePaymentReq.getStudentId().toString())
+                        .putMetadata("tutorId", stripePaymentReq.getTutorId().toString())
                         .addLineItem(
                                 SessionCreateParams.LineItem.builder()
                                         .setName(stripePaymentReq.getTutorName())
@@ -85,7 +88,7 @@ public class StripeServiceImpl implements StripeService
                                                         .build())
                                         .build())
                         .setMode(SessionCreateParams.Mode.PAYMENT)
-                        .setSuccessUrl(mainAppUrl) // TODO: Add success url
+                        .setSuccessUrl(mainAppUrl.concat("browsecourse/preview/").concat(stripePaymentReq.getCourseId().toString())) // TODO: Add success url
                         .setCancelUrl(mainAppUrl) // TODO: Add cancel url
                         .build();
 
