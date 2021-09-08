@@ -24,7 +24,7 @@ public class StudentAttempt
     @Column(nullable = true)
     private LocalDateTime dateTimeOfCompletion;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, targetEntity = Quiz.class, fetch = FetchType.LAZY)
     private Quiz quiz;
 
     @OneToMany(targetEntity = StudentAttemptQuestion.class, fetch = FetchType.LAZY)

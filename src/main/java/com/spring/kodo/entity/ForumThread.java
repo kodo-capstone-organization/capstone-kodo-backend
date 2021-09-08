@@ -33,7 +33,7 @@ public class ForumThread
     @NotNull
     private LocalDateTime timeStamp;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, targetEntity = Account.class, fetch = FetchType.LAZY)
     private Account account;
 
     @OneToMany(targetEntity = ForumPost.class, fetch = FetchType.LAZY)

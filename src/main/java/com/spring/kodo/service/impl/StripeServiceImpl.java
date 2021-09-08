@@ -3,6 +3,7 @@ package com.spring.kodo.service.impl;
 import com.google.gson.JsonSyntaxException;
 import com.spring.kodo.restentity.request.StripePaymentReq;
 import com.spring.kodo.service.inter.StripeService;
+import com.spring.kodo.util.Constants;
 import com.stripe.Stripe;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
@@ -21,9 +22,6 @@ import java.math.BigDecimal;
 @Service
 public class StripeServiceImpl implements StripeService
 {
-
-    static final BigDecimal KODO_PLATFORM_FEE_PERCENTAGE = new BigDecimal(0.35);
-
     @Value("${STRIPE_API_KEY}")
     private String stripeApiKey;
 
@@ -80,7 +78,7 @@ public class StripeServiceImpl implements StripeService
                                         .build())
                         .setPaymentIntentData(
                                 SessionCreateParams.PaymentIntentData.builder()
-                                        .setApplicationFeeAmount(stripePaymentReq.getAmount().multiply(KODO_PLATFORM_FEE_PERCENTAGE).longValue() * 100)
+                                        .setApplicationFeeAmount(stripePaymentReq.getAmount().multiply(Constants.PLATFORM_FEE_PERCENTAGE).longValue() * 100)
                                         .setTransferData(
                                                 SessionCreateParams.PaymentIntentData.TransferData.builder()
                                                         .setDestination(stripePaymentReq.getTutorStripeAccountId())

@@ -35,7 +35,7 @@ public class QuizQuestion
     @Min(0)
     private Integer marks;
 
-    @ManyToOne(targetEntity = Quiz.class, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, targetEntity = Quiz.class, fetch = FetchType.LAZY)
     private Quiz quiz;
 
     @OneToMany(targetEntity = QuizQuestionOption.class, fetch = FetchType.LAZY)

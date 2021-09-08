@@ -30,7 +30,7 @@ public class ForumPost
     @OneToOne(optional = true, targetEntity = ForumPost.class, fetch = FetchType.LAZY)
     private ForumPost reply;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, targetEntity = Account.class, fetch = FetchType.LAZY)
     private Account account;
 
     public ForumPost()
