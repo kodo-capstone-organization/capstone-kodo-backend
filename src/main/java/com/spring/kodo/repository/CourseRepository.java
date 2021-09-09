@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -32,5 +33,11 @@ public interface CourseRepository extends JpaRepository<Course, Long>
     List<Course> findAllCoursesToRecommend(@Param("allTags") HashSet<Tag> allTags);
 
     @Query(value = "SELECT AVG(ec.course_rating) FROM Course c JOIN Enrolled_Course ec WHERE c.course_id = :courseId", nativeQuery = true)
-    Double getCourseRatingByCourseId(@Param("courseId") Long courseId);
+    Double findCourseRatingByCourseId(@Param("courseId") Long courseId);
+
+    @Query(value = "SELECT SUM(t.course_price) FROM Transaction t WHERE t.course_course_id = :courseId", nativeQuery = true)
+    BigDecimal findTotalEarningsByCourseId(@Param("courseId") Long courseId);
+
+    @Query(value = "SELECT SUM(t.course_price) FROM Transaction t WHERE t.course_course_id = :courseId AND YEAR(t.date_time_of_transaction) BETWEEN :year AND YEAR(DATE_ADD(:year, INTERVAL 1 YEAR))", nativeQuery = true)
+    BigDecimal findTotalEarningsByCourseIdAndYear(@Param("courseId") Long courseId, @Param("year") Integer year);
 }
