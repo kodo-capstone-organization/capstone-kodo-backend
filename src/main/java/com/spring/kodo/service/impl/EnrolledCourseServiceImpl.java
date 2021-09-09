@@ -224,7 +224,7 @@ public class EnrolledCourseServiceImpl implements EnrolledCourseService
             enrolledCourse.setDateTimeOfCompletion(null);
         }
 
-        enrolledCourseRepository.save(enrolledCourse);
+        enrolledCourseRepository.saveAndFlush(enrolledCourse);
         return enrolledCourse;
     }
 }

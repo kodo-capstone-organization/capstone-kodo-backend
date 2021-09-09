@@ -36,7 +36,7 @@ public class EnrolledContentServiceImpl implements EnrolledContentService
     private EnrolledLessonService enrolledLessonService;
 
     @Autowired
-    private ContentService lessonService;
+    private ContentService contentService;
 
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -59,7 +59,7 @@ public class EnrolledContentServiceImpl implements EnrolledContentService
             {
                 if (parentContentId != null)
                 {
-                    Content parentContent = lessonService.getContentByContentId(parentContentId);
+                    Content parentContent = contentService.getContentByContentId(parentContentId);
                     newEnrolledContent.setParentContent(parentContent);
 
                     enrolledContentRepository.saveAndFlush(newEnrolledContent);
@@ -142,6 +142,7 @@ public class EnrolledContentServiceImpl implements EnrolledContentService
         if (complete)
         {
             enrolledContent.setDateTimeOfCompletion(LocalDateTime.now());
+            enrolledContentRepository.saveAndFlush(enrolledContent);
         }
         else
         {
@@ -151,7 +152,6 @@ public class EnrolledContentServiceImpl implements EnrolledContentService
         EnrolledLesson enrolledLesson = enrolledLessonService.checkDateTimeOfCompletionOfEnrolledLessonByEnrolledContentId(enrolledContent.getEnrolledContentId());
         EnrolledCourse enrolledCourse = enrolledCourseService.checkDateTimeOfCompletionOfEnrolledCourseByEnrolledLessonId(enrolledLesson.getEnrolledLessonId());
 
-        enrolledContentRepository.save(enrolledContent);
         return enrolledContent;
     }
 }

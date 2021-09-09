@@ -103,27 +103,27 @@ public class DatabaseConfig
     private List<ForumPost> forumPosts;
 
     // Edit these to scale the sample database
-    private final Integer PROGRAMMING_LANGUAGES_COUNT = 14; // Current max is 14
+    private final Integer PROGRAMMING_LANGUAGES_COUNT = 10; // Current max is 14
 
     private final Integer TUTOR_COUNT = 5;
-    private final Integer STUDENT_COUNT = 20;
+    private final Integer STUDENT_COUNT = 10;
 
     private final Integer LESSON_COUNT = 3;
 
     private final Integer MULTIMEDIA_COUNT = 2;
 
     private final Integer QUIZ_COUNT = 1;
-    private final Integer QUIZ_QUESTION_COUNT = 5;
-    private final Integer QUIZ_QUESTION_OPTION_COUNT = 4;
+    private final Integer QUIZ_QUESTION_COUNT = 3;
+    private final Integer QUIZ_QUESTION_OPTION_COUNT = 3;
 
-    private final Integer STUDENT_ENROLLED_COUNT = 10;
+    private final Integer STUDENT_ENROLLED_COUNT = 20;
     private final Integer STUDENT_ATTEMPT_COUNT = 5;
 
     private final Integer FORUM_CATEGORY_COUNT = 3;
     private final Integer FORUM_THREAD_COUNT = 3;
     private final Integer FORUM_POST_COUNT = 3;
 
-    private final Integer COMPLETE_CONTENT_PER_STUDENT = 3;
+    private final Integer COMPLETE_CONTENT_COUNT = 100;
 
     // Don't Edit these
     private final Integer PREFIXED_ADMIN_COUNT = 1;
@@ -183,7 +183,8 @@ public class DatabaseConfig
     public void loadDataOnStartup() throws Exception
     {
         // Stop Heroku from updating Google Cloud SQL on every git change
-        if (configProfileType.equals("prod")) {
+        if (configProfileType.equals("prod"))
+        {
             return;
         }
 
@@ -323,16 +324,16 @@ public class DatabaseConfig
 
         int quizIndex = 0;
 
-        for (int i = 0; i < courses.size(); i++)
+        for (Course course : courses)
         {
-            for (int j = 0; j < LESSON_COUNT; j++)
+            for (Lesson lesson : course.getLessons())
             {
                 for (int l = 0; l < QUIZ_COUNT; l++, quizIndex++)
                 {
                     quiz = quizzes.get(quizIndex);
                     quiz = quizService.createNewQuiz(quiz);
 
-                    lessonService.addContentToLesson(lessons.get(j), quiz);
+                    lessonService.addContentToLesson(lesson, quiz);
                 }
             }
         }
@@ -409,17 +410,14 @@ public class DatabaseConfig
 
     private void createMultimedias() throws Exception
     {
-        Lesson lesson;
         Multimedia multimedia;
 
         int multimediaIndex = 0;
 
-        for (int i = 0; i < courses.size(); i++)
+        for (Course course : courses)
         {
-            for (int j = 0; j < LESSON_COUNT; j++)
+            for (Lesson lesson : course.getLessons())
             {
-                lesson = lessons.get(j);
-
                 for (int k = 0; k < MULTIMEDIA_COUNT; k++, multimediaIndex++)
                 {
                     multimedia = multimediaService.createNewMultimedia(multimedias.get(multimediaIndex));
@@ -441,44 +439,38 @@ public class DatabaseConfig
         EnrolledLesson enrolledLesson;
         EnrolledContent enrolledContent;
 
-        int studentIndex = STUDENT_FIRST_INDEX;
-        int courseIndex = 0;
-
-        for (int i = 0; i < STUDENT_ENROLLED_COUNT; i++, studentIndex++, courseIndex++)
+        int i = 0;
+        while (i < STUDENT_ENROLLED_COUNT)
         {
-            try
+            for (int studentIndex = STUDENT_FIRST_INDEX; studentIndex < STUDENT_SIZE; studentIndex++)
             {
-                student = accounts.get(studentIndex);
-                course = courses.get(courseIndex);
-
-                enrolledCourse = enrolledCourseService.createNewEnrolledCourse(student.getAccountId(), course.getCourseId());
-                accountService.addEnrolledCourseToAccount(student, enrolledCourse);
-
-                for (Lesson lesson : course.getLessons())
+                for (int courseIndex = 0; courseIndex < courses.size() && i < STUDENT_ENROLLED_COUNT; courseIndex++, i++)
                 {
-                    enrolledLesson = enrolledLessonService.createNewEnrolledLesson(lesson.getLessonId());
-                    enrolledCourseService.addEnrolledLessonToEnrolledCourse(enrolledCourse, enrolledLesson);
-
-                    for (Content content : lesson.getContents())
+                    try
                     {
-                        enrolledContent = enrolledContentService.createNewEnrolledContent(content.getContentId());
-                        enrolledLessonService.addEnrolledContentToEnrolledLesson(enrolledLesson, enrolledContent);
+                        student = accounts.get(studentIndex);
+                        course = courses.get(courseIndex);
+
+                        enrolledCourse = enrolledCourseService.createNewEnrolledCourse(student.getAccountId(), course.getCourseId());
+                        accountService.addEnrolledCourseToAccount(student, enrolledCourse);
+
+                        for (Lesson lesson : course.getLessons())
+                        {
+                            enrolledLesson = enrolledLessonService.createNewEnrolledLesson(lesson.getLessonId());
+                            enrolledCourseService.addEnrolledLessonToEnrolledCourse(enrolledCourse, enrolledLesson);
+
+                            for (Content content : lesson.getContents())
+                            {
+                                enrolledContent = enrolledContentService.createNewEnrolledContent(content.getContentId());
+                                enrolledLessonService.addEnrolledContentToEnrolledLesson(enrolledLesson, enrolledContent);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        i--;
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                i--;
-            }
-
-            if (studentIndex == STUDENT_SIZE - 1)
-            {
-                studentIndex = STUDENT_FIRST_INDEX;
-            }
-
-            if (courseIndex == courses.size() - 1)
-            {
-                courseIndex = 0;
             }
         }
 
@@ -614,7 +606,6 @@ public class DatabaseConfig
 
                     for (int k = 0; k < FORUM_POST_COUNT; k++, forumPostIndex++)
                     {
-
                         forumPost = forumPosts.get(forumPostIndex);
 
                         forumPost = forumPostService.createNewForumPost(forumPost, accounts.get(accountIndex).getAccountId());
@@ -633,6 +624,37 @@ public class DatabaseConfig
         forumPosts = forumPostService.getAllForumPosts();
 
         System.out.printf(">> Created ForumPosts (%d)\n", forumPosts.size());
+    }
+
+    private void completeContent() throws Exception
+    {
+        int completedContent = 0;
+
+        Account student;
+
+        for (int i = STUDENT_FIRST_INDEX; i < STUDENT_SIZE; i++)
+        {
+            student = accounts.get(i);
+
+            for (EnrolledCourse enrolledCourse : student.getEnrolledCourses())
+            {
+                for (EnrolledLesson enrolledLesson : enrolledCourse.getEnrolledLessons())
+                {
+                    for (EnrolledContent enrolledContent : enrolledLesson.getEnrolledContents())
+                    {
+                        if (completedContent == COMPLETE_CONTENT_COUNT)
+                        {
+                            break;
+                        }
+
+                        enrolledContent = enrolledContentService.setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId(true, student.getAccountId(), enrolledContent.getParentContent().getContentId());
+                        completedContent++;
+                    }
+                }
+            }
+        }
+
+        System.out.printf(">> Completed EnrolledContent (%d)\n", completedContent);
     }
 
     private void addAccounts()
@@ -788,45 +810,6 @@ public class DatabaseConfig
                 }
             }
         }
-    }
-
-    private void completeContent() throws Exception
-    {
-        int completedContent = 0;
-        int completedContentCounter = 0;
-
-        Account student;
-
-        for (int i = STUDENT_FIRST_INDEX; i < STUDENT_SIZE; i++)
-        {
-            student = accounts.get(i);
-
-            for (EnrolledCourse enrolledCourse : student.getEnrolledCourses())
-            {
-                for (EnrolledLesson enrolledLesson : enrolledCourse.getEnrolledLessons())
-                {
-                    for (EnrolledContent enrolledContent : enrolledLesson.getEnrolledContents())
-                    {
-                        if (COMPLETE_CONTENT_PER_STUDENT == completedContentCounter)
-                        {
-                            completedContentCounter = 0;
-                            break;
-                        }
-
-                        enrolledContent = enrolledContentService.setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId(true, student.getAccountId(), enrolledContent.getParentContent().getContentId());
-
-                        if (enrolledContent.getDateTimeOfCompletion() != null)
-                        {
-                            completedContent++;
-                        }
-
-                        completedContentCounter++;
-                    }
-                }
-            }
-        }
-
-        System.out.printf(">> Completed EnrolledContent (%d)\n", completedContent);
     }
 
     private int getRandomNumber(int min, int max)

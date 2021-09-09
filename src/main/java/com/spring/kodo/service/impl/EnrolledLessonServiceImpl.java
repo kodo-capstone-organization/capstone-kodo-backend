@@ -190,7 +190,7 @@ public class EnrolledLessonServiceImpl implements EnrolledLessonService
             enrolledLesson.setDateTimeOfCompletion(null);
         }
 
-        enrolledLessonRepository.save(enrolledLesson);
+        enrolledLessonRepository.saveAndFlush(enrolledLesson);
         return enrolledLesson;
     }
 }
