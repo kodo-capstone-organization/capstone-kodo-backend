@@ -72,10 +72,16 @@ public class Transaction
         this();
 
         this.stripeTransactionId = stripeTransactionId;
-        this.stripeFee = Constants.STRIPE_FEE_PERCENTAGE.multiply(this.coursePrice).add(Constants.STRIPE_FEE_ACCOUNT_BASE);
-        this.platformFee = Constants.PLATFORM_FEE_PERCENTAGE.multiply(this.coursePrice);
         this.coursePrice = coursePrice;
-        this.tutorPayout = this.coursePrice.subtract(this.platformFee);
+
+        // Total application fee consisting of Kodo platform fee and Stripe fees
+        BigDecimal totalApplicationFee = Constants.PLATFORM_FEE_PERCENTAGE.multiply(this.coursePrice);
+
+        this.tutorPayout = this.coursePrice.subtract(totalApplicationFee);
+        this.stripeFee = Constants.STRIPE_FEE_PERCENTAGE.multiply(this.coursePrice).add(Constants.STRIPE_FEE_ACCOUNT_BASE);
+
+        // Net platform fee receivable by Kodo after paying for Stripe fees
+        this.platformFee = totalApplicationFee.subtract(this.stripeFee);
     }
 
     public Long getTransactionId()
