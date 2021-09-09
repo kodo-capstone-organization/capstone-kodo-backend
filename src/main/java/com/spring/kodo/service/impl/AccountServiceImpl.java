@@ -493,13 +493,17 @@ public class AccountServiceImpl implements AccountService
     @Override
     public Long deactivateAccount(Long deactivatingAccountId, Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException
     {
-        if (deactivatingAccountId == requestingAccountId)
-        {
-            throw new AccountPermissionDeniedException("You cannot deactivate your own account");
-        }
 
         Account requestingAccount = getAccountByAccountId(requestingAccountId);
         Account deactivatingAccount = getAccountByAccountId(deactivatingAccountId);
+
+        if (deactivatingAccountId == requestingAccountId)
+        {
+//            throw new AccountPermissionDeniedException("You cannot deactivate your own account");
+            deactivatingAccount.setIsActive(Boolean.FALSE);
+            Account deactivatedAccount = accountRepository.saveAndFlush(deactivatingAccount);
+            return deactivatedAccount.getAccountId();
+        }
 
         // Check that requestingAccount is an admin account
         if (requestingAccount.getIsAdmin())
