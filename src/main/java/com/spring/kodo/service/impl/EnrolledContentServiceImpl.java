@@ -142,6 +142,7 @@ public class EnrolledContentServiceImpl implements EnrolledContentService
         if (complete)
         {
             enrolledContent.setDateTimeOfCompletion(LocalDateTime.now());
+            enrolledContentRepository.save(enrolledContent);
         }
         else
         {
@@ -151,7 +152,6 @@ public class EnrolledContentServiceImpl implements EnrolledContentService
         EnrolledLesson enrolledLesson = enrolledLessonService.checkDateTimeOfCompletionOfEnrolledLessonByEnrolledContentId(enrolledContent.getEnrolledContentId());
         EnrolledCourse enrolledCourse = enrolledCourseService.checkDateTimeOfCompletionOfEnrolledCourseByEnrolledLessonId(enrolledLesson.getEnrolledLessonId());
 
-        enrolledContentRepository.save(enrolledContent);
         return enrolledContent;
     }
 }

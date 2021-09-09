@@ -106,24 +106,24 @@ public class DatabaseConfig
     private final Integer PROGRAMMING_LANGUAGES_COUNT = 14; // Current max is 14
 
     private final Integer TUTOR_COUNT = 5;
-    private final Integer STUDENT_COUNT = 20;
+    private final Integer STUDENT_COUNT = 10;
 
     private final Integer LESSON_COUNT = 3;
 
     private final Integer MULTIMEDIA_COUNT = 2;
 
     private final Integer QUIZ_COUNT = 1;
-    private final Integer QUIZ_QUESTION_COUNT = 5;
-    private final Integer QUIZ_QUESTION_OPTION_COUNT = 4;
+    private final Integer QUIZ_QUESTION_COUNT = 3;
+    private final Integer QUIZ_QUESTION_OPTION_COUNT = 3;
 
-    private final Integer STUDENT_ENROLLED_COUNT = 10;
+    private final Integer STUDENT_ENROLLED_COUNT = 20;
     private final Integer STUDENT_ATTEMPT_COUNT = 5;
 
     private final Integer FORUM_CATEGORY_COUNT = 3;
     private final Integer FORUM_THREAD_COUNT = 3;
     private final Integer FORUM_POST_COUNT = 3;
 
-    private final Integer COMPLETE_CONTENT_PER_STUDENT = 3;
+    private final Integer COMPLETE_CONTENT_PER_STUDENT = 27;
 
     // Don't Edit these
     private final Integer PREFIXED_ADMIN_COUNT = 1;
@@ -323,16 +323,18 @@ public class DatabaseConfig
 
         int quizIndex = 0;
 
-        for (int i = 0; i < courses.size(); i++)
+        for (Course course : courses)
+
         {
-            for (int j = 0; j < LESSON_COUNT; j++)
+            for (Lesson lesson : course.getLessons())
+
             {
                 for (int l = 0; l < QUIZ_COUNT; l++, quizIndex++)
                 {
                     quiz = quizzes.get(quizIndex);
                     quiz = quizService.createNewQuiz(quiz);
 
-                    lessonService.addContentToLesson(lessons.get(j), quiz);
+                    lessonService.addContentToLesson(lesson, quiz);
                 }
             }
         }
@@ -409,16 +411,15 @@ public class DatabaseConfig
 
     private void createMultimedias() throws Exception
     {
-        Lesson lesson;
+//        Lesson lesson;
         Multimedia multimedia;
 
         int multimediaIndex = 0;
 
-        for (int i = 0; i < courses.size(); i++)
+        for (Course course : courses)
         {
-            for (int j = 0; j < LESSON_COUNT; j++)
+            for (Lesson lesson : course.getLessons())
             {
-                lesson = lessons.get(j);
 
                 for (int k = 0; k < MULTIMEDIA_COUNT; k++, multimediaIndex++)
                 {
