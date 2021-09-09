@@ -418,7 +418,7 @@ public class DatabaseConfig
         {
             for (Lesson lesson : course.getLessons())
             {
-                for (int k = 0; k < MULTIMEDIA_COUNT; k++, multimediaIndex++)
+                for (int i = 0; i < MULTIMEDIA_COUNT; i++, multimediaIndex++)
                 {
                     multimedia = multimediaService.createNewMultimedia(multimedias.get(multimediaIndex));
                     lessonService.addContentToLesson(lesson, multimedia);
@@ -646,9 +646,11 @@ public class DatabaseConfig
                         {
                             break;
                         }
-
-                        enrolledContent = enrolledContentService.setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId(true, student.getAccountId(), enrolledContent.getParentContent().getContentId());
-                        completedContent++;
+                        else
+                        {
+                            enrolledContent = enrolledContentService.setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId(true, student.getAccountId(), enrolledContent.getParentContent().getContentId());
+                            completedContent++;
+                        }
                     }
                 }
             }
