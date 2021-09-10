@@ -143,6 +143,22 @@ public class Account
         this.isAdmin = isAdmin;
     }
 
+    // Should only be used for Database Config
+    public Account(String username, String password, String name, String bio, String email, String displayPictureUrl, String stripeAccountId, boolean isAdmin)
+    {
+        this();
+
+        this.username = username;
+        this.password = CryptographicHelper.getSHA256Digest(password, this.salt);
+        this.name = name;
+        this.bio = bio;
+        this.email = email;
+        this.displayPictureUrl = displayPictureUrl;
+        this.stripeAccountId = stripeAccountId;
+        this.isAdmin = isAdmin;
+    }
+
+
     public Long getAccountId()
     {
         return accountId;
