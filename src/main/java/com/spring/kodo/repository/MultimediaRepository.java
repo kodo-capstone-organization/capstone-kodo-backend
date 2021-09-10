@@ -12,5 +12,5 @@ public interface MultimediaRepository extends JpaRepository<Multimedia, Long>
 {
     Optional<Multimedia> findByUrl(String url);
 
-    Optional<Multimedia> findByType(MultimediaType type);
+    Optional<Multimedia> findByMultimediaType(MultimediaType type);
 }

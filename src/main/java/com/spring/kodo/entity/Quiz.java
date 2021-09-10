@@ -2,6 +2,7 @@ package com.spring.kodo.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -14,6 +15,7 @@ import java.util.List;
 @Entity
 @Table
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "quizQuestions", "studentAttempts"})
+@JsonTypeName("quiz")
 public class Quiz extends Content
 {
     @Column(nullable = false)

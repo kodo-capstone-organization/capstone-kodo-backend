@@ -674,7 +674,7 @@ public class DatabaseConfig
         accounts.add(new Account("tutor1", "password", "Tutor Trisha", "Hello! I am Tutor Trisha Toh. My greatest passion in life is teaching. I was born and raised in Singapore, " +
                 "and experienced great success at school and at university due to amazing and unforgettable teachers. This is the foundation of my commitment to helping out my students, whatever their abilities may be. " +
                 "Currently, I am studying a masters degree specializing in Frontend Engineering.",
-                "tutor1@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/18700b5a-4890-430f-9bab-1d312862c030.gif?generation=1630266710675423&alt=media", false));
+                "tutor1@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/18700b5a-4890-430f-9bab-1d312862c030.gif?generation=1630266710675423&alt=media", "acct_1JWRdcPHGejF5xk8", false));
 
         for (int i = 2; i <= TUTOR_COUNT + 1; i++)
         {

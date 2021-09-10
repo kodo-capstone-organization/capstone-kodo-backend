@@ -19,12 +19,14 @@ public class CourseWithTutorResp
     private List<Tag> courseTags;
     private List<Lesson> lessons;
     private Account tutor;
+    private String bannerPictureFileName;
+    private Boolean isEnrollmentActive;
 
     public CourseWithTutorResp()
     {
     }
 
-    public CourseWithTutorResp(Long courseId, String name, String description, BigDecimal price, String bannerUrl, List<EnrolledCourse> enrollment, List<Tag> courseTags, List<Lesson> lessons, Account tutor)
+    public CourseWithTutorResp(Long courseId, String name, String description, BigDecimal price, String bannerUrl, List<EnrolledCourse> enrollment, List<Tag> courseTags, List<Lesson> lessons, String bannerPictureFileName, Boolean isEnrollmentActive, Account tutor)
     {
         this.courseId = courseId;
         this.name = name;
@@ -35,6 +37,16 @@ public class CourseWithTutorResp
         this.courseTags = courseTags;
         this.lessons = lessons;
         this.tutor = tutor;
+        this.bannerPictureFileName = bannerPictureFileName;
+        this.isEnrollmentActive = isEnrollmentActive;
+    }
+
+    public String getBannerPictureFileName() {
+        return bannerPictureFileName;
+    }
+
+    public void setBannerPictureFileName(String bannerPictureFileName) {
+        this.bannerPictureFileName = bannerPictureFileName;
     }
 
     public Long getCourseId() {
@@ -123,5 +135,13 @@ public class CourseWithTutorResp
     public void setTutor(Account tutor)
     {
         this.tutor = tutor;
+    }
+
+    public Boolean getIsEnrollmentActive() {
+        return isEnrollmentActive;
+    }
+
+    public void setIsEnrollmentActive(Boolean enrollmentActive) {
+        isEnrollmentActive = enrollmentActive;
     }
 }

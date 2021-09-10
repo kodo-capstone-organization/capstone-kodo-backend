@@ -1,6 +1,7 @@
 package com.spring.kodo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.enumeration.MultimediaType;
 import org.hibernate.validator.constraints.URL;
@@ -14,6 +15,7 @@ import javax.validation.constraints.Size;
 
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonTypeName("multimedia")
 public class Multimedia extends Content
 {
     @Column(length = 512)
@@ -25,17 +27,17 @@ public class Multimedia extends Content
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
-    private MultimediaType type;
+    private MultimediaType multimediaType;
 
     public Multimedia()
     {
     }
 
-    public Multimedia(String name, String description, String url, MultimediaType type)
+    public Multimedia(String name, String description, String url, MultimediaType mutlimediaType)
     {
         super(name, description);
         this.url = url;
-        this.type = type;
+        this.multimediaType = mutlimediaType;
     }
 
     public String getUrl()
@@ -53,14 +55,14 @@ public class Multimedia extends Content
         return MessageFormatterUtil.getGCSObjectNameFromMediaLink(this.url);
     }
 
-    public MultimediaType getType()
+    public MultimediaType getMultimediaType()
     {
-        return type;
+        return multimediaType;
     }
 
-    public void setType(MultimediaType type)
+    public void setMultimediaType(MultimediaType type)
     {
-        this.type = type;
+        this.multimediaType = type;
     }
 
     @Override
@@ -68,7 +70,7 @@ public class Multimedia extends Content
     {
         return "Multimedia{" +
                 "url='" + url + '\'' +
-                ", type=" + type +
+                ", type=" + multimediaType +
                 '}';
     }
 }
