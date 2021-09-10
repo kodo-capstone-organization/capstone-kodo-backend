@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -221,6 +222,24 @@ public class CourseController
         }
     }
 
+    @DeleteMapping("/toggleEnrollmentActiveStatus/{courseId}&{requestingAccountId}")
+    public ResponseEntity toggleEnrollmentActiveStatus(@PathVariable Long courseId, @PathVariable Long requestingAccountId)
+    {
+        try
+        {
+            Long toggledCourseId = this.courseService.toggleEnrollmentActiveStatus(courseId, requestingAccountId);
+            return ResponseEntity.status(HttpStatus.OK).body("Successfully deleted course with Course ID: " + toggledCourseId);
+        }
+        catch (AccountPermissionDeniedException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
+        }
+        catch (AccountNotFoundException | CourseNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     private List<CourseWithTutorResp> getAllCoursesWithTutorsByCourses(List<Course> courses) throws AccountNotFoundException
     {
         List<CourseWithTutorResp> courseWithTutorResps = new ArrayList<>();
@@ -253,6 +272,7 @@ public class CourseController
                 course.getCourseTags(),
                 course.getLessons(),
                 course.getBannerPictureFilename(),
+                course.getIsEnrollmentActive(),
                 tutor
         );
 

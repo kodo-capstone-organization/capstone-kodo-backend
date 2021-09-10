@@ -485,4 +485,24 @@ public class CourseServiceImpl implements CourseService
             throw new CourseNotFoundException("Course with ID: " + courseId + " does not exist!");
         }
     }
+
+    @Override
+    public Long toggleEnrollmentActiveStatus(Long courseIdToToggle, Long requestingAccountId) throws AccountNotFoundException, CourseNotFoundException, AccountPermissionDeniedException {
+
+        Account requestingAccount = accountService.getAccountByAccountId(requestingAccountId);
+        Course courseToToggle = getCourseByCourseId(courseIdToToggle);
+        Account tutorOfCourse = accountService.getAccountByCourseId(courseIdToToggle);
+
+        // If requesting account is admin or is the tutor of the course, allow deletion
+        if (requestingAccount.getIsAdmin() || requestingAccount.getAccountId() == tutorOfCourse.getAccountId())
+        {
+            // Toggle
+            courseToToggle.setIsEnrollmentActive(!courseToToggle.getIsEnrollmentActive());
+            return courseRepository.saveAndFlush(courseToToggle).getCourseId();
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("You do not have the rights to toggle enrollment status of this course");
+        }
+    }
 }

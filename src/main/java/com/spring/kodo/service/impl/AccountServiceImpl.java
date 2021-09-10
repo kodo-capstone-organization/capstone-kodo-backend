@@ -518,6 +518,7 @@ public class AccountServiceImpl implements AccountService
         }
     }
 
+    @Override
     public Account login(String username, String password) throws InvalidLoginCredentialsException, AccountNotFoundException
     {
         if (username != null)
