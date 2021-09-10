@@ -252,6 +252,7 @@ public class CourseController
                 course.getEnrollment(),
                 course.getCourseTags(),
                 course.getLessons(),
+                course.getBannerPictureFilename(),
                 tutor
         );
 

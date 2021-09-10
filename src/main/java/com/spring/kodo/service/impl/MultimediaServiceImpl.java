@@ -94,7 +94,7 @@ public class MultimediaServiceImpl implements MultimediaService
     @Override
     public Multimedia getMultimediaByType(MultimediaType multimediaType) throws MultimediaNotFoundException
     {
-        Multimedia multimedia = multimediaRepository.findByType(multimediaType).orElse(null);
+        Multimedia multimedia = multimediaRepository.findByMultimediaType(multimediaType).orElse(null);
 
         if (multimedia != null)
         {
