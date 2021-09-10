@@ -30,8 +30,8 @@ public interface CourseRepository extends JpaRepository<Course, Long>
     @Query("SELECT a.courses FROM Account a WHERE a.accountId = :tutorId")
     List<Course> findAllCoursesByTutorId(@Param("tutorId") Long tutorId);
 
-    @Sql("SELECT DISTINCT * FROM Course c JOIN Course_Course_Tags cct ON c.course_id = cct.course_id WHERE cct.tag_id IN (:allTagIds)")
-    List<Course> findAllCoursesToRecommend(@Param("allTagIds") HashSet<Long> allTagIds);
+    @Query(value = "SELECT DISTINCT * FROM Course c JOIN Course_Course_Tags cct ON c.course_id = cct.course_id WHERE cct.tag_id IN (:allTagIds)", nativeQuery = true)
+    List<Course> findAllCoursesToRecommend(@Param("allTagIds") List<Long> allTagIds);
 
     @Query(value = "SELECT AVG(ec.course_rating) FROM Course c JOIN Enrolled_Course ec WHERE c.course_id = :courseId", nativeQuery = true)
     Double findCourseRatingByCourseId(@Param("courseId") Long courseId);

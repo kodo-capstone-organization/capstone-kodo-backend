@@ -339,7 +339,13 @@ public class CourseServiceImpl implements CourseService {
         }
 
         //use entire tag list to find courses
-        allCoursesToRecommend.addAll(courseRepository.findAllCoursesToRecommend(allTagIdsToRecommend));
+        for (Course course : courseRepository.findAllCoursesToRecommend(allTagIdsToRecommend.stream().toList())) {
+            try {
+                allCoursesToRecommend.add(course);
+            } catch (Exception exception) {
+                throw new AccountNotFoundException("This is the sql problem");
+            }
+        }
 
         //remove courses that user is already enrolled in
         for (EnrolledCourse enrolledCourse : enrolledCourses) {
