@@ -15,6 +15,8 @@ public interface EnrolledLessonService
 
     EnrolledLesson getEnrolledLessonByEnrolledContentId(Long enrolledContentId) throws EnrolledLessonNotFoundException;
 
+    EnrolledLesson getEnrolledLessonByStudentIdAndLessonId(Long studentId, Long lessonId) throws EnrolledLessonNotFoundException;
+
     List<EnrolledLesson> getAllEnrolledLessons();
 
     List<EnrolledLesson> getAllEnrolledLessonsByParentLessonId(Long parentLessonId);

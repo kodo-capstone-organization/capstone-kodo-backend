@@ -102,7 +102,22 @@ public class EnrolledLessonServiceImpl implements EnrolledLessonService
         }
         else
         {
-            throw new EnrolledLessonNotFoundException("EnrolledContent with ID: " + enrolledContentId + " does not exist!");
+            throw new EnrolledLessonNotFoundException("EnrolledLesson with EnrolledContent ID: " + enrolledContentId + " does not exist!");
+        }
+    }
+
+    @Override
+    public EnrolledLesson getEnrolledLessonByStudentIdAndLessonId(Long studentId, Long lessonId) throws EnrolledLessonNotFoundException
+    {
+        EnrolledLesson enrolledLesson = enrolledLessonRepository.findByStudentIdAndLessonId(studentId, lessonId).orElse(null);
+
+        if (enrolledLesson != null)
+        {
+            return enrolledLesson;
+        }
+        else
+        {
+            throw new EnrolledLessonNotFoundException("EnrolledLesson with Account ID: " + studentId + " and Lesson ID: " + lessonId + " does not exist!");
         }
     }
 
