@@ -21,7 +21,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class CourseServiceImpl implements CourseService {
+public class CourseServiceImpl implements CourseService
+{
     @Autowired
     private CourseRepository courseRepository;
 
@@ -43,7 +44,8 @@ public class CourseServiceImpl implements CourseService {
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
 
-    public CourseServiceImpl() {
+    public CourseServiceImpl()
+    {
         validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.getValidator();
     }
@@ -56,87 +58,117 @@ public class CourseServiceImpl implements CourseService {
             CourseNotFoundException,
             TagNameExistsException,
             UnknownPersistenceException,
-            InputDataValidationException {
-        try {
+            InputDataValidationException
+    {
+        try
+        {
             Set<ConstraintViolation<Course>> constraintViolations = validator.validate(newCourse);
 
-            if (constraintViolations.isEmpty()) {
+            if (constraintViolations.isEmpty())
+            {
                 // Process Tags
-                if (tagTitles != null) {
-                    for (String tagTitle : tagTitles) {
+                if (tagTitles != null)
+                {
+                    for (String tagTitle : tagTitles)
+                    {
                         newCourse = addTagToCourse(newCourse, tagTitle);
                     }
 
                     courseRepository.saveAndFlush(newCourse);
                     return newCourse;
-                } else {
+                }
+                else
+                {
                     throw new CreateNewCourseException("TagTitles cannot be null");
                 }
-            } else {
+            }
+            else
+            {
                 throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
-        } catch (DataAccessException ex) {
+        }
+        catch (DataAccessException ex)
+        {
             throw new UnknownPersistenceException(ex.getMessage());
         }
     }
 
     @Override
-    public Course getCourseByCourseId(Long courseId) throws CourseNotFoundException {
+    public Course getCourseByCourseId(Long courseId) throws CourseNotFoundException
+    {
         Course course = courseRepository.findById(courseId).orElse(null);
 
-        if (course != null) {
+        if (course != null)
+        {
             return course;
-        } else {
+        }
+        else
+        {
             throw new CourseNotFoundException("Course with ID: " + courseId + " does not exist!");
         }
     }
 
     @Override
-    public Course getCourseByName(String name) throws CourseNotFoundException {
+    public Course getCourseByName(String name) throws CourseNotFoundException
+    {
         Course course = courseRepository.findByName(name).orElse(null);
 
-        if (course != null) {
+        if (course != null)
+        {
             return course;
-        } else {
+        }
+        else
+        {
             throw new CourseNotFoundException("Course with Name: " + name + " does not exist!");
         }
     }
 
     @Override
-    public Course getCourseByLessonId(Long lessonId) throws CourseNotFoundException {
+    public Course getCourseByLessonId(Long lessonId) throws CourseNotFoundException
+    {
         Course course = courseRepository.findByLessonId(lessonId).orElse(null);
 
-        if (course != null) {
+        if (course != null)
+        {
             return course;
-        } else {
+        }
+        else
+        {
             throw new CourseNotFoundException("Course with Lesson ID: " + lessonId + " does not exist!");
         }
     }
 
     @Override
-    public List<Course> getAllCourses() {
+    public List<Course> getAllCourses()
+    {
         return courseRepository.findAll();
     }
 
     @Override
-    public List<Course> getAllCoursesByTagTitle(String tagTitle) throws TagNotFoundException {
+    public List<Course> getAllCoursesByTagTitle(String tagTitle) throws TagNotFoundException
+    {
         tagService.getTagByTitle(tagTitle);
         return courseRepository.findAllCoursesByTagTitle(tagTitle);
     }
 
     @Override
-    public List<Course> getAllCoursesByKeyword(String keyword) throws CourseWithKeywordNotFoundException {
+    public List<Course> getAllCoursesByKeyword(String keyword) throws CourseWithKeywordNotFoundException
+    {
         List<Course> courses = courseRepository.findAllCoursesByKeyword(keyword);
 
-        if (courses.size() > 0) {
+        if (courses.size() > 0)
+        {
             return courses;
-        } else {
+        }
+        else
+        {
             throw new CourseWithKeywordNotFoundException("Courses with the keyword " + keyword + " cannot be found");
         }
     }
 
     @Override
-    public List<Course> getAllCoursesByTutorId(Long tutorId) throws AccountNotFoundException {
+    public List<Course> getAllCoursesByTutorId(Long tutorId) throws AccountNotFoundException
+    {
         accountService.getAccountByAccountId(tutorId);
         return courseRepository.findAllCoursesByTutorId(tutorId);
     }
@@ -147,51 +179,63 @@ public class CourseServiceImpl implements CourseService {
             List<Long> enrolledCourseIds,
             List<Long> lessonIds,
             List<String> courseTagTitles
-    ) throws InputDataValidationException, CourseNotFoundException, UpdateCourseException, TagNameExistsException, UnknownPersistenceException, TagNotFoundException, LessonNotFoundException, EnrolledCourseNotFoundException {
+    ) throws InputDataValidationException, CourseNotFoundException, UpdateCourseException, TagNameExistsException, UnknownPersistenceException, TagNotFoundException, LessonNotFoundException, EnrolledCourseNotFoundException
+    {
 
-        if (course != null && course.getCourseId() != null) {
+        if (course != null && course.getCourseId() != null)
+        {
             Course courseToUpdate = null;
             Set<ConstraintViolation<Course>> constraintViolations = validator.validate(course);
 
-            if (constraintViolations.isEmpty()) {
+            if (constraintViolations.isEmpty())
+            {
                 courseToUpdate = getCourseByCourseId(course.getCourseId());
 
                 // Update tags (courseTags) - Unidirectional
-                if (courseTagTitles != null) {
+                if (courseTagTitles != null)
+                {
                     courseToUpdate.getCourseTags().clear();
-                    for (String courseTagTitle : courseTagTitles) {
+                    for (String courseTagTitle : courseTagTitles)
+                    {
                         Tag tag = tagService.getTagByTitleOrCreateNew(courseTagTitle);
                         addTagToCourse(courseToUpdate, tag);
                     }
                 }
 
                 // Update lessons - Unidirectional
-                if (lessonIds != null) {
+                if (lessonIds != null)
+                {
 
                     // Find lessons that were removed to delete
                     List<Long> currentLessonIds = courseToUpdate.getLessons().stream().map(Lesson::getLessonId).collect(Collectors.toList());
-                    for (Long curLessonId : currentLessonIds) {
-                        if (!lessonIds.contains(curLessonId)) {
+                    for (Long curLessonId : currentLessonIds)
+                    {
+                        if (!lessonIds.contains(curLessonId))
+                        {
                             lessonService.deleteLesson(curLessonId);
                         }
                     }
 
                     // Make association
                     courseToUpdate.getLessons().clear();
-                    for (Long lessonId : lessonIds) {
+                    for (Long lessonId : lessonIds)
+                    {
                         Lesson lesson = lessonService.getLessonByLessonId(lessonId);
                         addLessonToCourse(courseToUpdate, lesson);
                     }
                 }
 
                 // Update enrollment - Bidirectional
-                if (enrolledCourseIds != null) {
-                    for (EnrolledCourse enrolledCourse : courseToUpdate.getEnrollment()) {
+                if (enrolledCourseIds != null)
+                {
+                    for (EnrolledCourse enrolledCourse : courseToUpdate.getEnrollment())
+                    {
                         enrolledCourse.setParentCourse(null);
                     }
                     courseToUpdate.getEnrollment().clear();
 
-                    for (Long enrolledCourseId : enrolledCourseIds) {
+                    for (Long enrolledCourseId : enrolledCourseIds)
+                    {
                         EnrolledCourse enrolledCourse = enrolledCourseService.getEnrolledCourseByEnrolledCourseId(enrolledCourseId);
                         addEnrolledCourseToCourse(courseToUpdate, enrolledCourse);
                     }
@@ -205,22 +249,30 @@ public class CourseServiceImpl implements CourseService {
 
                 return courseRepository.saveAndFlush(courseToUpdate);
 
-            } else {
+            }
+            else
+            {
                 throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
 
-        } else {
+        }
+        else
+        {
             throw new CourseNotFoundException("Course ID not provided for course to be updated");
         }
     }
 
     @Override
-    public Course addTagToCourse(Course course, String tagTitle) throws CourseNotFoundException, TagNotFoundException, UpdateCourseException, TagNameExistsException, UnknownPersistenceException, InputDataValidationException {
+    public Course addTagToCourse(Course course, String tagTitle) throws CourseNotFoundException, TagNotFoundException, UpdateCourseException, TagNameExistsException, UnknownPersistenceException, InputDataValidationException
+    {
         Tag tag = tagService.getTagByTitleOrCreateNew(tagTitle);
 
-        if (!course.getCourseTags().contains(tag)) {
+        if (!course.getCourseTags().contains(tag))
+        {
             course.getCourseTags().add(tag);
-        } else {
+        }
+        else
+        {
             throw new UpdateCourseException("Unable to add tag with title: " + tag.getTitle() +
                     " to course with ID: " + course.getCourseId() + " as tag is already linked to this course");
         }
@@ -229,120 +281,167 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Course addTagToCourse(Course course, Tag tag) throws UpdateCourseException, CourseNotFoundException, TagNotFoundException {
-        if (course != null) {
-            if (course.getCourseId() != null) {
+    public Course addTagToCourse(Course course, Tag tag) throws UpdateCourseException, CourseNotFoundException, TagNotFoundException
+    {
+        if (course != null)
+        {
+            if (course.getCourseId() != null)
+            {
                 course = getCourseByCourseId(course.getCourseId());
-                if (tag != null) {
-                    if (tag.getTagId() != null) {
+                if (tag != null)
+                {
+                    if (tag.getTagId() != null)
+                    {
                         tag = tagService.getTagByTagId(tag.getTagId());
 
-                        if (!course.getCourseTags().contains(tag)) {
+                        if (!course.getCourseTags().contains(tag))
+                        {
                             course.getCourseTags().add(tag);
                             return courseRepository.save(course);
-                        } else {
+                        }
+                        else
+                        {
                             throw new UpdateCourseException("Course with ID " + course.getCourseId() + " already contains Tag with ID " + tag.getTagId());
                         }
-                    } else {
+                    }
+                    else
+                    {
                         throw new UpdateCourseException("Tag ID cannot be null");
                     }
-                } else {
+                }
+                else
+                {
                     throw new UpdateCourseException("Tag cannot be null");
                 }
-            } else {
+            }
+            else
+            {
                 throw new UpdateCourseException("Course ID cannot be null");
             }
-        } else {
+        }
+        else
+        {
             throw new UpdateCourseException("Course cannot be null");
         }
     }
 
     @Override
-    public Course addLessonToCourse(Course course, Lesson lesson) throws UpdateCourseException, CourseNotFoundException, LessonNotFoundException {
-        if (course != null) {
-            if (course.getCourseId() != null) {
+    public Course addLessonToCourse(Course course, Lesson lesson) throws UpdateCourseException, CourseNotFoundException, LessonNotFoundException
+    {
+        if (course != null)
+        {
+            if (course.getCourseId() != null)
+            {
                 course = getCourseByCourseId(course.getCourseId());
-                if (lesson != null) {
-                    if (lesson.getLessonId() != null) {
+                if (lesson != null)
+                {
+                    if (lesson.getLessonId() != null)
+                    {
                         lesson = lessonService.getLessonByLessonId(lesson.getLessonId());
 
-                        if (!course.getLessons().contains(lesson)) {
+                        if (!course.getLessons().contains(lesson))
+                        {
                             course.getLessons().add(lesson);
                             return courseRepository.save(course);
-                        } else {
+                        }
+                        else
+                        {
                             throw new UpdateCourseException("Course with ID " + course.getCourseId() + " already contains Lesson with ID " + lesson.getLessonId());
                         }
-                    } else {
+                    }
+                    else
+                    {
                         throw new UpdateCourseException("Lesson ID cannot be null");
                     }
-                } else {
+                }
+                else
+                {
                     throw new UpdateCourseException("Lesson cannot be null");
                 }
-            } else {
+            }
+            else
+            {
                 throw new UpdateCourseException("Course ID cannot be null");
             }
-        } else {
+        }
+        else
+        {
             throw new UpdateCourseException("Course cannot be null");
         }
     }
 
     @Override
-    public Course addEnrolledCourseToCourse(Course course, EnrolledCourse enrolledCourse) throws CourseNotFoundException, UpdateCourseException, EnrolledCourseNotFoundException {
+    public Course addEnrolledCourseToCourse(Course course, EnrolledCourse enrolledCourse) throws CourseNotFoundException, UpdateCourseException, EnrolledCourseNotFoundException
+    {
 
-        if (course != null) {
-            if (course.getCourseId() != null) {
+        if (course != null)
+        {
+            if (course.getCourseId() != null)
+            {
                 course = getCourseByCourseId(course.getCourseId());
-                if (enrolledCourse != null) {
-                    if (enrolledCourse.getEnrolledCourseId() != null) {
+                if (enrolledCourse != null)
+                {
+                    if (enrolledCourse.getEnrolledCourseId() != null)
+                    {
                         enrolledCourse = enrolledCourseService.getEnrolledCourseByEnrolledCourseId(enrolledCourse.getEnrolledCourseId());
 
-                        if (!course.getEnrollment().contains(enrolledCourse)) {
+                        if (!course.getEnrollment().contains(enrolledCourse))
+                        {
                             // Bidirectional
                             enrolledCourse.setParentCourse(course);
                             course.getEnrollment().add(enrolledCourse);
 
                             return courseRepository.save(course);
-                        } else {
+                        }
+                        else
+                        {
                             throw new UpdateCourseException("Course with ID " + course.getCourseId() + " already contains EnrolledCourse with ID " + enrolledCourse.getEnrolledCourseId());
                         }
-                    } else {
+                    }
+                    else
+                    {
                         throw new UpdateCourseException("EnrolledCourse ID cannot be null");
                     }
-                } else {
+                }
+                else
+                {
                     throw new UpdateCourseException("EnrolledCourse cannot be null");
                 }
-            } else {
+            }
+            else
+            {
                 throw new UpdateCourseException("Course ID cannot be null");
             }
-        } else {
+        }
+        else
+        {
             throw new UpdateCourseException("Course cannot be null");
         }
     }
 
     @Override
-    public List<Course> getAllCoursesToRecommend(Long accountId) throws AccountNotFoundException {
-        HashSet<Long> allTagIdsToRecommend = new HashSet<>();
+    public List<Course> getAllCoursesToRecommend(Long accountId) throws AccountNotFoundException
+    {
+        HashSet<Tag> allTagsToRecommend = new HashSet<>();
         List<Course> allCoursesToRecommend = new ArrayList<>();
         Account account = accountService.getAccountByAccountId(accountId);
 
-        //get ids of interests related to this account
-        for (Tag tag : account.getInterests()) {
-            allTagIdsToRecommend.add(tag.getTagId());
-        }
+        //get interests related to this account
+        allTagsToRecommend.addAll(account.getInterests());
 
-        //get tag ids for all enrolled courses
+        //get tags for all enrolled courses
         List<EnrolledCourse> enrolledCourses = account.getEnrolledCourses();
-        for (EnrolledCourse singleEnrolledCourse : enrolledCourses) {
-            for (Tag tag : singleEnrolledCourse.getParentCourse().getCourseTags()) {
-                allTagIdsToRecommend.add(tag.getTagId());
-            }
+        for (EnrolledCourse singleEnrolledCourse : enrolledCourses)
+        {
+            allTagsToRecommend.addAll(singleEnrolledCourse.getParentCourse().getCourseTags());
         }
 
         //use entire tag list to find courses
-        allCoursesToRecommend.addAll(courseRepository.findAllCoursesToRecommend(allTagIdsToRecommend));
+        allCoursesToRecommend.addAll(courseRepository.findAllCoursesToRecommend(allTagsToRecommend));
 
         //remove courses that user is already enrolled in
-        for (EnrolledCourse enrolledCourse : enrolledCourses) {
+        for (EnrolledCourse enrolledCourse : enrolledCourses)
+        {
             allCoursesToRecommend.remove(enrolledCourse.getParentCourse());
         }
 
@@ -350,30 +449,39 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Double getCourseRating(Long courseId) throws CourseNotFoundException {
+    public Double getCourseRating(Long courseId) throws CourseNotFoundException
+    {
         getCourseByCourseId(courseId);
 
         return courseRepository.findCourseRatingByCourseId(courseId);
     }
 
     @Override
-    public BigDecimal getTotalEarningsByCourseId(Long courseId) throws CourseNotFoundException {
+    public BigDecimal getTotalEarningsByCourseId(Long courseId) throws CourseNotFoundException
+    {
         BigDecimal totalEarnings = courseRepository.findTotalEarningsByCourseId(courseId);
 
-        if (totalEarnings != null) {
+        if (totalEarnings != null)
+        {
             return totalEarnings;
-        } else {
+        }
+        else
+        {
             throw new CourseNotFoundException("Course with ID: " + courseId + " does not exist!");
         }
     }
 
     @Override
-    public BigDecimal getTotalEarningsByCourseIdAndYear(Long courseId, Integer year) throws CourseNotFoundException {
+    public BigDecimal getTotalEarningsByCourseIdAndYear(Long courseId, Integer year) throws CourseNotFoundException
+    {
         BigDecimal totalEarnings = courseRepository.findTotalEarningsByCourseIdAndYear(courseId, year);
 
-        if (totalEarnings != null) {
+        if (totalEarnings != null)
+        {
             return totalEarnings;
-        } else {
+        }
+        else
+        {
             throw new CourseNotFoundException("Course with ID: " + courseId + " does not exist!");
         }
     }
@@ -386,11 +494,14 @@ public class CourseServiceImpl implements CourseService {
         Account tutorOfCourse = accountService.getAccountByCourseId(courseIdToToggle);
 
         // If requesting account is admin or is the tutor of the course, allow deletion
-        if (requestingAccount.getIsAdmin() || requestingAccount.getAccountId() == tutorOfCourse.getAccountId()) {
+        if (requestingAccount.getIsAdmin() || requestingAccount.getAccountId() == tutorOfCourse.getAccountId())
+        {
             // Toggle
             courseToToggle.setIsEnrollmentActive(!courseToToggle.getIsEnrollmentActive());
             return courseRepository.saveAndFlush(courseToToggle).getCourseId();
-        } else {
+        }
+        else
+        {
             throw new AccountPermissionDeniedException("You do not have the rights to toggle enrollment status of this course");
         }
     }
