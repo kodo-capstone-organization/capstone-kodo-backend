@@ -422,25 +422,35 @@ public class CourseServiceImpl implements CourseService
     @Override
     public List<Course> getAllCoursesToRecommend(Long accountId) throws AccountNotFoundException
     {
-        HashSet<Tag> allTagsToRecommend = new HashSet<>();
+        HashSet<Long> allTagIdsToRecommend = new HashSet<>();
         List<Course> allCoursesToRecommend = new ArrayList<>();
         Account account = accountService.getAccountByAccountId(accountId);
 
-        //get interests related to this account
-        allTagsToRecommend.addAll(account.getInterests());
+        //get ids of interests related to this account
+        for (Tag tag : account.getInterests())
+        {
+            allTagIdsToRecommend.add(tag.getTagId());
+        }
 
-        //get tags for all enrolled courses
+        //get tag ids for all enrolled courses
         List<EnrolledCourse> enrolledCourses = account.getEnrolledCourses();
         for (EnrolledCourse singleEnrolledCourse : enrolledCourses)
         {
-            allTagsToRecommend.addAll(singleEnrolledCourse.getParentCourse().getCourseTags());
+            for (Tag tag : singleEnrolledCourse.getParentCourse().getCourseTags())
+            {
+                allTagIdsToRecommend.add(tag.getTagId());
+            }
         }
 
         //use entire tag list to find courses
-        for (Course course : courseRepository.findAllCoursesToRecommend(allTagIdsToRecommend.stream().toList())) {
-            try {
+        for (Course course : courseRepository.findAllCoursesToRecommend(allTagIdsToRecommend.stream().toList()))
+        {
+            try
+            {
                 allCoursesToRecommend.add(course);
-            } catch (Exception exception) {
+            }
+            catch (Exception exception)
+            {
                 throw new AccountNotFoundException("This is the sql problem");
             }
         }
@@ -493,7 +503,8 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
-    public Long toggleEnrollmentActiveStatus(Long courseIdToToggle, Long requestingAccountId) throws AccountNotFoundException, CourseNotFoundException, AccountPermissionDeniedException {
+    public Long toggleEnrollmentActiveStatus(Long courseIdToToggle, Long requestingAccountId) throws AccountNotFoundException, CourseNotFoundException, AccountPermissionDeniedException
+    {
 
         Account requestingAccount = accountService.getAccountByAccountId(requestingAccountId);
         Course courseToToggle = getCourseByCourseId(courseIdToToggle);
