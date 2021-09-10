@@ -41,10 +41,14 @@ public class Course
     @Size(min = 0, max = 512)
     private String bannerUrl;
 
-    @OneToMany(targetEntity = EnrolledCourse.class, mappedBy = "parentCourse", fetch = FetchType.LAZY)
+    @Column(nullable = false)
+    @NotNull
+    private Boolean isEnrollmentActive;
+
+    @OneToMany(targetEntity = EnrolledCourse.class, mappedBy = "parentCourse", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<EnrolledCourse> enrollment;
 
-    @OneToMany(targetEntity = Lesson.class, fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = Lesson.class, fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinTable(
             joinColumns = @JoinColumn(name = "course_id", referencedColumnName="courseId"),
             inverseJoinColumns = @JoinColumn(name = "lesson_id", referencedColumnName = "lessonId"),
@@ -65,6 +69,7 @@ public class Course
         this.enrollment = new ArrayList<>();
         this.lessons = new ArrayList<>();
         this.courseTags = new ArrayList<>();
+        this.isEnrollmentActive = true;
     }
 
     public Course(Long courseId, String name, String description, BigDecimal price, String bannerUrl)
@@ -171,6 +176,14 @@ public class Course
     public void setCourseTags(List<Tag> courseTags)
     {
         this.courseTags = courseTags;
+    }
+
+    public Boolean getIsEnrollmentActive() {
+        return isEnrollmentActive;
+    }
+
+    public void setIsEnrollmentActive(Boolean enrollmentActive) {
+        isEnrollmentActive = enrollmentActive;
     }
 
     @Override
