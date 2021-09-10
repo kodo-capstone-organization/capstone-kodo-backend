@@ -27,6 +27,8 @@ public interface CourseService
 
     Course getCourseByName(String name) throws CourseNotFoundException;
 
+    List<Course> getAllCoursesWithActiveEnrollment();
+
     List<Course> getAllCourses();
 
     List<Course> getAllCoursesByTagTitle(String tagTitle) throws TagNotFoundException;

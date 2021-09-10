@@ -55,6 +55,22 @@ public class CourseController
         }
     }
 
+    @GetMapping("/getAllCoursesWithActiveEnrollment")
+    public List<CourseWithTutorResp> getAllCoursesWithActiveEnrollment()
+    {
+        try
+        {
+            List<Course> courses = this.courseService.getAllCoursesWithActiveEnrollment();
+            List<CourseWithTutorResp> courseWithTutorResps = getAllCoursesWithTutorsByCourses(courses);
+
+            return courseWithTutorResps;
+        }
+        catch (AccountNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @GetMapping("/getAllCourses")
     public List<CourseWithTutorResp> getAllCourses()
     {

@@ -27,9 +27,6 @@ public class CourseServiceImpl implements CourseService
     private CourseRepository courseRepository;
 
     @Autowired
-    private ForumCategoryService forumCategoryService;
-
-    @Autowired
     private LessonService lessonService;
 
     @Autowired
@@ -136,6 +133,12 @@ public class CourseServiceImpl implements CourseService
         {
             throw new CourseNotFoundException("Course with Lesson ID: " + lessonId + " does not exist!");
         }
+    }
+
+    @Override
+    public List<Course> getAllCoursesWithActiveEnrollment()
+    {
+        return courseRepository.findAllWithActiveEnrollment();
     }
 
     @Override
