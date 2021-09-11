@@ -82,7 +82,7 @@ public class DatabaseConfig
     @Autowired
     private Environment env;
 
-    private List<String> PROGRAMMING_LANGUAGES;
+    private List<String> LANGUAGES;
 
     private List<Account> accounts;
     private List<Tag> tags;
@@ -103,10 +103,10 @@ public class DatabaseConfig
     private List<ForumPost> forumPosts;
 
     // Edit these to scale the sample database
-    private final Integer PROGRAMMING_LANGUAGES_COUNT = 10; // Current max is 14
+    private final Integer PROGRAMMING_LANGUAGES_COUNT = 20; // Current max is 20
 
     private final Integer TUTOR_COUNT = 5;
-    private final Integer STUDENT_COUNT = 10;
+    private final Integer STUDENT_COUNT = 11;
 
     private final Integer LESSON_COUNT = 3;
 
@@ -116,7 +116,7 @@ public class DatabaseConfig
     private final Integer QUIZ_QUESTION_COUNT = 3;
     private final Integer QUIZ_QUESTION_OPTION_COUNT = 3;
 
-    private final Integer STUDENT_ENROLLED_COUNT = 20;
+    private final Integer STUDENT_ENROLLED_COUNT = 113;
     private final Integer STUDENT_ATTEMPT_COUNT = 5;
 
     private final Integer FORUM_CATEGORY_COUNT = 3;
@@ -141,16 +141,23 @@ public class DatabaseConfig
 
     public DatabaseConfig()
     {
-        PROGRAMMING_LANGUAGES = Arrays.asList(
+        LANGUAGES = Arrays.asList(
                 "C",
                 "C#",
                 "C++",
+                "COBOL",
+                "Common Lisp",
+                "F#",
                 "Go",
+                "Haskell",
                 "Java",
                 "JavaScript",
+                "Kotlin",
+                "PHP",
                 "Perl",
                 "Python",
                 "R",
+                "Ruby",
                 "Rust",
                 "SQL",
                 "Scala",
@@ -190,13 +197,13 @@ public class DatabaseConfig
 
         System.out.println("\n===== Application started on port: " + env.getProperty("local.server.port") + " =====");
         System.out.println("\n===== 0. Checking settings =====");
-        if (PROGRAMMING_LANGUAGES_COUNT <= PROGRAMMING_LANGUAGES.size())
+        if (PROGRAMMING_LANGUAGES_COUNT <= LANGUAGES.size())
         {
-            PROGRAMMING_LANGUAGES = PROGRAMMING_LANGUAGES.subList(0, PROGRAMMING_LANGUAGES_COUNT);
+            LANGUAGES = LANGUAGES.subList(0, PROGRAMMING_LANGUAGES_COUNT);
         }
         else
         {
-            throw new InputDataValidationException("Programming Language size has to be <= " + PROGRAMMING_LANGUAGES.size());
+            throw new InputDataValidationException("Programming Language size has to be <= " + LANGUAGES.size());
         }
 
         System.out.println("\n===== 1. Loading Init Data to Database =====");
@@ -442,9 +449,9 @@ public class DatabaseConfig
         int i = 0;
         while (i < STUDENT_ENROLLED_COUNT)
         {
-            for (int studentIndex = STUDENT_FIRST_INDEX; studentIndex < STUDENT_SIZE; studentIndex++)
+            for (int courseIndex = 0; courseIndex < courses.size(); courseIndex++)
             {
-                for (int courseIndex = 0; courseIndex < courses.size() && i < STUDENT_ENROLLED_COUNT; courseIndex++, i++)
+                for (int studentIndex = STUDENT_FIRST_INDEX; studentIndex < STUDENT_SIZE && i < STUDENT_ENROLLED_COUNT; studentIndex++, i++)
                 {
                     try
                     {
@@ -684,7 +691,7 @@ public class DatabaseConfig
 
     private void addTags()
     {
-        for (String language : PROGRAMMING_LANGUAGES)
+        for (String language : LANGUAGES)
         {
             tags.add(new Tag(language));
         }
@@ -692,7 +699,7 @@ public class DatabaseConfig
 
     private void addCourses()
     {
-        for (String language : PROGRAMMING_LANGUAGES)
+        for (String language : LANGUAGES)
         {
             courses.add(new Course(language + " Course", "A beginner course in " + language + " language.", BigDecimal.valueOf(19.99), "https://" + language.toLowerCase() + "coursebanner.com"));
         }
@@ -700,7 +707,7 @@ public class DatabaseConfig
 
     private void addLessons()
     {
-        for (String language : PROGRAMMING_LANGUAGES)
+        for (String language : LANGUAGES)
         {
             for (int i = 1; i <= LESSON_COUNT; i++)
             {
@@ -711,7 +718,7 @@ public class DatabaseConfig
 
     private void addQuizzes()
     {
-        for (String language : PROGRAMMING_LANGUAGES)
+        for (String language : LANGUAGES)
         {
             for (int i = 1; i <= LESSON_COUNT; i++)
             {
@@ -725,7 +732,7 @@ public class DatabaseConfig
 
     private void addQuizQuestions()
     {
-        for (String language : PROGRAMMING_LANGUAGES)
+        for (String language : LANGUAGES)
         {
             for (int i = 1; i <= LESSON_COUNT; i++)
             {
@@ -742,7 +749,7 @@ public class DatabaseConfig
 
     private void addQuizQuestionOptions()
     {
-        for (String language : PROGRAMMING_LANGUAGES)
+        for (String language : LANGUAGES)
         {
             for (int i = 1; i <= LESSON_COUNT; i++)
             {
@@ -762,7 +769,7 @@ public class DatabaseConfig
 
     private void addMultimedias()
     {
-        for (String language : PROGRAMMING_LANGUAGES)
+        for (String language : LANGUAGES)
         {
             for (int i = 1; i <= LESSON_COUNT; i++)
             {
@@ -774,7 +781,7 @@ public class DatabaseConfig
 
     private void addForumCategories()
     {
-        for (String language : PROGRAMMING_LANGUAGES)
+        for (String language : LANGUAGES)
         {
             for (int i = 1; i <= FORUM_CATEGORY_COUNT; i++)
             {
@@ -785,7 +792,7 @@ public class DatabaseConfig
 
     private void addForumThreads()
     {
-        for (String language : PROGRAMMING_LANGUAGES)
+        for (String language : LANGUAGES)
         {
             for (int i = 1; i <= FORUM_CATEGORY_COUNT; i++)
             {
@@ -799,7 +806,7 @@ public class DatabaseConfig
 
     private void addForumPosts()
     {
-        for (String language : PROGRAMMING_LANGUAGES)
+        for (String language : LANGUAGES)
         {
             for (int i = 1; i <= FORUM_CATEGORY_COUNT; i++)
             {
