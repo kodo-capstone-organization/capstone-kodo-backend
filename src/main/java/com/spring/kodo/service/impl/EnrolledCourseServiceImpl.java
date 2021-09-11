@@ -145,6 +145,21 @@ public class EnrolledCourseServiceImpl implements EnrolledCourseService
     }
 
     @Override
+    public EnrolledCourse getEnrolledCourseByStudentIdAndCourseId(Long studentId, Long courseId) throws EnrolledCourseNotFoundException
+    {
+        EnrolledCourse enrolledCourse = enrolledCourseRepository.findByStudentIdAndCourseId(studentId, courseId).orElse(null);
+
+        if (enrolledCourse != null)
+        {
+            return enrolledCourse;
+        }
+        else
+        {
+            throw new EnrolledCourseNotFoundException("EnrolledCourse with Account ID " + studentId + " and Course ID: " + courseId + " does not exist!");
+        }
+    }
+
+    @Override
     public List<EnrolledCourse> getAllEnrolledCourses()
     {
         return enrolledCourseRepository.findAll();
