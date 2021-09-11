@@ -21,13 +21,13 @@ public class CourseWithTutorAndRatingResp
     private Account tutor;
     private String bannerPictureFileName;
     private Boolean isEnrollmentActive;
-    private Double rating;
+    private Double courseRating;
 
     public CourseWithTutorAndRatingResp()
     {
     }
 
-    public CourseWithTutorAndRatingResp(Long courseId, String name, String description, BigDecimal price, String bannerUrl, List<EnrolledCourse> enrollment, List<Tag> courseTags, List<Lesson> lessons, Account tutor, String bannerPictureFileName, Boolean isEnrollmentActive, Double rating)
+    public CourseWithTutorAndRatingResp(Long courseId, String name, String description, BigDecimal price, String bannerUrl, List<EnrolledCourse> enrollment, List<Tag> courseTags, List<Lesson> lessons, Account tutor, String bannerPictureFileName, Boolean isEnrollmentActive, Double courseRating)
     {
         this.courseId = courseId;
         this.name = name;
@@ -40,7 +40,7 @@ public class CourseWithTutorAndRatingResp
         this.tutor = tutor;
         this.bannerPictureFileName = bannerPictureFileName;
         this.isEnrollmentActive = isEnrollmentActive;
-        this.rating = rating;
+        this.courseRating = courseRating;
     }
 
     public Long getCourseId()
@@ -153,13 +153,13 @@ public class CourseWithTutorAndRatingResp
         isEnrollmentActive = enrollmentActive;
     }
 
-    public Double getRating()
+    public Double getCourseRating()
     {
-        return rating;
+        return courseRating;
     }
 
-    public void setRating(Double rating)
+    public void setCourseRating(Double courseRating)
     {
-        this.rating = rating;
+        this.courseRating = courseRating;
     }
 }

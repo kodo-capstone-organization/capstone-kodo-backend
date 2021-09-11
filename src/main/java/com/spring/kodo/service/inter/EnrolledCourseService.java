@@ -18,6 +18,8 @@ public interface EnrolledCourseService
 
     List<EnrolledCourse> getAllEnrolledCourses();
 
+    EnrolledCourse setCourseRatingByEnrolledCourseId(Long enrolledCourseId, Integer courseRating) throws EnrolledCourseNotFoundException, InputDataValidationException;
+
     EnrolledCourse addEnrolledLessonToEnrolledCourse(EnrolledCourse enrolledCourse, EnrolledLesson enrolledLesson) throws UpdateEnrolledCourseException, EnrolledCourseNotFoundException, EnrolledLessonNotFoundException;
 
     EnrolledCourse checkDateTimeOfCompletionOfEnrolledCourseByEnrolledLessonId(Long enrolledLessonId) throws EnrolledCourseNotFoundException;

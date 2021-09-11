@@ -232,6 +232,7 @@ public class DatabaseConfig
         createForumThreads();
         createForumPosts();
         completeContent();
+        rateEnrolledCourses();
 
         System.out.println("\n===== Init Data Fully Loaded to Database =====");
 
@@ -657,6 +658,19 @@ public class DatabaseConfig
         }
 
         System.out.printf(">> Completed EnrolledContent (%d)\n", completedContent);
+    }
+
+    private void rateEnrolledCourses() throws Exception
+    {
+        int courseRatingSet = 0;
+
+        for (int i = 1; i <= 5; i++)
+        {
+            enrolledCourseService.setCourseRatingByEnrolledCourseId((long) i, i);
+            courseRatingSet++;
+        }
+
+        System.out.printf(">> Rated EnrolledCourses (%d)\n", courseRatingSet);
     }
 
     private void addAccounts()

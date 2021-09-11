@@ -1,6 +1,7 @@
 package com.spring.kodo.service.inter;
 
 import com.spring.kodo.entity.EnrolledContent;
+import com.spring.kodo.entity.EnrolledCourse;
 import com.spring.kodo.util.exception.*;
 
 import java.util.List;
