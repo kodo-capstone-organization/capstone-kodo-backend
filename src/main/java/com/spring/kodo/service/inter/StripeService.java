@@ -2,6 +2,7 @@ package com.spring.kodo.service.inter;
 
 import com.google.gson.JsonSyntaxException;
 import com.spring.kodo.restentity.request.StripePaymentReq;
+import com.spring.kodo.util.exception.*;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Account;
@@ -18,7 +19,7 @@ public interface StripeService
 
     String createStripeSession(StripePaymentReq stripePaymentReq) throws StripeException;
 
-    void handleSuccessfulStripeCheckout( String payload, HttpServletRequest request) throws SignatureVerificationException, JsonSyntaxException;
+    void handleSuccessfulStripeCheckout( String payload, HttpServletRequest request) throws SignatureVerificationException, JsonSyntaxException, AccountNotFoundException, UnknownPersistenceException, InputDataValidationException, UpdateAccountException, CreateNewEnrolledCourseException, EnrolledCourseNotFoundException, CourseNotFoundException;
 
-    void handleCompletedCheckoutSession(Session session);
+    void handleCompletedCheckoutSession(Session session) throws AccountNotFoundException, CourseNotFoundException, UnknownPersistenceException, CreateNewEnrolledCourseException, InputDataValidationException, EnrolledCourseNotFoundException, UpdateAccountException;
 }
