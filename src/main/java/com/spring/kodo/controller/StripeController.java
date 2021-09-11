@@ -80,6 +80,12 @@ public class StripeController
         }
         catch (SignatureVerificationException ex) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        } catch (AccountNotFoundException | CourseNotFoundException | UpdateAccountException | CreateNewEnrolledCourseException | EnrolledCourseNotFoundException ex) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        } catch (InputDataValidationException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        } catch (UnknownPersistenceException ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
         }
     }
 }

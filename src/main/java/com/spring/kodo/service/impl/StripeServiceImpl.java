@@ -1,9 +1,15 @@
 package com.spring.kodo.service.impl;
 
 import com.google.gson.JsonSyntaxException;
+import com.spring.kodo.entity.Course;
+import com.spring.kodo.entity.EnrolledCourse;
 import com.spring.kodo.restentity.request.StripePaymentReq;
+import com.spring.kodo.service.inter.AccountService;
+import com.spring.kodo.service.inter.CourseService;
+import com.spring.kodo.service.inter.EnrolledCourseService;
 import com.spring.kodo.service.inter.StripeService;
 import com.spring.kodo.util.Constants;
+import com.spring.kodo.util.exception.*;
 import com.stripe.Stripe;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
@@ -18,7 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
+import java.util.Map;
 
 @Service
 public class StripeServiceImpl implements StripeService
@@ -31,6 +37,15 @@ public class StripeServiceImpl implements StripeService
 
     @Value("${FE_MAIN_APP_URL}")
     private String mainAppUrl;
+
+    @Autowired
+    private EnrolledCourseService enrolledCourseService;
+
+    @Autowired
+    private AccountService accountService;
+
+    @Autowired
+    private CourseService courseService;
 
     @Override
     public Account createNewStripeAccount() throws StripeException
@@ -96,7 +111,7 @@ public class StripeServiceImpl implements StripeService
     }
 
     @Override
-    public void handleSuccessfulStripeCheckout(String payload, HttpServletRequest request) throws SignatureVerificationException, JsonSyntaxException {
+    public void handleSuccessfulStripeCheckout(String payload, HttpServletRequest request) throws SignatureVerificationException, JsonSyntaxException, AccountNotFoundException, UnknownPersistenceException, InputDataValidationException, UpdateAccountException, CreateNewEnrolledCourseException, EnrolledCourseNotFoundException, CourseNotFoundException {
         Stripe.apiKey = stripeApiKey;
         String header = request.getHeader("Stripe-Signature");
         String endpointSecret = stripeEndpointSecret;
@@ -113,9 +128,19 @@ public class StripeServiceImpl implements StripeService
     }
 
     @Override
-    public void handleCompletedCheckoutSession(Session session)
-    {
+    public void handleCompletedCheckoutSession(Session session) throws AccountNotFoundException, CourseNotFoundException, UnknownPersistenceException, CreateNewEnrolledCourseException, InputDataValidationException, EnrolledCourseNotFoundException, UpdateAccountException {
         // Update Transaction entity
         System.out.println(session);
+
+        Map<String, String> stripeSessionMetadata = session.getMetadata();
+        Long courseId = Long.parseLong(stripeSessionMetadata.getOrDefault("courseId", ""));
+        Long studentId = Long.parseLong(stripeSessionMetadata.getOrDefault("studentId", ""));
+        Long tutorId = Long.parseLong(stripeSessionMetadata.getOrDefault("tutorId", ""));
+
+        com.spring.kodo.entity.Account student = accountService.getAccountByAccountId(studentId);
+        Course course = courseService.getCourseByCourseId(courseId);
+
+        EnrolledCourse enrolledCourse = enrolledCourseService.createNewEnrolledCourse(student.getAccountId(), course.getCourseId());
+        accountService.addEnrolledCourseToAccount(student, enrolledCourse);
     }
 }
