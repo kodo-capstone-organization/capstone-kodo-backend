@@ -125,7 +125,7 @@ public class CourseController
     {
         try
         {
-            List<Course> allCoursesToRecommend = this.courseService.getAllCoursesToRecommend(accountId);
+            List<Course> allCoursesToRecommend = this.courseService.getAllCoursesToRecommendByAccountId(accountId);
             return allCoursesToRecommend;
         }
         catch (AccountNotFoundException ex)

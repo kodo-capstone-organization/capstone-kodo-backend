@@ -39,7 +39,7 @@ public interface CourseService
 
     Course addEnrolledCourseToCourse(Course course, EnrolledCourse enrolledCourse) throws CourseNotFoundException, UpdateCourseException, EnrolledCourseNotFoundException;
 
-    List<Course> getAllCoursesToRecommend(Long accountId) throws AccountNotFoundException;
+    List<Course> getAllCoursesToRecommendByAccountId(Long accountId) throws AccountNotFoundException;
 
     Course updateCourse(
             Course course,
@@ -61,6 +61,4 @@ public interface CourseService
     BigDecimal getTotalEarningsByCourseIdAndYear(Long courseId, Integer year) throws CourseNotFoundException;
 
     Long toggleEnrollmentActiveStatus(Long courseIdToToggle, Long requestingAccountId) throws AccountNotFoundException, CourseNotFoundException, AccountPermissionDeniedException;
-
-//    Course addForumCategoryToCourse(Course course, ForumCategory forumCategory) throws UpdateCourseException, CourseNotFoundException, ForumCategoryNotFoundException;
 }

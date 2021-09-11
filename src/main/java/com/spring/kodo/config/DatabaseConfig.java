@@ -103,7 +103,7 @@ public class DatabaseConfig
     private List<ForumPost> forumPosts;
 
     // Edit these to scale the sample database
-    private final Integer PROGRAMMING_LANGUAGES_COUNT = 10; // Current max is 14
+    private final Integer PROGRAMMING_LANGUAGES_COUNT = 14; // Current max is 14
 
     private final Integer TUTOR_COUNT = 5;
     private final Integer STUDENT_COUNT = 10;
@@ -671,6 +671,18 @@ public class DatabaseConfig
         }
 
         System.out.printf(">> Rated EnrolledCourses (%d)\n", courseRatingSet);
+
+        // Testing getAllCoursesToRecommendByAccountId
+//        for (int i = 1; i <= 5; i++)
+//        {
+//            List<Course> courses = courseService.getAllCoursesToRecommendByAccountId((long) i);
+//            System.out.println(courses.size());
+//            for (Course course : courses)
+//            {
+//                System.out.println(course.getName());
+//            }
+//            System.out.println();
+//        }
     }
 
     private void addAccounts()
