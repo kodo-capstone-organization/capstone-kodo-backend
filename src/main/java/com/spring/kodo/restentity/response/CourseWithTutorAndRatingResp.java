@@ -8,7 +8,7 @@ import com.spring.kodo.entity.Tag;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class CourseWithTutorResp
+public class CourseWithTutorAndRatingResp
 {
     private Long courseId;
     private String name;
@@ -21,12 +21,13 @@ public class CourseWithTutorResp
     private Account tutor;
     private String bannerPictureFileName;
     private Boolean isEnrollmentActive;
+    private Double courseRating;
 
-    public CourseWithTutorResp()
+    public CourseWithTutorAndRatingResp()
     {
     }
 
-    public CourseWithTutorResp(Long courseId, String name, String description, BigDecimal price, String bannerUrl, List<EnrolledCourse> enrollment, List<Tag> courseTags, List<Lesson> lessons, String bannerPictureFileName, Boolean isEnrollmentActive, Account tutor)
+    public CourseWithTutorAndRatingResp(Long courseId, String name, String description, BigDecimal price, String bannerUrl, List<EnrolledCourse> enrollment, List<Tag> courseTags, List<Lesson> lessons, Account tutor, String bannerPictureFileName, Boolean isEnrollmentActive, Double courseRating)
     {
         this.courseId = courseId;
         this.name = name;
@@ -39,21 +40,16 @@ public class CourseWithTutorResp
         this.tutor = tutor;
         this.bannerPictureFileName = bannerPictureFileName;
         this.isEnrollmentActive = isEnrollmentActive;
+        this.courseRating = courseRating;
     }
 
-    public String getBannerPictureFileName() {
-        return bannerPictureFileName;
-    }
-
-    public void setBannerPictureFileName(String bannerPictureFileName) {
-        this.bannerPictureFileName = bannerPictureFileName;
-    }
-
-    public Long getCourseId() {
+    public Long getCourseId()
+    {
         return courseId;
     }
 
-    public void setCourseId(Long courseId) {
+    public void setCourseId(Long courseId)
+    {
         this.courseId = courseId;
     }
 
@@ -137,11 +133,33 @@ public class CourseWithTutorResp
         this.tutor = tutor;
     }
 
-    public Boolean getIsEnrollmentActive() {
+    public String getBannerPictureFileName()
+    {
+        return bannerPictureFileName;
+    }
+
+    public void setBannerPictureFileName(String bannerPictureFileName)
+    {
+        this.bannerPictureFileName = bannerPictureFileName;
+    }
+
+    public Boolean getEnrollmentActive()
+    {
         return isEnrollmentActive;
     }
 
-    public void setIsEnrollmentActive(Boolean enrollmentActive) {
+    public void setEnrollmentActive(Boolean enrollmentActive)
+    {
         isEnrollmentActive = enrollmentActive;
+    }
+
+    public Double getCourseRating()
+    {
+        return courseRating;
+    }
+
+    public void setCourseRating(Double courseRating)
+    {
+        this.courseRating = courseRating;
     }
 }
