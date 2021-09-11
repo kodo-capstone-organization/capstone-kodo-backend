@@ -1,7 +1,6 @@
 package com.spring.kodo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.spring.kodo.util.MessageFormatterUtil;
@@ -76,33 +75,33 @@ public class Account
 
     @ManyToMany(targetEntity = Tag.class, fetch = FetchType.LAZY)
     @JoinTable(
-            joinColumns = @JoinColumn(name = "account_id", referencedColumnName="accountId"),
+            joinColumns = @JoinColumn(name = "account_id", referencedColumnName = "accountId"),
             inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "tagId"),
-            uniqueConstraints = @UniqueConstraint(columnNames = { "account_id", "tag_id" })
+            uniqueConstraints = @UniqueConstraint(columnNames = {"account_id", "tag_id"})
     )
     private List<Tag> interests;
 
     @OneToMany(targetEntity = EnrolledCourse.class, fetch = FetchType.LAZY)
     @JoinTable(
-            joinColumns = @JoinColumn(name = "account_id", referencedColumnName="accountId"),
+            joinColumns = @JoinColumn(name = "account_id", referencedColumnName = "accountId"),
             inverseJoinColumns = @JoinColumn(name = "enrolled_course_id", referencedColumnName = "enrolledCourseId"),
-            uniqueConstraints = @UniqueConstraint(columnNames = { "account_id", "enrolled_course_id" })
+            uniqueConstraints = @UniqueConstraint(columnNames = {"account_id", "enrolled_course_id"})
     )
     private List<EnrolledCourse> enrolledCourses;
 
     @OneToMany(targetEntity = Course.class, fetch = FetchType.LAZY)
     @JoinTable(
-            joinColumns = @JoinColumn(name = "account_id", referencedColumnName="accountId"),
+            joinColumns = @JoinColumn(name = "account_id", referencedColumnName = "accountId"),
             inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "courseId"),
-            uniqueConstraints = @UniqueConstraint(columnNames = { "account_id", "course_id" })
+            uniqueConstraints = @UniqueConstraint(columnNames = {"account_id", "course_id"})
     )
     private List<Course> courses;
 
     @OneToMany(targetEntity = StudentAttempt.class, fetch = FetchType.LAZY)
     @JoinTable(
-            joinColumns = @JoinColumn(name = "account_id", referencedColumnName="accountId"),
+            joinColumns = @JoinColumn(name = "account_id", referencedColumnName = "accountId"),
             inverseJoinColumns = @JoinColumn(name = "student_attempt_id", referencedColumnName = "studentAttemptId"),
-            uniqueConstraints = @UniqueConstraint(columnNames = { "account_id", "student_attempt_id" })
+            uniqueConstraints = @UniqueConstraint(columnNames = {"account_id", "student_attempt_id"})
     )
     private List<StudentAttempt> studentAttempts;
 
@@ -196,13 +195,9 @@ public class Account
 
     public void setPassword(String password)
     {
-        if (this.password != null)
+        if (password != null)
         {
             this.password = CryptographicHelper.getSHA256Digest(password, this.salt);
-        }
-        else
-        {
-            this.password = null;
         }
     }
 
@@ -311,9 +306,15 @@ public class Account
         this.studentAttempts = studentAttempts;
     }
 
-    public String getStripeAccountId() { return stripeAccountId; }
+    public String getStripeAccountId()
+    {
+        return stripeAccountId;
+    }
 
-    public void setStripeAccountId(String stripeAccountId) { this.stripeAccountId = stripeAccountId; }
+    public void setStripeAccountId(String stripeAccountId)
+    {
+        this.stripeAccountId = stripeAccountId;
+    }
 
     @Override
     public String toString()

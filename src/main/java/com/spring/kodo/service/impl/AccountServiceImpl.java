@@ -209,6 +209,7 @@ public class AccountServiceImpl implements AccountService
     @Override
     public Account updateAccount(
             Account account,
+            String password,
             List<String> tagTitles,
             List<Long> enrolledCourseIds,
             List<Long> courseIds,
@@ -270,8 +271,7 @@ public class AccountServiceImpl implements AccountService
                     // Update other non-relational fields
                     accountToUpdate.setUsername(account.getUsername());
                     accountToUpdate.setName(account.getName());
-                    accountToUpdate.setPassword(account.getPassword());
-                    accountToUpdate.setSalt(account.getSalt());
+                    accountToUpdate.setPassword(password);
                     accountToUpdate.setBio(account.getBio());
                     accountToUpdate.setEmail(account.getEmail());
                     accountToUpdate.setDisplayPictureUrl(account.getDisplayPictureUrl());

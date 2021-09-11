@@ -22,22 +22,20 @@ public interface AccountService
     Account getAccountByEnrolledCourseId(Long enrolledCourseId) throws AccountNotFoundException;
 
     Account getAccountByStudentAttemptId(Long studentAttemptId) throws AccountNotFoundException;
-
     Account updateAccount(
             Account account,
+            String password,
             List<String> tagTitles,
             List<Long> enrolledCourseIds,
-            List<Long> coursesIds,
+            List<Long> courseIds,
             List<Long> forumThreadIds,
             List<Long> forumPostIds,
             List<Long> studentAttemptIds
     )
             throws AccountNotFoundException, TagNotFoundException,
             UpdateAccountException, EnrolledCourseNotFoundException,
-            CourseNotFoundException, StudentAttemptNotFoundException,
-            ForumThreadNotFoundException, ForumPostNotFoundException,
-            TagNameExistsException, UnknownPersistenceException,
-            InputDataValidationException;
+            StudentAttemptNotFoundException, TagNameExistsException,
+            UnknownPersistenceException, InputDataValidationException;
 
     Account addTagToAccount(Account account, Tag tag) throws AccountNotFoundException, TagNotFoundException, UpdateAccountException;
 

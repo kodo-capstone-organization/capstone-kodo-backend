@@ -79,7 +79,7 @@ public class AccountController
                 {
                     String displayPictureURL = fileService.upload(displayPicture);
                     newAccount.setDisplayPictureUrl(displayPictureURL);
-                    newAccount = accountService.updateAccount(newAccount, null, null, null, null, null, null);
+                    newAccount = accountService.updateAccount(newAccount, null, null, null, null, null, null, null);
                 }
 
                 return newAccount;
@@ -88,7 +88,7 @@ public class AccountController
             {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
             }
-            catch (AccountNotFoundException | TagNotFoundException | UpdateAccountException | EnrolledCourseNotFoundException | CourseNotFoundException | StudentAttemptNotFoundException | ForumThreadNotFoundException | ForumPostNotFoundException ex)
+            catch (AccountNotFoundException | TagNotFoundException | UpdateAccountException | EnrolledCourseNotFoundException | StudentAttemptNotFoundException ex)
             {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
             }
@@ -115,6 +115,7 @@ public class AccountController
             {
                 Account updatedAccount = this.accountService.updateAccount(
                         updateAccountReq.getAccount(),
+                        updateAccountReq.getPassword(),
                         updateAccountReq.getTagTitles(),
                         updateAccountReq.getEnrolledCourseIds(),
                         updateAccountReq.getCourseIds(),
@@ -137,12 +138,12 @@ public class AccountController
                     // Upload new file
                     String updatedDisplayPictureURL = fileService.upload(updatedDisplayPicture);
                     updatedAccount.setDisplayPictureUrl(updatedDisplayPictureURL);
-                    updatedAccount = accountService.updateAccount(updatedAccount, null, null, null, null, null, null);
+                    updatedAccount = accountService.updateAccount(updatedAccount, null, null, null, null, null, null, null);
                 }
 
                 return updatedAccount;
             }
-            catch (AccountNotFoundException | TagNotFoundException | UpdateAccountException | EnrolledCourseNotFoundException | CourseNotFoundException | StudentAttemptNotFoundException | ForumThreadNotFoundException | ForumPostNotFoundException ex)
+            catch (AccountNotFoundException | TagNotFoundException | UpdateAccountException | EnrolledCourseNotFoundException | StudentAttemptNotFoundException ex)
             {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
             }

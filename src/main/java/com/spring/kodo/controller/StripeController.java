@@ -38,7 +38,7 @@ public class StripeController
                 AccountLink accountLink = this.stripeService.createStripeAccountLink(stripeAccount);
 
                 account.setStripeAccountId(stripeAccount.getId());
-                accountService.updateAccount(account, null, null, null, null, null, null);
+                accountService.updateAccount(account, null, null, null, null, null, null, null);
                 return ResponseEntity.status(HttpStatus.OK).body(accountLink.getUrl());
             }
             throw new AccountExistsException("User has an existing Stripe account connected to his Kodo account");
@@ -47,7 +47,7 @@ public class StripeController
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
-        catch (AccountNotFoundException | TagNotFoundException | UpdateAccountException | EnrolledCourseNotFoundException | CourseNotFoundException | StudentAttemptNotFoundException | ForumThreadNotFoundException | ForumPostNotFoundException ex)
+        catch (AccountNotFoundException | TagNotFoundException | UpdateAccountException | EnrolledCourseNotFoundException | StudentAttemptNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
