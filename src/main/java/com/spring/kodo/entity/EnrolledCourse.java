@@ -19,8 +19,7 @@ public class EnrolledCourse
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long enrolledCourseId;
 
-    @Column(nullable = false)
-    @NotNull
+    @Column(nullable = true)
     @Min(0)
     @Max(5)
     private int courseRating;

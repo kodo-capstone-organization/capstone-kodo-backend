@@ -23,7 +23,7 @@ public interface CourseRepository extends JpaRepository<Course, Long>
     @Query("SELECT c FROM Course c WHERE c.isEnrollmentActive = TRUE")
     List<Course> findAllWithActiveEnrollment();
 
-    @Query(value = "SELECT * FROM Tag t JOIN Course_Course_Tags cct JOIN Course c ON t.tag_id = cct.tag_id AND c.course_id = cct.course_id WHERE t.title = :tagTitle", nativeQuery = true)
+    @Query(value = "SELECT c.* FROM Tag t JOIN Course_Course_Tags cct JOIN Course c ON t.tag_id = cct.tag_id AND c.course_id = cct.course_id WHERE t.title = :tagTitle", nativeQuery = true)
     List<Course> findAllCoursesByTagTitle(@Param("tagTitle") String tagTitle);
 
     @Query("SELECT c FROM Course c WHERE c.name LIKE %:keyword%")
@@ -32,8 +32,36 @@ public interface CourseRepository extends JpaRepository<Course, Long>
     @Query("SELECT a.courses FROM Account a WHERE a.accountId = :tutorId")
     List<Course> findAllCoursesByTutorId(@Param("tutorId") Long tutorId);
 
-    @Query(value = "SELECT DISTINCT * FROM Course c JOIN Course_Course_Tags cct ON c.course_id = cct.course_id WHERE cct.tag_id IN (:allTagIds)", nativeQuery = true)
-    List<Course> findAllCoursesToRecommend(@Param("allTagIds") List<Long> allTagIds);
+    @Query(value = "SELECT c.*\n" +
+            "FROM Course_Course_Tags cct\n" +
+            "    JOIN Course c\n" +
+            "    ON cct.course_id = c.course_id\n" +
+            "WHERE cct.tag_id\n" +
+            "IN (\n" +
+            "    SELECT ai.tag_id\n" +
+            "    FROM Account_Interests ai\n" +
+            "    WHERE ai.account_id = :accountId\n" +
+            "\n" +
+            "    UNION\n" +
+            "\n" +
+            "    SELECT cct.tag_id\n" +
+            "    FROM Account_Enrolled_Courses aec\n" +
+            "        JOIN Enrolled_Course ec\n" +
+            "        JOIN Course_Course_Tags cct\n" +
+            "            ON aec.enrolled_course_id = ec.enrolled_course_id\n" +
+            "            AND ec.parent_course_course_id = cct.course_id\n" +
+            "    WHERE aec.account_id = :accountId\n" +
+            ")\n" +
+            "AND cct.course_id NOT IN\n" +
+            "(\n" +
+            "    SELECT ec.parent_course_course_id\n" +
+            "    FROM Enrolled_Course ec\n" +
+            "             JOIN Account_Enrolled_Courses aec\n" +
+            "    ON ec.enrolled_course_id = aec.enrolled_course_id\n" +
+            "    WHERE aec.account_id = :accountId\n" +
+            ")",
+            nativeQuery = true)
+    List<Course> findAllCoursesToRecommendByAccountId(@Param("accountId") Long accountId);
 
     @Query(value = "SELECT AVG(ec.course_rating) FROM Course c JOIN Enrolled_Course ec WHERE c.course_id = :courseId", nativeQuery = true)
     Double findCourseRatingByCourseId(@Param("courseId") Long courseId);

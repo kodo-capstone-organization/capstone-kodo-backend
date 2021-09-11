@@ -66,7 +66,6 @@ public class EnrolledCourseServiceImpl implements EnrolledCourseService
 
                         for (EnrolledCourse enrolledCourse : student.getEnrolledCourses())
                         {
-//                            if (enrolledCourse.getParentCourse().equals(course))
                             if (enrolledCourse.getParentCourse().getCourseId().equals(course.getCourseId()))
                             {
                                 throw new CreateNewEnrolledCourseException("The student with ID " + studentId + " is already enrolled to course with ID " + courseId);
@@ -145,6 +144,20 @@ public class EnrolledCourseServiceImpl implements EnrolledCourseService
         }
     }
 
+    @Override
+    public EnrolledCourse getEnrolledCourseByStudentIdAndCourseId(Long studentId, Long courseId) throws EnrolledCourseNotFoundException
+    {
+        EnrolledCourse enrolledCourse = enrolledCourseRepository.findByStudentIdAndCourseId(studentId, courseId).orElse(null);
+
+        if (enrolledCourse != null)
+        {
+            return enrolledCourse;
+        }
+        else
+        {
+            throw new EnrolledCourseNotFoundException("EnrolledCourse with Account ID " + studentId + " and Course ID: " + courseId + " does not exist!");
+        }
+    }
 
     @Override
     public List<EnrolledCourse> getAllEnrolledCourses()
@@ -196,6 +209,25 @@ public class EnrolledCourseServiceImpl implements EnrolledCourseService
         else
         {
             throw new UpdateEnrolledCourseException("EnrolledCourse cannot be null");
+        }
+    }
+
+    @Override
+    public EnrolledCourse setCourseRatingByEnrolledCourseId(Long enrolledCourseId, Integer courseRating) throws EnrolledCourseNotFoundException, InputDataValidationException
+    {
+        EnrolledCourse enrolledCourse = getEnrolledCourseByEnrolledCourseId(enrolledCourseId);
+
+        enrolledCourse.setCourseRating(courseRating);
+
+        Set<ConstraintViolation<EnrolledCourse>> constraintViolations = validator.validate(enrolledCourse);
+        if (constraintViolations.isEmpty())
+        {
+            enrolledCourseRepository.saveAndFlush(enrolledCourse);
+            return enrolledCourse;
+        }
+        else
+        {
+            throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
         }
     }
 

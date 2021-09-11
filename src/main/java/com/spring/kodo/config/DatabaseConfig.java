@@ -102,7 +102,6 @@ public class DatabaseConfig
     private List<ForumThread> forumThreads;
     private List<ForumPost> forumPosts;
 
-    // Edit these to scale the sample database
     private final Integer PROGRAMMING_LANGUAGES_COUNT = 20; // Current max is 20
 
     private final Integer TUTOR_COUNT = 5;
@@ -239,6 +238,7 @@ public class DatabaseConfig
         createForumThreads();
         createForumPosts();
         completeContent();
+        rateEnrolledCourses();
 
         System.out.println("\n===== Init Data Fully Loaded to Database =====");
 
@@ -664,6 +664,31 @@ public class DatabaseConfig
         }
 
         System.out.printf(">> Completed EnrolledContent (%d)\n", completedContent);
+    }
+
+    private void rateEnrolledCourses() throws Exception
+    {
+        int courseRatingSet = 0;
+
+        for (int i = 1; i <= 5; i++)
+        {
+            enrolledCourseService.setCourseRatingByEnrolledCourseId((long) i, i);
+            courseRatingSet++;
+        }
+
+        System.out.printf(">> Rated EnrolledCourses (%d)\n", courseRatingSet);
+
+        // Testing getAllCoursesToRecommendByAccountId
+//        for (int i = 1; i <= 5; i++)
+//        {
+//            List<Course> courses = courseService.getAllCoursesToRecommendByAccountId((long) i);
+//            System.out.println(courses.size());
+//            for (Course course : courses)
+//            {
+//                System.out.println(course.getName());
+//            }
+//            System.out.println();
+//        }
     }
 
     private void addAccounts()

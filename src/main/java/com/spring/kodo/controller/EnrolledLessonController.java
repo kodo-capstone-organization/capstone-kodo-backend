@@ -27,9 +27,6 @@ public class EnrolledLessonController
     @Autowired
     private EnrolledLessonService enrolledLessonService;
 
-    @Autowired
-    private FileService fileService;
-
     @GetMapping("/getAllEnrolledLessons")
     public List<EnrolledLesson> getAllEnrolledLessons()
     {
