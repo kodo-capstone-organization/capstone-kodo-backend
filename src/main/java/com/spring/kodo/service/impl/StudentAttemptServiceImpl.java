@@ -1,10 +1,9 @@
 package com.spring.kodo.service.impl;
 
-import com.spring.kodo.entity.Quiz;
-import com.spring.kodo.entity.QuizQuestion;
-import com.spring.kodo.entity.StudentAttempt;
-import com.spring.kodo.entity.StudentAttemptQuestion;
+import com.spring.kodo.entity.*;
+import com.spring.kodo.repository.AccountRepository;
 import com.spring.kodo.repository.StudentAttemptRepository;
+import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.QuizService;
 import com.spring.kodo.service.inter.StudentAttemptQuestionService;
 import com.spring.kodo.service.inter.StudentAttemptService;
@@ -26,6 +25,9 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
 {
     @Autowired
     private StudentAttemptRepository studentAttemptRepository;
+
+    @Autowired
+    private AccountService accountService;
 
     @Autowired
     private StudentAttemptQuestionService studentAttemptQuestionService;
@@ -106,6 +108,20 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
     public List<StudentAttempt> getAllStudentAttempts()
     {
         return studentAttemptRepository.findAll();
+    }
+
+    @Override
+    public Integer getNumberOfStudentAttemptsLeft(Long accountId, Long quizId) throws AccountNotFoundException, QuizNotFoundException {
+        Account user = accountService.getAccountByAccountId(accountId);
+        Quiz quiz = quizService.getQuizByQuizId(quizId);
+        Integer numberOfStudentAttemptsLeft = quiz.getMaxAttemptsPerStudent();
+
+        for (StudentAttempt attempt : user.getStudentAttempts()) {
+            if (attempt.getQuiz().getContentId().equals(quiz.getContentId())) {
+                numberOfStudentAttemptsLeft--;
+            }
+        }
+        return numberOfStudentAttemptsLeft;
     }
 
     @Override
