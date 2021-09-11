@@ -17,6 +17,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -83,6 +84,7 @@ public class DatabaseConfig
     private Environment env;
 
     private List<String> LANGUAGES;
+    private List<String> NAMES;
 
     private List<Account> accounts;
     private List<Tag> tags;
@@ -102,10 +104,10 @@ public class DatabaseConfig
     private List<ForumThread> forumThreads;
     private List<ForumPost> forumPosts;
 
-    private final Integer PROGRAMMING_LANGUAGES_COUNT = 20; // Current max is 20
+    private final Integer PROGRAMMING_LANGUAGES_COUNT = 25; // Current max is 25
 
     private final Integer TUTOR_COUNT = 5;
-    private final Integer STUDENT_COUNT = 11;
+    private final Integer STUDENT_COUNT = 7;
 
     private final Integer LESSON_COUNT = 3;
 
@@ -115,14 +117,16 @@ public class DatabaseConfig
     private final Integer QUIZ_QUESTION_COUNT = 3;
     private final Integer QUIZ_QUESTION_OPTION_COUNT = 3;
 
-    private final Integer STUDENT_ENROLLED_COUNT = 113;
+    private final Integer STUDENT_ENROLLED_COUNT = 37;
     private final Integer STUDENT_ATTEMPT_COUNT = 5;
 
     private final Integer FORUM_CATEGORY_COUNT = 3;
     private final Integer FORUM_THREAD_COUNT = 3;
     private final Integer FORUM_POST_COUNT = 3;
 
-    private final Integer COMPLETE_CONTENT_COUNT = 100;
+    private final Integer COMPLETE_CONTENT_COUNT = 200;
+
+    private final Integer RATE_ENROLLED_COURSES_COUNT = 20;
 
     // Don't Edit these
     private final Integer PREFIXED_ADMIN_COUNT = 1;
@@ -141,17 +145,21 @@ public class DatabaseConfig
     public DatabaseConfig()
     {
         LANGUAGES = Arrays.asList(
+                "Assembly",
                 "C",
                 "C#",
                 "C++",
                 "COBOL",
                 "Common Lisp",
+                "Dart",
                 "F#",
                 "Go",
+                "Groovy",
                 "Haskell",
                 "Java",
                 "JavaScript",
                 "Kotlin",
+                "MATLAB",
                 "PHP",
                 "Perl",
                 "Python",
@@ -161,7 +169,33 @@ public class DatabaseConfig
                 "SQL",
                 "Scala",
                 "Swift",
-                "TypeScript"
+                "TypeScript",
+                "Visual Basic"
+        );
+
+        NAMES = Arrays.asList(
+                "Jack",
+                "Lewis",
+                "James",
+                "Logan",
+                "Ryan",
+                "Daniel",
+                "Aaron",
+                "Oliver",
+                "Liam",
+                "Jamie",
+                "Ethan",
+                "Alexander",
+                "Cameron",
+                "Finlay",
+                "Kyle",
+                "Adam",
+                "Harry",
+                "Matthew",
+                "Callum",
+                "Lucas",
+                "Nathan",
+                "Aiden"
         );
 
         accounts = new ArrayList<>();
@@ -668,12 +702,27 @@ public class DatabaseConfig
 
     private void rateEnrolledCourses() throws Exception
     {
-        int courseRatingSet = 0;
+        enrolledCourses = enrolledCourseService.getAllEnrolledCourses();
 
-        for (int i = 1; i <= 5; i++)
+        int courseRatingSet = 0;
+        int rating = 1;
+
+        for (EnrolledCourse enrolledCourse : enrolledCourses)
         {
-            enrolledCourseService.setCourseRatingByEnrolledCourseId((long) i, i);
-            courseRatingSet++;
+            if (RATE_ENROLLED_COURSES_COUNT == courseRatingSet)
+            {
+                break;
+            }
+            else if (enrolledCourse.getDateTimeOfCompletion() != null)
+            {
+                enrolledCourseService.setCourseRatingByEnrolledCourseId(enrolledCourse.getEnrolledCourseId(), rating++);
+                courseRatingSet++;
+            }
+
+            if (rating == 6)
+            {
+                rating = 1;
+            }
         }
 
         System.out.printf(">> Rated EnrolledCourses (%d)\n", courseRatingSet);
@@ -693,14 +742,24 @@ public class DatabaseConfig
 
     private void addAccounts()
     {
+        int nameIndex = 0;
+
+        String name;
+
         accounts.add(new Account("admin", "password", "Admin Adam", "I am Admin", "admin@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/1131f24e-b080-4420-a897-88bcee2b2787.gif?generation=1630265308844077&alt=media", true));
 
         accounts.add(new Account("student1", "password", "Student Samuel", "I am Student Samuel", "studentsamuel@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/cba20ec5-5739-4853-b425-ba39647cd8cc.gif?generation=1630266661221190&alt=media", false));
         accounts.add(new Account("student2", "password", "Student Sunny", "I am Student Sunny", "studentsunny@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/46a24305-9b12-4445-b779-5ee1d56b94d7.gif?generation=1630266556687403&alt=media", false));
 
-        for (int i = 3; i <= STUDENT_COUNT + 2; i++)
+        for (int i = 3; i <= STUDENT_COUNT + 2; i++, nameIndex++)
         {
-            accounts.add(new Account("student" + i, "password", "Student " + i, "I am Student " + i, "student" + i + "@gmail.com", "https://student" + i + ".com", false));
+            name = NAMES.get(nameIndex);
+            accounts.add(new Account("student" + i, "password", "Student " + name, "I am Student " + name, "student" + name.toLowerCase(Locale.ROOT) + i + "@gmail.com", "https://student" + name.toLowerCase(Locale.ROOT) + ".com", false));
+
+            if (nameIndex == NAMES.size() - 1)
+            {
+                nameIndex = 0;
+            }
         }
 
         accounts.add(new Account("tutor1", "password", "Tutor Trisha", "Hello! I am Tutor Trisha Toh. My greatest passion in life is teaching. I was born and raised in Singapore, " +
@@ -710,7 +769,13 @@ public class DatabaseConfig
 
         for (int i = 2; i <= TUTOR_COUNT + 1; i++)
         {
-            accounts.add(new Account("tutor" + i, "password", "Tutor " + i, "I am Tutor " + i, "tutor" + i + "@gmail.com", "https://tutor" + i + ".com", false));
+            name = NAMES.get(nameIndex);
+            accounts.add(new Account("tutor" + i, "password", "Tutor " + name, "I am Tutor " + name, "tutor" + name.toLowerCase(Locale.ROOT) + i + "@gmail.com", "https://tutor" + name.toLowerCase(Locale.ROOT) + ".com", false));
+
+            if (nameIndex == NAMES.size() - 1)
+            {
+                nameIndex = 0;
+            }
         }
     }
 
