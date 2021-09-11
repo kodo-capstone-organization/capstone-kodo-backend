@@ -5,7 +5,9 @@ public enum MultimediaType
     PDF("PDF"),
     IMAGE("IMAGE"),
     VIDEO("VIDEO"),
-    ZIP("ZIP");
+    ZIP("ZIP"),
+    DOCUMENT("DOCUMENT"),
+    EMPTY("EMPTY");
 
     private final String multimediaType;
 
