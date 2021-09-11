@@ -446,7 +446,7 @@ public class CourseServiceImpl implements CourseService
         }
 
         //use entire tag list to find courses
-        for (Course course : courseRepository.findAllCoursesToRecommend(allTagIdsToRecommend.stream().toList()))
+        for (Course course : courseRepository.findAllCoursesByAllTagIds(allTagIdsToRecommend.stream().toList()))
         {
             try
             {
