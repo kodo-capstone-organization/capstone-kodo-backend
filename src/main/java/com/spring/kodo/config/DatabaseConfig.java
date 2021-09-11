@@ -767,7 +767,7 @@ public class DatabaseConfig
                 "Currently, I am studying a masters degree specializing in Frontend Engineering.",
                 "tutor1@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/18700b5a-4890-430f-9bab-1d312862c030.gif?generation=1630266710675423&alt=media", "acct_1JWRdcPHGejF5xk8", false));
 
-        for (int i = 2; i <= TUTOR_COUNT + 1; i++)
+        for (int i = 2; i <= TUTOR_COUNT + 1; i++, nameIndex++)
         {
             name = NAMES.get(nameIndex);
             accounts.add(new Account("tutor" + i, "password", "Tutor " + name, "I am Tutor " + name, "tutor" + name.toLowerCase(Locale.ROOT) + i + "@gmail.com", "https://tutor" + name.toLowerCase(Locale.ROOT) + ".com", false));
