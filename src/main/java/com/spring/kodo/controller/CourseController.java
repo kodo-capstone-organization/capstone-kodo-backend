@@ -3,8 +3,7 @@ package com.spring.kodo.controller;
 import com.spring.kodo.entity.*;
 import com.spring.kodo.restentity.request.CreateNewCourseReq;
 import com.spring.kodo.restentity.request.UpdateCourseReq;
-import com.spring.kodo.restentity.request.UpdateLessonReq;
-import com.spring.kodo.restentity.response.CourseWithTutorResp;
+import com.spring.kodo.restentity.response.CourseWithTutorAndRatingResp;
 import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.exception.*;
 import org.slf4j.Logger;
@@ -38,16 +37,17 @@ public class CourseController
     private LessonController lessonController;
 
     @GetMapping("/getCourseByCourseId/{courseId}")
-    public CourseWithTutorResp getCourseByCourseId(@PathVariable Long courseId)
+    public CourseWithTutorAndRatingResp getCourseByCourseId(@PathVariable Long courseId)
     {
         try
         {
             Course course = this.courseService.getCourseByCourseId(courseId);
             Account tutor = this.accountService.getAccountByCourseId(courseId);
+            Double rating = this.courseService.getCourseRating(courseId);
 
-            CourseWithTutorResp courseWithTutorResp = createCourseWithtutorResp(course, tutor);
+            CourseWithTutorAndRatingResp courseWithTutorAndRatingResp = createCourseWithtutorResp(course, tutor, rating);
 
-            return courseWithTutorResp;
+            return courseWithTutorAndRatingResp;
         }
         catch (CourseNotFoundException | AccountNotFoundException ex)
         {
@@ -56,64 +56,64 @@ public class CourseController
     }
 
     @GetMapping("/getAllCoursesWithActiveEnrollment")
-    public List<CourseWithTutorResp> getAllCoursesWithActiveEnrollment()
+    public List<CourseWithTutorAndRatingResp> getAllCoursesWithActiveEnrollment()
     {
         try
         {
             List<Course> courses = this.courseService.getAllCoursesWithActiveEnrollment();
-            List<CourseWithTutorResp> courseWithTutorResps = getAllCoursesWithTutorsByCourses(courses);
+            List<CourseWithTutorAndRatingResp> courseWithTutorAndRatingResps = getAllCoursesWithTutorsByCourses(courses);
 
-            return courseWithTutorResps;
+            return courseWithTutorAndRatingResps;
         }
-        catch (AccountNotFoundException ex)
+        catch (AccountNotFoundException | CourseNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
     }
 
     @GetMapping("/getAllCourses")
-    public List<CourseWithTutorResp> getAllCourses()
+    public List<CourseWithTutorAndRatingResp> getAllCourses()
     {
         try
         {
             List<Course> courses = this.courseService.getAllCourses();
-            List<CourseWithTutorResp> courseWithTutorResps = getAllCoursesWithTutorsByCourses(courses);
+            List<CourseWithTutorAndRatingResp> courseWithTutorAndRatingResps = getAllCoursesWithTutorsByCourses(courses);
 
-            return courseWithTutorResps;
+            return courseWithTutorAndRatingResps;
         }
-        catch (AccountNotFoundException ex)
+        catch (AccountNotFoundException | CourseNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
     }
 
     @GetMapping("/getAllCoursesByTagTitle/{tagTitle}")
-    public List<CourseWithTutorResp> getAllCoursesByTagTitle(@PathVariable String tagTitle)
+    public List<CourseWithTutorAndRatingResp> getAllCoursesByTagTitle(@PathVariable String tagTitle)
     {
         try
         {
             List<Course> courses = this.courseService.getAllCoursesByTagTitle(tagTitle);
-            List<CourseWithTutorResp> courseWithTutorResps = getAllCoursesWithTutorsByCourses(courses);
+            List<CourseWithTutorAndRatingResp> courseWithTutorAndRatingResps = getAllCoursesWithTutorsByCourses(courses);
 
-            return courseWithTutorResps;
+            return courseWithTutorAndRatingResps;
         }
-        catch (TagNotFoundException | AccountNotFoundException ex)
+        catch (TagNotFoundException | AccountNotFoundException | CourseNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
     }
 
     @GetMapping("/getAllCoursesByKeyword/{keyword}")
-    public List<CourseWithTutorResp> getAllCoursesByKeyword(@PathVariable String keyword)
+    public List<CourseWithTutorAndRatingResp> getAllCoursesByKeyword(@PathVariable String keyword)
     {
         try
         {
             List<Course> courses = this.courseService.getAllCoursesByKeyword(keyword);
-            List<CourseWithTutorResp> courseWithTutorResps = getAllCoursesWithTutorsByCourses(courses);
+            List<CourseWithTutorAndRatingResp> courseWithTutorAndRatingResps = getAllCoursesWithTutorsByCourses(courses);
 
-            return courseWithTutorResps;
+            return courseWithTutorAndRatingResps;
         }
-        catch (CourseWithKeywordNotFoundException | AccountNotFoundException ex)
+        catch (CourseWithKeywordNotFoundException | AccountNotFoundException | CourseNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
@@ -256,29 +256,31 @@ public class CourseController
         }
     }
 
-    private List<CourseWithTutorResp> getAllCoursesWithTutorsByCourses(List<Course> courses) throws AccountNotFoundException
+    private List<CourseWithTutorAndRatingResp> getAllCoursesWithTutorsByCourses(List<Course> courses) throws AccountNotFoundException, CourseNotFoundException
     {
-        List<CourseWithTutorResp> courseWithTutorResps = new ArrayList<>();
+        List<CourseWithTutorAndRatingResp> courseWithTutorAndRatingResps = new ArrayList<>();
 
         Long courseId;
         Account tutor;
-        CourseWithTutorResp courseWithTutorResp;
+        Double rating;
+        CourseWithTutorAndRatingResp courseWithTutorAndRatingResp;
 
         for (Course course : courses)
         {
             courseId = course.getCourseId();
             tutor = this.accountService.getAccountByCourseId(courseId);
+            rating = this.courseService.getCourseRating(courseId);
 
-            courseWithTutorResp = createCourseWithtutorResp(course, tutor);
-            courseWithTutorResps.add(courseWithTutorResp);
+            courseWithTutorAndRatingResp = createCourseWithtutorResp(course, tutor, rating);
+            courseWithTutorAndRatingResps.add(courseWithTutorAndRatingResp);
         }
 
-        return courseWithTutorResps;
+        return courseWithTutorAndRatingResps;
     }
 
-    private CourseWithTutorResp createCourseWithtutorResp(Course course, Account tutor)
+    private CourseWithTutorAndRatingResp createCourseWithtutorResp(Course course, Account tutor, Double rating)
     {
-        CourseWithTutorResp courseWithTutorResp = new CourseWithTutorResp(
+        CourseWithTutorAndRatingResp courseWithTutorAndRatingResp = new CourseWithTutorAndRatingResp(
                 course.getCourseId(),
                 course.getName(),
                 course.getDescription(),
@@ -287,11 +289,12 @@ public class CourseController
                 course.getEnrollment(),
                 course.getCourseTags(),
                 course.getLessons(),
+                tutor,
                 course.getBannerPictureFilename(),
                 course.getIsEnrollmentActive(),
-                tutor
+                rating
         );
 
-        return courseWithTutorResp;
+        return courseWithTutorAndRatingResp;
     }
 }
