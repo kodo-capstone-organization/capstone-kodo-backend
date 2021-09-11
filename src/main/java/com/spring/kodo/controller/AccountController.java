@@ -48,6 +48,19 @@ public class AccountController
         }
     }
 
+    @GetMapping("/getAccountByEnrolledCourseId/{enrolledCourseId}")
+    public Account getAccountByEnrolledCourseId(@PathVariable Long enrolledCourseId)
+    {
+        try
+        {
+            return this.accountService.getAccountByEnrolledCourseId(enrolledCourseId);
+        }
+        catch (AccountNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @PostMapping("/createNewAccount")
     public Account createNewAccount(
             @RequestPart(name = "account", required = true) CreateNewAccountReq createNewAccountReq,
