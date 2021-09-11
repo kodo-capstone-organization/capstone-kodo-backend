@@ -143,12 +143,12 @@ public class CourseWithTutorAndRatingResp
         this.bannerPictureFileName = bannerPictureFileName;
     }
 
-    public Boolean getEnrollmentActive()
+    public Boolean getIsEnrollmentActive()
     {
         return isEnrollmentActive;
     }
 
-    public void setEnrollmentActive(Boolean enrollmentActive)
+    public void setIsEnrollmentActive(Boolean enrollmentActive)
     {
         isEnrollmentActive = enrollmentActive;
     }
