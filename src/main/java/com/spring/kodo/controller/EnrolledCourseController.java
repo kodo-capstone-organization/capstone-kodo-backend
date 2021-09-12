@@ -1,26 +1,16 @@
 package com.spring.kodo.controller;
 
-import com.spring.kodo.entity.Account;
-import com.spring.kodo.entity.Course;
 import com.spring.kodo.entity.EnrolledCourse;
-import com.spring.kodo.restentity.request.CreateNewCourseReq;
-import com.spring.kodo.restentity.request.UpdateCourseReq;
-import com.spring.kodo.restentity.response.CourseWithTutorAndRatingResp;
-import com.spring.kodo.service.inter.AccountService;
-import com.spring.kodo.service.inter.CourseService;
-import com.spring.kodo.service.inter.EnrolledCourseService;
-import com.spring.kodo.service.inter.FileService;
+import com.spring.kodo.restentity.response.EnrolledCourseWithStudentResp;
+import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -31,6 +21,15 @@ public class EnrolledCourseController
 
     @Autowired
     private EnrolledCourseService enrolledCourseService;
+
+    @Autowired
+    private AccountService accountService;
+
+    @Autowired
+    private EnrolledLessonService enrolledLessonService;
+
+    @Autowired
+    private CourseService courseService;
 
     @GetMapping("/getEnrolledCourseByEnrolledCourseId/{enrolledCourseId}")
     public EnrolledCourse getEnrolledCourseByEnrolledCourseId(@PathVariable Long enrolledCourseId)
@@ -85,5 +84,11 @@ public class EnrolledCourseController
         {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, ex.getMessage());
         }
+    }
+
+    @GetMapping("/getEnrolledCoursesWithStudentCompletion/{courseId}")
+    public List<EnrolledCourseWithStudentResp> getEnrolledCoursesWithStudentCompletion(@PathVariable Long courseId)
+    {
+        return this.enrolledCourseService.getAllCompletionPercentagesByCourseId(courseId);
     }
 }
