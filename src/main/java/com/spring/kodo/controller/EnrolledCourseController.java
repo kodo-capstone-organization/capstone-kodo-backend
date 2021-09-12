@@ -1,8 +1,7 @@
 package com.spring.kodo.controller;
 
-import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.EnrolledCourse;
-import com.spring.kodo.restentity.response.EnrolledCourseWithStudentReq;
+import com.spring.kodo.restentity.response.EnrolledCourseWithStudentResp;
 import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.exception.*;
 import org.slf4j.Logger;
@@ -12,8 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -30,6 +27,9 @@ public class EnrolledCourseController
 
     @Autowired
     private EnrolledLessonService enrolledLessonService;
+
+    @Autowired
+    private CourseService courseService;
 
     @GetMapping("/getEnrolledCourseByEnrolledCourseId/{enrolledCourseId}")
     public EnrolledCourse getEnrolledCourseByEnrolledCourseId(@PathVariable Long enrolledCourseId)
@@ -86,27 +86,9 @@ public class EnrolledCourseController
         }
     }
 
-    @GetMapping("/getEnrolledCoursesWithStudentCompletion/{enrolledCourseIds}")
-    public List<EnrolledCourseWithStudentReq> getEnrolledCoursesWithStudentCompletion(@PathVariable Long[] enrolledCourseIds)
+    @GetMapping("/getEnrolledCoursesWithStudentCompletion/{courseId}")
+    public List<EnrolledCourseWithStudentResp> getEnrolledCoursesWithStudentCompletion(@PathVariable Long courseId)
     {
-        List<EnrolledCourseWithStudentReq> enrolledCourseWithStudentReqs = new ArrayList<EnrolledCourseWithStudentReq>();
-
-        for (Long enrolledCourseId : enrolledCourseIds)
-        {
-            try {
-                Account studentAccount = this.accountService.getAccountByEnrolledCourseId(enrolledCourseId);
-                EnrolledCourse enrolledCourse = this.enrolledCourseService.getEnrolledCourseByEnrolledCourseId(enrolledCourseId);
-                BigDecimal completionPercentage = new BigDecimal(enrolledCourse.getEnrolledLessons().stream().filter(enrolledLesson -> enrolledLesson.getDateTimeOfCompletion() != null).count() / enrolledCourse.getEnrolledLessons().size());
-
-                EnrolledCourseWithStudentReq newEnrolledCourseWithStudentReq
-                        = new EnrolledCourseWithStudentReq(studentAccount.getName(), enrolledCourse.getParentCourse().getName(), completionPercentage);
-
-                enrolledCourseWithStudentReqs.add(newEnrolledCourseWithStudentReq);
-
-            } catch (AccountNotFoundException | EnrolledCourseNotFoundException ex) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-            }
-        }
-        return enrolledCourseWithStudentReqs;
+        return this.enrolledCourseService.getAllCompletionPercentagesByCourseId(courseId);
     }
 }

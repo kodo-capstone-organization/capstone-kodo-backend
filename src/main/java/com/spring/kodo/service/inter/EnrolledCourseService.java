@@ -2,6 +2,7 @@ package com.spring.kodo.service.inter;
 
 import com.spring.kodo.entity.EnrolledLesson;
 import com.spring.kodo.entity.EnrolledCourse;
+import com.spring.kodo.restentity.response.EnrolledCourseWithStudentResp;
 import com.spring.kodo.util.exception.*;
 
 import java.util.List;
@@ -25,4 +26,6 @@ public interface EnrolledCourseService
     EnrolledCourse addEnrolledLessonToEnrolledCourse(EnrolledCourse enrolledCourse, EnrolledLesson enrolledLesson) throws UpdateEnrolledCourseException, EnrolledCourseNotFoundException, EnrolledLessonNotFoundException;
 
     EnrolledCourse checkDateTimeOfCompletionOfEnrolledCourseByEnrolledLessonId(Long enrolledLessonId) throws EnrolledCourseNotFoundException;
+
+    List<EnrolledCourseWithStudentResp> getAllCompletionPercentagesByCourseId(Long courseId);
 }
