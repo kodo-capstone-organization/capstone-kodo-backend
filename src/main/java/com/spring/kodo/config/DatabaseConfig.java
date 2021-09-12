@@ -855,7 +855,7 @@ public class DatabaseConfig
         for (int i = 0; i < LEVELS.size(); i++)
         {
             prices.add(price);
-            price.add(BigDecimal.TEN);
+            price = price.add(BigDecimal.TEN);
         }
 
         for (String language : LANGUAGES)
