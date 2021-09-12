@@ -14,8 +14,6 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -428,6 +426,16 @@ public class CourseServiceImpl implements CourseService
         accountService.getAccountByAccountId(accountId);
 
         List<Course> allCoursesToRecommend = courseRepository.findAllCoursesToRecommendWithLimitByAccountId(accountId, limit);
+
+        return allCoursesToRecommend;
+    }
+
+    @Override
+    public List<Course> getAllCoursesToRecommendByAccountIdAndTagIds(Long accountId, List<Long> tagIds) throws AccountNotFoundException
+    {
+        accountService.getAccountByAccountId(accountId);
+
+        List<Course> allCoursesToRecommend = courseRepository.findAllCoursesToRecommendByAccountIdAndTagIds(accountId, tagIds);
 
         return allCoursesToRecommend;
     }

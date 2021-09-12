@@ -117,5 +117,11 @@ public class TagServiceImpl implements TagService
     {
         return tagRepository.findAll();
     }
+
+    @Override
+    public List<Tag> getTopRelevantTagsThroughFrequencyWithLimitByAccountId(Long accountId, Integer limit)
+    {
+        return tagRepository.findTopRelevantTagsThroughFrequencyWithLimitByAccountId(accountId, limit);
+    }
 }
 

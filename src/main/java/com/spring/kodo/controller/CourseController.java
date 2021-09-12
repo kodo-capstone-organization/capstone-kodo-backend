@@ -4,6 +4,7 @@ import com.spring.kodo.entity.*;
 import com.spring.kodo.restentity.request.CreateNewCourseReq;
 import com.spring.kodo.restentity.request.UpdateCourseReq;
 import com.spring.kodo.restentity.response.CourseWithTutorAndRatingResp;
+import com.spring.kodo.restentity.response.RecommendedCoursesWithTags;
 import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.exception.*;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/course")
@@ -26,6 +28,9 @@ public class CourseController
 
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private TagService tagService;
 
     @Autowired
     private CourseService courseService;
@@ -121,12 +126,18 @@ public class CourseController
 
 
     @GetMapping("/getAllCoursesToRecommendWithLimitByAccountId/{accountId}/{limit}")
-    public List<Course> getAllCoursesToRecommendWithLimitByAccountId(@PathVariable Long accountId, @PathVariable Integer limit)
+    public RecommendedCoursesWithTags getAllCoursesToRecommendWithLimitByAccountId(@PathVariable Long accountId, @PathVariable Integer limit)
     {
         try
         {
-            List<Course> allCoursesToRecommend = this.courseService.getAllCoursesToRecommendWithLimitByAccountId(accountId, limit);
-            return allCoursesToRecommend;
+            List<Tag> topTags = this.tagService.getTopRelevantTagsThroughFrequencyWithLimitByAccountId(accountId, limit);
+            List<Long> topTagIds = topTags.stream().map(tag -> tag.getTagId()).collect(Collectors.toList());
+
+            List<Course> allCoursesToRecommend = this.courseService.getAllCoursesToRecommendByAccountIdAndTagIds(accountId, topTagIds);
+
+            RecommendedCoursesWithTags recommendedCoursesWithTags = new RecommendedCoursesWithTags(allCoursesToRecommend, topTags);
+
+            return recommendedCoursesWithTags;
         }
         catch (AccountNotFoundException ex)
         {

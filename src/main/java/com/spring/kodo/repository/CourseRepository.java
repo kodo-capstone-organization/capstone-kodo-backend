@@ -1,14 +1,12 @@
 package com.spring.kodo.repository;
 
 import com.spring.kodo.entity.Course;
-import com.spring.kodo.entity.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,44 +32,63 @@ public interface CourseRepository extends JpaRepository<Course, Long>
 
     @Query(value =
             "SELECT interestsAndEnrolledCourses.*\n" +
-            "FROM\n" +
-            "(\n" +
-            " SELECT DISTINCT c.*\n" +
-            " FROM Course c\n" +
-            "    JOIN\n" +
-            "      (\n" +
-            "          SELECT limitedTagsTable.tag_id\n" +
-            "          FROM (\n" +
-            "                   SELECT cct.tag_id\n" +
-            "                   FROM Account_Enrolled_Courses aec\n" +
-            "                            JOIN Course_Course_Tags cct\n" +
-            "                                 ON aec.enrolled_course_id = cct.course_id\n" +
-            "                   WHERE aec.account_id = :accountId\n" +
-            "                   UNION ALL\n" +
-            "                   SELECT ai.tag_id\n" +
-            "                   FROM Account_Interests ai\n" +
-            "                   WHERE ai.account_id = :accountId\n" +
-            "               ) AS limitedTagsTable\n" +
-            "          GROUP BY limitedTagsTable.tag_id\n" +
-            "          ORDER BY COUNT(limitedTagsTable.tag_id) DESC\n" +
-            "          LIMIT :limit\n" +
-            "      ) AS limitedTagsTable\n" +
-            "      JOIN Course_Course_Tags cct\n" +
-            "          ON c.course_id = cct.course_id\n" +
-            "          AND cct.tag_id = limitedTagsTable.tag_id\n" +
-            ") AS interestsAndEnrolledCourses\n" +
-            "LEFT JOIN\n" +
-            "(\n" +
-            "    SELECT ec.parent_course_course_id AS 'course_id'\n" +
-            "    FROM Account_Enrolled_Courses aec\n" +
-            "             JOIN Enrolled_Course ec\n" +
-            "                  on aec.enrolled_course_id = ec.enrolled_course_id\n" +
-            "    WHERE aec.account_id = :accountId\n" +
-            ") AS enrolledCourses\n" +
-            "    ON interestsAndEnrolledCourses.course_id = enrolledCourses.course_id\n" +
-            "WHERE enrolledCourses.course_id IS NULL",
+                    "FROM\n" +
+                    "(\n" +
+                    " SELECT DISTINCT c.*\n" +
+                    " FROM Course c\n" +
+                    "    JOIN\n" +
+                    "      (\n" +
+                    "          SELECT limitedTagsTable.tag_id\n" +
+                    "          FROM (\n" +
+                    "                   SELECT cct.tag_id\n" +
+                    "                   FROM Account_Enrolled_Courses aec\n" +
+                    "                            JOIN Course_Course_Tags cct\n" +
+                    "                                 ON aec.enrolled_course_id = cct.course_id\n" +
+                    "                   WHERE aec.account_id = :accountId\n" +
+                    "                   UNION ALL\n" +
+                    "                   SELECT ai.tag_id\n" +
+                    "                   FROM Account_Interests ai\n" +
+                    "                   WHERE ai.account_id = :accountId\n" +
+                    "               ) AS limitedTagsTable\n" +
+                    "          GROUP BY limitedTagsTable.tag_id\n" +
+                    "          ORDER BY COUNT(limitedTagsTable.tag_id) DESC\n" +
+                    "          LIMIT :limit\n" +
+                    "      ) AS limitedTagsTable\n" +
+                    "      JOIN Course_Course_Tags cct\n" +
+                    "          ON c.course_id = cct.course_id\n" +
+                    "          AND cct.tag_id = limitedTagsTable.tag_id\n" +
+                    ") AS interestsAndEnrolledCourses\n" +
+                    "LEFT JOIN\n" +
+                    "(\n" +
+                    "    SELECT ec.parent_course_course_id AS 'course_id'\n" +
+                    "    FROM Account_Enrolled_Courses aec\n" +
+                    "             JOIN Enrolled_Course ec\n" +
+                    "                  on aec.enrolled_course_id = ec.enrolled_course_id\n" +
+                    "    WHERE aec.account_id = :accountId\n" +
+                    ") AS enrolledCourses\n" +
+                    "    ON interestsAndEnrolledCourses.course_id = enrolledCourses.course_id\n" +
+                    "WHERE enrolledCourses.course_id IS NULL",
             nativeQuery = true)
     List<Course> findAllCoursesToRecommendWithLimitByAccountId(@Param("accountId") Long accountId, @Param("limit") Integer limit);
+
+    @Query(value =
+            "SELECT DISTINCT c.*\n" +
+                    "FROM Course c\n" +
+                    "    JOIN Course_Course_Tags cct\n" +
+                    "        ON c.course_id = cct.course_id\n" +
+                    "LEFT JOIN\n" +
+                    "(\n" +
+                    "    SELECT ec.parent_course_course_id AS 'course_id'\n" +
+                    "    FROM Account_Enrolled_Courses aec\n" +
+                    "             JOIN Enrolled_Course ec\n" +
+                    "                  on aec.enrolled_course_id = ec.enrolled_course_id\n" +
+                    "    WHERE aec.account_id = :accountId\n" +
+                    ") AS enrolledCourses\n" +
+                    "ON c.course_id = enrolledCourses.course_id\n" +
+                    "WHERE enrolledCourses.course_id IS NULL\n" +
+                    "AND cct.tag_id IN :tagIds",
+            nativeQuery = true)
+    List<Course> findAllCoursesToRecommendByAccountIdAndTagIds(@Param("accountId") Long accountId, @Param("tagIds") List<Long> tagIds);
 
     @Query(value = "SELECT AVG(ec.course_rating) FROM Course c JOIN Enrolled_Course ec WHERE c.course_id = :courseId", nativeQuery = true)
     Double findCourseRatingByCourseId(@Param("courseId") Long courseId);

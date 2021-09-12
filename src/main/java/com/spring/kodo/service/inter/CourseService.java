@@ -41,6 +41,8 @@ public interface CourseService
 
     List<Course> getAllCoursesToRecommendWithLimitByAccountId(Long accountId, Integer limit) throws AccountNotFoundException;
 
+    List<Course> getAllCoursesToRecommendByAccountIdAndTagIds(Long accountId, List<Long> tagIds) throws AccountNotFoundException;
+
     Course updateCourse(
             Course course,
             List<Long> enrolledCourseIds,

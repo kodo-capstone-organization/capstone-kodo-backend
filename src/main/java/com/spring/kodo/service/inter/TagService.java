@@ -19,4 +19,6 @@ public interface TagService
     Tag getTagByTitle(String tagTitle) throws TagNotFoundException;
 
     List<Tag> getAllTags();
+
+    List<Tag> getTopRelevantTagsThroughFrequencyWithLimitByAccountId(Long accountId, Integer limit);
 }
