@@ -83,6 +83,7 @@ public class DatabaseConfig
     @Autowired
     private Environment env;
 
+    private List<String> LEVELS;
     private List<String> LANGUAGES;
     private List<String> NAMES;
 
@@ -104,9 +105,9 @@ public class DatabaseConfig
     private List<ForumThread> forumThreads;
     private List<ForumPost> forumPosts;
 
-    private final Integer PROGRAMMING_LANGUAGES_COUNT = 25; // Current max is 25
+    private final Integer LANGUAGES_COUNT = 15; // Current max is 25
 
-    private final Integer TUTOR_COUNT = 5;
+    private final Integer TUTOR_COUNT = 10;
     private final Integer STUDENT_COUNT = 7;
 
     private final Integer LESSON_COUNT = 3;
@@ -144,6 +145,12 @@ public class DatabaseConfig
 
     public DatabaseConfig()
     {
+        LEVELS = Arrays.asList(
+                "Beginner",
+                "Intermediate",
+                "Expert"
+        );
+
         LANGUAGES = Arrays.asList(
                 "Assembly",
                 "C",
@@ -174,28 +181,62 @@ public class DatabaseConfig
         );
 
         NAMES = Arrays.asList(
-                "Jack",
-                "Lewis",
-                "James",
-                "Logan",
-                "Ryan",
-                "Daniel",
                 "Aaron",
-                "Oliver",
-                "Liam",
-                "Jamie",
-                "Ethan",
-                "Alexander",
-                "Cameron",
-                "Finlay",
-                "Kyle",
+                "Astrid",
+                "Abigail",
                 "Adam",
-                "Harry",
-                "Matthew",
+                "Aiden",
+                "Alexander",
+                "Amelia",
+                "Aria",
+                "Ava",
+                "Avery",
                 "Callum",
+                "Cameron",
+                "Camila",
+                "Charlotte",
+                "Chloe",
+                "Daniel",
+                "Eleanor",
+                "Elizabeth",
+                "Ella",
+                "Ellie",
+                "Emily",
+                "Emma",
+                "Ethan",
+                "Evelyn",
+                "Finlay",
+                "Gianna",
+                "Grace",
+                "Harper",
+                "Harry",
+                "Hazel",
+                "Isabella",
+                "Jack",
+                "James",
+                "Jamie",
+                "Kyle",
+                "Layla",
+                "Lewis",
+                "Liam",
+                "Logan",
                 "Lucas",
+                "Luna",
+                "Madison",
+                "Matthew",
+                "Mia",
+                "Mila",
                 "Nathan",
-                "Aiden"
+                "Nora",
+                "Oliver",
+                "Olivia",
+                "Penelope",
+                "Riley",
+                "Ryan",
+                "Scarlett",
+                "Sofia",
+                "Sophia",
+                "Zoey"
         );
 
         accounts = new ArrayList<>();
@@ -230,9 +271,9 @@ public class DatabaseConfig
 
         System.out.println("\n===== Application started on port: " + env.getProperty("local.server.port") + " =====");
         System.out.println("\n===== 0. Checking settings =====");
-        if (PROGRAMMING_LANGUAGES_COUNT <= LANGUAGES.size())
+        if (LANGUAGES_COUNT <= LANGUAGES.size())
         {
-            LANGUAGES = LANGUAGES.subList(0, PROGRAMMING_LANGUAGES_COUNT);
+            LANGUAGES = LANGUAGES.subList(0, LANGUAGES_COUNT);
         }
         else
         {
@@ -315,16 +356,30 @@ public class DatabaseConfig
     {
         Account tutor;
         Course course;
+        String tagTitle;
+
+        List<String> tagTitles = new ArrayList<>();
 
         int tutorIndex = TUTOR_FIRST_INDEX;
+        int courseIndex = 0;
 
-        for (int i = 0; i < courses.size(); i++, tutorIndex++)
+        for (int i = 0; i < tags.size(); i++, tutorIndex++)
         {
             tutor = accounts.get(tutorIndex);
-            course = courses.get(i);
+            tagTitle = tags.get(i).getTitle();
 
-            courseService.createNewCourse(course, tutor.getAccountId(), Arrays.asList(tags.get(i).getTitle()));
-            accountService.addCourseToAccount(tutor, course);
+            for (int j = 0; j < LEVELS.size(); j++, courseIndex++)
+            {
+                course = courses.get(courseIndex);
+
+                tagTitles.add(tagTitle);
+                tagTitles.add(LEVELS.get(j).toLowerCase(Locale.ROOT));
+
+                courseService.createNewCourse(course, tutor.getAccountId(), tagTitles);
+                accountService.addCourseToAccount(tutor, course);
+
+                tagTitles.clear();
+            }
 
             if (tutorIndex == TUTOR_SIZE - 1)
             {
@@ -339,18 +394,22 @@ public class DatabaseConfig
 
     private void createLessons() throws Exception
     {
+        Course course;
         Lesson lesson;
 
+        int courseIndex = 0;
         int lessonIndex = 0;
 
-        for (int i = 0; i < courses.size(); i++)
+        for (int i = 0; i < courses.size(); i++, courseIndex++)
         {
-            for (int j = 0; j < LESSON_COUNT; j++, lessonIndex++)
+            course = courses.get(courseIndex);
+
+            for (int k = 0; k < LESSON_COUNT; k++, lessonIndex++)
             {
                 lesson = lessons.get(lessonIndex);
 
                 lessonService.createNewLesson(lesson);
-                courseService.addLessonToCourse(courses.get(i), lesson);
+                courseService.addLessonToCourse(course, lesson);
             }
         }
 
@@ -789,9 +848,32 @@ public class DatabaseConfig
 
     private void addCourses()
     {
+        String level;
+        BigDecimal price = BigDecimal.valueOf(19.99);
+
+        List<BigDecimal> prices = new ArrayList<>();
+        for (int i = 0; i < LEVELS.size(); i++)
+        {
+            prices.add(price);
+            price.add(BigDecimal.TEN);
+        }
+
         for (String language : LANGUAGES)
         {
-            courses.add(new Course(language + " Course", "A beginner course in " + language + " language.", BigDecimal.valueOf(19.99), "https://" + language.toLowerCase() + "coursebanner.com"));
+            for (int i = 0; i < LEVELS.size(); i++)
+            {
+                level = LEVELS.get(i);
+                price = prices.get(i);
+
+                courses.add(
+                        new Course(
+                                String.format("%s %s Course", level, language),
+                                String.format("A %s course in %s language", level.toLowerCase(Locale.ROOT), language.toLowerCase(Locale.ROOT)),
+                                price,
+                                String.format("https://%s%scoursebanner.com", level.toLowerCase(Locale.ROOT), language.toLowerCase(Locale.ROOT))
+                        )
+                );
+            }
         }
     }
 
@@ -799,9 +881,16 @@ public class DatabaseConfig
     {
         for (String language : LANGUAGES)
         {
-            for (int i = 1; i <= LESSON_COUNT; i++)
+            for (String level : LEVELS)
             {
-                lessons.add(new Lesson(language + " Lesson " + i, "A very interesting " + ordinal(i) + " lesson on " + language, i));
+                for (int i = 1; i <= LESSON_COUNT; i++)
+                {
+                    lessons.add(
+                            new Lesson(
+                                    String.format("%s %s Lesson %d", level, language, i),
+                                    "A very interesting " + ordinal(i) + " lesson on " + language, i)
+                    );
+                }
             }
         }
     }
@@ -810,11 +899,20 @@ public class DatabaseConfig
     {
         for (String language : LANGUAGES)
         {
-            for (int i = 1; i <= LESSON_COUNT; i++)
+            for (String level : LEVELS)
             {
-                for (int j = 1; j <= QUIZ_COUNT; j++)
+                for (int i = 1; i <= LESSON_COUNT; i++)
                 {
-                    quizzes.add(new Quiz(language + " Quiz #" + j, "A very interesting " + ordinal(j) + " quiz on " + language, LocalTime.of(0, 30), 10));
+                    for (int j = 1; j <= QUIZ_COUNT; j++)
+                    {
+                        quizzes.add(
+                                new Quiz(
+                                        String.format("%s %s Quiz #%d", level, language, j),
+                                        "A very interesting " + ordinal(j) + " quiz on " + language,
+                                        LocalTime.of(0, 30),
+                                        10)
+                        );
+                    }
                 }
             }
         }
@@ -824,13 +922,21 @@ public class DatabaseConfig
     {
         for (String language : LANGUAGES)
         {
-            for (int i = 1; i <= LESSON_COUNT; i++)
+            for (String level : LEVELS)
             {
-                for (int j = 1; j <= QUIZ_COUNT; j++)
+                for (int i = 1; i <= LESSON_COUNT; i++)
                 {
-                    for (int k = 1; k <= QUIZ_QUESTION_COUNT; k++)
+                    for (int j = 1; j <= QUIZ_COUNT; j++)
                     {
-                        quizQuestions.add(new QuizQuestion(ordinal(k) + " question of quiz for lesson " + i + " of " + language + " course", QuestionType.MCQ, 1));
+                        for (int k = 1; k <= QUIZ_QUESTION_COUNT; k++)
+                        {
+                            quizQuestions.add(
+                                    new QuizQuestion(
+                                            String.format("%s question of quiz for lesson %d of %s %s course", ordinal(k), i, level, language),
+                                            QuestionType.MCQ,
+                                            1)
+                            );
+                        }
                     }
                 }
             }
@@ -841,15 +947,18 @@ public class DatabaseConfig
     {
         for (String language : LANGUAGES)
         {
-            for (int i = 1; i <= LESSON_COUNT; i++)
+            for (String level : LEVELS)
             {
-                for (int j = 1; j <= QUIZ_COUNT; j++)
+                for (int i = 1; i <= LESSON_COUNT; i++)
                 {
-                    for (int k = 1; k <= QUIZ_QUESTION_COUNT; k++)
+                    for (int j = 1; j <= QUIZ_COUNT; j++)
                     {
-                        for (int l = 1; l <= QUIZ_QUESTION_OPTION_COUNT; l++)
+                        for (int k = 1; k <= QUIZ_QUESTION_COUNT; k++)
                         {
-                            quizQuestionOptions.add(new QuizQuestionOption("Option " + l, null, l == 1));
+                            for (int l = 1; l <= QUIZ_QUESTION_OPTION_COUNT; l++)
+                            {
+                                quizQuestionOptions.add(new QuizQuestionOption("Option " + l, null, l == 1));
+                            }
                         }
                     }
                 }
@@ -861,10 +970,13 @@ public class DatabaseConfig
     {
         for (String language : LANGUAGES)
         {
-            for (int i = 1; i <= LESSON_COUNT; i++)
+            for (String level : LEVELS)
             {
-                multimedias.add(new Multimedia(language + " Multimedia #" + i + "-1", "A very interesting " + ordinal(i) + " PDF on " + language, "http://www.africau.edu/images/default/sample.pdf", MultimediaType.PDF));
-                multimedias.add(new Multimedia(language + " Multimedia #" + i + "-2", "A very interesting " + ordinal(i) + " video on " + language, "https://www.youtube.com/watch?v=T8y_RsF4TSw&list=RDmvkbCZfwWzA&index=16", MultimediaType.VIDEO));
+                for (int i = 1; i <= LESSON_COUNT; i++)
+                {
+                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-1", "A very interesting " + ordinal(i) + " PDF on " + language, "http://www.africau.edu/images/default/sample.pdf", MultimediaType.PDF));
+                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-2", "A very interesting " + ordinal(i) + " video on " + language, "https://www.youtube.com/watch?v=T8y_RsF4TSw&list=RDmvkbCZfwWzA&index=16", MultimediaType.VIDEO));
+                }
             }
         }
     }
@@ -873,9 +985,12 @@ public class DatabaseConfig
     {
         for (String language : LANGUAGES)
         {
-            for (int i = 1; i <= FORUM_CATEGORY_COUNT; i++)
+            for (String level : LEVELS)
             {
-                forumCategories.add(new ForumCategory("Discussion on " + language + " Tips #" + i, "A very informative description on " + language + " tips #" + i));
+                for (int i = 1; i <= FORUM_CATEGORY_COUNT; i++)
+                {
+                    forumCategories.add(new ForumCategory("Discussion on " + level + " " + language + " Tips #" + i, "A very informative description on " + language + " tips #" + i));
+                }
             }
         }
     }
@@ -884,11 +999,14 @@ public class DatabaseConfig
     {
         for (String language : LANGUAGES)
         {
-            for (int i = 1; i <= FORUM_CATEGORY_COUNT; i++)
+            for (String level : LEVELS)
             {
-                for (int j = 1; j <= FORUM_THREAD_COUNT; j++)
+                for (int i = 1; i <= FORUM_CATEGORY_COUNT; i++)
                 {
-                    forumThreads.add(new ForumThread("Thread #" + j + " on " + language + " Tips #" + i, "Thread #" + j + " description on " + language + " Tips #" + i));
+                    for (int j = 1; j <= FORUM_THREAD_COUNT; j++)
+                    {
+                        forumThreads.add(new ForumThread("Thread #" + j + " on " + level + " " + language + " Tips #" + i, "Thread #" + j + " description on " + level + " " + language + " Tips #" + i));
+                    }
                 }
             }
         }
@@ -898,13 +1016,16 @@ public class DatabaseConfig
     {
         for (String language : LANGUAGES)
         {
-            for (int i = 1; i <= FORUM_CATEGORY_COUNT; i++)
+            for (String level : LEVELS)
             {
-                for (int j = 1; j <= FORUM_THREAD_COUNT; j++)
+                for (int i = 1; i <= FORUM_CATEGORY_COUNT; i++)
                 {
-                    for (int k = 1; k <= FORUM_POST_COUNT; k++)
+                    for (int j = 1; j <= FORUM_THREAD_COUNT; j++)
                     {
-                        forumPosts.add(new ForumPost("Post #" + k + " on " + language));
+                        for (int k = 1; k <= FORUM_POST_COUNT; k++)
+                        {
+                            forumPosts.add(new ForumPost("Post #" + k + " on " + level + " " + language));
+                        }
                     }
                 }
             }

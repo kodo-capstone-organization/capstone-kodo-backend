@@ -135,6 +135,7 @@ public class AccountController
                             System.err.println("Unable to delete previous display picture: " + currentDisplayPictureFilename + ". Proceeding to overwrite with new picture");
                         }
                     }
+
                     // Upload new file
                     String updatedDisplayPictureURL = fileService.upload(updatedDisplayPicture);
                     updatedAccount.setDisplayPictureUrl(updatedDisplayPictureURL);
