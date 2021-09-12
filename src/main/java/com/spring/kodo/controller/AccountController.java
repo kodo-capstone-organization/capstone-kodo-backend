@@ -35,7 +35,7 @@ public class AccountController
         return this.accountService.getAllAccounts();
     }
 
-    @GetMapping("/getAccountByAccountId/{accountId}")
+    @GetMapping("/getAccountByAccountId/{accountId}&{}")
     public Account getAccountByAccountId(@PathVariable Long accountId)
     {
         try
