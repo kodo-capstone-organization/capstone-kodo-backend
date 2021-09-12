@@ -32,7 +32,7 @@ public interface CourseRepository extends JpaRepository<Course, Long>
     @Query("SELECT a.courses FROM Account a WHERE a.accountId = :tutorId")
     List<Course> findAllCoursesByTutorId(@Param("tutorId") Long tutorId);
 
-    @Query(value = "SELECT c.*\n" +
+    @Query(value = "SELECT DISTINCT c.*\n" +
             "FROM Course_Course_Tags cct\n" +
             "    JOIN Course c\n" +
             "    ON cct.course_id = c.course_id\n" +
