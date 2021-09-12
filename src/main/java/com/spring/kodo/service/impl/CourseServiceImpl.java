@@ -423,11 +423,11 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
-    public List<Course> getAllCoursesToRecommendByAccountId(Long accountId) throws AccountNotFoundException
+    public List<Course> getAllCoursesToRecommendWithLimitByAccountId(Long accountId, Integer limit) throws AccountNotFoundException
     {
         accountService.getAccountByAccountId(accountId);
 
-        List<Course> allCoursesToRecommend = courseRepository.findAllCoursesToRecommendByAccountId(accountId);
+        List<Course> allCoursesToRecommend = courseRepository.findAllCoursesToRecommendWithLimitByAccountId(accountId, limit);
 
         return allCoursesToRecommend;
     }

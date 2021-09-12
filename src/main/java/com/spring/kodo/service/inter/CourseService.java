@@ -39,7 +39,7 @@ public interface CourseService
 
     Course addEnrolledCourseToCourse(Course course, EnrolledCourse enrolledCourse) throws CourseNotFoundException, UpdateCourseException, EnrolledCourseNotFoundException;
 
-    List<Course> getAllCoursesToRecommendByAccountId(Long accountId) throws AccountNotFoundException;
+    List<Course> getAllCoursesToRecommendWithLimitByAccountId(Long accountId, Integer limit) throws AccountNotFoundException;
 
     Course updateCourse(
             Course course,

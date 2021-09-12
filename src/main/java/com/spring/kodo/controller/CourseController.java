@@ -120,12 +120,12 @@ public class CourseController
     }
 
 
-    @GetMapping("/getAllCoursesToRecommend/{accountId}")
-    public List<Course> getAllCoursesToRecommend(@PathVariable Long accountId)
+    @GetMapping("/getAllCoursesToRecommendWithLimitByAccountId/{accountId}/{limit}")
+    public List<Course> getAllCoursesToRecommendWithLimitByAccountId(@PathVariable Long accountId, @PathVariable Integer limit)
     {
         try
         {
-            List<Course> allCoursesToRecommend = this.courseService.getAllCoursesToRecommendByAccountId(accountId);
+            List<Course> allCoursesToRecommend = this.courseService.getAllCoursesToRecommendWithLimitByAccountId(accountId, limit);
             return allCoursesToRecommend;
         }
         catch (AccountNotFoundException ex)
