@@ -3,6 +3,7 @@ package com.spring.kodo.service.impl;
 import com.spring.kodo.entity.Quiz;
 import com.spring.kodo.entity.QuizQuestion;
 import com.spring.kodo.repository.QuizRepository;
+import com.spring.kodo.restentity.response.QuizWithStudentAttemptCountResp;
 import com.spring.kodo.service.inter.QuizQuestionService;
 import com.spring.kodo.service.inter.QuizService;
 import com.spring.kodo.util.MessageFormatterUtil;
@@ -179,5 +180,11 @@ public class QuizServiceImpl implements QuizService
     public Quiz updateQuiz(Quiz quiz) throws MethodNotSupportedException
     {
         throw new MethodNotSupportedException("Yet to be implemented");
+    }
+
+    @Override
+    public List<QuizWithStudentAttemptCountResp> getAllQuizzesWithStudentAttemptCountByEnrolledLessonId(Long enrolledLessonId)
+    {
+        return quizRepository.findAllQuizzesWithStudentAttemptCountByEnrolledLessonId(enrolledLessonId);
     }
 }

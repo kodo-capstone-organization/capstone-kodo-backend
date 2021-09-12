@@ -2,6 +2,7 @@ package com.spring.kodo.service.inter;
 
 import com.spring.kodo.entity.Quiz;
 import com.spring.kodo.entity.QuizQuestion;
+import com.spring.kodo.restentity.response.QuizWithStudentAttemptCountResp;
 import com.spring.kodo.util.exception.*;
 import org.apache.http.MethodNotSupportedException;
 
@@ -20,4 +21,6 @@ public interface QuizService
     Quiz addQuizQuestionsToQuiz(Quiz quiz, List<QuizQuestion> quizQuestions) throws QuizNotFoundException, UpdateQuizException, QuizQuestionNotFoundException;
 
     Quiz updateQuiz(Quiz quiz) throws MethodNotSupportedException;
+
+    List<QuizWithStudentAttemptCountResp> getAllQuizzesWithStudentAttemptCountByEnrolledLessonId(Long enrolledLessonId);
 }
