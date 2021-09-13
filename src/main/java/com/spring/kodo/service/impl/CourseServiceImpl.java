@@ -246,6 +246,7 @@ public class CourseServiceImpl implements CourseService
                 courseToUpdate.setName(course.getName());
                 courseToUpdate.setDescription(course.getDescription());
                 courseToUpdate.setPrice(course.getPrice());
+                courseToUpdate.setBannerUrl(course.getBannerUrl());
 
                 return courseRepository.saveAndFlush(courseToUpdate);
 
