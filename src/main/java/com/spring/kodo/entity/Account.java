@@ -70,7 +70,7 @@ public class Account
     @NotNull
     private Boolean isActive;
 
-    @Column(nullable = true)
+    @Column(nullable = true, unique = true)
     private String stripeAccountId;
 
     @ManyToMany(targetEntity = Tag.class, fetch = FetchType.LAZY)

@@ -85,7 +85,11 @@ public class DatabaseConfig
 
     private List<String> LEVELS;
     private List<String> LANGUAGES;
-    private List<String> NAMES;
+    private List<String> STUDENT_NAMES;
+    private List<String> STUDENT_BIOGRAPHIES;
+    private List<String> TUTOR_NAMES;
+    private List<String> TUTOR_BIOGRAPHIES;
+    private List<String> DISPLAY_PICTURE_URLS;
 
     private List<Account> accounts;
     private List<Tag> tags;
@@ -108,7 +112,7 @@ public class DatabaseConfig
     private final Integer LANGUAGES_COUNT = 15; // Current max is 25
 
     private final Integer TUTOR_COUNT = 10;
-    private final Integer STUDENT_COUNT = 7;
+    private final Integer STUDENT_COUNT = 10;
 
     private final Integer LESSON_COUNT = 3;
 
@@ -131,8 +135,8 @@ public class DatabaseConfig
 
     // Don't Edit these
     private final Integer PREFIXED_ADMIN_COUNT = 1;
-    private final Integer PREFIXED_TUTOR_COUNT = 1;
-    private final Integer PREFIXED_STUDENT_COUNT = 2;
+    private final Integer PREFIXED_TUTOR_COUNT = 0;
+    private final Integer PREFIXED_STUDENT_COUNT = 0;
 
     private final Integer ADMIN_FIRST_INDEX = 0;
     private final Integer ADMIN_SIZE = PREFIXED_ADMIN_COUNT + ADMIN_FIRST_INDEX;
@@ -180,63 +184,38 @@ public class DatabaseConfig
                 "Visual Basic"
         );
 
-        NAMES = Arrays.asList(
-                "Aaron",
-                "Astrid",
-                "Abigail",
-                "Adam",
-                "Aiden",
-                "Alexander",
-                "Amelia",
-                "Aria",
-                "Ava",
-                "Avery",
-                "Callum",
-                "Cameron",
-                "Camila",
-                "Charlotte",
-                "Chloe",
-                "Daniel",
-                "Eleanor",
-                "Elizabeth",
-                "Ella",
-                "Ellie",
-                "Emily",
-                "Emma",
-                "Ethan",
-                "Evelyn",
-                "Finlay",
-                "Gianna",
-                "Grace",
-                "Harper",
-                "Harry",
-                "Hazel",
-                "Isabella",
-                "Jack",
-                "James",
-                "Jamie",
-                "Kyle",
-                "Layla",
-                "Lewis",
-                "Liam",
-                "Logan",
-                "Lucas",
-                "Luna",
-                "Madison",
-                "Matthew",
-                "Mia",
-                "Mila",
-                "Nathan",
-                "Nora",
-                "Oliver",
-                "Olivia",
-                "Penelope",
-                "Riley",
-                "Ryan",
-                "Scarlett",
-                "Sofia",
-                "Sophia",
-                "Zoey"
+        STUDENT_NAMES = Arrays.asList(
+                "Samuel", "Sunny", "Sophia", "Sofia", "Scarlett", "Savannah", "Stella", "Skylar", "Samantha", "Sarah", "Sadie", "Serenity", "Sophie", "Sydney", "Sara", "Summer", "Sloane", "Sienna", "Sawyer", "Selena", "Stephanie", "Sage", "Samara", "Shelby", "Skyler", "Scarlet", "Serena", "Skye", "Saylor", "Sabrina", "Sarai", "Sierra", "Selah", "Sylvia", "Sasha", "Skyla", "Savanna", "Shiloh", "Sutton", "Sloan", "Saige", "Siena", "Stevie", "Simone", "Sariah", "Salma", "Scarlette", "Sky", "Sariyah", "Sandra", "Selene", "Saoirse", "Susan", "Spencer", "Sonia", "Saanvi", "Samira", "Sylvie", "Scout", "Sarahi", "Saniyah", "Sharon", "Sally", "Sailor", "Shayla", "Sidney", "Samiyah", "Sherlyn", "Selina", "Shanaya", "Seraphina", "Salem", "Siya", "Sanaa", "Saniya", "Shirley", "Skylynn", "Shea", "Sapphire", "Shay", "Soraya", "Sevyn", "Shannon", "Stacy", "Sofie", "Susanna", "Skylah", "Silvia", "Saphira", "Sana", "Sahana", "Sanai", "Shreya", "Sia", "Samiya", "Sonya", "Shoshana", "Soleil", "Suri", "Sarina", "Safa"
+        );
+
+        TUTOR_NAMES = Arrays.asList(
+                "Trisha", "Taylor", "Trinity", "Teagan", "Tessa", "Thea", "Talia", "Tatum", "Tiffany", "Tiana", "Tatiana", "Teresa", "Tenley", "Thalia", "Tori", "Tinley", "Tinsley", "Taliyah", "Treasure", "Tegan", "Tara", "Tabitha", "Theresa", "Tamia", "Tess", "Taryn", "Taya", "Temperance", "Tania", "Tallulah", "Tia", "Tyler", "Tala", "Tina", "Tahlia", "Teigan", "Toni", "Tamara", "Tianna", "Tesla", "Teegan", "Taliah", "Taelyn", "Taraji", "Theia", "Tilly", "Taytum", "Theodora", "Taniyah", "Taylee", "Taylin", "Tanvi", "Taelynn", "Tanya", "Tayla", "Tiara", "Taleah", "Tracy", "Terra", "Talya", "Toby", "Tova", "Triniti", "Tirzah", "Tasneem", "Taylen", "Taylynn", "Tayler", "Tamar", "Tyra", "Tatyana", "Teyana", "Therese", "Timber", "Taniya", "Tammy", "Teigen", "Tatianna", "Tylee", "Tate", "Tristyn", "Tanner", "Tenzin", "Tillie", "Taleen", "Tierney", "Tyanna", "Tristan", "Taegan", "Tru", "Truly", "Tailynn", "Tahani", "Tahiry", "Tennyson", "Terri", "Teaghan", "Tyla", "Talayah", "Talitha"
+        );
+
+        STUDENT_BIOGRAPHIES = Arrays.asList(
+                "Hello! I am Student %s, I am interested to further my software engineering skills through this platform!",
+
+                "My name is %s. I am hope to be able to widen my knowledge on programming-related subjects!",
+
+                "I am Student %s, nice to meet everyone! I hope to meet like-minded and passionate individuals who are in pursuit of bettering their engineering skill!"
+        );
+
+        TUTOR_BIOGRAPHIES = Arrays.asList(
+                "Hello! I am Tutor %s. My greatest passion in life is teaching. I was born and raised in Singapore, " +
+                "and experienced great success at school and at university due to amazing and unforgettable teachers. This is the foundation of my commitment to helping out my students, whatever their abilities may be. " +
+                "Currently, I am studying a masters degree specializing in Frontend Engineering.",
+
+                "Welcome! I am Tutor %s. Having worked in companies such as Shoppee and Tesla, I believe that my experience has been useful in curating " +
+                "courses that cater to learners of all ages and skill levels. Enroll in a course with me and let's work together to further your software engineering skills!",
+
+                "Tutor %s here! As a previous educator in Green University and Maple Polytechnic, I believe strongly in education as a tool of enablement. " +
+                "It is my hope that the material I have uploaded onto this platform will be able to help students in understanding programming concepts that may be difficult to understand!" +
+                "Feel free to reach out to me through a session here."
+        );
+
+        DISPLAY_PICTURE_URLS = Arrays.asList(
+                "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/1131f24e-b080-4420-a897-88bcee2b2787.gif?generation=1630265308844077&alt=media",
+                "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/46a24305-9b12-4445-b779-5ee1d56b94d7.gif?generation=1630266556687403&alt=media"
         );
 
         accounts = new ArrayList<>();
@@ -802,38 +781,64 @@ public class DatabaseConfig
     private void addAccounts()
     {
         int nameIndex = 0;
+        int displayPictureUrlIndex = 0;
+        int biographyIndex = 0;
 
         String name;
+        String displayPictureUrl;
+        String biography;
 
-        accounts.add(new Account("admin", "password", "Admin Adam", "I am Admin", "admin@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/1131f24e-b080-4420-a897-88bcee2b2787.gif?generation=1630265308844077&alt=media", true));
+        accounts.add(new Account("admin", "password", "Admin Adam", "I am Admin", "admin@gmail.com", DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex), true));
 
-        accounts.add(new Account("student1", "password", "Student Samuel", "I am Student Samuel", "studentsamuel@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/cba20ec5-5739-4853-b425-ba39647cd8cc.gif?generation=1630266661221190&alt=media", false));
-        accounts.add(new Account("student2", "password", "Student Sunny", "I am Student Sunny", "studentsunny@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/46a24305-9b12-4445-b779-5ee1d56b94d7.gif?generation=1630266556687403&alt=media", false));
-
-        for (int i = 3; i <= STUDENT_COUNT + 2; i++, nameIndex++)
+        for (int i = 1; i <= STUDENT_COUNT; i++, nameIndex++, displayPictureUrlIndex++, biographyIndex++)
         {
-            name = NAMES.get(nameIndex);
-            accounts.add(new Account("student" + i, "password", "Student " + name, "I am Student " + name, "student" + name.toLowerCase(Locale.ROOT) + i + "@gmail.com", "https://student" + name.toLowerCase(Locale.ROOT) + ".com", false));
+            name = STUDENT_NAMES.get(nameIndex);
+            displayPictureUrl = DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex);
+            biography = String.format(STUDENT_BIOGRAPHIES.get(biographyIndex), name);
 
-            if (nameIndex == NAMES.size() - 1)
+            accounts.add(new Account("student" + i, "password", "Student " + name, biography, "student" + name.toLowerCase(Locale.ROOT) + i + "@gmail.com", displayPictureUrl, false));
+
+            if (nameIndex == STUDENT_NAMES.size() - 1)
             {
                 nameIndex = 0;
             }
+
+            if (displayPictureUrlIndex == DISPLAY_PICTURE_URLS.size() - 1)
+            {
+                displayPictureUrlIndex = 0;
+            }
+
+            if (biographyIndex == STUDENT_BIOGRAPHIES.size() - 1)
+            {
+                biographyIndex = 0;
+            }
         }
 
-        accounts.add(new Account("tutor1", "password", "Tutor Trisha", "Hello! I am Tutor Trisha Toh. My greatest passion in life is teaching. I was born and raised in Singapore, " +
-                "and experienced great success at school and at university due to amazing and unforgettable teachers. This is the foundation of my commitment to helping out my students, whatever their abilities may be. " +
-                "Currently, I am studying a masters degree specializing in Frontend Engineering.",
-                "tutor1@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/18700b5a-4890-430f-9bab-1d312862c030.gif?generation=1630266710675423&alt=media", "acct_1JWRdcPHGejF5xk8", false));
+        nameIndex = 0;
+        displayPictureUrlIndex = 0;
+        biographyIndex = 0;
 
-        for (int i = 2; i <= TUTOR_COUNT + 1; i++, nameIndex++)
+        for (int i = 1; i <= TUTOR_COUNT; i++, nameIndex++, displayPictureUrlIndex++, biographyIndex++)
         {
-            name = NAMES.get(nameIndex);
-            accounts.add(new Account("tutor" + i, "password", "Tutor " + name, "I am Tutor " + name, "tutor" + name.toLowerCase(Locale.ROOT) + i + "@gmail.com", "https://tutor" + name.toLowerCase(Locale.ROOT) + ".com", false));
+            name = TUTOR_NAMES.get(nameIndex);
+            displayPictureUrl = DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex);
+            biography = String.format(TUTOR_BIOGRAPHIES.get(biographyIndex), name);
 
-            if (nameIndex == NAMES.size() - 1)
+            accounts.add(new Account("tutor" + i, "password", "Tutor " + name, biography, "tutor" + name.toLowerCase(Locale.ROOT) + i + "@gmail.com", displayPictureUrl, false));
+
+            if (nameIndex == TUTOR_NAMES.size() - 1)
             {
                 nameIndex = 0;
+            }
+
+            if (displayPictureUrlIndex == DISPLAY_PICTURE_URLS.size() - 1)
+            {
+                displayPictureUrlIndex = 0;
+            }
+
+            if (biographyIndex == TUTOR_BIOGRAPHIES.size() - 1)
+            {
+                biographyIndex = 0;
             }
         }
     }
