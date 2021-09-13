@@ -34,26 +34,20 @@ public class StripeController
             com.spring.kodo.entity.Account account = this.accountService.getAccountByAccountId(accountId);
             if (account.getStripeAccountId() == null)
             {
-                Account stripeAccount = this.stripeService.createNewStripeAccount();
+                Account stripeAccount = this.stripeService.createNewStripeAccount(account.getAccountId());
                 AccountLink accountLink = this.stripeService.createStripeAccountLink(stripeAccount);
 
-                account.setStripeAccountId(stripeAccount.getId());
-                accountService.updateAccount(account, null, null, null, null, null, null, null);
                 return ResponseEntity.status(HttpStatus.OK).body(accountLink.getUrl());
             }
             throw new AccountExistsException("User has an existing Stripe account connected to his Kodo account");
         }
-        catch (StripeException | AccountExistsException | InputDataValidationException | TagNameExistsException ex)
+        catch (StripeException | AccountExistsException ex)
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
-        catch (AccountNotFoundException | TagNotFoundException | UpdateAccountException | EnrolledCourseNotFoundException | StudentAttemptNotFoundException ex)
+        catch (AccountNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        }
-        catch (UnknownPersistenceException ex)
-        {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
         }
     }
 
@@ -70,19 +64,18 @@ public class StripeController
         }
     }
 
-    @PostMapping("/successfulStripeCheckout")
-    public ResponseEntity successfulStripeCheckout(@RequestBody(required=true) String payload, HttpServletRequest request)
+    @PostMapping("/webhook")
+    public ResponseEntity webhook(@RequestBody(required=true) String payload, HttpServletRequest request)
     {
         try
         {
-            stripeService.handleSuccessfulStripeCheckout(payload, request);
+            stripeService.handleIncomingStripeWebhook(payload, request);
             return ResponseEntity.status(HttpStatus.OK).build();
-        }
-        catch (SignatureVerificationException ex) {
+        } catch (SignatureVerificationException ex) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
-        } catch (AccountNotFoundException | CourseNotFoundException | UpdateAccountException | CreateNewEnrolledCourseException | EnrolledCourseNotFoundException ex) {
+        } catch (AccountNotFoundException | CourseNotFoundException | UpdateAccountException | CreateNewEnrolledCourseException | EnrolledCourseNotFoundException | TagNotFoundException | StudentAttemptNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        } catch (InputDataValidationException ex) {
+        } catch (InputDataValidationException | TagNameExistsException ex) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         } catch (UnknownPersistenceException ex) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());

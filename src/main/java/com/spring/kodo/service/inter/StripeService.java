@@ -13,13 +13,11 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface StripeService
 {
-    Account createNewStripeAccount() throws StripeException;
+    Account createNewStripeAccount(Long accountId) throws StripeException;
 
     AccountLink createStripeAccountLink(Account account) throws StripeException;
 
     String createStripeSession(StripePaymentReq stripePaymentReq) throws StripeException;
 
-    void handleSuccessfulStripeCheckout( String payload, HttpServletRequest request) throws SignatureVerificationException, JsonSyntaxException, AccountNotFoundException, UnknownPersistenceException, InputDataValidationException, UpdateAccountException, CreateNewEnrolledCourseException, EnrolledCourseNotFoundException, CourseNotFoundException;
-
-    void handleCompletedCheckoutSession(Session session) throws AccountNotFoundException, CourseNotFoundException, UnknownPersistenceException, CreateNewEnrolledCourseException, InputDataValidationException, EnrolledCourseNotFoundException, UpdateAccountException;
+    void handleIncomingStripeWebhook(String payload, HttpServletRequest request) throws SignatureVerificationException, JsonSyntaxException, AccountNotFoundException, UnknownPersistenceException, InputDataValidationException, UpdateAccountException, CreateNewEnrolledCourseException, EnrolledCourseNotFoundException, CourseNotFoundException, StudentAttemptNotFoundException, TagNotFoundException, TagNameExistsException;
 }

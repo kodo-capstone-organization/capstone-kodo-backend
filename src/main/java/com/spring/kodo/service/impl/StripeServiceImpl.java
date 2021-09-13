@@ -48,7 +48,7 @@ public class StripeServiceImpl implements StripeService
     private CourseService courseService;
 
     @Override
-    public Account createNewStripeAccount() throws StripeException
+    public Account createNewStripeAccount(Long accountId) throws StripeException
     {
         Stripe.apiKey = stripeApiKey;
 
@@ -56,6 +56,7 @@ public class StripeServiceImpl implements StripeService
                 AccountCreateParams
                         .builder()
                         .setType(AccountCreateParams.Type.EXPRESS)
+                        .putMetadata("accountId", accountId.toString())
                         .build();
 
         return Account.create(params);
@@ -111,7 +112,7 @@ public class StripeServiceImpl implements StripeService
     }
 
     @Override
-    public void handleSuccessfulStripeCheckout(String payload, HttpServletRequest request) throws SignatureVerificationException, JsonSyntaxException, AccountNotFoundException, UnknownPersistenceException, InputDataValidationException, UpdateAccountException, CreateNewEnrolledCourseException, EnrolledCourseNotFoundException, CourseNotFoundException {
+    public void handleIncomingStripeWebhook(String payload, HttpServletRequest request) throws SignatureVerificationException, JsonSyntaxException, AccountNotFoundException, UnknownPersistenceException, InputDataValidationException, UpdateAccountException, CreateNewEnrolledCourseException, EnrolledCourseNotFoundException, CourseNotFoundException, StudentAttemptNotFoundException, TagNotFoundException, TagNameExistsException {
         Stripe.apiKey = stripeApiKey;
         String header = request.getHeader("Stripe-Signature");
         String endpointSecret = stripeEndpointSecret;
@@ -120,14 +121,35 @@ public class StripeServiceImpl implements StripeService
 
         event = Webhook.constructEvent(payload, header, endpointSecret);
 
-        if (event.getType().equals("checkout.session.completed"))
+        switch (event.getType())
         {
-            Session session = (Session) event.getData().getObject();
-            handleCompletedCheckoutSession(session);
+            case "checkout.session.completed":
+                Session session = (Session) event.getData().getObject();
+                handleCompletedCheckoutSession(session);
+                break;
+            case "account.updated":
+                Account account = (Account) event.getData().getObject();
+                handleStripePayoutsEnabled(account);
+                break;
+            default:
+                break;
         }
     }
 
-    @Override
+    public void handleStripePayoutsEnabled(Account account) throws AccountNotFoundException, EnrolledCourseNotFoundException, UnknownPersistenceException, TagNotFoundException, UpdateAccountException, InputDataValidationException, StudentAttemptNotFoundException, TagNameExistsException {
+        if (account.getPayoutsEnabled()) {
+            System.out.println(account);
+
+            Map<String, String> stripeAccountMetadata = account.getMetadata();
+            Long accountId = Long.parseLong(stripeAccountMetadata.getOrDefault("accountId", ""));
+
+            com.spring.kodo.entity.Account kodoAccount = accountService.getAccountByAccountId(accountId);
+            kodoAccount.setStripeAccountId(account.getId());
+            accountService.updateAccount(kodoAccount, null, null, null, null, null, null, null);
+        }
+    }
+
+
     public void handleCompletedCheckoutSession(Session session) throws AccountNotFoundException, CourseNotFoundException, UnknownPersistenceException, CreateNewEnrolledCourseException, InputDataValidationException, EnrolledCourseNotFoundException, UpdateAccountException {
         // Update Transaction entity
         System.out.println(session);
