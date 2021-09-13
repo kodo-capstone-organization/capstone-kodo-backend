@@ -135,11 +135,26 @@ public class CourseController
 
             List<Course> allCoursesToRecommend = this.courseService.getAllCoursesToRecommendByAccountIdAndTagIds(accountId, topTagIds);
 
-            RecommendedCoursesWithTags recommendedCoursesWithTags = new RecommendedCoursesWithTags(allCoursesToRecommend, topTags);
+            List<CourseWithTutorAndRatingResp> courseWithTutorAndRatingResps = new ArrayList<>(allCoursesToRecommend.size());
+
+            Account tutor;
+            double courseRating;
+
+            for (Course course : allCoursesToRecommend)
+            {
+                tutor = this.accountService.getAccountByCourseId(course.getCourseId());
+                courseRating = this.courseService.getCourseRating(course.getCourseId());
+
+                courseWithTutorAndRatingResps.add(
+                        new CourseWithTutorAndRatingResp(course, tutor, courseRating)
+                );
+            }
+
+            RecommendedCoursesWithTags recommendedCoursesWithTags = new RecommendedCoursesWithTags(courseWithTutorAndRatingResps, topTags);
 
             return recommendedCoursesWithTags;
         }
-        catch (AccountNotFoundException ex)
+        catch (AccountNotFoundException | CourseNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }

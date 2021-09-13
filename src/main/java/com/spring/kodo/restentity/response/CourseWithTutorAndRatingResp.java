@@ -1,9 +1,6 @@
 package com.spring.kodo.restentity.response;
 
-import com.spring.kodo.entity.Account;
-import com.spring.kodo.entity.EnrolledCourse;
-import com.spring.kodo.entity.Lesson;
-import com.spring.kodo.entity.Tag;
+import com.spring.kodo.entity.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -40,6 +37,22 @@ public class CourseWithTutorAndRatingResp
         this.tutor = tutor;
         this.bannerPictureFileName = bannerPictureFileName;
         this.isEnrollmentActive = isEnrollmentActive;
+        this.courseRating = courseRating;
+    }
+
+    public CourseWithTutorAndRatingResp(Course course, Account tutor, Double courseRating)
+    {
+        this.courseId = course.getCourseId();
+        this.name = course.getName();
+        this.description = course.getDescription();
+        this.price = course.getPrice();
+        this.bannerUrl = course.getBannerUrl();
+        this.enrollment = course.getEnrollment();
+        this.courseTags = course.getCourseTags();
+        this.lessons = course.getLessons();
+        this.tutor = tutor;
+        this.bannerPictureFileName = course.getBannerPictureFilename();
+        this.isEnrollmentActive = course.getIsEnrollmentActive();
         this.courseRating = courseRating;
     }
 
