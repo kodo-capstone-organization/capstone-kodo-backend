@@ -4,6 +4,7 @@ import com.spring.kodo.entity.*;
 import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.enumeration.MultimediaType;
 import com.spring.kodo.util.enumeration.QuestionType;
+import com.spring.kodo.util.exception.TagNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -11,11 +12,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import static com.spring.kodo.util.Constants.*;
@@ -25,6 +28,12 @@ public class DatabaseConfig
 {
     @Value("${CONFIG_PROFILE_TYPE}")
     private String configProfileType;
+
+    @Autowired
+    private DataSourceService dataSourceService;
+
+    @Autowired
+    private RestartService restartService;
 
     @Autowired
     private ForumPostService forumPostService;
@@ -83,6 +92,9 @@ public class DatabaseConfig
     @Autowired
     private Environment env;
 
+    @Autowired
+    private DataSource dataSource;
+
     private List<Account> accounts;
     private List<Tag> tags;
     private List<Course> courses;
@@ -114,7 +126,7 @@ public class DatabaseConfig
     private final Integer QUIZ_QUESTION_COUNT = 3;
     private final Integer QUIZ_QUESTION_OPTION_COUNT = 3;
 
-    private final Integer STUDENT_ENROLLED_COUNT =  (int) (0.5 * (LANGUAGES_COUNT * STUDENT_COUNT));
+    private final Integer STUDENT_ENROLLED_COUNT = (int) (0.5 * (LANGUAGES_COUNT * STUDENT_COUNT));
     private final Integer STUDENT_ATTEMPT_COUNT = 5;
 
     private final Integer FORUM_CATEGORY_COUNT = 1;
@@ -163,7 +175,33 @@ public class DatabaseConfig
     }
 
     @EventListener(ApplicationReadyEvent.class)
-    public void loadDataOnStartup() throws Exception
+    public void onStartUp() throws Exception
+    {
+        try
+        {
+            this.tagService.getTagByTagId(1L);
+
+            Scanner sc = new Scanner(System.in);
+            System.out.println("1. Reload Data");
+            System.out.println("2. Do Nothing");
+            System.out.print("> ");
+
+            if (sc.nextInt() == 1)
+            {
+                dataSourceService.dropDatabase();
+                dataSourceService.createDatabase();
+                restartService.restartApp();
+            }
+
+            sc.close();
+        }
+        catch (TagNotFoundException ex)
+        {
+            loadData();
+        }
+    }
+
+    public void loadData() throws Exception
     {
         // Stop Heroku from updating Google Cloud SQL on every git change
         if (configProfileType.equals("prod"))
