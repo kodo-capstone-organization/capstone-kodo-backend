@@ -735,17 +735,17 @@ public class DatabaseConfig
 
         for (int i = 1; i <= STUDENT_COUNT; i++, nameIndex++, displayPictureUrlIndex++, biographyIndex++)
         {
-            if (nameIndex == STUDENT_NAMES.size())
+            if (nameIndex >= STUDENT_NAMES.size())
             {
                 nameIndex = 0;
             }
 
-            if (displayPictureUrlIndex == DISPLAY_PICTURE_URLS.size())
+            if (displayPictureUrlIndex >= DISPLAY_PICTURE_URLS.size())
             {
                 displayPictureUrlIndex = 0;
             }
 
-            if (biographyIndex == STUDENT_BIOGRAPHIES.size())
+            if (biographyIndex >= STUDENT_BIOGRAPHIES.size())
             {
                 biographyIndex = 0;
             }
@@ -758,22 +758,20 @@ public class DatabaseConfig
         }
 
         nameIndex = 0;
-        displayPictureUrlIndex = 0;
-        biographyIndex = 0;
 
         for (int i = 1; i <= TUTOR_COUNT; i++, nameIndex++, displayPictureUrlIndex++, biographyIndex++)
         {
-            if (nameIndex == TUTOR_NAMES.size())
+            if (nameIndex >= TUTOR_NAMES.size())
             {
                 nameIndex = 0;
             }
 
-            if (displayPictureUrlIndex == DISPLAY_PICTURE_URLS.size())
+            if (displayPictureUrlIndex >= DISPLAY_PICTURE_URLS.size())
             {
                 displayPictureUrlIndex = 0;
             }
 
-            if (biographyIndex == TUTOR_BIOGRAPHIES.size())
+            if (biographyIndex >= TUTOR_BIOGRAPHIES.size())
             {
                 biographyIndex = 0;
             }
