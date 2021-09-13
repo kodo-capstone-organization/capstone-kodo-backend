@@ -4,7 +4,6 @@ import com.spring.kodo.entity.*;
 import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.enumeration.MultimediaType;
 import com.spring.kodo.util.enumeration.QuestionType;
-import com.spring.kodo.util.exception.InputDataValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -15,10 +14,11 @@ import org.springframework.core.env.Environment;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
+
+import static com.spring.kodo.util.Constants.*;
 
 @Configuration
 public class DatabaseConfig
@@ -83,14 +83,6 @@ public class DatabaseConfig
     @Autowired
     private Environment env;
 
-    private List<String> LEVELS;
-    private List<String> LANGUAGES;
-    private List<String> STUDENT_NAMES;
-    private List<String> STUDENT_BIOGRAPHIES;
-    private List<String> TUTOR_NAMES;
-    private List<String> TUTOR_BIOGRAPHIES;
-    private List<String> DISPLAY_PICTURE_URLS;
-
     private List<Account> accounts;
     private List<Tag> tags;
     private List<Course> courses;
@@ -109,10 +101,10 @@ public class DatabaseConfig
     private List<ForumThread> forumThreads;
     private List<ForumPost> forumPosts;
 
-    private final Integer LANGUAGES_COUNT = 15; // Current max is 25
+    private final Integer LANGUAGES_COUNT = 10; // Current max is 25
 
-    private final Integer TUTOR_COUNT = 10;
-    private final Integer STUDENT_COUNT = 10;
+    private final Integer TUTOR_COUNT = 25;
+    private final Integer STUDENT_COUNT = 25;
 
     private final Integer LESSON_COUNT = 3;
 
@@ -122,16 +114,16 @@ public class DatabaseConfig
     private final Integer QUIZ_QUESTION_COUNT = 3;
     private final Integer QUIZ_QUESTION_OPTION_COUNT = 3;
 
-    private final Integer STUDENT_ENROLLED_COUNT = 37;
+    private final Integer STUDENT_ENROLLED_COUNT =  (int) (0.5 * (LANGUAGES_COUNT * STUDENT_COUNT));
     private final Integer STUDENT_ATTEMPT_COUNT = 5;
 
-    private final Integer FORUM_CATEGORY_COUNT = 3;
+    private final Integer FORUM_CATEGORY_COUNT = 1;
     private final Integer FORUM_THREAD_COUNT = 3;
     private final Integer FORUM_POST_COUNT = 3;
 
-    private final Integer COMPLETE_CONTENT_COUNT = 200;
+    private final Integer COMPLETE_CONTENT_COUNT = (int) (0.5 * (STUDENT_ENROLLED_COUNT * LESSON_COUNT * (MULTIMEDIA_COUNT + QUIZ_COUNT)));
 
-    private final Integer RATE_ENROLLED_COURSES_COUNT = 20;
+    private final Integer RATE_ENROLLED_COURSES_COUNT = (int) (0.2 * STUDENT_ENROLLED_COUNT);
 
     // Don't Edit these
     private final Integer PREFIXED_ADMIN_COUNT = 1;
@@ -149,75 +141,6 @@ public class DatabaseConfig
 
     public DatabaseConfig()
     {
-        LEVELS = Arrays.asList(
-                "Beginner",
-                "Intermediate",
-                "Expert"
-        );
-
-        LANGUAGES = Arrays.asList(
-                "Assembly",
-                "C",
-                "C#",
-                "C++",
-                "COBOL",
-                "Common Lisp",
-                "Dart",
-                "F#",
-                "Go",
-                "Groovy",
-                "Haskell",
-                "Java",
-                "JavaScript",
-                "Kotlin",
-                "MATLAB",
-                "PHP",
-                "Perl",
-                "Python",
-                "R",
-                "Ruby",
-                "Rust",
-                "SQL",
-                "Scala",
-                "Swift",
-                "TypeScript",
-                "Visual Basic"
-        );
-
-        STUDENT_NAMES = Arrays.asList(
-                "Samuel", "Sunny", "Sophia", "Sofia", "Scarlett", "Savannah", "Stella", "Skylar", "Samantha", "Sarah", "Sadie", "Serenity", "Sophie", "Sydney", "Sara", "Summer", "Sloane", "Sienna", "Sawyer", "Selena", "Stephanie", "Sage", "Samara", "Shelby", "Skyler", "Scarlet", "Serena", "Skye", "Saylor", "Sabrina", "Sarai", "Sierra", "Selah", "Sylvia", "Sasha", "Skyla", "Savanna", "Shiloh", "Sutton", "Sloan", "Saige", "Siena", "Stevie", "Simone", "Sariah", "Salma", "Scarlette", "Sky", "Sariyah", "Sandra", "Selene", "Saoirse", "Susan", "Spencer", "Sonia", "Saanvi", "Samira", "Sylvie", "Scout", "Sarahi", "Saniyah", "Sharon", "Sally", "Sailor", "Shayla", "Sidney", "Samiyah", "Sherlyn", "Selina", "Shanaya", "Seraphina", "Salem", "Siya", "Sanaa", "Saniya", "Shirley", "Skylynn", "Shea", "Sapphire", "Shay", "Soraya", "Sevyn", "Shannon", "Stacy", "Sofie", "Susanna", "Skylah", "Silvia", "Saphira", "Sana", "Sahana", "Sanai", "Shreya", "Sia", "Samiya", "Sonya", "Shoshana", "Soleil", "Suri", "Sarina", "Safa"
-        );
-
-        TUTOR_NAMES = Arrays.asList(
-                "Trisha", "Taylor", "Trinity", "Teagan", "Tessa", "Thea", "Talia", "Tatum", "Tiffany", "Tiana", "Tatiana", "Teresa", "Tenley", "Thalia", "Tori", "Tinley", "Tinsley", "Taliyah", "Treasure", "Tegan", "Tara", "Tabitha", "Theresa", "Tamia", "Tess", "Taryn", "Taya", "Temperance", "Tania", "Tallulah", "Tia", "Tyler", "Tala", "Tina", "Tahlia", "Teigan", "Toni", "Tamara", "Tianna", "Tesla", "Teegan", "Taliah", "Taelyn", "Taraji", "Theia", "Tilly", "Taytum", "Theodora", "Taniyah", "Taylee", "Taylin", "Tanvi", "Taelynn", "Tanya", "Tayla", "Tiara", "Taleah", "Tracy", "Terra", "Talya", "Toby", "Tova", "Triniti", "Tirzah", "Tasneem", "Taylen", "Taylynn", "Tayler", "Tamar", "Tyra", "Tatyana", "Teyana", "Therese", "Timber", "Taniya", "Tammy", "Teigen", "Tatianna", "Tylee", "Tate", "Tristyn", "Tanner", "Tenzin", "Tillie", "Taleen", "Tierney", "Tyanna", "Tristan", "Taegan", "Tru", "Truly", "Tailynn", "Tahani", "Tahiry", "Tennyson", "Terri", "Teaghan", "Tyla", "Talayah", "Talitha"
-        );
-
-        STUDENT_BIOGRAPHIES = Arrays.asList(
-                "Hello! I am Student %s, I am interested to further my software engineering skills through this platform!",
-
-                "My name is %s. I hope to be able to widen my knowledge on programming-related subjects!",
-
-                "I am Student %s, nice to meet everyone! I hope to meet like-minded and passionate individuals who are in pursuit of bettering their engineering skill!"
-        );
-
-        TUTOR_BIOGRAPHIES = Arrays.asList(
-                "Hello! I am Tutor %s. My greatest passion in life is teaching. I was born and raised in Singapore, " +
-                "and experienced great success at school and at university due to amazing and unforgettable teachers. This is the foundation of my commitment to helping out my students, whatever their abilities may be. " +
-                "Currently, I am studying a masters degree specializing in Frontend Engineering.",
-
-                "Welcome! I am Tutor %s. Having worked in companies such as Shoppee and Tesla, I believe that my experience has been useful in curating " +
-                "courses that cater to learners of all ages and skill levels. Enroll in a course with me and let's work together to further your software engineering skills!",
-
-                "Tutor %s here! As a previous educator in Green University and Maple Polytechnic, I believe strongly in education as a tool of enablement. " +
-                "It is my hope that the material I have uploaded onto this platform will be able to help students in understanding programming concepts that may be difficult to understand!" +
-                "Feel free to reach out to me through a session here."
-        );
-
-        DISPLAY_PICTURE_URLS = Arrays.asList(
-                "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/1131f24e-b080-4420-a897-88bcee2b2787.gif?generation=1630265308844077&alt=media",
-                "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/46a24305-9b12-4445-b779-5ee1d56b94d7.gif?generation=1630266556687403&alt=media"
-        );
-
         accounts = new ArrayList<>();
         tags = new ArrayList<>();
         courses = new ArrayList<>();
@@ -249,16 +172,6 @@ public class DatabaseConfig
         }
 
         System.out.println("\n===== Application started on port: " + env.getProperty("local.server.port") + " =====");
-        System.out.println("\n===== 0. Checking settings =====");
-        if (LANGUAGES_COUNT <= LANGUAGES.size())
-        {
-            LANGUAGES = LANGUAGES.subList(0, LANGUAGES_COUNT);
-        }
-        else
-        {
-            throw new InputDataValidationException("Programming Language size has to be <= " + LANGUAGES.size());
-        }
-
         System.out.println("\n===== 1. Loading Init Data to Database =====");
 
         // Populate data lists
@@ -707,29 +620,59 @@ public class DatabaseConfig
 
     private void completeContent() throws Exception
     {
+        int iterativeBreak = COMPLETE_CONTENT_COUNT / 3;
+
         int completedContent = 0;
+        int contentPerStudent = 0;
+        int contentPerStudentIndex = 0;
 
         Account student;
 
-        for (int i = STUDENT_FIRST_INDEX; i < STUDENT_SIZE; i++)
+        while (completedContent < COMPLETE_CONTENT_COUNT)
         {
-            student = accounts.get(i);
-
-            for (EnrolledCourse enrolledCourse : student.getEnrolledCourses())
+            for (int i = STUDENT_FIRST_INDEX; i < STUDENT_SIZE; i++)
             {
-                for (EnrolledLesson enrolledLesson : enrolledCourse.getEnrolledLessons())
+                student = accounts.get(i);
+                contentPerStudent = getRandomNumber(1, 10);
+                contentPerStudentIndex = 0;
+
+                for (EnrolledCourse enrolledCourse : student.getEnrolledCourses())
                 {
-                    for (EnrolledContent enrolledContent : enrolledLesson.getEnrolledContents())
+                    for (EnrolledLesson enrolledLesson : enrolledCourse.getEnrolledLessons())
                     {
+                        for (EnrolledContent enrolledContent : enrolledLesson.getEnrolledContents())
+                        {
+                            if (enrolledContent.getDateTimeOfCompletion() != null)
+                            {
+                                continue;
+                            }
+                            else if (completedContent < iterativeBreak)
+                            {
+                                enrolledContent = enrolledContentService.setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId(true, student.getAccountId(), enrolledContent.getParentContent().getContentId());
+                                completedContent++;
+                            }
+                            else if (completedContent >= iterativeBreak)
+                            {
+                                if (completedContent == COMPLETE_CONTENT_COUNT || contentPerStudentIndex == contentPerStudent)
+                                {
+                                    break;
+                                }
+                                else
+                                {
+                                    enrolledContent = enrolledContentService.setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId(true, student.getAccountId(), enrolledContent.getParentContent().getContentId());
+                                    contentPerStudentIndex++;
+                                    completedContent++;
+                                }
+                            }
+                        }
                         if (completedContent == COMPLETE_CONTENT_COUNT)
                         {
                             break;
                         }
-                        else
-                        {
-                            enrolledContent = enrolledContentService.setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId(true, student.getAccountId(), enrolledContent.getParentContent().getContentId());
-                            completedContent++;
-                        }
+                    }
+                    if (completedContent == COMPLETE_CONTENT_COUNT)
+                    {
+                        break;
                     }
                 }
             }
@@ -792,26 +735,26 @@ public class DatabaseConfig
 
         for (int i = 1; i <= STUDENT_COUNT; i++, nameIndex++, displayPictureUrlIndex++, biographyIndex++)
         {
+            if (nameIndex == STUDENT_NAMES.size())
+            {
+                nameIndex = 0;
+            }
+
+            if (displayPictureUrlIndex == DISPLAY_PICTURE_URLS.size())
+            {
+                displayPictureUrlIndex = 0;
+            }
+
+            if (biographyIndex == STUDENT_BIOGRAPHIES.size())
+            {
+                biographyIndex = 0;
+            }
+
             name = STUDENT_NAMES.get(nameIndex);
             displayPictureUrl = DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex);
             biography = String.format(STUDENT_BIOGRAPHIES.get(biographyIndex), name);
 
             accounts.add(new Account("student" + i, "password", "Student " + name, biography, "student" + name.toLowerCase(Locale.ROOT) + i + "@gmail.com", displayPictureUrl, false));
-
-            if (nameIndex == STUDENT_NAMES.size() - 1)
-            {
-                nameIndex = 0;
-            }
-
-            if (displayPictureUrlIndex == DISPLAY_PICTURE_URLS.size() - 1)
-            {
-                displayPictureUrlIndex = 0;
-            }
-
-            if (biographyIndex == STUDENT_BIOGRAPHIES.size() - 1)
-            {
-                biographyIndex = 0;
-            }
         }
 
         nameIndex = 0;
@@ -820,27 +763,30 @@ public class DatabaseConfig
 
         for (int i = 1; i <= TUTOR_COUNT; i++, nameIndex++, displayPictureUrlIndex++, biographyIndex++)
         {
+            if (nameIndex == TUTOR_NAMES.size())
+            {
+                nameIndex = 0;
+            }
+
+            if (displayPictureUrlIndex == DISPLAY_PICTURE_URLS.size())
+            {
+                displayPictureUrlIndex = 0;
+            }
+
+            if (biographyIndex == TUTOR_BIOGRAPHIES.size())
+            {
+                biographyIndex = 0;
+            }
+
             name = TUTOR_NAMES.get(nameIndex);
             displayPictureUrl = DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex);
             biography = String.format(TUTOR_BIOGRAPHIES.get(biographyIndex), name);
 
             accounts.add(new Account("tutor" + i, "password", "Tutor " + name, biography, "tutor" + name.toLowerCase(Locale.ROOT) + i + "@gmail.com", displayPictureUrl, false));
-
-            if (nameIndex == TUTOR_NAMES.size() - 1)
-            {
-                nameIndex = 0;
-            }
-
-            if (displayPictureUrlIndex == DISPLAY_PICTURE_URLS.size() - 1)
-            {
-                displayPictureUrlIndex = 0;
-            }
-
-            if (biographyIndex == TUTOR_BIOGRAPHIES.size() - 1)
-            {
-                biographyIndex = 0;
-            }
         }
+
+        // UNIQUE for Trisha
+        accounts.get(0).setStripeAccountId("acct_1JZ8h5PDe56gk95T");
     }
 
     private void addTags()
