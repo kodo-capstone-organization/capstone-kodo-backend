@@ -71,7 +71,7 @@ public class Constants
                     "and experienced great success at school and at university due to amazing and unforgettable teachers. This is the foundation of my commitment to helping out my students, whatever their abilities may be. " +
                     "Currently, I am studying a masters degree specializing in Frontend Engineering.",
 
-            "Welcome! I am Tutor %s. Having worked in companies such as Shoppee and Tesla, I believe that my experience has been useful in curating " +
+            "Welcome! I am Tutor %s. Having worked in companies such as Shopee and Tesla, I believe that my experience has been useful in curating " +
                     "courses that cater to learners of all ages and skill levels. Enroll in a course with me and let's work together to further your software engineering skills!",
 
             "Tutor %s here! As a previous educator in Green University and Maple Polytechnic, I believe strongly in education as a tool of enablement. " +

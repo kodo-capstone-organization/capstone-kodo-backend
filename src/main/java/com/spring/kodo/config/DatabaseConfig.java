@@ -224,19 +224,37 @@ public class DatabaseConfig
 
     private void createAccounts() throws Exception
     {
+        List<Tag> selectedTags;
+        int tagCount = 3;
+        int tagIndex = 0;
+
         for (int i = ADMIN_FIRST_INDEX; i < ADMIN_SIZE; i++)
         {
             accountService.createNewAccount(accounts.get(i), null);
         }
 
-        for (int i = STUDENT_FIRST_INDEX; i < STUDENT_SIZE; i++)
+        for (int i = STUDENT_FIRST_INDEX; i < STUDENT_SIZE; i++, tagIndex++)
         {
-            accountService.createNewAccount(accounts.get(i), tags.subList(getRandomNumber(0, tags.size() / 2 - 1), getRandomNumber(tags.size() / 2 - 1, tags.size() - 1)).stream().map(Tag::getTitle).collect(Collectors.toList()));
+            if (tagIndex + tagCount >= tags.size() - 1)
+            {
+                tagIndex = 0;
+            }
+
+            selectedTags = tags.subList(tagIndex, tagIndex + tagCount);
+
+            accountService.createNewAccount(accounts.get(i), selectedTags.stream().map(Tag::getTitle).collect(Collectors.toList()));
         }
 
-        for (int i = TUTOR_FIRST_INDEX; i < TUTOR_SIZE; i++)
+        for (int i = TUTOR_FIRST_INDEX; i < TUTOR_SIZE; i++, tagIndex++)
         {
-            accountService.createNewAccount(accounts.get(i), null);
+            if (tagIndex + tagCount >= tags.size() - 1)
+            {
+                tagIndex = 0;
+            }
+
+            selectedTags = tags.subList(tagIndex, tagIndex + tagCount);
+
+            accountService.createNewAccount(accounts.get(i), selectedTags.stream().map(Tag::getTitle).collect(Collectors.toList()));
         }
 
         accounts = accountService.getAllAccounts();
