@@ -195,7 +195,7 @@ public class DatabaseConfig
         STUDENT_BIOGRAPHIES = Arrays.asList(
                 "Hello! I am Student %s, I am interested to further my software engineering skills through this platform!",
 
-                "My name is %s. I am hope to be able to widen my knowledge on programming-related subjects!",
+                "My name is %s. I hope to be able to widen my knowledge on programming-related subjects!",
 
                 "I am Student %s, nice to meet everyone! I hope to meet like-minded and passionate individuals who are in pursuit of bettering their engineering skill!"
         );
