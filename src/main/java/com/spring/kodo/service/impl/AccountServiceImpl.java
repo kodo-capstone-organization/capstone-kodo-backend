@@ -476,13 +476,12 @@ public class AccountServiceImpl implements AccountService
     @Override
     public Boolean isAccountWithUsernameExists(String username) throws AccountNotFoundException
     {
-        Account account = getAccountByUsername(username);
-
-        if (account != null)
+        try
         {
+            Account account = getAccountByUsername(username);
             return true;
         }
-        else
+        catch (AccountNotFoundException ex)
         {
             return false;
         }
@@ -491,13 +490,12 @@ public class AccountServiceImpl implements AccountService
     @Override
     public Boolean isAccountWithEmailExists(String email) throws AccountNotFoundException
     {
-        Account account = getAccountByEmail(email);
-
-        if (account != null)
+        try
         {
+            Account account = getAccountByEmail(email);
             return true;
         }
-        else
+        catch (AccountNotFoundException ex)
         {
             return false;
         }
