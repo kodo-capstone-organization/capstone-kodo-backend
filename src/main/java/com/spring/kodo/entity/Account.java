@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.cryptography.CryptographicHelper;
+import com.spring.kodo.util.exception.InputDataValidationException;
 import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.*;
@@ -14,12 +15,20 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Entity
 @Table
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "forumPosts"})
 public class Account
 {
+    // At least 1 of 0-9 = (?=.*[0-9])
+    // At least 1 of a-z = (?=.*[a-z])
+    // At least 1 of A-Z = (?=.*[A-Z])
+    // At least 1 of specials = (?=.*[@#$%^&+=])
+    // No white spaces inbetween = (?=\S+$)
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,64}$");
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long accountId;
@@ -38,7 +47,7 @@ public class Account
     @JsonProperty(access = Access.WRITE_ONLY) // Will not be read on serialization (GET request)
     @Column(nullable = false, length = 64)
     @NotBlank(message = "Password cannot be blank")
-    @Size(max = 64)
+    @Size(min = 8, max = 64)
     private String password;
 
     @Column(nullable = false, length = 64)
@@ -115,31 +124,31 @@ public class Account
         this.isActive = true;
     }
 
-    public Account(Long accountId, String username, String password, String name, String bio, String email, String displayPictureUrl, boolean isAdmin)
+    public Account(String username, String password, String name, String bio, String email, String displayPictureUrl, boolean isAdmin) throws InputDataValidationException
     {
         this();
 
-        this.accountId = accountId;
-        this.username = username;
-        this.password = CryptographicHelper.getSHA256Digest(password, this.salt);
-        this.name = name;
-        this.bio = bio;
-        this.email = email;
-        this.displayPictureUrl = displayPictureUrl;
-        this.isAdmin = isAdmin;
+        if (PASSWORD_PATTERN.matcher(password).matches())
+        {
+            this.username = username;
+            this.password = CryptographicHelper.getSHA256Digest(password, this.salt);
+            this.name = name;
+            this.bio = bio;
+            this.email = email;
+            this.displayPictureUrl = displayPictureUrl;
+            this.isAdmin = isAdmin;
+        }
+        else
+        {
+            throw new InputDataValidationException("Password has to be at least 8 characters long with at least 1 uppercase letter and 1 number");
+        }
     }
 
-    public Account(String username, String password, String name, String bio, String email, String displayPictureUrl, boolean isAdmin)
+    public Account(Long accountId, String username, String password, String name, String bio, String email, String displayPictureUrl, boolean isAdmin) throws InputDataValidationException
     {
-        this();
+        this(username, password, name, bio, email, displayPictureUrl, isAdmin);
 
-        this.username = username;
-        this.password = CryptographicHelper.getSHA256Digest(password, this.salt);
-        this.name = name;
-        this.bio = bio;
-        this.email = email;
-        this.displayPictureUrl = displayPictureUrl;
-        this.isAdmin = isAdmin;
+        this.accountId = accountId;
     }
 
     // Should only be used for Database Config

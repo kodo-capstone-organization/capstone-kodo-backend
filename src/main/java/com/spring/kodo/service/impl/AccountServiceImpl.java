@@ -60,36 +60,50 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
-    public Account createNewAccount(Account newAccount, List<String> tagTitles) throws TagNameExistsException, InputDataValidationException, UnknownPersistenceException, AccountUsernameOrEmailExistsException
+    public Account createNewAccount(Account newAccount, List<String> tagTitles)
+            throws
+            AccountUsernameExistException,
+            AccountEmailExistException,
+            TagNameExistsException,
+            TagNotFoundException,
+            AccountNotFoundException,
+            UpdateAccountException,
+            InputDataValidationException,
+            UnknownPersistenceException
     {
         try
         {
             Set<ConstraintViolation<Account>> constraintViolations = validator.validate(newAccount);
             if (constraintViolations.isEmpty())
             {
-                // Persist Account
-                accountRepository.saveAndFlush(newAccount);
-
-                // Process Tags
-                if (tagTitles != null && (!tagTitles.isEmpty()))
+                if (!isAccountWithUsernameExists(newAccount.getUsername()))
                 {
-                    for (String tagTitle : tagTitles)
+                    if (!isAccountWithEmailExists(newAccount.getEmail()))
                     {
-                        Tag tag = tagService.getTagByTitleOrCreateNew(tagTitle);
-                        try
+                        // Persist Account
+                        accountRepository.saveAndFlush(newAccount);
+
+                        // Process Tags
+                        if (tagTitles != null && (!tagTitles.isEmpty()))
                         {
-                            newAccount = addTagToAccount(newAccount, tag);
+                            for (String tagTitle : tagTitles)
+                            {
+                                Tag tag = tagService.getTagByTitleOrCreateNew(tagTitle);
+                                newAccount = addTagToAccount(newAccount, tag);
+                            }
                         }
-                        catch (TagNotFoundException | AccountNotFoundException | UpdateAccountException ex)
-                        {
-                            // Since we are still in a creation step, these generic exceptions will probably not happen / can kinda be ignored
-                            // e.g. acc not found, duplicate tag exception
-                            continue;
-                        }
+
+                        return newAccount;
+                    }
+                    else
+                    {
+                        throw new AccountEmailExistException("Account with email " + newAccount.getEmail() + " already exists!");
                     }
                 }
-
-                return newAccount;
+                else
+                {
+                    throw new AccountUsernameExistException("Account with username " + newAccount.getUsername() + " already exists!");
+                }
             }
             else
             {
@@ -98,14 +112,7 @@ public class AccountServiceImpl implements AccountService
         }
         catch (DataAccessException ex)
         {
-            if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
-            {
-                throw new AccountUsernameOrEmailExistsException("Account username and/or email is already in use!");
-            }
-            else
-            {
-                throw new UnknownPersistenceException(ex.getMessage());
-            }
+            throw new UnknownPersistenceException(ex.getMessage());
         }
     }
 
@@ -466,29 +473,36 @@ public class AccountServiceImpl implements AccountService
         }
     }
 
-//    @Override
-//    public Account addStudentAttemptToAccount(Account account, StudentAttempt studentAttempt) throws AccountNotFoundException, StudentAttemptNotFoundException, UpdateAccountException
-//    {
-//        account = getAccountByAccountId(account.getAccountId());
-//        studentAttempt = studentAttemptService.getStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId());
-//
-//        if (account.getStudentAttempts().contains(studentAttempt))
-//        {
-//            throw new UpdateAccountException("This attempt has already been recorded.");
-//        }
-//        else if (accountRepository.getNumberOfStudentAttemptsByStudentForQuiz(studentAttempt.getQuiz().getContentId(), account.getAccountId()) >= studentAttempt.getQuiz().getMaxAttemptsPerStudent())
-//        {
-//            studentAttemptRepository.delete(studentAttempt); // clean up
-//            throw new UpdateAccountException("This account has ran out of attempts for quiz: " + studentAttempt.getQuiz().getName() + ". Attempt is thus deleted");
-//        }
-//        else
-//        {
-//            account.getStudentAttempts().add(studentAttempt);
-//        }
-//
-//        accountRepository.saveAndFlush(account);
-//        return account;
-//    }
+    @Override
+    public Boolean isAccountWithUsernameExists(String username) throws AccountNotFoundException
+    {
+        Account account = getAccountByUsername(username);
+
+        if (account != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean isAccountWithEmailExists(String email) throws AccountNotFoundException
+    {
+        Account account = getAccountByEmail(email);
+
+        if (account != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
 
     @Override
     public Long deactivateAccount(Long deactivatingAccountId, Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException

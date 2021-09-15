@@ -92,9 +92,6 @@ public class DatabaseConfig
     @Autowired
     private Environment env;
 
-    @Autowired
-    private DataSource dataSource;
-
     private List<Account> accounts;
     private List<Tag> tags;
     private List<Course> courses;
@@ -777,7 +774,7 @@ public class DatabaseConfig
 //        }
     }
 
-    private void addAccounts()
+    private void addAccounts() throws Exception
     {
         int nameIndex = 0;
         int displayPictureUrlIndex = 0;
@@ -787,7 +784,7 @@ public class DatabaseConfig
         String displayPictureUrl;
         String biography;
 
-        accounts.add(new Account("admin", "password", "Admin Adam", "I am Admin", "admin@gmail.com", DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex), true));
+        accounts.add(new Account("admin", "Password1", "Admin Adam", "I am Admin", "admin@gmail.com", DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex), true));
 
         for (int i = 1; i <= STUDENT_COUNT; i++, nameIndex++, displayPictureUrlIndex++, biographyIndex++)
         {
@@ -810,7 +807,7 @@ public class DatabaseConfig
             displayPictureUrl = DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex);
             biography = String.format(STUDENT_BIOGRAPHIES.get(biographyIndex), name);
 
-            accounts.add(new Account("student" + i, "password", "Student " + name, biography, "student" + name.toLowerCase(Locale.ROOT) + i + "@gmail.com", displayPictureUrl, false));
+            accounts.add(new Account("student" + i, "Password1", "Student " + name, biography, "student" + name.toLowerCase(Locale.ROOT) + i + "@gmail.com", displayPictureUrl, false));
         }
 
         nameIndex = 0;
@@ -836,11 +833,11 @@ public class DatabaseConfig
             displayPictureUrl = DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex);
             biography = String.format(TUTOR_BIOGRAPHIES.get(biographyIndex), name);
 
-            accounts.add(new Account("tutor" + i, "password", "Tutor " + name, biography, "tutor" + name.toLowerCase(Locale.ROOT) + i + "@gmail.com", displayPictureUrl, false));
+            accounts.add(new Account("tutor" + i, "Password1", "Tutor " + name, biography, "tutor" + name.toLowerCase(Locale.ROOT) + i + "@gmail.com", displayPictureUrl, false));
         }
 
         // UNIQUE for Trisha
-        accounts.get(0).setStripeAccountId("acct_1JZ8h5PDe56gk95T");
+        accounts.get(TUTOR_FIRST_INDEX).setStripeAccountId("acct_1JZ8h5PDe56gk95T");
     }
 
     private void addTags()

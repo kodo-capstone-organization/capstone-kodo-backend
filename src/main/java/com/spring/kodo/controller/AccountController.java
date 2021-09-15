@@ -84,7 +84,7 @@ public class AccountController
 
                 return newAccount;
             }
-            catch (InputDataValidationException | AccountUsernameOrEmailExistsException | TagNameExistsException | FileUploadToGCSException ex)
+            catch (InputDataValidationException | AccountUsernameExistException | AccountEmailExistException | TagNameExistsException | FileUploadToGCSException ex)
             {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
             }

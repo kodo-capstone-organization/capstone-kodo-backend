@@ -7,7 +7,16 @@ import java.util.List;
 
 public interface AccountService
 {
-    Account createNewAccount(Account account, List<String> tagTitles) throws TagNameExistsException, InputDataValidationException, UnknownPersistenceException, AccountUsernameOrEmailExistsException;
+    Account createNewAccount(Account newAccount, List<String> tagTitles)
+            throws
+            AccountUsernameExistException,
+            AccountEmailExistException,
+            TagNameExistsException,
+            TagNotFoundException,
+            AccountNotFoundException,
+            UpdateAccountException,
+            InputDataValidationException,
+            UnknownPersistenceException;
 
     List<Account> getAllAccounts();
 
@@ -22,6 +31,7 @@ public interface AccountService
     Account getAccountByEnrolledCourseId(Long enrolledCourseId) throws AccountNotFoundException;
 
     Account getAccountByStudentAttemptId(Long studentAttemptId) throws AccountNotFoundException;
+
     Account updateAccount(
             Account account,
             String password,
@@ -44,6 +54,10 @@ public interface AccountService
     Account addCourseToAccount(Account account, Course course) throws UpdateAccountException, AccountNotFoundException, CourseNotFoundException;
 
     Account addStudentAttemptToAccount(Account account, StudentAttempt studentAttempt) throws UpdateAccountException, AccountNotFoundException, StudentAttemptNotFoundException;
+
+    Boolean isAccountWithUsernameExists(String username) throws AccountNotFoundException;
+
+    Boolean isAccountWithEmailExists(String email) throws AccountNotFoundException;
 
     Long deactivateAccount(Long deactivatingAccountId, Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException;
 
