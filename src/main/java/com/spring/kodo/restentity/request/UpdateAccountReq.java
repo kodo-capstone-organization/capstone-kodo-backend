@@ -1,6 +1,7 @@
 package com.spring.kodo.restentity.request;
 
 import com.spring.kodo.entity.Account;
+import com.spring.kodo.util.exception.InputDataValidationException;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class UpdateAccountReq
     private List<Long> forumPostIds; // leave as null if not updating
     private List<Long> studentAttemptIds; // leave as null if not updating
 
-    public UpdateAccountReq(Account account, String password, List<String> tagTitles, List<Long> enrolledCourseIds, List<Long> courseIds, List<Long> forumThreadIds, List<Long> forumPostIds, List<Long> studentAttemptIds)
+    public UpdateAccountReq(Account account, String password, List<String> tagTitles, List<Long> enrolledCourseIds, List<Long> courseIds, List<Long> forumThreadIds, List<Long> forumPostIds, List<Long> studentAttemptIds) throws InputDataValidationException
     {
         this.account = account;
         this.password = password;

@@ -112,7 +112,8 @@ public class StripeServiceImpl implements StripeService
     }
 
     @Override
-    public void handleIncomingStripeWebhook(String payload, HttpServletRequest request) throws SignatureVerificationException, JsonSyntaxException, AccountNotFoundException, UnknownPersistenceException, InputDataValidationException, UpdateAccountException, CreateNewEnrolledCourseException, EnrolledCourseNotFoundException, CourseNotFoundException, StudentAttemptNotFoundException, TagNotFoundException, TagNameExistsException {
+    public void handleIncomingStripeWebhook(String payload, HttpServletRequest request) throws SignatureVerificationException, JsonSyntaxException, AccountNotFoundException, UnknownPersistenceException, InputDataValidationException, UpdateAccountException, CreateNewEnrolledCourseException, EnrolledCourseNotFoundException, CourseNotFoundException, StudentAttemptNotFoundException, TagNotFoundException, TagNameExistsException, AccountEmailExistException
+    {
         Stripe.apiKey = stripeApiKey;
         String header = request.getHeader("Stripe-Signature");
         String endpointSecret = stripeEndpointSecret;
@@ -136,7 +137,8 @@ public class StripeServiceImpl implements StripeService
         }
     }
 
-    public void handleStripePayoutsEnabled(Account account) throws AccountNotFoundException, EnrolledCourseNotFoundException, UnknownPersistenceException, TagNotFoundException, UpdateAccountException, InputDataValidationException, StudentAttemptNotFoundException, TagNameExistsException {
+    public void handleStripePayoutsEnabled(Account account) throws AccountNotFoundException, EnrolledCourseNotFoundException, UnknownPersistenceException, TagNotFoundException, UpdateAccountException, InputDataValidationException, StudentAttemptNotFoundException, TagNameExistsException, AccountEmailExistException
+    {
         if (account.getPayoutsEnabled()) {
             System.out.println(account);
 
@@ -145,7 +147,7 @@ public class StripeServiceImpl implements StripeService
 
             com.spring.kodo.entity.Account kodoAccount = accountService.getAccountByAccountId(accountId);
             kodoAccount.setStripeAccountId(account.getId());
-            accountService.updateAccount(kodoAccount, null, null, null, null, null, null, null);
+            accountService.updateAccount(kodoAccount);
         }
     }
 

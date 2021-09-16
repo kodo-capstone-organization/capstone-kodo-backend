@@ -2,9 +2,6 @@ package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.*;
 import com.spring.kodo.repository.AccountRepository;
-import com.spring.kodo.repository.CourseRepository;
-import com.spring.kodo.repository.ForumPostRepository;
-import com.spring.kodo.repository.StudentAttemptRepository;
 import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.cryptography.CryptographicHelper;
@@ -12,6 +9,7 @@ import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -25,12 +23,9 @@ public class AccountServiceImpl implements AccountService
 {
     @Autowired // With this annotation, we do not to populate AccountRepository in this class' constructor
     private AccountRepository accountRepository;
+
     @Autowired
-    private CourseRepository courseRepository;
-    @Autowired
-    private StudentAttemptRepository studentAttemptRepository;
-    @Autowired
-    private ForumPostRepository forumPostRepository;
+    private FileService fileService;
 
     @Autowired
     private TagService tagService;
@@ -40,12 +35,6 @@ public class AccountServiceImpl implements AccountService
 
     @Autowired
     private CourseService courseService;
-
-    @Autowired
-    private ForumThreadService forumThreadService;
-
-    @Autowired
-    private ForumPostService forumPostService;
 
     @Autowired
     private StudentAttemptService studentAttemptService;
@@ -124,6 +113,35 @@ public class AccountServiceImpl implements AccountService
                 Tag tag = tagService.getTagByTitleOrCreateNew(tagTitle);
                 newAccount = addTagToAccount(newAccount, tag);
             }
+        }
+
+        return newAccount;
+    }
+
+    @Override
+    public Account createNewAccount(Account newAccount, List<String> tagTitles, MultipartFile displayPicture)
+            throws
+            AccountUsernameExistException,
+            AccountEmailExistException,
+            TagNameExistsException,
+            TagNotFoundException,
+            AccountNotFoundException,
+            UpdateAccountException,
+            InputDataValidationException,
+            UnknownPersistenceException,
+            FileUploadToGCSException,
+            CreateNewAccountException
+    {
+        newAccount = createNewAccount(newAccount, tagTitles);
+
+        if (displayPicture != null)
+        {
+            String displayPictureUrl = fileService.upload(displayPicture);
+            newAccount.setDisplayPictureUrl(displayPictureUrl);
+        }
+        else
+        {
+            throw new CreateNewAccountException("Display picture not provided for account to be create");
         }
 
         return newAccount;
@@ -227,6 +245,77 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
+    public Account updateAccount(Account account) throws UpdateAccountException, AccountNotFoundException, AccountEmailExistException
+    {
+        if (account != null)
+        {
+            if (account.getAccountId() != null)
+            {
+                Account accountToUpdate = getAccountByAccountId(account.getAccountId());
+
+                if (account.getUsername().equals(accountToUpdate.getUsername()))
+                {
+                    if (!account.getEmail().equals(accountToUpdate.getEmail()))
+                    {
+                        if (!isAccountExistsByEmail(account.getEmail()))
+                        {
+                            // Update Non-Relational Fields
+                            accountToUpdate.setEmail(account.getEmail());
+                        }
+                        else
+                        {
+                            throw new AccountEmailExistException("Account with email " + account.getEmail() + " already exists!");
+                        }
+                    }
+
+                    // Update Non-Relational Fields
+                    accountToUpdate.setName(account.getName());
+                    accountToUpdate.setBio(account.getBio());
+                    accountToUpdate.setEmail(account.getEmail());
+                    accountToUpdate.setDisplayPictureUrl(account.getDisplayPictureUrl());
+                    accountToUpdate.setIsAdmin(account.getIsAdmin());
+                    accountToUpdate.setIsActive(account.getIsActive());
+                    accountToUpdate.setStripeAccountId(account.getStripeAccountId());
+
+                    accountToUpdate = accountRepository.saveAndFlush(accountToUpdate);
+                    return accountToUpdate;
+                }
+                else
+                {
+                    throw new UpdateAccountException("Account username does not match any existing account record");
+                }
+            }
+            else
+            {
+                throw new UpdateAccountException("Account ID not provided for account to be updated");
+            }
+        }
+        else
+        {
+            throw new UpdateAccountException("Account not provided for account to be updated");
+        }
+    }
+
+    @Override
+    public Account updateAccount(Account account, String password) throws UpdateAccountException, AccountNotFoundException, InputDataValidationException, AccountEmailExistException
+    {
+        Account accountToUpdate = updateAccount(account);
+        // Update Non-Relational Fields
+
+        if (password != null)
+        {
+            accountToUpdate.setPassword(password);
+        }
+        else
+        {
+            throw new UpdateAccountException("Password not provided for account to be updated");
+        }
+
+        accountToUpdate = accountRepository.saveAndFlush(accountToUpdate);
+        return accountToUpdate;
+    }
+
+    @Override
     public Account updateAccount(
             Account account,
             String password,
@@ -236,85 +325,64 @@ public class AccountServiceImpl implements AccountService
             List<Long> forumThreadIds,
             List<Long> forumPostIds,
             List<Long> studentAttemptIds
-    )
-            throws AccountNotFoundException, TagNotFoundException,
-            UpdateAccountException, EnrolledCourseNotFoundException,
-            StudentAttemptNotFoundException, TagNameExistsException,
-            UnknownPersistenceException, InputDataValidationException
+    ) throws UpdateAccountException,
+            AccountNotFoundException,
+            InputDataValidationException,
+            AccountEmailExistException,
+            TagNameExistsException,
+            UnknownPersistenceException,
+            TagNotFoundException,
+            EnrolledCourseNotFoundException,
+            StudentAttemptNotFoundException
     {
+        Account accountToUpdate = updateAccount(account, password);
 
-        if (account != null && account.getAccountId() != null)
+        // Update Tags (interests) - Unidirectional
+        if (tagTitles != null)
         {
-            Account accountToUpdate = null;
-            Set<ConstraintViolation<Account>> constraintViolations = validator.validate(account);
-
-            if (constraintViolations.isEmpty())
+            accountToUpdate.getInterests().clear();
+            for (String tagTitle : tagTitles)
             {
-                // Get managed instance of account to be updated
-                accountToUpdate = getAccountByAccountId(account.getAccountId());
-
-                if (accountToUpdate.getUsername().equals(account.getUsername()))
-                {
-                    // Update tags (interests) - Unidirectional
-                    if (tagTitles != null)
-                    {
-                        accountToUpdate.getInterests().clear();
-                        for (String tagTitle : tagTitles)
-                        {
-                            Tag tag = tagService.getTagByTitleOrCreateNew(tagTitle);
-                            addTagToAccount(accountToUpdate, tag);
-                        }
-                    }
-
-                    // Update enrolled courses - Unidirectional
-                    if (enrolledCourseIds != null)
-                    {
-                        accountToUpdate.getEnrolledCourses().clear();
-                        for (Long enrolledCourseId : enrolledCourseIds)
-                        {
-                            EnrolledCourse enrolledCourse = enrolledCourseService.getEnrolledCourseByEnrolledCourseId(enrolledCourseId);
-                            addEnrolledCourseToAccount(accountToUpdate, enrolledCourse);
-                        }
-                    }
-
-                    // Update studentAttempts - Unidirectional
-                    if (studentAttemptIds != null)
-                    {
-                        accountToUpdate.getStudentAttempts().clear();
-                        for (Long studentAttemptId : studentAttemptIds)
-                        {
-                            StudentAttempt studentAttempt = studentAttemptService.getStudentAttemptByStudentAttemptId(studentAttemptId);
-                            addStudentAttemptToAccount(accountToUpdate, studentAttempt);
-                        }
-                    }
-
-                    // Update other non-relational fields
-                    accountToUpdate.setUsername(account.getUsername());
-                    accountToUpdate.setName(account.getName());
-                    accountToUpdate.setPassword(password);
-                    accountToUpdate.setBio(account.getBio());
-                    accountToUpdate.setEmail(account.getEmail());
-                    accountToUpdate.setDisplayPictureUrl(account.getDisplayPictureUrl());
-                    accountToUpdate.setIsAdmin(account.getIsAdmin());
-                    accountToUpdate.setIsActive(account.getIsActive());
-                    accountToUpdate.setStripeAccountId(account.getStripeAccountId());
-
-                    return accountRepository.saveAndFlush(accountToUpdate);
-                }
-                else
-                {
-                    throw new UpdateAccountException("Username of account record to be updated does not match the existing record");
-                }
-            }
-            else
-            {
-                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                Tag tag = tagService.getTagByTitleOrCreateNew(tagTitle);
+                addTagToAccount(accountToUpdate, tag);
             }
         }
         else
         {
-            throw new AccountNotFoundException("Account ID not provided for account to be updated");
+            throw new UpdateAccountException("Tag titles not provided for account to be updated");
         }
+
+        // Update EnrolledCourses - Unidirectional
+        if (enrolledCourseIds != null)
+        {
+            accountToUpdate.getEnrolledCourses().clear();
+            for (Long enrolledCourseId : enrolledCourseIds)
+            {
+                EnrolledCourse enrolledCourse = enrolledCourseService.getEnrolledCourseByEnrolledCourseId(enrolledCourseId);
+                addEnrolledCourseToAccount(accountToUpdate, enrolledCourse);
+            }
+        }
+        else
+        {
+            throw new UpdateAccountException("EnrolledCourse IDs not provided for account to be updated");
+        }
+
+        // Update StudentAttempts - Unidirectional
+        if (studentAttemptIds != null)
+        {
+            accountToUpdate.getStudentAttempts().clear();
+            for (Long studentAttemptId : studentAttemptIds)
+            {
+                StudentAttempt studentAttempt = studentAttemptService.getStudentAttemptByStudentAttemptId(studentAttemptId);
+                addStudentAttemptToAccount(accountToUpdate, studentAttempt);
+            }
+        }
+        else
+        {
+            throw new UpdateAccountException("StudentAttempt IDs not provided for account to be updated");
+        }
+
+        return accountToUpdate;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.spring.kodo.service.inter;
 
 import com.spring.kodo.entity.*;
 import com.spring.kodo.util.exception.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -25,6 +26,19 @@ public interface AccountService
             InputDataValidationException,
             UnknownPersistenceException;
 
+    Account createNewAccount(Account newAccount, List<String> tagTitles, MultipartFile displayPicture)
+            throws
+            AccountUsernameExistException,
+            AccountEmailExistException,
+            TagNameExistsException,
+            TagNotFoundException,
+            AccountNotFoundException,
+            UpdateAccountException,
+            InputDataValidationException,
+            UnknownPersistenceException,
+            FileUploadToGCSException,
+            CreateNewAccountException;
+
     List<Account> getAllAccounts();
 
     Account getAccountByAccountId(Long accountId) throws AccountNotFoundException;
@@ -39,6 +53,10 @@ public interface AccountService
 
     Account getAccountByStudentAttemptId(Long studentAttemptId) throws AccountNotFoundException;
 
+    Account updateAccount(Account account) throws UpdateAccountException, AccountNotFoundException, AccountEmailExistException;
+
+    Account updateAccount(Account account, String password) throws UpdateAccountException, AccountNotFoundException, InputDataValidationException, AccountEmailExistException;
+
     Account updateAccount(
             Account account,
             String password,
@@ -48,11 +66,15 @@ public interface AccountService
             List<Long> forumThreadIds,
             List<Long> forumPostIds,
             List<Long> studentAttemptIds
-    )
-            throws AccountNotFoundException, TagNotFoundException,
-            UpdateAccountException, EnrolledCourseNotFoundException,
-            StudentAttemptNotFoundException, TagNameExistsException,
-            UnknownPersistenceException, InputDataValidationException;
+    ) throws UpdateAccountException,
+            AccountNotFoundException,
+            InputDataValidationException,
+            AccountEmailExistException,
+            TagNameExistsException,
+            UnknownPersistenceException,
+            TagNotFoundException,
+            EnrolledCourseNotFoundException,
+            StudentAttemptNotFoundException;
 
     Account addTagToAccount(Account account, Tag tag) throws AccountNotFoundException, TagNotFoundException, UpdateAccountException;
 

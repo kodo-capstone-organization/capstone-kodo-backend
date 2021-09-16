@@ -124,24 +124,23 @@ public class Account
         this.isActive = true;
     }
 
-    public Account(String username, String password, String name, String bio, String email, String displayPictureUrl, boolean isAdmin) throws InputDataValidationException
+    public Account(String username, String password, String name, String bio, String email, boolean isAdmin) throws InputDataValidationException
     {
         this();
 
-        if (PASSWORD_PATTERN.matcher(password).matches())
-        {
-            this.username = username;
-            this.password = CryptographicHelper.getSHA256Digest(password, this.salt);
-            this.name = name;
-            this.bio = bio;
-            this.email = email;
-            this.displayPictureUrl = displayPictureUrl;
-            this.isAdmin = isAdmin;
-        }
-        else
-        {
-            throw new InputDataValidationException("Password has to be at least 8 characters long with at least 1 uppercase letter and 1 number");
-        }
+        this.username = username;
+        setPassword(password);
+        this.name = name;
+        this.bio = bio;
+        this.email = email;
+        this.isAdmin = isAdmin;
+    }
+
+    public Account(String username, String password, String name, String bio, String email, String displayPictureUrl, boolean isAdmin) throws InputDataValidationException
+    {
+        this(username, password, name, bio, email, isAdmin);
+
+        this.displayPictureUrl = displayPictureUrl;
     }
 
     public Account(Long accountId, String username, String password, String name, String bio, String email, String displayPictureUrl, boolean isAdmin) throws InputDataValidationException
@@ -152,20 +151,12 @@ public class Account
     }
 
     // Should only be used for Database Config
-    public Account(String username, String password, String name, String bio, String email, String displayPictureUrl, String stripeAccountId, boolean isAdmin)
+    public Account(String username, String password, String name, String bio, String email, String displayPictureUrl, String stripeAccountId, boolean isAdmin) throws InputDataValidationException
     {
-        this();
+        this(username, password, name, bio, email, displayPictureUrl, isAdmin);
 
-        this.username = username;
-        this.password = CryptographicHelper.getSHA256Digest(password, this.salt);
-        this.name = name;
-        this.bio = bio;
-        this.email = email;
-        this.displayPictureUrl = displayPictureUrl;
         this.stripeAccountId = stripeAccountId;
-        this.isAdmin = isAdmin;
     }
-
 
     public Long getAccountId()
     {
@@ -202,11 +193,18 @@ public class Account
         return password;
     }
 
-    public void setPassword(String password)
+    public void setPassword(String password) throws InputDataValidationException
     {
         if (password != null)
         {
-            this.password = CryptographicHelper.getSHA256Digest(password, this.salt);
+            if (PASSWORD_PATTERN.matcher(password).matches())
+            {
+                this.password = CryptographicHelper.getSHA256Digest(password, this.salt);
+            }
+            else
+            {
+                throw new InputDataValidationException("Password has to be at least 8 characters long with at least 1 uppercase letter and 1 number");
+            }
         }
     }
 

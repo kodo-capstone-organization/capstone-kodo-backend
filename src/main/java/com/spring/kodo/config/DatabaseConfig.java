@@ -176,6 +176,13 @@ public class DatabaseConfig
     {
         try
         {
+            // Stop Heroku from updating Google Cloud SQL on every git change
+            if (configProfileType.equals("prod"))
+            {
+                System.out.println("=== Production Configuration ===");
+                return;
+            }
+
             this.tagService.getTagByTagId(1L);
 
             Scanner sc = new Scanner(System.in);
@@ -200,12 +207,6 @@ public class DatabaseConfig
 
     public void loadData() throws Exception
     {
-        // Stop Heroku from updating Google Cloud SQL on every git change
-        if (configProfileType.equals("prod"))
-        {
-            return;
-        }
-
         System.out.println("\n===== Application started on port: " + env.getProperty("local.server.port") + " =====");
         System.out.println("\n===== 1. Loading Init Data to Database =====");
 

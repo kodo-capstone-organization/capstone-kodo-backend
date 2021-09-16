@@ -17,7 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping(path="/stripe")
+@RequestMapping(path = "/stripe")
 public class StripeController
 {
     @Autowired
@@ -27,7 +27,7 @@ public class StripeController
     StripeService stripeService;
 
     @PostMapping("/createStripeAccount")
-    public ResponseEntity createStripeAccount(@RequestParam(name="accountId", required=true) Long accountId)
+    public ResponseEntity createStripeAccount(@RequestParam(name = "accountId", required = true) Long accountId)
     {
         try
         {
@@ -52,32 +52,41 @@ public class StripeController
     }
 
     @PostMapping("/createStripeSession")
-    public ResponseEntity createStripeSession(@RequestPart(name="stripePaymentReq", required=true) StripePaymentReq stripePaymentReq)
+    public ResponseEntity createStripeSession(@RequestPart(name = "stripePaymentReq", required = true) StripePaymentReq stripePaymentReq)
     {
         try
         {
             String url = this.stripeService.createStripeSession(stripePaymentReq);
             return ResponseEntity.status(HttpStatus.OK).body(url);
         }
-        catch (StripeException ex) {
+        catch (StripeException ex)
+        {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
     }
 
     @PostMapping("/webhook")
-    public ResponseEntity webhook(@RequestBody(required=true) String payload, HttpServletRequest request)
+    public ResponseEntity webhook(@RequestBody(required = true) String payload, HttpServletRequest request)
     {
         try
         {
             stripeService.handleIncomingStripeWebhook(payload, request);
             return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (SignatureVerificationException ex) {
+        }
+        catch (SignatureVerificationException ex)
+        {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
-        } catch (AccountNotFoundException | CourseNotFoundException | UpdateAccountException | CreateNewEnrolledCourseException | EnrolledCourseNotFoundException | TagNotFoundException | StudentAttemptNotFoundException ex) {
+        }
+        catch (AccountNotFoundException | CourseNotFoundException | UpdateAccountException | CreateNewEnrolledCourseException | EnrolledCourseNotFoundException | TagNotFoundException | StudentAttemptNotFoundException ex)
+        {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        } catch (InputDataValidationException | TagNameExistsException ex) {
+        }
+        catch (InputDataValidationException | AccountEmailExistException | TagNameExistsException ex)
+        {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
-        } catch (UnknownPersistenceException ex) {
+        }
+        catch (UnknownPersistenceException ex)
+        {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
         }
     }
