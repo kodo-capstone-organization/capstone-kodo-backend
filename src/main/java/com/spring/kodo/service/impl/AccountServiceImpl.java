@@ -382,6 +382,7 @@ public class AccountServiceImpl implements AccountService
             throw new UpdateAccountException("StudentAttempt IDs not provided for account to be updated");
         }
 
+        accountToUpdate = accountRepository.saveAndFlush(accountToUpdate);
         return accountToUpdate;
     }
 
