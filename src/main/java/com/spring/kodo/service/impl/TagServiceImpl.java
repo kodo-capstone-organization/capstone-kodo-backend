@@ -99,6 +99,7 @@ public class TagServiceImpl implements TagService
     public Tag getTagByTitleOrCreateNew(String tagTitle) throws TagNameExistsException, UnknownPersistenceException, InputDataValidationException
     {
         Tag tag = null;
+
         try
         {
             tag = getTagByTitle(tagTitle);

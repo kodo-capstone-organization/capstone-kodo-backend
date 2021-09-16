@@ -60,14 +60,10 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
-    public Account createNewAccount(Account newAccount, List<String> tagTitles)
+    public Account createNewAccount(Account newAccount)
             throws
             AccountUsernameExistException,
             AccountEmailExistException,
-            TagNameExistsException,
-            TagNotFoundException,
-            AccountNotFoundException,
-            UpdateAccountException,
             InputDataValidationException,
             UnknownPersistenceException
     {
@@ -76,23 +72,12 @@ public class AccountServiceImpl implements AccountService
             Set<ConstraintViolation<Account>> constraintViolations = validator.validate(newAccount);
             if (constraintViolations.isEmpty())
             {
-                if (!isAccountWithUsernameExists(newAccount.getUsername()))
+                if (!isAccountExistsByUsername(newAccount.getUsername()))
                 {
-                    if (!isAccountWithEmailExists(newAccount.getEmail()))
+                    if (!isAccountExistsByEmail(newAccount.getEmail()))
                     {
                         // Persist Account
                         accountRepository.saveAndFlush(newAccount);
-
-                        // Process Tags
-                        if (tagTitles != null && (!tagTitles.isEmpty()))
-                        {
-                            for (String tagTitle : tagTitles)
-                            {
-                                Tag tag = tagService.getTagByTitleOrCreateNew(tagTitle);
-                                newAccount = addTagToAccount(newAccount, tag);
-                            }
-                        }
-
                         return newAccount;
                     }
                     else
@@ -114,6 +99,34 @@ public class AccountServiceImpl implements AccountService
         {
             throw new UnknownPersistenceException(ex.getMessage());
         }
+    }
+
+
+    @Override
+    public Account createNewAccount(Account newAccount, List<String> tagTitles)
+            throws
+            AccountUsernameExistException,
+            AccountEmailExistException,
+            TagNameExistsException,
+            TagNotFoundException,
+            AccountNotFoundException,
+            UpdateAccountException,
+            InputDataValidationException,
+            UnknownPersistenceException
+    {
+        newAccount = createNewAccount(newAccount);
+
+        // Process Tags
+        if (tagTitles != null && (!tagTitles.isEmpty()))
+        {
+            for (String tagTitle : tagTitles)
+            {
+                Tag tag = tagService.getTagByTitleOrCreateNew(tagTitle);
+                newAccount = addTagToAccount(newAccount, tag);
+            }
+        }
+
+        return newAccount;
     }
 
     @Override
@@ -474,31 +487,15 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
-    public Boolean isAccountWithUsernameExists(String username) throws AccountNotFoundException
+    public Boolean isAccountExistsByUsername(String username)
     {
-        try
-        {
-            Account account = getAccountByUsername(username);
-            return true;
-        }
-        catch (AccountNotFoundException ex)
-        {
-            return false;
-        }
+        return accountRepository.existsByUsername(username);
     }
 
     @Override
-    public Boolean isAccountWithEmailExists(String email) throws AccountNotFoundException
+    public Boolean isAccountExistsByEmail(String email)
     {
-        try
-        {
-            Account account = getAccountByEmail(email);
-            return true;
-        }
-        catch (AccountNotFoundException ex)
-        {
-            return false;
-        }
+        return accountRepository.existsByEmail(email);
     }
 
 
