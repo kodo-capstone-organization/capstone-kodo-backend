@@ -1,21 +1,26 @@
-# Capstone-Kodo-Backend
+# Kodo Backend Application
+
+Kodo is a MOOC platform that offers computing-related courses specifically to address market shifts towards a digital world
 
 ## Setup
 
-### Database
+### Start up
 
-Kodo uses the following databases:
-- Cloud SQL for relational data management
-- Cloud Storage for file storage
+cd to ```/capstone-kodo-backend``` on your terminal and run the following command on ```./startup_kodo.sh```
 
-For MySQL usage, all developers should utilise a local database for personal testing prior to deployment. Cloud SQL should only be used for dev and prod environment.
+### Kodo Database
 
-#### Setup
+The current application automatically deletes all existing data on every startup. In order to avoid reloading the database, change the ```CONFIG_PROFILE_TYPE``` value to ```prod```
 
-1. Set environment variables on Intellij
-    - Create three seperate configurations on Intellij, each configuration will contain necessary credentials to access the associated database based on the environment.
-    - Repeat the following steps for each configuration: Edit configuration > Add environment variables > Apply changes.
-    
-2. Test MySQL database connection
-    - For Cloud SQL usage, add private IP address to Cloud SQL Account Authorised network prior to testing.
-    - Open database tab > Add MySQL database > Input credentials > Test connection. Repeat this step for each database.
+### Stripe
+
+Run the following steps to listen to incoming Stripe events on your local machine
+
+- download ```stripe cli``` on your terminal
+- run ```stripe login``` on your terminal
+- replace the stripe endpoint secret value in the ```startup_kodo.sh``` file to the temporary endpoint secret given by stripe cli
+- run ```stripe listen --forward-to http://localhost:8080/stripe/webhook``` to redirect all stripe events to your local machine
+
+## Production Site
+
+Our production site is hosted on heroku: [https://kodo-capstone-backend.herokuapp.com/](https://kodo-capstone-backend.herokuapp.com/)
