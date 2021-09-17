@@ -4,11 +4,9 @@ Kodo is a MOOC platform that offers computing-related courses specifically to ad
 
 ## Setup
 
-### Start up
-
-cd to ```/capstone-kodo-backend``` on your terminal and run the following command on ```./startup_kodo.sh```
-
 ### Kodo Database
+
+Create a database named ```kodo```
 
 The current application automatically deletes all existing data on every startup. In order to avoid reloading the database, change the ```CONFIG_PROFILE_TYPE``` value to ```prod```
 
@@ -20,6 +18,11 @@ Run the following steps to listen to incoming Stripe events on your local machin
 - run ```stripe login``` on your terminal
 - replace the stripe endpoint secret value in the ```startup_kodo.sh``` file to the temporary endpoint secret given by stripe cli
 - run ```stripe listen --forward-to http://localhost:8080/stripe/webhook``` to redirect all stripe events to your local machine
+
+## Running Kodo Backend
+
+cd to ```/capstone-kodo-backend``` on your terminal and run the following command on ```./startup_kodo.sh```
+
 
 ## Production Site
 
