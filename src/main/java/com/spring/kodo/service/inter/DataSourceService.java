@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 public interface DataSourceService
 {
-    void dropDatabase() throws SQLException;
+    void truncateAllTables() throws SQLException;
 
     void createDatabase() throws SQLException;
 }

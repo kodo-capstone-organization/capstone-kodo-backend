@@ -1,5 +1,6 @@
 package com.spring.kodo.config;
 
+import com.spring.kodo.KodoApplication;
 import com.spring.kodo.entity.*;
 import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.enumeration.MultimediaType;
@@ -31,9 +32,6 @@ public class DatabaseConfig
 
     @Autowired
     private DataSourceService dataSourceService;
-
-    @Autowired
-    private RestartService restartService;
 
     @Autowired
     private ForumPostService forumPostService;
@@ -174,35 +172,14 @@ public class DatabaseConfig
     @EventListener(ApplicationReadyEvent.class)
     public void onStartUp() throws Exception
     {
-        try
-        {
             // Stop Heroku from updating Google Cloud SQL on every git change
-            if (configProfileType.equals("prod"))
+            if (configProfileType.equals("dev"))
             {
-                System.out.println("=== Production Configuration ===");
-                return;
-            }
-
-            this.tagService.getTagByTagId(1L);
-
-            Scanner sc = new Scanner(System.in);
-            System.out.println("1. Reload Data");
-            System.out.println("2. Do Nothing");
-            System.out.print("> ");
-
-            if (sc.nextInt() == 1)
-            {
-                dataSourceService.dropDatabase();
                 dataSourceService.createDatabase();
-                restartService.restartApp();
+                dataSourceService.truncateAllTables();
+                loadData();
             }
 
-            sc.close();
-        }
-        catch (TagNotFoundException ex)
-        {
-            loadData();
-        }
     }
 
     public void loadData() throws Exception
