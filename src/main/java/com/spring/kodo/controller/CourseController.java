@@ -264,6 +264,43 @@ public class CourseController
         }
     }
 
+//    @PutMapping("/replaceTagsToCourse")
+//    public Course replaceTagsToCourse(
+//            @RequestPart(name="courseId", required = true) Long courseId,
+//            @RequestPart(name="tagTitles", required = true) List<String> tagTitles
+//    )
+//    {
+//        if (courseId != null)
+//        {
+//            if (tagTitles != null)
+//            {
+//                try
+//                {
+//                    Course course = courseService.getCourseByCourseId(courseId);
+//                    course = courseService.replaceTagsToCourse(course, tagTitles);
+//
+//                    return course;
+//                }
+//                catch (CourseNotFoundException ex)
+//                {
+//                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+//                }
+//                catch (UnknownPersistenceException | InputDataValidationException | TagNameExistsException | UpdateCourseException ex)
+//                {
+//                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+//                }
+//            }
+//            else
+//            {
+//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Tag Titles");
+//            }
+//        }
+//        else
+//        {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Course ID");
+//        }
+//    }
+
     @DeleteMapping("/toggleEnrollmentActiveStatus/{courseId}&{requestingAccountId}")
     public ResponseEntity toggleEnrollmentActiveStatus(@PathVariable Long courseId, @PathVariable Long requestingAccountId)
     {

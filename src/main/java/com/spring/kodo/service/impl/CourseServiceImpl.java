@@ -14,6 +14,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -266,6 +267,7 @@ public class CourseServiceImpl implements CourseService
     @Override
     public Course addTagToCourse(Course course, String tagTitle) throws CourseNotFoundException, TagNotFoundException, UpdateCourseException, TagNameExistsException, UnknownPersistenceException, InputDataValidationException
     {
+        course = getCourseByCourseId(course.getCourseId());
         Tag tag = tagService.getTagByTitleOrCreateNew(tagTitle);
 
         if (!course.getCourseTags().contains(tag))
@@ -278,7 +280,56 @@ public class CourseServiceImpl implements CourseService
                     " to course with ID: " + course.getCourseId() + " as tag is already linked to this course");
         }
 
+        courseRepository.saveAndFlush(course);
         return course;
+    }
+
+    @Override
+    public Course replaceTagsToCourse(Course course, List<String> tagTitles) throws CourseNotFoundException, UpdateCourseException, TagNameExistsException, UnknownPersistenceException, InputDataValidationException
+    {
+        if (course != null)
+        {
+            if (course.getCourseId() != null)
+            {
+                if (tagTitles != null)
+                {
+                    course = getCourseByCourseId(course.getCourseId());
+                    Tag tag;
+                    List<Tag> tags = new ArrayList<>();
+
+                    for (String tagTitle : tagTitles)
+                    {
+                        tag = tagService.getTagByTitleOrCreateNew(tagTitle);
+                        if (!tags.contains(tag))
+                        {
+                            tags.add(tag);
+                        }
+                        else
+                        {
+                            throw new UpdateCourseException("Provided tag titles contain repetitions");
+                        }
+                    }
+
+                    course.getCourseTags().clear();
+                    course.getCourseTags().addAll(tags);
+
+                    courseRepository.saveAndFlush(course);
+                    return course;
+                }
+                else
+                {
+                    throw new UpdateCourseException("Tag Titles cannot be null");
+                }
+            }
+            else
+            {
+                throw new UpdateCourseException("Course ID cannot be null");
+            }
+        }
+        else
+        {
+            throw new UpdateCourseException("Course cannot be null");
+        }
     }
 
     @Override

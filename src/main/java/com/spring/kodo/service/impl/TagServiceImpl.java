@@ -124,5 +124,11 @@ public class TagServiceImpl implements TagService
     {
         return tagRepository.findTopRelevantTagsThroughFrequencyWithLimitByAccountId(accountId, limit);
     }
+    
+    @Override
+    public Tag deleteTagByTagId(Long tagId)
+    {
+        
+    }
 }
 
