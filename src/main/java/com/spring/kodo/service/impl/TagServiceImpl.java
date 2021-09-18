@@ -4,6 +4,7 @@ import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Course;
 import com.spring.kodo.entity.Tag;
 import com.spring.kodo.repository.TagRepository;
+import com.spring.kodo.restentity.response.TagWithAccountsCountAndCoursesCount;
 import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.CourseService;
 import com.spring.kodo.service.inter.TagService;
@@ -124,6 +125,14 @@ public class TagServiceImpl implements TagService
     public List<Tag> getAllTags()
     {
         return tagRepository.findAll();
+    }
+
+    @Override
+    public List<TagWithAccountsCountAndCoursesCount> getAllTagsWithAccountsCountAndCoursesCount()
+    {
+        List<TagWithAccountsCountAndCoursesCount> tagsWithAccountsCountAndCoursesCount = tagRepository.findAllTagsWithAccountsCountAndCoursesCount();
+
+        return tagsWithAccountsCountAndCoursesCount;
     }
 
     @Override

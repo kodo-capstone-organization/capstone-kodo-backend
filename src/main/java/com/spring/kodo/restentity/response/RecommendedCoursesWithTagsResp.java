@@ -5,16 +5,16 @@ import com.spring.kodo.entity.Tag;
 
 import java.util.List;
 
-public class RecommendedCoursesWithTags
+public class RecommendedCoursesWithTagsResp
 {
     private List<CourseWithTutorAndRatingResp> courses;
     private List<Tag> tags;
 
-    public RecommendedCoursesWithTags()
+    public RecommendedCoursesWithTagsResp()
     {
     }
 
-    public RecommendedCoursesWithTags(List<CourseWithTutorAndRatingResp> courses, List<Tag> tags)
+    public RecommendedCoursesWithTagsResp(List<CourseWithTutorAndRatingResp> courses, List<Tag> tags)
     {
         this.courses = courses;
         this.tags = tags;

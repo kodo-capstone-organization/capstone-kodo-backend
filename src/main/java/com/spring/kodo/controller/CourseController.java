@@ -4,7 +4,7 @@ import com.spring.kodo.entity.*;
 import com.spring.kodo.restentity.request.CreateNewCourseReq;
 import com.spring.kodo.restentity.request.UpdateCourseReq;
 import com.spring.kodo.restentity.response.CourseWithTutorAndRatingResp;
-import com.spring.kodo.restentity.response.RecommendedCoursesWithTags;
+import com.spring.kodo.restentity.response.RecommendedCoursesWithTagsResp;
 import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.exception.*;
 import org.slf4j.Logger;
@@ -126,7 +126,7 @@ public class CourseController
 
 
     @GetMapping("/getAllCoursesToRecommendWithLimitByAccountId/{accountId}/{limit}")
-    public RecommendedCoursesWithTags getAllCoursesToRecommendWithLimitByAccountId(@PathVariable Long accountId, @PathVariable Integer limit)
+    public RecommendedCoursesWithTagsResp getAllCoursesToRecommendWithLimitByAccountId(@PathVariable Long accountId, @PathVariable Integer limit)
     {
         try
         {
@@ -150,9 +150,9 @@ public class CourseController
                 );
             }
 
-            RecommendedCoursesWithTags recommendedCoursesWithTags = new RecommendedCoursesWithTags(courseWithTutorAndRatingResps, topTags);
+            RecommendedCoursesWithTagsResp recommendedCoursesWithTagsResp = new RecommendedCoursesWithTagsResp(courseWithTutorAndRatingResps, topTags);
 
-            return recommendedCoursesWithTags;
+            return recommendedCoursesWithTagsResp;
         }
         catch (AccountNotFoundException | CourseNotFoundException ex)
         {

@@ -1,6 +1,7 @@
 package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.Tag;
+import com.spring.kodo.restentity.response.TagWithAccountsCountAndCoursesCount;
 import com.spring.kodo.util.exception.DeleteTagException;
 import com.spring.kodo.util.exception.TagNotFoundException;
 import com.spring.kodo.service.inter.TagService;
@@ -39,6 +40,12 @@ public class TagController
     public List<Tag> getAllTags()
     {
         return tagService.getAllTags();
+    }
+
+    @GetMapping("/getAllTagsWithAccountsCountAndCoursesCount")
+    public List<TagWithAccountsCountAndCoursesCount> getAllTagsWithAccountsCountAndCoursesCount()
+    {
+        return tagService.getAllTagsWithAccountsCountAndCoursesCount();
     }
 
     @GetMapping("/deleteTagByTagId/{tagId}")
