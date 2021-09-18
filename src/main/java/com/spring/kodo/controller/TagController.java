@@ -1,6 +1,7 @@
 package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.Tag;
+import com.spring.kodo.util.exception.DeleteTagException;
 import com.spring.kodo.util.exception.TagNotFoundException;
 import com.spring.kodo.service.inter.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class TagController
     {
         try
         {
-            Tag tag = this.tagService.getTagByTagId(tagId);
+            Tag tag = tagService.getTagByTagId(tagId);
             return tag;
         }
         catch (TagNotFoundException ex)
@@ -37,6 +38,25 @@ public class TagController
     @GetMapping("/getAllTags")
     public List<Tag> getAllTags()
     {
-        return this.tagService.getAllTags();
+        return tagService.getAllTags();
+    }
+
+    @GetMapping("/deleteTagByTagId/{tagId}")
+    public Tag deleteTagByTagId(@PathVariable Long tagId)
+    {
+        try
+        {
+            Tag tag = tagService.deleteTagByTagId(tagId);
+
+            return tag;
+        }
+        catch (TagNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+        catch (DeleteTagException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
     }
 }

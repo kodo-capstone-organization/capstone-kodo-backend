@@ -1,10 +1,7 @@
 package com.spring.kodo.service.inter;
 
 import com.spring.kodo.entity.Tag;
-import com.spring.kodo.util.exception.InputDataValidationException;
-import com.spring.kodo.util.exception.TagNameExistsException;
-import com.spring.kodo.util.exception.TagNotFoundException;
-import com.spring.kodo.util.exception.UnknownPersistenceException;
+import com.spring.kodo.util.exception.*;
 
 import java.util.List;
 
@@ -21,4 +18,6 @@ public interface TagService
     List<Tag> getAllTags();
 
     List<Tag> getTopRelevantTagsThroughFrequencyWithLimitByAccountId(Long accountId, Integer limit);
+
+    Tag deleteTagByTagId(Long tagId) throws DeleteTagException, TagNotFoundException;
 }

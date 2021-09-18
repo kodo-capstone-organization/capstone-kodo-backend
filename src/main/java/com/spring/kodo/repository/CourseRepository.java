@@ -24,6 +24,9 @@ public interface CourseRepository extends JpaRepository<Course, Long>
     @Query(value = "SELECT c.* FROM Tag t JOIN Course_Course_Tags cct JOIN Course c ON t.tag_id = cct.tag_id AND c.course_id = cct.course_id WHERE t.title = :tagTitle", nativeQuery = true)
     List<Course> findAllCoursesByTagTitle(@Param("tagTitle") String tagTitle);
 
+    @Query(value = "SELECT c.* FROM Course c JOIN Course_Course_Tags cct ON c.course_id = cct.course_id WHERE cct.tag_id = :tagId", nativeQuery = true)
+    List<Course> findAllCoursesByTagId(@Param("tagId") Long tagId);
+
     @Query("SELECT c FROM Course c WHERE c.name LIKE %:keyword%")
     List<Course> findAllCoursesByKeyword(@Param("keyword") String keyword);
 

@@ -146,10 +146,19 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
-    public List<Course> getAllCoursesByTagTitle(String tagTitle) throws TagNotFoundException
+    public List<Course> getAllCoursesByTagTitle(String tagTitle)
     {
-        tagService.getTagByTitle(tagTitle);
-        return courseRepository.findAllCoursesByTagTitle(tagTitle);
+        List<Course> courses = courseRepository.findAllCoursesByTagTitle(tagTitle);
+
+        return courses;
+    }
+
+    @Override
+    public List<Course> getAllCoursesByTagId(Long tagId)
+    {
+        List<Course> courses = courseRepository.findAllCoursesByTagId(tagId);
+
+        return courses;
     }
 
     @Override

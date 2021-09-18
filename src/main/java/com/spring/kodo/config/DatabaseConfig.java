@@ -179,7 +179,10 @@ public class DatabaseConfig
                 dataSourceService.truncateAllTables();
                 loadData();
             }
-
+            else
+            {
+                System.out.println("\n===== 1. Loading Init Data to Database =====");
+            }
     }
 
     public void loadData() throws Exception

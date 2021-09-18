@@ -39,8 +39,6 @@ public interface AccountService
             FileUploadToGCSException,
             CreateNewAccountException;
 
-    List<Account> getAllAccounts();
-
     Account getAccountByAccountId(Long accountId) throws AccountNotFoundException;
 
     Account getAccountByUsername(String username) throws AccountNotFoundException;
@@ -52,6 +50,10 @@ public interface AccountService
     Account getAccountByEnrolledCourseId(Long enrolledCourseId) throws AccountNotFoundException;
 
     Account getAccountByStudentAttemptId(Long studentAttemptId) throws AccountNotFoundException;
+
+    List<Account> getAllAccounts();
+
+    List<Account> getAllAccountsByTagId(Long tagId);
 
     Account updateAccount(Account account) throws UpdateAccountException, AccountNotFoundException, AccountEmailExistException;
 

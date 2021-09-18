@@ -31,7 +31,9 @@ public interface CourseService
 
     List<Course> getAllCourses();
 
-    List<Course> getAllCoursesByTagTitle(String tagTitle) throws TagNotFoundException;
+    List<Course> getAllCoursesByTagTitle(String tagTitle);
+
+    List<Course> getAllCoursesByTagId(Long tagId);
 
     List<Course> getAllCoursesByKeyword(String keyword) throws CourseWithKeywordNotFoundException;
 

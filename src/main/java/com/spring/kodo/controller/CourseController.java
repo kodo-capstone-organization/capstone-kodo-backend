@@ -102,7 +102,7 @@ public class CourseController
 
             return courseWithTutorAndRatingResps;
         }
-        catch (TagNotFoundException | AccountNotFoundException | CourseNotFoundException ex)
+        catch (AccountNotFoundException | CourseNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }

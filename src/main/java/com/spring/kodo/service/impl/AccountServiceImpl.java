@@ -241,6 +241,15 @@ public class AccountServiceImpl implements AccountService
     public List<Account> getAllAccounts()
     {
         List<Account> accounts = accountRepository.findAll();
+
+        return accounts;
+    }
+
+    @Override
+    public List<Account> getAllAccountsByTagId(Long tagId)
+    {
+        List<Account> accounts = accountRepository.findAllAccountsByTagId(tagId);
+
         return accounts;
     }
 

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -34,6 +35,9 @@ public interface AccountRepository extends JpaRepository<Account, Long>
 
     @Query(value = "SELECT * FROM Account a JOIN Account_Student_Attempts asa ON a.account_id = asa.account_id WHERE asa.student_attempt_id = :studentAttemptId", nativeQuery = true)
     Optional<Account> findByStudentAttemptId(@Param("studentAttemptId") Long studentAttemptId);
+
+    @Query(value = "SELECT a.* FROM Account a JOIN Account_Interests ai ON a.account_id = ai.account_id WHERE ai.tag_id = :tagId", nativeQuery = true)
+    List<Account> findAllAccountsByTagId(@Param("tagId") Long tagId);
 
     Boolean existsByUsername(String username);
 
