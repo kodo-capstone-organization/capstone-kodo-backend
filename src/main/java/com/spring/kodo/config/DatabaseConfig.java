@@ -1,9 +1,11 @@
 package com.spring.kodo.config;
 
+import com.spring.kodo.KodoApplication;
 import com.spring.kodo.entity.*;
 import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.enumeration.MultimediaType;
 import com.spring.kodo.util.enumeration.QuestionType;
+import com.spring.kodo.util.exception.TagNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -11,11 +13,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import static com.spring.kodo.util.Constants.*;
@@ -168,17 +172,14 @@ public class DatabaseConfig
     @EventListener(ApplicationReadyEvent.class)
     public void onStartUp() throws Exception
     {
-        // Stop Heroku from updating Google Cloud SQL on every git change
-        if (configProfileType.equals("dev"))
-        {
-            dataSourceService.createDatabase();
-            dataSourceService.truncateAllTables();
-            loadData();
-        }
-        else
-        {
-            System.out.println("\n===== Application started on port: " + env.getProperty("local.server.port") + " =====");
-        }
+            // Stop Heroku from updating Google Cloud SQL on every git change
+            if (configProfileType.equals("dev"))
+            {
+                dataSourceService.createDatabase();
+                dataSourceService.truncateAllTables();
+                loadData();
+            }
+
     }
 
     public void loadData() throws Exception

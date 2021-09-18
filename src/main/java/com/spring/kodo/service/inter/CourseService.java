@@ -54,8 +54,6 @@ public interface CourseService
 
     Course addTagToCourse(Course course, Tag tag) throws UpdateCourseException, CourseNotFoundException, TagNotFoundException;
 
-    Course replaceTagsToCourse(Course course, List<String> tagTitles) throws CourseNotFoundException, UpdateCourseException, TagNameExistsException, UnknownPersistenceException, InputDataValidationException;
-
     Course addLessonToCourse(Course course, Lesson lesson) throws UpdateCourseException, CourseNotFoundException, LessonNotFoundException;
 
     Double getCourseRating(Long courseId) throws CourseNotFoundException;
