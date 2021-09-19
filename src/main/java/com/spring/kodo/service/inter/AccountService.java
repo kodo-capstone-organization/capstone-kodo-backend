@@ -92,5 +92,5 @@ public interface AccountService
 
     Long deactivateAccount(Long deactivatingAccountId, Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException;
 
-    Account login(String username, String password) throws InvalidLoginCredentialsException, AccountNotFoundException;
+    Account login(String username, String password) throws InvalidLoginCredentialsException;
 }

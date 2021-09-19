@@ -173,7 +173,7 @@ public class DatabaseConfig
     public void onStartUp() throws Exception
     {
             // Stop Heroku from updating Google Cloud SQL on every git change
-            if (configProfileType.equals("dev"))
+            if (configProfileType.toLowerCase(Locale.ROOT).equals("dev"))
             {
                 dataSourceService.createDatabase();
                 dataSourceService.truncateAllTables();
@@ -181,7 +181,8 @@ public class DatabaseConfig
             }
             else
             {
-                System.out.println("\n===== 1. Loading Init Data to Database =====");
+                System.out.println("\n===== Application started on port: " + env.getProperty("local.server.port") + " =====");
+                System.out.println("\n===== No New Data Loaded to Database =====");
             }
     }
 

@@ -187,10 +187,6 @@ public class AccountController
             Account accountLoggedIn = this.accountService.login(username, password);
             return ResponseEntity.status(HttpStatus.OK).body(accountLoggedIn.getAccountId());
         }
-        catch (AccountNotFoundException ex)
-        {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        }
         catch (InvalidLoginCredentialsException ex)
         {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());

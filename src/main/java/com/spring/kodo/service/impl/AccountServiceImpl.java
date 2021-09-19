@@ -606,18 +606,25 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
-    public Account login(String username, String password) throws InvalidLoginCredentialsException, AccountNotFoundException
+    public Account login(String username, String password) throws InvalidLoginCredentialsException
     {
         if (username != null)
         {
-            Account account = getAccountByUsername(username);
-            String hashedPassword = CryptographicHelper.getSHA256Digest(password, account.getSalt());
-
-            if (account.getPassword().equals(hashedPassword))
+            try
             {
-                return account;
+                Account account = getAccountByUsername(username);
+                String hashedPassword = CryptographicHelper.getSHA256Digest(password, account.getSalt());
+
+                if (account.getPassword().equals(hashedPassword))
+                {
+                    return account;
+                }
+                else
+                {
+                    throw new InvalidLoginCredentialsException("Username or Password is invalid");
+                }
             }
-            else
+            catch (AccountNotFoundException ex)
             {
                 throw new InvalidLoginCredentialsException("Username or Password is invalid");
             }
