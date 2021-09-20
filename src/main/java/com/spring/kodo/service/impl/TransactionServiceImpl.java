@@ -17,6 +17,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.math.BigDecimal;
 import java.util.Set;
 
 @Service
@@ -80,6 +81,12 @@ public class TransactionServiceImpl implements TransactionService
     @Override
     public Boolean isAccountExistsByStripeTransactionId(String stripeTransactionId) {
         return transactionRepository.existsByStripeTransactionId(stripeTransactionId);
+    }
+
+    @Override
+    public BigDecimal getAllPlatformEarning()
+    {
+        return this.transactionRepository.getAllPlatformEarning();
     }
 
 
