@@ -11,6 +11,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
 {
     Boolean existsByStripeTransactionId(String stripeTransactionId);
 
-    @Query(value = "SELECT SUM(t.platformFee) FROM Transaction t")
+    @Query(value = "SELECT * FROM Transaction t", nativeQuery = true)
     BigDecimal getAllPlatformEarning();
 }

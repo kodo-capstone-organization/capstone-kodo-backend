@@ -84,10 +84,19 @@ public class TransactionServiceImpl implements TransactionService
     }
 
     @Override
-    public BigDecimal getAllPlatformEarning()
+    public BigDecimal getAllPlatformEarning(Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException
     {
-        return this.transactionRepository.getAllPlatformEarning();
-    }
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
 
+        if (requestingAccount.getIsAdmin())
+        {
+            return this.transactionRepository.getAllPlatformEarning();
+        }
+        else
+            {
+            throw new AccountPermissionDeniedException("You do not have administrative rights to deactivate accounts.");
+        }
+
+    }
 
 }

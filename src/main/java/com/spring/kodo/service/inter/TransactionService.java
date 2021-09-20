@@ -11,5 +11,5 @@ public interface TransactionService
 
     public Boolean isAccountExistsByStripeTransactionId(String stripeTransactionId);
 
-    public BigDecimal getAllPlatformEarning();
+    public BigDecimal getAllPlatformEarning(Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException;
 }
