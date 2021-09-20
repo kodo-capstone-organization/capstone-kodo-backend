@@ -172,18 +172,18 @@ public class DatabaseConfig
     @EventListener(ApplicationReadyEvent.class)
     public void onStartUp() throws Exception
     {
-            // Stop Heroku from updating Google Cloud SQL on every git change
-            if (configProfileType.toLowerCase(Locale.ROOT).equals("dev"))
-            {
-                dataSourceService.createDatabase();
-                dataSourceService.truncateAllTables();
-                loadData();
-            }
-            else
-            {
-                System.out.println("\n===== Application started on port: " + env.getProperty("local.server.port") + " =====");
-                System.out.println("\n===== No New Data Loaded to Database =====");
-            }
+        // Stop Heroku from updating Google Cloud SQL on every git change
+        if (configProfileType.toLowerCase(Locale.ROOT).equals("dev"))
+        {
+            dataSourceService.createDatabase();
+            dataSourceService.truncateAllTables();
+            loadData();
+        }
+        else
+        {
+            System.out.println("\n===== Application started on port: " + env.getProperty("local.server.port") + " =====");
+            System.out.println("\n===== No New Data Loaded to Database =====");
+        }
     }
 
     public void loadData() throws Exception
