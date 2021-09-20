@@ -93,13 +93,13 @@ public class StripeServiceImpl implements StripeService
                         .addLineItem(
                                 SessionCreateParams.LineItem.builder()
                                         .setName(stripePaymentReq.getTutorName())
-                                        .setAmount(stripePaymentReq.getAmount().longValue() * 100)
+                                        .setAmount(stripePaymentReq.getAmount().multiply(new BigDecimal(100)).longValue())
                                         .setCurrency("sgd")
                                         .setQuantity(1L)
                                         .build())
                         .setPaymentIntentData(
                                 SessionCreateParams.PaymentIntentData.builder()
-                                        .setApplicationFeeAmount(stripePaymentReq.getAmount().multiply(Constants.PLATFORM_FEE_PERCENTAGE).longValue() * 100)
+                                        .setApplicationFeeAmount(stripePaymentReq.getAmount().multiply(new BigDecimal(100)).multiply(Constants.PLATFORM_FEE_PERCENTAGE).longValue())
                                         .setTransferData(
                                                 SessionCreateParams.PaymentIntentData.TransferData.builder()
                                                         .setDestination(stripePaymentReq.getTutorStripeAccountId())
@@ -168,7 +168,7 @@ public class StripeServiceImpl implements StripeService
         EnrolledCourse enrolledCourse = enrolledCourseService.createNewEnrolledCourse(student.getAccountId(), course.getCourseId());
         accountService.addEnrolledCourseToAccount(student, enrolledCourse);
 
-        Transaction newTransaction = new Transaction(session.getId(), new BigDecimal(session.getAmountTotal() / 100));
+        Transaction newTransaction = new Transaction(session.getId(), new BigDecimal(session.getAmountTotal()).divide(new BigDecimal(100)));
         newTransaction = this.transactionService.createNewTransaction(newTransaction, studentId, tutorId, courseId);
     }
 }

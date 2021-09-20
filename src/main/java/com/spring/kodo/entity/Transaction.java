@@ -9,6 +9,7 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
 @Entity
@@ -75,10 +76,10 @@ public class Transaction
         this.coursePrice = coursePrice;
 
         // Total application fee consisting of Kodo platform fee and Stripe fees
-        BigDecimal totalApplicationFee = Constants.PLATFORM_FEE_PERCENTAGE.multiply(this.coursePrice);
+        BigDecimal totalApplicationFee = Constants.PLATFORM_FEE_PERCENTAGE.multiply(this.coursePrice).setScale(2, RoundingMode.DOWN);
 
-        this.tutorPayout = this.coursePrice.subtract(totalApplicationFee);
-        this.stripeFee = Constants.STRIPE_FEE_PERCENTAGE.multiply(this.coursePrice).add(Constants.STRIPE_FEE_ACCOUNT_BASE);
+        this.tutorPayout = this.coursePrice.subtract(totalApplicationFee).setScale(2, RoundingMode.DOWN);
+        this.stripeFee = Constants.STRIPE_FEE_PERCENTAGE.multiply(this.coursePrice).add(Constants.STRIPE_FEE_ACCOUNT_BASE).setScale(2, RoundingMode.DOWN);
 
         // Net platform fee receivable by Kodo after paying for Stripe fees
         this.platformFee = totalApplicationFee.subtract(this.stripeFee);

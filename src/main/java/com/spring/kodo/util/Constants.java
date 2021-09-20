@@ -12,7 +12,7 @@ public class Constants
     public static final String PROJECT_NAME = "kodo-backend";
 
     public static final BigDecimal STRIPE_FEE_ACCOUNT_BASE = BigDecimal.valueOf(0.50);
-    public static final BigDecimal STRIPE_FEE_PERCENTAGE = BigDecimal.valueOf(0.34);
+    public static final BigDecimal STRIPE_FEE_PERCENTAGE = BigDecimal.valueOf(0.034);
     public static final BigDecimal PLATFORM_FEE_PERCENTAGE = BigDecimal.valueOf(0.35);
 
     public static final List<String> LEVELS = Arrays.asList(
