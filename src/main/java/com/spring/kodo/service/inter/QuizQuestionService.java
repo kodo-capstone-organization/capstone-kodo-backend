@@ -19,6 +19,8 @@ public interface QuizQuestionService
 
     List<QuizQuestion> getAllQuizQuestions();
 
+    List<QuizQuestion> getAllQuizQuestionsByQuizId(Long quizId);
+
     QuizQuestion addQuizQuestionOptionToQuizQuestion(QuizQuestion quizQuestion, QuizQuestionOption quizQuestionOption) throws UpdateQuizQuestionException, QuizQuestionNotFoundException, QuizQuestionOptionNotFoundException;
 
     QuizQuestion addQuizQuestionOptionsToQuizQuestion(QuizQuestion quizQuestion, List<QuizQuestionOption> quizQuestionOptions) throws UpdateQuizQuestionException, QuizQuestionNotFoundException, QuizQuestionOptionNotFoundException;
