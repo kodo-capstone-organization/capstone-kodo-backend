@@ -4,6 +4,7 @@ import com.spring.kodo.entity.Transaction;
 import com.spring.kodo.util.exception.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public interface TransactionService
 {
@@ -11,5 +12,5 @@ public interface TransactionService
 
     public Boolean isAccountExistsByStripeTransactionId(String stripeTransactionId);
 
-    public BigDecimal getAllPlatformEarning(Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException;
+    public List<Transaction> getAllTransactions(Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException;
 }

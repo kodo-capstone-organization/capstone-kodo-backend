@@ -18,6 +18,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -84,13 +85,13 @@ public class TransactionServiceImpl implements TransactionService
     }
 
     @Override
-    public BigDecimal getAllPlatformEarning(Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException
+    public List<Transaction> getAllTransactions(Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException
     {
         Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
 
         if (requestingAccount.getIsAdmin())
         {
-            return this.transactionRepository.getAllPlatformEarning();
+            return this.transactionRepository.findAll();
         }
         else
             {
