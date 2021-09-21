@@ -59,8 +59,6 @@ public class QuizController
 
                     quizQuestion = quizQuestionService.addQuizQuestionOptionsToQuizQuestion(quizQuestion, quizQuestionOptions);
                     quiz = quizService.addQuizQuestionToQuiz(quiz, quizQuestion);
-
-                    System.out.println("hello");
                 }
 
                 return quiz;
@@ -108,5 +106,39 @@ public class QuizController
     public List<QuizWithStudentAttemptCountResp> getAllQuizzesWithStudentAttemptCountByEnrolledLessonId(@PathVariable Long enrolledLessonId)
     {
         return this.quizService.getAllQuizzesWithStudentAttemptCountByEnrolledLessonId(enrolledLessonId);
+    }
+
+    @GetMapping("/deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId/{quizId}")
+    public Boolean deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId(@PathVariable Long quizId)
+    {
+        if (quizId != null)
+        {
+            try
+            {
+//                Quiz quiz = quizService.getQuizByQuizId(quizId);
+//                for (QuizQuestion quizQuestion : quiz.getQuizQuestions())
+//                {
+//                    for (QuizQuestionOption quizQuestionOption : quizQuestion.getQuizQuestionOptions())
+//                    {
+//                        quizQuestionOptionService.deleteQuizQuestionOption(quizQuestionOption.getQuizQuestionOptionId());
+//                    }
+//                    quizQuestionService.deleteQuizQuestion(quizQuestion.getQuizQuestionId());
+//                }
+
+                return quizService.deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId(quizId);
+            }
+            catch (QuizNotFoundException | QuizQuestionOptionNotFoundException | QuizQuestionNotFoundException ex)
+            {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+            }
+            catch (DeleteQuizQuestionOptionException | DeleteQuizQuestionException | DeleteQuizException ex)
+            {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+            }
+        }
+        else
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Quiz ID");
+        }
     }
 }

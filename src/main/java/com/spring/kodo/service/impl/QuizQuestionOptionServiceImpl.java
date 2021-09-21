@@ -1,12 +1,11 @@
 package com.spring.kodo.service.impl;
 
+import com.spring.kodo.entity.QuizQuestion;
 import com.spring.kodo.entity.QuizQuestionOption;
 import com.spring.kodo.repository.QuizQuestionOptionRepository;
 import com.spring.kodo.service.inter.QuizQuestionOptionService;
 import com.spring.kodo.util.MessageFormatterUtil;
-import com.spring.kodo.util.exception.InputDataValidationException;
-import com.spring.kodo.util.exception.QuizQuestionOptionNotFoundException;
-import com.spring.kodo.util.exception.UnknownPersistenceException;
+import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,7 @@ import java.util.Set;
 public class QuizQuestionOptionServiceImpl implements QuizQuestionOptionService
 {
     @Autowired
-    private QuizQuestionOptionRepository newQuizQuestionOptionRepository;
+    private QuizQuestionOptionRepository quizQuestionOptionRepository;
 
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -41,7 +40,7 @@ public class QuizQuestionOptionServiceImpl implements QuizQuestionOptionService
             Set<ConstraintViolation<QuizQuestionOption>> constraintViolations = validator.validate(newQuizQuestionOption);
             if (constraintViolations.isEmpty())
             {
-                newQuizQuestionOptionRepository.saveAndFlush(newQuizQuestionOption);
+                quizQuestionOptionRepository.saveAndFlush(newQuizQuestionOption);
                 return newQuizQuestionOption;
             }
             else
@@ -66,7 +65,7 @@ public class QuizQuestionOptionServiceImpl implements QuizQuestionOptionService
                 Set<ConstraintViolation<QuizQuestionOption>> constraintViolations = validator.validate(newQuizQuestionOption);
                 if (constraintViolations.isEmpty())
                 {
-                    newQuizQuestionOptionRepository.saveAndFlush(newQuizQuestionOption);
+                    quizQuestionOptionRepository.saveAndFlush(newQuizQuestionOption);
                     newQuizQuestionOptions.set(i, newQuizQuestionOption);
                 }
                 else
@@ -85,7 +84,7 @@ public class QuizQuestionOptionServiceImpl implements QuizQuestionOptionService
     @Override
     public QuizQuestionOption getQuizQuestionOptionByQuizQuestionOptionId(Long quizQuestionId) throws QuizQuestionOptionNotFoundException
     {
-        QuizQuestionOption quizQuestion = newQuizQuestionOptionRepository.findById(quizQuestionId).orElse(null);
+        QuizQuestionOption quizQuestion = quizQuestionOptionRepository.findById(quizQuestionId).orElse(null);
 
         if (quizQuestion != null)
         {
@@ -100,7 +99,7 @@ public class QuizQuestionOptionServiceImpl implements QuizQuestionOptionService
     @Override
     public QuizQuestionOption getQuizQuestionOptionByLeftContent(String leftContent) throws QuizQuestionOptionNotFoundException
     {
-        QuizQuestionOption quizQuestion = newQuizQuestionOptionRepository.findByLeftContent(leftContent).orElse(null);
+        QuizQuestionOption quizQuestion = quizQuestionOptionRepository.findByLeftContent(leftContent).orElse(null);
 
         if (quizQuestion != null)
         {
@@ -115,7 +114,7 @@ public class QuizQuestionOptionServiceImpl implements QuizQuestionOptionService
     @Override
     public QuizQuestionOption getQuizQuestionOptionByRightContent(String rightContent) throws QuizQuestionOptionNotFoundException
     {
-        QuizQuestionOption quizQuestion = newQuizQuestionOptionRepository.findByRightContent(rightContent).orElse(null);
+        QuizQuestionOption quizQuestion = quizQuestionOptionRepository.findByRightContent(rightContent).orElse(null);
 
         if (quizQuestion != null)
         {
@@ -130,6 +129,35 @@ public class QuizQuestionOptionServiceImpl implements QuizQuestionOptionService
     @Override
     public List<QuizQuestionOption> getAllQuizQuestionOptions()
     {
-        return newQuizQuestionOptionRepository.findAll();
+        return quizQuestionOptionRepository.findAll();
+    }
+
+    @Override
+    public Boolean deleteQuizQuestionOptionByQuizQuestionOptionId(Long quizQuestionOptionId) throws DeleteQuizQuestionOptionException, QuizQuestionOptionNotFoundException
+    {
+        if (quizQuestionOptionId != null)
+        {
+            QuizQuestionOption quizQuestionOptionToDelete = getQuizQuestionOptionByQuizQuestionOptionId(quizQuestionOptionId);
+
+            if (!isQuizQuestionOptionContainsStudentAttemptAnswersByQuizQuestionOptionId(quizQuestionOptionId))
+            {
+                quizQuestionOptionRepository.delete(quizQuestionOptionToDelete);
+                return true;
+            }
+            else
+            {
+                throw new DeleteQuizQuestionOptionException("QuizQuestionOption that has StudentAttemptAnswers cannot be deleted");
+            }
+        }
+        else
+        {
+            throw new DeleteQuizQuestionOptionException("QuizQuestionOption ID cannot be null");
+        }
+    }
+
+    @Override
+    public Boolean isQuizQuestionOptionContainsStudentAttemptAnswersByQuizQuestionOptionId(Long quizQuestionOptionId)
+    {
+        return quizQuestionOptionRepository.containsStudentAttemptQuestions(quizQuestionOptionId);
     }
 }

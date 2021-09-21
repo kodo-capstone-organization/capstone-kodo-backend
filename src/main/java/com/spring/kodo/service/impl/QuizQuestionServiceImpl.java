@@ -222,4 +222,40 @@ public class QuizQuestionServiceImpl implements QuizQuestionService
             throw new UpdateQuizQuestionException("QuizQuestion cannot be null");
         }
     }
+
+    @Override
+    public Boolean deleteQuizQuestionByQuizQuestionId(Long quizQuestionId) throws DeleteQuizQuestionException, QuizQuestionNotFoundException
+    {
+        if (quizQuestionId != null)
+        {
+            QuizQuestion quizQuestionToDelete = getQuizQuestionByQuizQuestionId(quizQuestionId);
+
+            if (!isQuizQuestionContainsStudentAttemptQuestionsByQuizQuestionId(quizQuestionId))
+            {
+                if (quizQuestionToDelete.getQuizQuestionOptions().size() == 0)
+                {
+                    quizQuestionRepository.delete(quizQuestionToDelete);
+                    return true;
+                }
+                else
+                {
+                    throw new DeleteQuizQuestionException("QuizQuestion that has QuizQuestionOptions cannot be deleted");
+                }
+            }
+            else
+            {
+                throw new DeleteQuizQuestionException("QuizQuestion that has StudentAttemptQuestions cannot be deleted");
+            }
+        }
+        else
+        {
+            throw new DeleteQuizQuestionException("QuizQuestion ID cannot be null");
+        }
+    }
+
+    @Override
+    public Boolean isQuizQuestionContainsStudentAttemptQuestionsByQuizQuestionId(Long quizQuestionId)
+    {
+        return quizQuestionRepository.containsStudentAttemptQuestions(quizQuestionId);
+    }
 }

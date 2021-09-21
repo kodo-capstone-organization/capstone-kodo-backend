@@ -31,4 +31,9 @@ public interface QuizQuestionRepository extends JpaRepository<QuizQuestion, Long
             "        AND cl.course_id = ac.course_id\n" +
             "WHERE ac.account_id = :tutorId", nativeQuery = true)
     List<QuizQuestion> findAllQuizQuestionsByTutorId(@Param("tutorId") Long tutorId);
+
+    @Query("SELECT COUNT(saq) > 0\n" +
+            "FROM StudentAttemptQuestion saq\n" +
+            "WHERE saq.quizQuestion.quizQuestionId = :quizQuestionId")
+    Boolean containsStudentAttemptQuestions(@Param("quizQuestionId") Long quizQuestionId);
 }

@@ -2,8 +2,10 @@ package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.Quiz;
 import com.spring.kodo.entity.QuizQuestion;
+import com.spring.kodo.entity.QuizQuestionOption;
 import com.spring.kodo.repository.QuizRepository;
 import com.spring.kodo.restentity.response.QuizWithStudentAttemptCountResp;
+import com.spring.kodo.service.inter.QuizQuestionOptionService;
 import com.spring.kodo.service.inter.QuizQuestionService;
 import com.spring.kodo.service.inter.QuizService;
 import com.spring.kodo.util.MessageFormatterUtil;
@@ -28,6 +30,9 @@ public class QuizServiceImpl implements QuizService
 
     @Autowired
     private QuizQuestionService quizQuestionService;
+
+    @Autowired
+    private QuizQuestionOptionService quizQuestionOptionService;
 
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -186,5 +191,39 @@ public class QuizServiceImpl implements QuizService
     public List<QuizWithStudentAttemptCountResp> getAllQuizzesWithStudentAttemptCountByEnrolledLessonId(Long enrolledLessonId)
     {
         return quizRepository.findAllQuizzesWithStudentAttemptCountByEnrolledLessonId(enrolledLessonId);
+    }
+
+    @Override
+    public Boolean deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId(Long quizId) throws DeleteQuizException, QuizNotFoundException, QuizQuestionOptionNotFoundException, DeleteQuizQuestionOptionException, QuizQuestionNotFoundException, DeleteQuizQuestionException
+    {
+        if (quizId != null)
+        {
+            Quiz quizToDelete = getQuizByQuizId(quizId);
+
+            if (quizToDelete.getStudentAttempts().size() == 0)
+            {
+                for (QuizQuestion quizQuestion : quizToDelete.getQuizQuestions())
+                {
+                    for (QuizQuestionOption quizQuestionOption : quizQuestion.getQuizQuestionOptions())
+                    {
+                        quizQuestionOptionService.deleteQuizQuestionOptionByQuizQuestionOptionId(quizQuestionOption.getQuizQuestionOptionId());
+                    }
+                    quizQuestion.getQuizQuestionOptions().clear();
+                    quizQuestionService.deleteQuizQuestionByQuizQuestionId(quizQuestion.getQuizQuestionId());
+                }
+                quizToDelete.getQuizQuestions().clear();
+
+                quizRepository.delete(quizToDelete);
+                return true;
+            }
+            else
+            {
+                throw new DeleteQuizException("Quiz that has StudentAttempts cannot be deleted");
+            }
+        }
+        else
+        {
+            throw new DeleteQuizException("Quiz ID cannot be null");
+        }
     }
 }
