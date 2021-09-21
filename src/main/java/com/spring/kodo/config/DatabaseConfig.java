@@ -871,7 +871,8 @@ public class DatabaseConfig
                                 String.format("%s %s Course", level, language),
                                 String.format("A %s course in %s language", level.toLowerCase(Locale.ROOT), language.toLowerCase(Locale.ROOT)),
                                 price,
-                                String.format("https://%s%scoursebanner.com", level.toLowerCase(Locale.ROOT), language.toLowerCase(Locale.ROOT))
+                                String.format("https://%s%scoursebanner.com", level.toLowerCase(Locale.ROOT), language.toLowerCase(Locale.ROOT)),
+                                true // Assume that enrollment is already active
                         )
                 );
             }

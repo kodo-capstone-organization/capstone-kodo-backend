@@ -69,7 +69,7 @@ public class Course
         this.enrollment = new ArrayList<>();
         this.lessons = new ArrayList<>();
         this.courseTags = new ArrayList<>();
-        this.isEnrollmentActive = true;
+        this.isEnrollmentActive = false; // A new course is inactive by default
     }
 
     public Course(Long courseId, String name, String description, BigDecimal price, String bannerUrl)
@@ -91,6 +91,17 @@ public class Course
         this.description = description;
         this.price = price;
         this.bannerUrl = bannerUrl;
+    }
+
+    public Course(String name, String description, BigDecimal price, String bannerUrl, Boolean isEnrollmentActive)
+    {
+        this();
+
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.bannerUrl = bannerUrl;
+        this.isEnrollmentActive = isEnrollmentActive;
     }
 
     public Long getCourseId()
