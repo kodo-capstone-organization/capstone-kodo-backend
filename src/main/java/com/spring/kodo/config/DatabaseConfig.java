@@ -175,9 +175,26 @@ public class DatabaseConfig
         // Stop Heroku from updating Google Cloud SQL on every git change
         if (configProfileType.toLowerCase(Locale.ROOT).equals("dev"))
         {
-            dataSourceService.createDatabase();
-            dataSourceService.truncateAllTables();
-            loadData();
+            Scanner scanner = new Scanner(System.in);
+
+            System.out.print("1. Reload Data\n");
+            System.out.print("2. Do Nothing\n");
+
+            int option = scanner.nextInt();
+
+            if (option == 1)
+            {
+                dataSourceService.createDatabase();
+                dataSourceService.truncateAllTables();
+                loadData();
+            }
+            else
+            {
+                System.out.println("\n===== Application started on port: " + env.getProperty("local.server.port") + " =====");
+                System.out.println("\n===== No New Data Loaded to Database =====");
+            }
+
+            scanner.close();
         }
         else
         {
