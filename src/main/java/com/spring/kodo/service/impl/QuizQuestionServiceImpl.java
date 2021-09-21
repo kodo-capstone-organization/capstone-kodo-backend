@@ -132,6 +132,12 @@ public class QuizQuestionServiceImpl implements QuizQuestionService
     }
 
     @Override
+    public List<QuizQuestion> getAllQuizQuestionsByTutorId(Long tutorId)
+    {
+        return quizQuestionRepository.findAllQuizQuestionsByTutorId(tutorId);
+    }
+
+    @Override
     public QuizQuestion addQuizQuestionOptionToQuizQuestion(QuizQuestion quizQuestion, QuizQuestionOption quizQuestionOption) throws UpdateQuizQuestionException, QuizQuestionNotFoundException, QuizQuestionOptionNotFoundException
     {
         if (quizQuestion != null)

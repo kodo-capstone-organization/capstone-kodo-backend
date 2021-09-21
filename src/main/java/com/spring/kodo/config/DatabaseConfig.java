@@ -179,6 +179,7 @@ public class DatabaseConfig
 
             System.out.print("1. Reload Data\n");
             System.out.print("2. Do Nothing\n");
+            System.out.print("> ");
 
             int option = scanner.nextInt();
 

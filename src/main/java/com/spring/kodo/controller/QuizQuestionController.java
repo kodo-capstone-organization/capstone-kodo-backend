@@ -37,15 +37,21 @@ public class QuizQuestionController
         }
     }
 
-    @GetMapping("/getAllQuizQuestionQuestions")
+    @GetMapping("/getAllQuizQuestions")
     public List<QuizQuestion> getAllQuizQuestions()
     {
         return this.quizQuestionService.getAllQuizQuestions();
     }
 
-    @GetMapping("/getAllQuizQuestionQuestions/{quizId}")
+    @GetMapping("/getAllQuizQuestionsByQuizId/{quizId}")
     public List<QuizQuestion> getAllQuizQuestionsByQuizId(@PathVariable("quizId") Long quizId)
     {
         return this.quizQuestionService.getAllQuizQuestionsByQuizId(quizId);
+    }
+
+    @GetMapping("/getAllQuizQuestionsByTutorId/{tutorId}")
+    public List<QuizQuestion> getAllQuizQuestionsByTutorId(@PathVariable("tutorId") Long tutorId)
+    {
+        return this.quizQuestionService.getAllQuizQuestionsByTutorId(tutorId);
     }
 }
