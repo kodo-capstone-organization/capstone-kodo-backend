@@ -18,7 +18,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/forumCategory")
-public class ForumCategoryController {
+public class ForumCategoryController
+{
 
     Logger logger = LoggerFactory.getLogger(ForumCategoryController.class);
 
@@ -30,45 +31,65 @@ public class ForumCategoryController {
     @PostMapping("/createNewForumCategory")
     public ForumCategory createNewForumCategory(
             @RequestPart(name = "forumCategory", required = true) CreateNewForumCategoryReq createNewForumCategoryReq
-    ) {
-        if (createNewForumCategoryReq != null) {
+    )
+    {
+        if (createNewForumCategoryReq != null)
+        {
             logger.info("HIT forumCategory/createNewForumCategory | POST | Received : " + createNewForumCategoryReq);
-            try {
+            try
+            {
                 ForumCategory newForumCategory = new ForumCategory(createNewForumCategoryReq.getName(), createNewForumCategoryReq.getDescription());
                 newForumCategory = this.forumCategoryService.createNewForumCategory(newForumCategory, createNewForumCategoryReq.getCourseId());
                 return newForumCategory;
-            } catch (CourseNotFoundException ex) {
+            }
+            catch (CourseNotFoundException ex)
+            {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-            } catch (InputDataValidationException ex) {
+            }
+            catch (InputDataValidationException ex)
+            {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
-            } catch (UnknownPersistenceException ex) {
+            }
+            catch (UnknownPersistenceException ex)
+            {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
             }
-        } else {
+        }
+        else
+        {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Create New Forum Thread Request");
         }
     }
 
     @GetMapping("/getForumCategoryByForumCategoryId/{forumCategoryId}")
-    public ForumCategory getForumCategoryByForumCategoryId(@PathVariable Long forumCategoryId) {
-        try {
+    public ForumCategory getForumCategoryByForumCategoryId(@PathVariable Long forumCategoryId)
+    {
+        try
+        {
             return this.forumCategoryService.getForumCategoryByForumCategoryId(forumCategoryId);
-        } catch (ForumCategoryNotFoundException ex) {
+        }
+        catch (ForumCategoryNotFoundException ex)
+        {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
     }
 
     @GetMapping("/getForumCategoryByName/{name}")
-    public ForumCategory getForumCategoryByName(@PathVariable String name) {
-        try {
+    public ForumCategory getForumCategoryByName(@PathVariable String name)
+    {
+        try
+        {
             return this.forumCategoryService.getForumCategoryByName(name);
-        } catch (ForumCategoryNotFoundException ex) {
+        }
+        catch (ForumCategoryNotFoundException ex)
+        {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
     }
 
     @GetMapping("/getAllForumCategories")
-    public List<ForumCategory> getAllForumCategories() {
+    public List<ForumCategory> getAllForumCategories()
+    {
         return this.forumCategoryService.getAllForumCategories();
     }
 
@@ -77,27 +98,40 @@ public class ForumCategoryController {
     @PutMapping("/updateForumCategory")
     public ForumCategory updateForumCategory(
             @RequestPart(name = "forumCategory", required = true) UpdateForumCategoryReq updateForumCategoryReq
-    ) {
-        if (updateForumCategoryReq != null) {
-            try {
+    )
+    {
+        if (updateForumCategoryReq != null)
+        {
+            try
+            {
                 ForumCategory updatedForumCategory = this.forumCategoryService.updateForumCategory(updateForumCategoryReq.getForumCategory());
                 return updatedForumCategory;
-            } catch (ForumCategoryNotFoundException ex) {
+            }
+            catch (ForumCategoryNotFoundException ex)
+            {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-            } catch (InputDataValidationException ex) {
+            }
+            catch (InputDataValidationException ex)
+            {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
             }
-        } else {
+        }
+        else
+        {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Update Forum Category Request");
         }
     }
 
     @DeleteMapping("/deleteForumCategory/{forumCategoryId}")
-    public ResponseEntity<String> deleteForumCategory(@PathVariable Long forumCategoryId) {
-        try {
+    public ResponseEntity<String> deleteForumCategory(@PathVariable Long forumCategoryId)
+    {
+        try
+        {
             Boolean deletedForumCategory = this.forumCategoryService.deleteForumCategory(forumCategoryId);
             return ResponseEntity.status(HttpStatus.OK).body("Successfully deleted forum category with ID: " + forumCategoryId);
-        } catch (ForumPostNotFoundException | ForumThreadNotFoundException | ForumCategoryNotFoundException ex) {
+        }
+        catch (ForumPostNotFoundException | ForumThreadNotFoundException | ForumCategoryNotFoundException ex)
+        {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
     }
@@ -105,17 +139,26 @@ public class ForumCategoryController {
     @PutMapping("/addForumThreadToForumCategory")
     public ForumCategory addForumThreadToForumCategory(
             @RequestPart(name = "forumCategoryAndForumThread", required = true) AddForumThreadToForumCategoryReq addForumThreadToForumCategoryReq
-    ) {
-        if (addForumThreadToForumCategoryReq != null) {
-            try {
+    )
+    {
+        if (addForumThreadToForumCategoryReq != null)
+        {
+            try
+            {
                 ForumCategory forumCategoryWithThread = this.forumCategoryService.addForumThreadToForumCategory(addForumThreadToForumCategoryReq.getForumCategory(), addForumThreadToForumCategoryReq.getForumThread());
                 return forumCategoryWithThread;
-            } catch (ForumThreadNotFoundException | ForumCategoryNotFoundException ex) {
+            }
+            catch (ForumThreadNotFoundException | ForumCategoryNotFoundException ex)
+            {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-            } catch (UpdateForumCategoryException ex) {
+            }
+            catch (UpdateForumCategoryException ex)
+            {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
             }
-        } else {
+        }
+        else
+        {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Add Forum Thread to Forum Category Request");
         }
     }
