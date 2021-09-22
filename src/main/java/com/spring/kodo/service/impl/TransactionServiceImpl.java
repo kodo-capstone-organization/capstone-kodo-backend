@@ -49,6 +49,7 @@ public class TransactionServiceImpl implements TransactionService
             Set<ConstraintViolation<Transaction>> constraintViolations = validator.validate(newTransaction);
             if (constraintViolations.isEmpty())
             {
+
                 if (!isAccountExistsByStripeTransactionId(newTransaction.getStripeTransactionId()))
                 {
                     Course course = courseService.getCourseByCourseId(courseId);

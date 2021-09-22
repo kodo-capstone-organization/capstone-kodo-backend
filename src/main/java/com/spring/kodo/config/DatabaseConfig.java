@@ -16,10 +16,7 @@ import org.springframework.core.env.Environment;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.spring.kodo.util.Constants.*;
@@ -88,6 +85,9 @@ public class DatabaseConfig
     private FileService fileService;
 
     @Autowired
+    private TransactionService transactionService;
+
+    @Autowired
     private Environment env;
 
     private List<Account> accounts;
@@ -146,6 +146,8 @@ public class DatabaseConfig
 
     private final Long START_TIME;
 
+    private final Random random;
+
     public DatabaseConfig()
     {
         accounts = new ArrayList<>();
@@ -167,6 +169,7 @@ public class DatabaseConfig
         forumPosts = new ArrayList<>();
 
         START_TIME = System.currentTimeMillis();
+        random = new Random();
     }
 
     @EventListener(ApplicationReadyEvent.class)
@@ -498,6 +501,14 @@ public class DatabaseConfig
 
                         enrolledCourse = enrolledCourseService.createNewEnrolledCourse(student.getAccountId(), course.getCourseId());
                         accountService.addEnrolledCourseToAccount(student, enrolledCourse);
+
+                        // Create transaction records assuming students successfully made the payments
+                        // Using a unique value in place of a real stripe sessionId
+                        String randomString = Long.toString(Math.abs(random.nextLong()), 36);
+                        String dummyUniqueStripeSessionId = "cs_test_dummy_" + randomString;
+                        Long tutorId = accountService.getAccountByCourseId(course.getCourseId()).getAccountId();
+                        Transaction newTransaction = new Transaction(dummyUniqueStripeSessionId, course.getPrice());
+                        transactionService.createNewTransaction(newTransaction, student.getAccountId(), tutorId, course.getCourseId());
 
                         for (Lesson lesson : course.getLessons())
                         {
