@@ -64,13 +64,19 @@ public class LessonController
     }
 
     // To be called from CourseController. Lesson should not be updated as a standalone API
-    protected List<Long> updateLessonsInACourse(List<UpdateLessonReq> updateLessonReqs, List<MultipartFile>  lessonMultimedias) throws ContentNotFoundException, LessonNotFoundException, UpdateContentException, UnknownPersistenceException, CreateNewQuizException, InputDataValidationException, MultimediaExistsException, FileUploadToGCSException, MultimediaNotFoundException {
+    protected List<Long> updateLessonsInACourse(List<UpdateLessonReq> updateLessonReqs, List<MultipartFile>  lessonMultimedias) throws ContentNotFoundException, LessonNotFoundException, UpdateContentException, UnknownPersistenceException, CreateNewQuizException, InputDataValidationException, MultimediaExistsException, FileUploadToGCSException, MultimediaNotFoundException, CourseNotFoundException {
 
         List<Long> lessonIds = new ArrayList<>();
 
         // Update lessons and its contents first [SPECIAL CASE]
         for (UpdateLessonReq updateLessonReq: updateLessonReqs)
         {
+            // Create new lesson
+            if (updateLessonReq.getLesson().getLessonId() == null) {
+                Lesson newLesson = lessonService.createNewLesson(new Lesson(updateLessonReq.getLesson().getName(), updateLessonReq.getLesson().getDescription(), updateLessonReq.getLesson().getSequence()));
+                updateLessonReq.getLesson().setLessonId(newLesson.getLessonId());
+            }
+
             List<Long> contentIds = new ArrayList<>();
 
             // Used to match file to multimediaReq
