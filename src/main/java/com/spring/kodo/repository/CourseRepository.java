@@ -93,6 +93,9 @@ public interface CourseRepository extends JpaRepository<Course, Long>
             nativeQuery = true)
     List<Course> findAllCoursesToRecommendByAccountIdAndTagIds(@Param("accountId") Long accountId, @Param("tagIds") List<Long> tagIds);
 
+    @Query(value = "SELECT * FROM Course c WHERE c.date_time_of_creation > NOW() - INTERVAL 14 DAY", nativeQuery = true)
+    List<Course> findAllCoursesCreatedInTheLast14Days();
+
     @Query(value = "SELECT AVG(ec.course_rating) FROM Course c JOIN Enrolled_Course ec WHERE c.course_id = :courseId", nativeQuery = true)
     Double findCourseRatingByCourseId(@Param("courseId") Long courseId);
 

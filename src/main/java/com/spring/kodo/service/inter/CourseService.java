@@ -45,6 +45,8 @@ public interface CourseService
 
     List<Course> getAllCoursesToRecommendByAccountIdAndTagIds(Long accountId, List<Long> tagIds) throws AccountNotFoundException;
 
+    List<Course> getAllCoursesInTheLast14Days();
+
     Course updateCourse(
             Course course,
             List<Long> enrolledCourseIds,
