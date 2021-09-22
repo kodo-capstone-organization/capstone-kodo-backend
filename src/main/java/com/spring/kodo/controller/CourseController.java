@@ -226,7 +226,8 @@ public class CourseController
     @PutMapping("/updateCourse")
     public Course updateCourse(
             @RequestPart(name="updateCourseReq", required = true) UpdateCourseReq updateCourseReq,
-            @RequestPart(name="bannerPicture", required = false) MultipartFile updatedBannerPicture
+            @RequestPart(name="bannerPicture", required = false) MultipartFile updatedBannerPicture,
+            @RequestPart(name="lessonMultimedias", required = false) List<MultipartFile> lessonMultimedias
     )
     {
         if (updateCourseReq != null)
@@ -235,7 +236,7 @@ public class CourseController
             try
             {
                 // Update all lessons and their contents first
-                List<Long> updatedLessonIds = lessonController.updateLessonsInACourse(updateCourseReq.getUpdateLessonReqs());
+                List<Long> updatedLessonIds = lessonController.updateLessonsInACourse(updateCourseReq.getUpdateLessonReqs(), lessonMultimedias);
 
                 // Update course
                 Course updatedCourse = this.courseService.updateCourse(

@@ -19,9 +19,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -62,7 +64,7 @@ public class LessonController
     }
 
     // To be called from CourseController. Lesson should not be updated as a standalone API
-    protected List<Long> updateLessonsInACourse(List<UpdateLessonReq> updateLessonReqs) throws ContentNotFoundException, LessonNotFoundException, UpdateContentException, UnknownPersistenceException, CreateNewQuizException, InputDataValidationException, MultimediaExistsException, FileUploadToGCSException, MultimediaNotFoundException {
+    protected List<Long> updateLessonsInACourse(List<UpdateLessonReq> updateLessonReqs, List<MultipartFile>  lessonMultimedias) throws ContentNotFoundException, LessonNotFoundException, UpdateContentException, UnknownPersistenceException, CreateNewQuizException, InputDataValidationException, MultimediaExistsException, FileUploadToGCSException, MultimediaNotFoundException {
 
         List<Long> lessonIds = new ArrayList<>();
 
@@ -70,6 +72,15 @@ public class LessonController
         for (UpdateLessonReq updateLessonReq: updateLessonReqs)
         {
             List<Long> contentIds = new ArrayList<>();
+
+            // Used to match file to multimediaReq
+            HashMap<String, MultipartFile> fileMap = new HashMap<String, MultipartFile>();
+
+            if (lessonMultimedias != null) {
+                for (MultipartFile file : lessonMultimedias) {
+                    fileMap.put(file.getOriginalFilename(), file);
+                }
+            }
 
             // Retrieve or create quiz
             for (Quiz quiz: updateLessonReq.getQuizzes())
@@ -91,6 +102,10 @@ public class LessonController
 
                 if (multimediaReq.getMultimedia().getContentId() == null)
                 {
+
+                    // Append new multimedia to updateLessonReq
+                    multimediaReq.setMultipartFile(fileMap.get(multimediaReq.getMultimedia().getNewFilename()));
+
                     multimedia = this.multimediaService.createNewMultimedia(multimediaReq.getMultimedia());
                 }
                 else
