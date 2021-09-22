@@ -1,5 +1,6 @@
 package com.spring.kodo.service.impl;
 
+import com.spring.kodo.entity.Course;
 import com.spring.kodo.entity.QuizQuestion;
 import com.spring.kodo.entity.QuizQuestionOption;
 import com.spring.kodo.repository.QuizQuestionOptionRepository;
@@ -130,6 +131,42 @@ public class QuizQuestionOptionServiceImpl implements QuizQuestionOptionService
     public List<QuizQuestionOption> getAllQuizQuestionOptions()
     {
         return quizQuestionOptionRepository.findAll();
+    }
+
+    @Override
+    public QuizQuestionOption updateQuizQuestionOption(QuizQuestionOption quizQuestionOption) throws UpdateQuizQuestionOptionException, QuizQuestionOptionNotFoundException, InputDataValidationException
+    {
+        if (quizQuestionOption != null)
+        {
+            if (quizQuestionOption.getQuizQuestionOptionId() != null)
+            {
+                Set<ConstraintViolation<QuizQuestionOption>> constraintViolations = validator.validate(quizQuestionOption);
+
+                if (constraintViolations.isEmpty())
+                {
+                    QuizQuestionOption quizQuestionOptionToUpdate = getQuizQuestionOptionByQuizQuestionOptionId(quizQuestionOption.getQuizQuestionOptionId());
+
+                    quizQuestionOptionToUpdate.setCorrect(quizQuestionOption.getCorrect());
+                    quizQuestionOptionToUpdate.setLeftContent(quizQuestionOption.getLeftContent());
+                    quizQuestionOptionToUpdate.setRightContent(quizQuestionOption.getRightContent());
+
+                    quizQuestionOptionRepository.saveAndFlush(quizQuestionOptionToUpdate);
+                    return quizQuestionOptionToUpdate;
+                }
+                else
+                {
+                    throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                }
+            }
+            else
+            {
+                throw new UpdateQuizQuestionOptionException("QuizQuestionOption ID cannot be null");
+            }
+        }
+        else
+        {
+            throw new UpdateQuizQuestionOptionException("QuizQuestionOption cannot be null");
+        }
     }
 
     @Override

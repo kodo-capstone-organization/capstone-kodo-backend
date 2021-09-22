@@ -13,6 +13,4 @@ public interface ContentService
     Content getContentByName(String name) throws ContentNotFoundException;
 
     List<Content> getAllContents();
-
-    Content updateContent(Content content) throws UpdateContentException, ContentNotFoundException;
 }

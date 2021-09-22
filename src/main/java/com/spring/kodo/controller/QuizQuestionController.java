@@ -24,12 +24,12 @@ public class QuizQuestionController
     @Autowired
     private QuizQuestionService quizQuestionService;
 
-    @GetMapping("/getQuizQuestionByQuizQuestionId/{quizId}")
-    public QuizQuestion getQuizQuestionByQuizQuestionId(@PathVariable Long quizId)
+    @GetMapping("/getQuizQuestionByQuizQuestionId/{quizQuestionId}")
+    public QuizQuestion getQuizQuestionByQuizQuestionId(@PathVariable Long quizQuestionId)
     {
         try
         {
-            return this.quizQuestionService.getQuizQuestionByQuizQuestionId(quizId);
+            return this.quizQuestionService.getQuizQuestionByQuizQuestionId(quizQuestionId);
         }
         catch (QuizQuestionNotFoundException ex)
         {

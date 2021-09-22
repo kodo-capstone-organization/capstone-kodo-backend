@@ -4,6 +4,7 @@ import com.spring.kodo.entity.Quiz;
 import com.spring.kodo.entity.QuizQuestion;
 import com.spring.kodo.entity.QuizQuestionOption;
 import com.spring.kodo.restentity.request.CreateNewQuizReq;
+import com.spring.kodo.restentity.request.UpdateQuizReq;
 import com.spring.kodo.restentity.response.QuizWithStudentAttemptCountResp;
 import com.spring.kodo.service.inter.QuizQuestionOptionService;
 import com.spring.kodo.service.inter.QuizQuestionService;
@@ -108,6 +109,36 @@ public class QuizController
         return this.quizService.getAllQuizzesWithStudentAttemptCountByEnrolledLessonId(enrolledLessonId);
     }
 
+    @PostMapping("/updateQuizWithQuizQuestionsAndQuizQuestionOptions")
+    public Quiz updateQuizWithQuizQuestionsAndQuizQuestionOptions(@RequestPart(name = "quiz", required = true) UpdateQuizReq updateQuizReq)
+    {
+        if (updateQuizReq != null)
+        {
+            try
+            {
+                Quiz quiz = updateQuizReq.getQuiz();
+                List<QuizQuestion> quizQuestions = updateQuizReq.getQuizQuestions();
+                List<List<QuizQuestionOption>> quizQuestionOptionLists = updateQuizReq.getQuizQuestionOptionLists();
+
+                quiz = quizService.updateQuiz(quiz, quizQuestions, quizQuestionOptionLists);
+
+                return quiz;
+            }
+            catch (QuizNotFoundException | QuizQuestionNotFoundException | QuizQuestionOptionNotFoundException ex)
+            {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+            }
+            catch (CreateNewQuizQuestionException | UpdateQuizQuestionOptionException | UpdateQuizException | UpdateQuizQuestionException | InputDataValidationException | UnknownPersistenceException ex)
+            {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+            }
+        }
+        else
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Update Quiz Request");
+        }
+    }
+
     @GetMapping("/deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId/{quizId}")
     public Boolean deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId(@PathVariable Long quizId)
     {
@@ -115,16 +146,6 @@ public class QuizController
         {
             try
             {
-//                Quiz quiz = quizService.getQuizByQuizId(quizId);
-//                for (QuizQuestion quizQuestion : quiz.getQuizQuestions())
-//                {
-//                    for (QuizQuestionOption quizQuestionOption : quizQuestion.getQuizQuestionOptions())
-//                    {
-//                        quizQuestionOptionService.deleteQuizQuestionOption(quizQuestionOption.getQuizQuestionOptionId());
-//                    }
-//                    quizQuestionService.deleteQuizQuestion(quizQuestion.getQuizQuestionId());
-//                }
-
                 return quizService.deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId(quizId);
             }
             catch (QuizNotFoundException | QuizQuestionOptionNotFoundException | QuizQuestionNotFoundException ex)

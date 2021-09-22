@@ -180,11 +180,91 @@ public class QuizServiceImpl implements QuizService
         }
     }
 
-    // TODO: Implementation
     @Override
-    public Quiz updateQuiz(Quiz quiz) throws MethodNotSupportedException
+    public Quiz updateQuiz(Quiz quiz) throws UpdateQuizException, QuizNotFoundException, InputDataValidationException
     {
-        throw new MethodNotSupportedException("Yet to be implemented");
+        if (quiz != null)
+        {
+            if (quiz.getContentId() != null)
+            {
+                Set<ConstraintViolation<Quiz>> constraintViolations = validator.validate(quiz);
+
+                if (constraintViolations.isEmpty())
+                {
+                    Quiz quizToUpdate = getQuizByQuizId(quiz.getContentId());
+
+                    quizToUpdate.setName(quiz.getName());
+                    quizToUpdate.setDescription(quiz.getDescription());
+                    quizToUpdate.setTimeLimit(quiz.getTimeLimit());
+                    quizToUpdate.setMaxAttemptsPerStudent(quiz.getMaxAttemptsPerStudent());
+
+                    quizRepository.saveAndFlush(quizToUpdate);
+                    return quizToUpdate;
+                }
+                else
+                {
+                    throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                }
+            }
+            else
+            {
+                throw new UpdateQuizException("Quiz ID cannot be null");
+            }
+        }
+        else
+        {
+            throw new UpdateQuizException("Quiz cannot be null");
+        }
+    }
+
+    @Override
+    public Quiz updateQuiz(Quiz quiz, List<QuizQuestion> quizQuestions, List<List<QuizQuestionOption>> quizQuestionOptionLists) throws QuizNotFoundException, UpdateQuizException, InputDataValidationException, QuizQuestionOptionNotFoundException, QuizQuestionNotFoundException, UpdateQuizQuestionException, UpdateQuizQuestionOptionException, CreateNewQuizQuestionException, UnknownPersistenceException
+    {
+        Quiz quizToUpdate = updateQuiz(quiz);
+
+        if (quizQuestions != null && quizQuestionOptionLists != null)
+        {
+            if (quizQuestions.size() == quizQuestionOptionLists.size())
+            {
+                boolean update;
+                QuizQuestion quizQuestion;
+                List<QuizQuestionOption> quizQuestionOptions;
+
+                for (int i = 0; i < quizQuestions.size(); i++)
+                {
+                    update = false;
+                    quizQuestion = quizQuestions.get(i);
+                    quizQuestionOptions = quizQuestionOptionLists.get(i);
+
+                    for (QuizQuestion quizQuestionToCheck : quizToUpdate.getQuizQuestions())
+                    {
+                        if (quizQuestionToCheck.getQuizQuestionId().equals(quizQuestion.getQuizQuestionId()))
+                        {
+                            update = true;
+                            break;
+                        }
+                    }
+
+                    if (update)
+                    {
+                        quizQuestionService.updateQuizQuestion(quizQuestion, quizQuestionOptions);
+                    }
+                    else
+                    {
+                        quizQuestion = quizQuestionService.createNewQuizQuestion(quizQuestion, quiz.getContentId());
+                        quizQuestion = quizQuestionService.addQuizQuestionOptionsToQuizQuestion(quizQuestion, quizQuestionOptions);
+                        quizToUpdate = addQuizQuestionToQuiz(quizToUpdate, quizQuestion);
+                    }
+                }
+            }
+            else
+            {
+                throw new UpdateQuizException("QuizQuestions and QuizQuestionOptionLists have to have the same size");
+            }
+        }
+
+        quizRepository.saveAndFlush(quizToUpdate);
+        return quizToUpdate;
     }
 
     @Override

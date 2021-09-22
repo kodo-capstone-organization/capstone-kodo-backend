@@ -19,6 +19,8 @@ public interface QuizQuestionOptionService
 
     List<QuizQuestionOption> getAllQuizQuestionOptions();
 
+    QuizQuestionOption updateQuizQuestionOption(QuizQuestionOption quizQuestionOption) throws UpdateQuizQuestionOptionException, QuizQuestionOptionNotFoundException, InputDataValidationException;
+
     Boolean deleteQuizQuestionOptionByQuizQuestionOptionId(Long quizQuestionOptionId) throws DeleteQuizQuestionOptionException, QuizQuestionOptionNotFoundException;
 
     Boolean isQuizQuestionOptionContainsStudentAttemptAnswersByQuizQuestionOptionId(Long quizQuestionOptionId);
