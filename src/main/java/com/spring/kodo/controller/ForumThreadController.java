@@ -18,7 +18,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/forumThread")
-public class ForumThreadController {
+public class ForumThreadController
+{
 
     Logger logger = LoggerFactory.getLogger(ForumThreadController.class);
 
@@ -28,53 +29,77 @@ public class ForumThreadController {
     @PostMapping("/createNewForumThread")
     public ForumThread createNewForumThread(
             @RequestPart(name = "forumThread", required = true) CreateNewForumThreadReq createNewForumThreadReq
-    ) {
-        if (createNewForumThreadReq != null) {
+    )
+    {
+        if (createNewForumThreadReq != null)
+        {
             logger.info("HIT forumThread/createNewForumThread | POST | Received : " + createNewForumThreadReq);
-            try {
+            try
+            {
                 ForumThread newForumThead = new ForumThread(createNewForumThreadReq.getName(), createNewForumThreadReq.getDescription(), createNewForumThreadReq.getTimeStamp());
                 newForumThead = this.forumThreadService.createNewForumThread(newForumThead, createNewForumThreadReq.getAccountId());
                 return newForumThead;
-            } catch (AccountNotFoundException ex) {
+            }
+            catch (AccountNotFoundException ex)
+            {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-            } catch (InputDataValidationException ex) {
+            }
+            catch (InputDataValidationException ex)
+            {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
-            } catch (UnknownPersistenceException ex) {
+            }
+            catch (UnknownPersistenceException ex)
+            {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
             }
-        } else {
+        }
+        else
+        {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Create New Forum Thread Request");
         }
     }
 
     @GetMapping("/getForumThreadByForumThreadId/{forumThreadId}")
-    public ForumThread getForumThreadByForumThreadId(@PathVariable Long forumThreadId) {
-        try {
+    public ForumThread getForumThreadByForumThreadId(@PathVariable Long forumThreadId)
+    {
+        try
+        {
             return this.forumThreadService.getForumThreadByForumThreadId(forumThreadId);
-        } catch (ForumThreadNotFoundException ex) {
+        }
+        catch (ForumThreadNotFoundException ex)
+        {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
     }
 
     @GetMapping("/getForumThreadByName/{name}")
-    public ForumThread getForumThreadByName(@PathVariable String name) {
-        try {
+    public ForumThread getForumThreadByName(@PathVariable String name)
+    {
+        try
+        {
             return this.forumThreadService.getForumThreadByName(name);
-        } catch (ForumThreadNotFoundException ex) {
+        }
+        catch (ForumThreadNotFoundException ex)
+        {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
     }
 
     @GetMapping("/getAllForumThreads")
-    public List<ForumThread> getAllForumThreads() {
+    public List<ForumThread> getAllForumThreads()
+    {
         return this.forumThreadService.getAllForumThreads();
     }
 
     @GetMapping("/getAllForumThreadsOfAForumCategory/{forumCategoryId}")
-    public List<ForumThread> getAllForumThreadsOfAForumCategory(@PathVariable Long forumCategoryId) {
-        try {
+    public List<ForumThread> getAllForumThreadsOfAForumCategory(@PathVariable Long forumCategoryId)
+    {
+        try
+        {
             return this.forumThreadService.getAllForumThreadsOfAForumCategory(forumCategoryId);
-        } catch (ForumCategoryNotFoundException ex) {
+        }
+        catch (ForumCategoryNotFoundException ex)
+        {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
     }
@@ -82,27 +107,40 @@ public class ForumThreadController {
     @PutMapping("/updateForumThread")
     public ForumThread updateForumThread(
             @RequestPart(name = "forumThread", required = true) UpdateForumThreadReq updateForumThreadReq
-    ) {
-        if (updateForumThreadReq != null) {
-            try {
+    )
+    {
+        if (updateForumThreadReq != null)
+        {
+            try
+            {
                 ForumThread updatedForumThread = this.forumThreadService.updateForumThread(updateForumThreadReq.getForumThread());
                 return updatedForumThread;
-            } catch (ForumThreadNotFoundException ex) {
+            }
+            catch (ForumThreadNotFoundException ex)
+            {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-            } catch (InputDataValidationException ex) {
+            }
+            catch (InputDataValidationException ex)
+            {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
             }
-        } else {
+        }
+        else
+        {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Update Forum Thread Request");
         }
     }
 
     @DeleteMapping("/deleteForumThread/{forumThreadId}")
-    public ResponseEntity<String> deleteForumThread(@PathVariable Long forumThreadId) {
-        try {
+    public ResponseEntity<String> deleteForumThread(@PathVariable Long forumThreadId)
+    {
+        try
+        {
             Boolean deletedForumThread = this.forumThreadService.deleteForumThread(forumThreadId);
             return ResponseEntity.status(HttpStatus.OK).body("Successfully deleted forum thread with ID: " + forumThreadId);
-        } catch (ForumPostNotFoundException | ForumThreadNotFoundException ex) {
+        }
+        catch (ForumPostNotFoundException | ForumThreadNotFoundException ex)
+        {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
     }
@@ -110,17 +148,26 @@ public class ForumThreadController {
     @PutMapping("/addForumPostToForumThread")
     public ForumThread addForumPostToForumThread(
             @RequestPart(name = "forumThreadAndForumPost", required = true) AddForumPostToForumThreadReq addForumPostToForumThreadReq
-    ) {
-        if (addForumPostToForumThreadReq != null) {
-            try {
+    )
+    {
+        if (addForumPostToForumThreadReq != null)
+        {
+            try
+            {
                 ForumThread forumThreadWithPost = this.forumThreadService.addForumPostToForumThread(addForumPostToForumThreadReq.getForumThread(), addForumPostToForumThreadReq.getForumPost());
                 return forumThreadWithPost;
-            } catch (ForumThreadNotFoundException | ForumPostNotFoundException ex) {
+            }
+            catch (ForumThreadNotFoundException | ForumPostNotFoundException ex)
+            {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-            } catch (UpdateForumThreadException ex) {
+            }
+            catch (UpdateForumThreadException ex)
+            {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
             }
-        } else {
+        }
+        else
+        {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Add Forum Post to Forum Thread Request");
         }
     }

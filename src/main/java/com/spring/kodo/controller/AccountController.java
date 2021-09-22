@@ -184,7 +184,21 @@ public class AccountController
     {
         try
         {
-            Account accountLoggedIn = this.accountService.login(username, password);
+            Account accountLoggedIn = this.accountService.userLogin(username, password);
+            return ResponseEntity.status(HttpStatus.OK).body(accountLoggedIn.getAccountId());
+        }
+        catch (InvalidLoginCredentialsException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
+        }
+    }
+
+    @PostMapping("/adminLogin")
+    public ResponseEntity adminLogin(@RequestPart(name = "username", required = true) String username, @RequestPart(name = "password", required = true) String password)
+    {
+        try
+        {
+            Account accountLoggedIn = this.accountService.adminLogin(username, password);
             return ResponseEntity.status(HttpStatus.OK).body(accountLoggedIn.getAccountId());
         }
         catch (InvalidLoginCredentialsException ex)

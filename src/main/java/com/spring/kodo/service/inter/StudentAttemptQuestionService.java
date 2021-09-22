@@ -13,5 +13,6 @@ public interface StudentAttemptQuestionService
     StudentAttemptQuestion getStudentAttemptQuestionByStudentAttemptQuestionId(Long studentAttemptQuestionId) throws StudentAttemptQuestionNotFoundException;
 
     List<StudentAttemptQuestion> getAllStudentAttemptQuestions();
+
     StudentAttemptQuestion addStudentAttemptAnswerToStudentAttemptQuestion(StudentAttemptQuestion studentAttemptQuestion, StudentAttemptAnswer studentAttemptAnswer) throws UpdateStudentAttemptQuestionException, StudentAttemptQuestionNotFoundException, StudentAttemptAnswerNotFoundException;
 }

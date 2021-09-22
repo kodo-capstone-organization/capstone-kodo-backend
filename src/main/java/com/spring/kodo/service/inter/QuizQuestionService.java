@@ -19,7 +19,19 @@ public interface QuizQuestionService
 
     List<QuizQuestion> getAllQuizQuestions();
 
+    List<QuizQuestion> getAllQuizQuestionsByQuizId(Long quizId);
+
+    List<QuizQuestion> getAllQuizQuestionsByTutorId(Long tutorId);
+
     QuizQuestion addQuizQuestionOptionToQuizQuestion(QuizQuestion quizQuestion, QuizQuestionOption quizQuestionOption) throws UpdateQuizQuestionException, QuizQuestionNotFoundException, QuizQuestionOptionNotFoundException;
 
     QuizQuestion addQuizQuestionOptionsToQuizQuestion(QuizQuestion quizQuestion, List<QuizQuestionOption> quizQuestionOptions) throws UpdateQuizQuestionException, QuizQuestionNotFoundException, QuizQuestionOptionNotFoundException;
+
+    QuizQuestion updateQuizQuestion(QuizQuestion quizQuestion) throws UpdateQuizQuestionException, QuizQuestionNotFoundException, InputDataValidationException;
+
+    QuizQuestion updateQuizQuestion(QuizQuestion quizQuestion, List<QuizQuestionOption> quizQuestionOptions) throws UpdateQuizQuestionException, QuizQuestionNotFoundException, QuizQuestionOptionNotFoundException, UpdateQuizQuestionOptionException, InputDataValidationException;
+
+    Boolean deleteQuizQuestionByQuizQuestionId(Long quizQuestionId) throws DeleteQuizQuestionException, QuizQuestionNotFoundException;
+
+    Boolean isQuizQuestionContainsStudentAttemptQuestionsByQuizQuestionId(Long quizQuestionId);
 }

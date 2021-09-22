@@ -172,8 +172,18 @@ public class DatabaseConfig
     @EventListener(ApplicationReadyEvent.class)
     public void onStartUp() throws Exception
     {
-            // Stop Heroku from updating Google Cloud SQL on every git change
-            if (configProfileType.toLowerCase(Locale.ROOT).equals("dev"))
+        // Stop Heroku from updating Google Cloud SQL on every git change
+        if (configProfileType.toLowerCase(Locale.ROOT).equals("dev"))
+        {
+            Scanner scanner = new Scanner(System.in);
+
+            System.out.print("1. Reload Data\n");
+            System.out.print("2. Do Nothing\n");
+            System.out.print("> ");
+
+            int option = scanner.nextInt();
+
+            if (option == 1)
             {
                 dataSourceService.createDatabase();
                 dataSourceService.truncateAllTables();
@@ -184,6 +194,14 @@ public class DatabaseConfig
                 System.out.println("\n===== Application started on port: " + env.getProperty("local.server.port") + " =====");
                 System.out.println("\n===== No New Data Loaded to Database =====");
             }
+
+            scanner.close();
+        }
+        else
+        {
+            System.out.println("\n===== Application started on port: " + env.getProperty("local.server.port") + " =====");
+            System.out.println("\n===== No New Data Loaded to Database =====");
+        }
     }
 
     public void loadData() throws Exception
@@ -854,7 +872,8 @@ public class DatabaseConfig
                                 String.format("%s %s Course", level, language),
                                 String.format("A %s course in %s language", level.toLowerCase(Locale.ROOT), language.toLowerCase(Locale.ROOT)),
                                 price,
-                                String.format("https://%s%scoursebanner.com", level.toLowerCase(Locale.ROOT), language.toLowerCase(Locale.ROOT))
+                                String.format("https://%s%scoursebanner.com", level.toLowerCase(Locale.ROOT), language.toLowerCase(Locale.ROOT)),
+                                true // Assume that enrollment is already active
                         )
                 );
             }

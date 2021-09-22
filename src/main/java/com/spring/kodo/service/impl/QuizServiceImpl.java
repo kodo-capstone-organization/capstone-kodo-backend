@@ -2,8 +2,10 @@ package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.Quiz;
 import com.spring.kodo.entity.QuizQuestion;
+import com.spring.kodo.entity.QuizQuestionOption;
 import com.spring.kodo.repository.QuizRepository;
 import com.spring.kodo.restentity.response.QuizWithStudentAttemptCountResp;
+import com.spring.kodo.service.inter.QuizQuestionOptionService;
 import com.spring.kodo.service.inter.QuizQuestionService;
 import com.spring.kodo.service.inter.QuizService;
 import com.spring.kodo.util.MessageFormatterUtil;
@@ -28,6 +30,9 @@ public class QuizServiceImpl implements QuizService
 
     @Autowired
     private QuizQuestionService quizQuestionService;
+
+    @Autowired
+    private QuizQuestionOptionService quizQuestionOptionService;
 
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -175,16 +180,130 @@ public class QuizServiceImpl implements QuizService
         }
     }
 
-    // TODO: Implementation
     @Override
-    public Quiz updateQuiz(Quiz quiz) throws MethodNotSupportedException
+    public Quiz updateQuiz(Quiz quiz) throws UpdateQuizException, QuizNotFoundException, InputDataValidationException
     {
-        throw new MethodNotSupportedException("Yet to be implemented");
+        if (quiz != null)
+        {
+            if (quiz.getContentId() != null)
+            {
+                Set<ConstraintViolation<Quiz>> constraintViolations = validator.validate(quiz);
+
+                if (constraintViolations.isEmpty())
+                {
+                    Quiz quizToUpdate = getQuizByQuizId(quiz.getContentId());
+
+                    quizToUpdate.setName(quiz.getName());
+                    quizToUpdate.setDescription(quiz.getDescription());
+                    quizToUpdate.setTimeLimit(quiz.getTimeLimit());
+                    quizToUpdate.setMaxAttemptsPerStudent(quiz.getMaxAttemptsPerStudent());
+
+                    quizRepository.saveAndFlush(quizToUpdate);
+                    return quizToUpdate;
+                }
+                else
+                {
+                    throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                }
+            }
+            else
+            {
+                throw new UpdateQuizException("Quiz ID cannot be null");
+            }
+        }
+        else
+        {
+            throw new UpdateQuizException("Quiz cannot be null");
+        }
+    }
+
+    @Override
+    public Quiz updateQuiz(Quiz quiz, List<QuizQuestion> quizQuestions, List<List<QuizQuestionOption>> quizQuestionOptionLists) throws QuizNotFoundException, UpdateQuizException, InputDataValidationException, QuizQuestionOptionNotFoundException, QuizQuestionNotFoundException, UpdateQuizQuestionException, UpdateQuizQuestionOptionException, CreateNewQuizQuestionException, UnknownPersistenceException
+    {
+        Quiz quizToUpdate = updateQuiz(quiz);
+
+        if (quizQuestions != null && quizQuestionOptionLists != null)
+        {
+            if (quizQuestions.size() == quizQuestionOptionLists.size())
+            {
+                boolean update;
+                QuizQuestion quizQuestion;
+                List<QuizQuestionOption> quizQuestionOptions;
+
+                for (int i = 0; i < quizQuestions.size(); i++)
+                {
+                    update = false;
+                    quizQuestion = quizQuestions.get(i);
+                    quizQuestionOptions = quizQuestionOptionLists.get(i);
+
+                    for (QuizQuestion quizQuestionToCheck : quizToUpdate.getQuizQuestions())
+                    {
+                        if (quizQuestionToCheck.getQuizQuestionId().equals(quizQuestion.getQuizQuestionId()))
+                        {
+                            update = true;
+                            break;
+                        }
+                    }
+
+                    if (update)
+                    {
+                        quizQuestionService.updateQuizQuestion(quizQuestion, quizQuestionOptions);
+                    }
+                    else
+                    {
+                        quizQuestion = quizQuestionService.createNewQuizQuestion(quizQuestion, quiz.getContentId());
+                        quizQuestion = quizQuestionService.addQuizQuestionOptionsToQuizQuestion(quizQuestion, quizQuestionOptions);
+                        quizToUpdate = addQuizQuestionToQuiz(quizToUpdate, quizQuestion);
+                    }
+                }
+            }
+            else
+            {
+                throw new UpdateQuizException("QuizQuestions and QuizQuestionOptionLists have to have the same size");
+            }
+        }
+
+        quizRepository.saveAndFlush(quizToUpdate);
+        return quizToUpdate;
     }
 
     @Override
     public List<QuizWithStudentAttemptCountResp> getAllQuizzesWithStudentAttemptCountByEnrolledLessonId(Long enrolledLessonId)
     {
         return quizRepository.findAllQuizzesWithStudentAttemptCountByEnrolledLessonId(enrolledLessonId);
+    }
+
+    @Override
+    public Boolean deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId(Long quizId) throws DeleteQuizException, QuizNotFoundException, QuizQuestionOptionNotFoundException, DeleteQuizQuestionOptionException, QuizQuestionNotFoundException, DeleteQuizQuestionException
+    {
+        if (quizId != null)
+        {
+            Quiz quizToDelete = getQuizByQuizId(quizId);
+
+            if (quizToDelete.getStudentAttempts().size() == 0)
+            {
+                for (QuizQuestion quizQuestion : quizToDelete.getQuizQuestions())
+                {
+                    for (QuizQuestionOption quizQuestionOption : quizQuestion.getQuizQuestionOptions())
+                    {
+                        quizQuestionOptionService.deleteQuizQuestionOptionByQuizQuestionOptionId(quizQuestionOption.getQuizQuestionOptionId());
+                    }
+                    quizQuestion.getQuizQuestionOptions().clear();
+                    quizQuestionService.deleteQuizQuestionByQuizQuestionId(quizQuestion.getQuizQuestionId());
+                }
+                quizToDelete.getQuizQuestions().clear();
+
+                quizRepository.delete(quizToDelete);
+                return true;
+            }
+            else
+            {
+                throw new DeleteQuizException("Quiz that has StudentAttempts cannot be deleted");
+            }
+        }
+        else
+        {
+            throw new DeleteQuizException("Quiz ID cannot be null");
+        }
     }
 }

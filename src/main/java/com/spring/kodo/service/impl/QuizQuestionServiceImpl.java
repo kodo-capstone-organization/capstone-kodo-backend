@@ -126,6 +126,18 @@ public class QuizQuestionServiceImpl implements QuizQuestionService
     }
 
     @Override
+    public List<QuizQuestion> getAllQuizQuestionsByQuizId(Long quizId)
+    {
+        return quizQuestionRepository.findAllQuizQuestionsByQuizId(quizId);
+    }
+
+    @Override
+    public List<QuizQuestion> getAllQuizQuestionsByTutorId(Long tutorId)
+    {
+        return quizQuestionRepository.findAllQuizQuestionsByTutorId(tutorId);
+    }
+
+    @Override
     public QuizQuestion addQuizQuestionOptionToQuizQuestion(QuizQuestion quizQuestion, QuizQuestionOption quizQuestionOption) throws UpdateQuizQuestionException, QuizQuestionNotFoundException, QuizQuestionOptionNotFoundException
     {
         if (quizQuestion != null)
@@ -209,5 +221,116 @@ public class QuizQuestionServiceImpl implements QuizQuestionService
         {
             throw new UpdateQuizQuestionException("QuizQuestion cannot be null");
         }
+    }
+
+    @Override
+    public QuizQuestion updateQuizQuestion(QuizQuestion quizQuestion) throws UpdateQuizQuestionException, QuizQuestionNotFoundException, InputDataValidationException
+    {
+        if (quizQuestion != null)
+        {
+            if (quizQuestion.getQuizQuestionId() != null)
+            {
+                Set<ConstraintViolation<QuizQuestion>> constraintViolations = validator.validate(quizQuestion);
+
+                if (constraintViolations.isEmpty())
+                {
+                    QuizQuestion quizQuestionToUpdate = getQuizQuestionByQuizQuestionId(quizQuestion.getQuizQuestionId());
+
+                    quizQuestionToUpdate.setContent(quizQuestion.getContent());
+                    quizQuestionToUpdate.setQuestionType(quizQuestion.getQuestionType());
+                    quizQuestionToUpdate.setMarks(quizQuestion.getMarks());
+
+                    quizQuestionRepository.saveAndFlush(quizQuestionToUpdate);
+                    return quizQuestionToUpdate;
+                }
+                else
+                {
+                    throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                }
+            }
+            else
+            {
+                throw new UpdateQuizQuestionException("QuizQuestion ID cannot be null");
+            }
+        }
+        else
+        {
+            throw new UpdateQuizQuestionException("QuizQuestion cannot be null");
+        }
+    }
+
+    @Override
+    public QuizQuestion updateQuizQuestion(QuizQuestion quizQuestion, List<QuizQuestionOption> quizQuestionOptions) throws UpdateQuizQuestionException, QuizQuestionNotFoundException, QuizQuestionOptionNotFoundException, UpdateQuizQuestionOptionException, InputDataValidationException
+    {
+        QuizQuestion quizQuestionToUpdate = updateQuizQuestion(quizQuestion);
+
+        System.out.println("Here 0");
+
+        if (quizQuestionOptions != null)
+        {
+            boolean update;
+
+            for (QuizQuestionOption quizQuestionOption : quizQuestionOptions)
+            {
+                update = false;
+
+                for (QuizQuestionOption quizQuestionOptionToCheck : quizQuestionToUpdate.getQuizQuestionOptions())
+                {
+                    if (quizQuestionOptionToCheck.getQuizQuestionOptionId().equals(quizQuestionOption.getQuizQuestionOptionId()))
+                    {
+                        update = true;
+                        break;
+                    }
+                }
+
+                if (update)
+                {
+                    quizQuestionOptionService.updateQuizQuestionOption(quizQuestionOption);
+                }
+                else
+                {
+                    quizQuestionToUpdate = addQuizQuestionOptionToQuizQuestion(quizQuestionToUpdate, quizQuestionOption);
+                }
+            }
+        }
+
+        quizQuestionRepository.saveAndFlush(quizQuestionToUpdate);
+        return quizQuestionToUpdate;
+    }
+
+    @Override
+    public Boolean deleteQuizQuestionByQuizQuestionId(Long quizQuestionId) throws DeleteQuizQuestionException, QuizQuestionNotFoundException
+    {
+        if (quizQuestionId != null)
+        {
+            QuizQuestion quizQuestionToDelete = getQuizQuestionByQuizQuestionId(quizQuestionId);
+
+            if (!isQuizQuestionContainsStudentAttemptQuestionsByQuizQuestionId(quizQuestionId))
+            {
+                if (quizQuestionToDelete.getQuizQuestionOptions().size() == 0)
+                {
+                    quizQuestionRepository.delete(quizQuestionToDelete);
+                    return true;
+                }
+                else
+                {
+                    throw new DeleteQuizQuestionException("QuizQuestion that has QuizQuestionOptions cannot be deleted");
+                }
+            }
+            else
+            {
+                throw new DeleteQuizQuestionException("QuizQuestion that has StudentAttemptQuestions cannot be deleted");
+            }
+        }
+        else
+        {
+            throw new DeleteQuizQuestionException("QuizQuestion ID cannot be null");
+        }
+    }
+
+    @Override
+    public Boolean isQuizQuestionContainsStudentAttemptQuestionsByQuizQuestionId(Long quizQuestionId)
+    {
+        return quizQuestionRepository.containsStudentAttemptQuestions(quizQuestionId);
     }
 }

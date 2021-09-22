@@ -74,37 +74,4 @@ public class ContentServiceImpl implements ContentService
     {
         return contentRepository.findAll();
     }
-
-    @Override
-    public Content updateContent(Content content) throws UpdateContentException, ContentNotFoundException {
-
-        if (content != null)
-        {
-            if (content instanceof Quiz)
-            {
-                try
-                {
-                    // TODO: remove try catch once method is implemented
-                    return this.quizService.updateQuiz((Quiz) content);
-                }
-                catch (MethodNotSupportedException e)
-                {
-                    e.printStackTrace();
-                    return null;
-                }
-            }
-            else if (content instanceof Multimedia)
-            {
-                return this.multimediaService.updateMultimedia((Multimedia) content);
-            }
-            else
-            {
-                throw new UpdateContentException("Invalid content type");
-            }
-        }
-        else
-        {
-            throw new ContentNotFoundException("Content with ID");
-        }
-    }
 }
