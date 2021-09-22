@@ -85,8 +85,7 @@ public class TransactionServiceImpl implements TransactionService
         return transactionRepository.existsByStripeTransactionId(stripeTransactionId);
     }
 
-    @Override
-    public List<Transaction> getAllTransactions(Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException
+    public List<Transaction> getAllPlatformTransactions(Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException
     {
         Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
 
@@ -98,7 +97,12 @@ public class TransactionServiceImpl implements TransactionService
             {
             throw new AccountPermissionDeniedException("You do not have administrative rights to deactivate accounts.");
         }
-
     }
 
+    @Override
+    public List<Transaction> getAllPaymentsByAccountId(Long requestingAccountId) throws AccountNotFoundException
+    {
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
+        return this.transactionRepository.getAllTransactionByPayerId(requestingAccount.getAccountId());
+    }
 }

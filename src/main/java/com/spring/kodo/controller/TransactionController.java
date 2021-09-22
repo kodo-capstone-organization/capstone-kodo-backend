@@ -27,16 +27,30 @@ public class TransactionController
     @Autowired
     public TransactionService transactionService;
 
-    @GetMapping("/getAllTransactions/{accountId}")
-    public List<Transaction> getAllTransactions(@PathVariable Long accountId)
+    @GetMapping("/getAllPlatformTransactions/{accountId}")
+    public List<Transaction> getAllPlatformTransactions(@PathVariable Long accountId)
     {
         try
         {
-            return this.transactionService.getAllTransactions(accountId);
+            // Must be admin to be able to perform this
+            return this.transactionService.getAllPlatformTransactions(accountId);
         }
         catch (AccountPermissionDeniedException ex)
         {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
+        }
+        catch (AccountNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
+    @GetMapping("/getAllPaymentsByAccountId/{accountId}")
+    public List<Transaction> getAllPaymentsByAccountId(@PathVariable Long accountId)
+    {
+        try
+        {
+            return this.transactionService.getAllPaymentsByAccountId(accountId);
         }
         catch (AccountNotFoundException ex)
         {
