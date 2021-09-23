@@ -3,6 +3,7 @@ package com.spring.kodo.repository;
 import com.spring.kodo.entity.EnrolledCourse;
 import com.spring.kodo.entity.EnrolledLesson;
 import com.spring.kodo.restentity.response.EnrolledCourseWithStudentResp;
+import com.spring.kodo.restentity.response.EnrolledCourseWithStudentCompletion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -51,4 +52,25 @@ public interface EnrolledCourseRepository extends JpaRepository<EnrolledCourse, 
             "WHERE ec.parent_course_course_id = :courseId\n" +
             "GROUP BY ec.enrolled_course_id;", nativeQuery = true)
     List<EnrolledCourseWithStudentResp> findAllEnrolledCourseCompletionPercentagesByCourseId(@Param("courseId") Long courseId);
+
+    @Query(value = "SELECT \n" +
+            "       a.account_id AS 'studentId', \n" +
+            "       a.name AS 'studentName', \n" +
+            "       a.username AS 'studentUsername', \n" +
+            "       a.is_active AS 'studentActive', \n"+
+            "       ec.date_time_of_completion AS 'completionDate' \n" +
+            "FROM Account a\n" +
+            "    JOIN Account_Enrolled_Courses aec\n" +
+            "    JOIN Enrolled_Course ec\n" +
+            "    JOIN Enrolled_Course_Enrolled_Lessons ecel\n" +
+            "    JOIN Enrolled_Lesson_Enrolled_Contents elec\n" +
+            "    JOIN Enrolled_Content ecc\n" +
+            "        ON a.account_id = aec.account_id\n" +
+            "        AND aec.enrolled_course_id = ec.enrolled_course_id\n" +
+            "        AND ec.enrolled_course_id = ecel.enrolled_course_id\n" +
+            "        AND ecel.enrolled_lesson_id = elec.enrolled_lesson_id\n" +
+            "        AND elec.enrolled_content_id = ecc.enrolled_content_id\n" +
+            "WHERE ec.parent_course_course_id = :courseId\n" +
+            "GROUP BY ec.enrolled_course_id;", nativeQuery = true)
+    List<EnrolledCourseWithStudentCompletion> findAllEnrolledCourseStudentsByCourseId(@Param("courseId") Long courseId);
 }

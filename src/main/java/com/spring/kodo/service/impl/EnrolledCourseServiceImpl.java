@@ -6,6 +6,7 @@ import com.spring.kodo.entity.EnrolledCourse;
 import com.spring.kodo.entity.EnrolledLesson;
 import com.spring.kodo.repository.EnrolledCourseRepository;
 import com.spring.kodo.restentity.response.EnrolledCourseWithStudentResp;
+import com.spring.kodo.restentity.response.EnrolledCourseWithStudentCompletion;
 import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.CourseService;
 import com.spring.kodo.service.inter.EnrolledCourseService;
@@ -264,5 +265,10 @@ public class EnrolledCourseServiceImpl implements EnrolledCourseService
     @Override
     public List<EnrolledCourseWithStudentResp> getAllCompletionPercentagesByCourseId(Long courseId) {
         return enrolledCourseRepository.findAllEnrolledCourseCompletionPercentagesByCourseId(courseId);
+    }
+
+    @Override
+    public List<EnrolledCourseWithStudentCompletion> getAllEnrolledStudentsCompletion(Long courseId) {
+        return enrolledCourseRepository.findAllEnrolledCourseStudentsByCourseId(courseId);
     }
 }

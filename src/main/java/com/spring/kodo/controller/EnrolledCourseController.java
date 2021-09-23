@@ -1,6 +1,7 @@
 package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.EnrolledCourse;
+import com.spring.kodo.restentity.response.EnrolledCourseWithStudentCompletion;
 import com.spring.kodo.restentity.response.EnrolledCourseWithStudentResp;
 import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.exception.*;
@@ -90,5 +91,11 @@ public class EnrolledCourseController
     public List<EnrolledCourseWithStudentResp> getEnrolledCoursesWithStudentCompletion(@PathVariable Long courseId)
     {
         return this.enrolledCourseService.getAllCompletionPercentagesByCourseId(courseId);
+    }
+
+    @GetMapping("/getEnrolledCoursesWithStudents/{courseId}")
+    public List<EnrolledCourseWithStudentCompletion> getEnrolledCoursesWithStudents(@PathVariable Long courseId)
+    {
+        return this.enrolledCourseService.getAllEnrolledStudentsCompletion(courseId);
     }
 }
