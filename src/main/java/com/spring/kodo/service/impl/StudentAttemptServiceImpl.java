@@ -1,13 +1,10 @@
 package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.*;
-import com.spring.kodo.repository.AccountRepository;
 import com.spring.kodo.repository.StudentAttemptRepository;
-import com.spring.kodo.service.inter.AccountService;
-import com.spring.kodo.service.inter.QuizService;
-import com.spring.kodo.service.inter.StudentAttemptQuestionService;
-import com.spring.kodo.service.inter.StudentAttemptService;
+import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.MessageFormatterUtil;
+import com.spring.kodo.util.enumeration.QuestionType;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -31,6 +28,9 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
 
     @Autowired
     private StudentAttemptQuestionService studentAttemptQuestionService;
+
+    @Autowired
+    private StudentAttemptAnswerService studentAttemptAnswerService;
 
     @Autowired
     private QuizService quizService;
@@ -111,13 +111,16 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
     }
 
     @Override
-    public Integer getNumberOfStudentAttemptsLeft(Long accountId, Long quizId) throws AccountNotFoundException, QuizNotFoundException {
+    public Integer getNumberOfStudentAttemptsLeft(Long accountId, Long quizId) throws AccountNotFoundException, QuizNotFoundException
+    {
         Account user = accountService.getAccountByAccountId(accountId);
         Quiz quiz = quizService.getQuizByQuizId(quizId);
         Integer numberOfStudentAttemptsLeft = quiz.getMaxAttemptsPerStudent();
 
-        for (StudentAttempt attempt : user.getStudentAttempts()) {
-            if (attempt.getQuiz().getContentId().equals(quiz.getContentId())) {
+        for (StudentAttempt attempt : user.getStudentAttempts())
+        {
+            if (attempt.getQuiz().getContentId().equals(quiz.getContentId()))
+            {
                 numberOfStudentAttemptsLeft--;
             }
         }
@@ -131,5 +134,177 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
         studentAttemptRepository.delete(studentAttempt);
 
         return studentAttemptId;
+    }
+
+    @Override
+    public Boolean isStudentAttemptCompleted(Long studentAttemptId) throws StudentAttemptNotFoundException
+    {
+        StudentAttempt studentAttempt = getStudentAttemptByStudentAttemptId(studentAttemptId);
+        Quiz quiz = studentAttempt.getQuiz();
+
+        List<StudentAttemptQuestion> studentAttemptQuestions = studentAttempt.getStudentAttemptQuestions();
+        List<QuizQuestion> quizQuestions = quiz.getQuizQuestions();
+
+        if (studentAttemptQuestions.size() == quizQuestions.size())
+        {
+            StudentAttemptQuestion studentAttemptQuestion;
+            QuizQuestion quizQuestion;
+
+            List<StudentAttemptAnswer> studentAttemptAnswers;
+            List<QuizQuestionOption> quizQuestionOptions;
+
+            for (int i = 0; i < studentAttemptQuestions.size(); i++)
+            {
+                studentAttemptQuestion = studentAttemptQuestions.get(i);
+                quizQuestion = quiz.getQuizQuestions().get(i);
+
+                studentAttemptAnswers = studentAttemptQuestion.getStudentAttemptAnswers();
+                quizQuestionOptions = quizQuestion.getQuizQuestionOptions();
+
+                if (quizQuestion.getQuestionType().equals(QuestionType.MCQ))
+                {
+                    if (studentAttemptAnswers.size() == 0)
+                    {
+                        return false;
+                    }
+                }
+                else if (quizQuestion.getQuestionType().equals(QuestionType.TF))
+                {
+                    if (studentAttemptAnswers.size() == 0)
+                    {
+                        return false;
+                    }
+                }
+                else if (quizQuestion.getQuestionType().equals(QuestionType.MATCHING))
+                {
+                    if (studentAttemptAnswers.size() < quizQuestionOptions.size())
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public StudentAttempt markStudentAttemptByStudentAttemptId(Long studentAttemptId) throws StudentAttemptNotFoundException, UpdateStudentAttemptAnswerException, StudentAttemptAnswerNotFoundException
+    {
+        StudentAttempt studentAttempt = getStudentAttemptByStudentAttemptId(studentAttemptId);
+        Quiz quiz = studentAttempt.getQuiz();
+
+        List<StudentAttemptQuestion> studentAttemptQuestions = studentAttempt.getStudentAttemptQuestions();
+        List<QuizQuestion> quizQuestions = quiz.getQuizQuestions();
+
+        if (studentAttemptQuestions.size() == quizQuestions.size())
+        {
+            StudentAttemptQuestion studentAttemptQuestion;
+            QuizQuestion quizQuestion;
+
+            List<StudentAttemptAnswer> studentAttemptAnswers;
+            List<QuizQuestionOption> quizQuestionOptions;
+
+            for (int i = 0; i < studentAttemptQuestions.size(); i++)
+            {
+                studentAttemptQuestion = studentAttemptQuestions.get(i);
+                quizQuestion = quiz.getQuizQuestions().get(i);
+
+                studentAttemptAnswers = studentAttemptQuestion.getStudentAttemptAnswers();
+                quizQuestionOptions = quizQuestion.getQuizQuestionOptions();
+
+                if (quizQuestion.getQuestionType().equals(QuestionType.MCQ))
+                {
+                    // Check options against one another
+                    // Duplicated but wait for FE implementation, check if it works well before merge
+                    for (QuizQuestionOption quizQuestionOption : quizQuestionOptions)
+                    {
+                        if (quizQuestionOption.getCorrect())
+                        {
+                            for (StudentAttemptAnswer studentAttemptAnswer : studentAttemptAnswers)
+                            {
+                                if (studentAttemptAnswer.getCorrect() == null)
+                                {
+                                    if (quizQuestionOption.getLeftContent().equals(studentAttemptAnswer.getLeftContent()))
+                                    {
+                                        studentAttemptAnswer.setCorrect(true);
+                                        studentAttemptAnswer.setMarks(quizQuestion.getMarks());
+                                    }
+                                    else
+                                    {
+                                        studentAttemptAnswer.setCorrect(false);
+                                        studentAttemptAnswer.setMarks(0);
+                                    }
+
+                                    studentAttemptAnswerService.updateStudentAttemptAnswer(studentAttemptAnswer);
+                                }
+                            }
+                        }
+                    }
+                }
+                else if (quizQuestion.getQuestionType().equals(QuestionType.TF))
+                {
+                    // Check options against one another
+                    // Duplicated but wait for FE implementation, check if it works well before merge
+                    for (QuizQuestionOption quizQuestionOption : quizQuestionOptions)
+                    {
+                        if (quizQuestionOption.getCorrect())
+                        {
+                            for (StudentAttemptAnswer studentAttemptAnswer : studentAttemptAnswers)
+                            {
+                                if (studentAttemptAnswer.getCorrect() == null)
+                                {
+                                    if (quizQuestionOption.getLeftContent().equals(studentAttemptAnswer.getLeftContent()))
+                                    {
+                                        studentAttemptAnswer.setCorrect(true);
+                                        studentAttemptAnswer.setMarks(quizQuestion.getMarks());
+                                    }
+                                    else
+                                    {
+                                        studentAttemptAnswer.setCorrect(false);
+                                        studentAttemptAnswer.setMarks(0);
+                                    }
+
+                                    studentAttemptAnswerService.updateStudentAttemptAnswer(studentAttemptAnswer);
+                                }
+                            }
+                        }
+                    }
+                }
+                else if (quizQuestion.getQuestionType().equals(QuestionType.MATCHING))
+                {
+                    // Check options against one another
+                    for (QuizQuestionOption quizQuestionOption : quizQuestionOptions)
+                    {
+                        for (StudentAttemptAnswer studentAttemptAnswer : studentAttemptAnswers)
+                        {
+                            if (studentAttemptAnswer.getCorrect() == null)
+                            {
+                                if (quizQuestionOption.getLeftContent().equals(studentAttemptAnswer.getLeftContent())
+                                        && quizQuestionOption.getRightContent().equals(studentAttemptAnswer.getRightContent()))
+                                {
+                                    studentAttemptAnswer.setCorrect(true);
+                                    // how to set the marks?
+                                }
+                                else
+                                {
+                                    studentAttemptAnswer.setCorrect(false);
+                                    // how to set the marks?
+                                }
+
+                                studentAttemptAnswerService.updateStudentAttemptAnswer(studentAttemptAnswer);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        studentAttemptRepository.saveAndFlush(studentAttempt);
+        return studentAttempt;
     }
 }

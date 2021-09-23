@@ -264,8 +264,6 @@ public class QuizQuestionServiceImpl implements QuizQuestionService
     {
         QuizQuestion quizQuestionToUpdate = updateQuizQuestion(quizQuestion);
 
-        System.out.println("Here 0");
-
         if (quizQuestionOptions != null)
         {
             boolean update;

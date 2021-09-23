@@ -1,6 +1,7 @@
 package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.QuizQuestionOption;
+import com.spring.kodo.entity.StudentAttempt;
 import com.spring.kodo.entity.StudentAttemptAnswer;
 import com.spring.kodo.repository.StudentAttemptAnswerRepository;
 import com.spring.kodo.service.inter.QuizQuestionOptionService;
@@ -37,32 +38,68 @@ public class StudentAttemptAnswerServiceImpl implements StudentAttemptAnswerServ
     }
 
     @Override
-    public StudentAttemptAnswer createNewStudentAttemptAnswer(Long quizQuestionOptionId) throws InputDataValidationException, CreateNewStudentAttemptAnswerException, QuizQuestionOptionNotFoundException, UnknownPersistenceException
+    public StudentAttemptAnswer createNewStudentAttemptAnswer(Long leftQuizQuestionOptionId) throws InputDataValidationException, CreateNewStudentAttemptAnswerException, QuizQuestionOptionNotFoundException, UnknownPersistenceException
     {
         try
         {
-            StudentAttemptAnswer newStudentAttemptAnswer = new StudentAttemptAnswer();
-
-            Set<ConstraintViolation<StudentAttemptAnswer>> constraintViolations = validator.validate(newStudentAttemptAnswer);
-            if (constraintViolations.isEmpty())
+            if (leftQuizQuestionOptionId != null)
             {
-                if (quizQuestionOptionId != null)
-                {
-                    QuizQuestionOption quizQuestionOption = quizQuestionOptionService.getQuizQuestionOptionByQuizQuestionOptionId(quizQuestionOptionId);
-                    newStudentAttemptAnswer.setQuizQuestionOption(quizQuestionOption);
+                QuizQuestionOption leftQuizQuestionOption = quizQuestionOptionService.getQuizQuestionOptionByQuizQuestionOptionId(leftQuizQuestionOptionId);
+                StudentAttemptAnswer newStudentAttemptAnswer;
 
+                newStudentAttemptAnswer = new StudentAttemptAnswer(leftQuizQuestionOption.getLeftContent());
+
+                Set<ConstraintViolation<StudentAttemptAnswer>> constraintViolations = validator.validate(newStudentAttemptAnswer);
+                if (constraintViolations.isEmpty())
+                {
                     // Persist StudentAttemptQuestion
                     studentAttemptAnswerRepository.saveAndFlush(newStudentAttemptAnswer);
                     return newStudentAttemptAnswer;
                 }
                 else
                 {
-                    throw new CreateNewStudentAttemptAnswerException("QuizQuestionOptionId cannot be null");
+                    throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
                 }
             }
             else
             {
-                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                throw new CreateNewStudentAttemptAnswerException("QuizQuestionOptionId cannot be null");
+            }
+        }
+        catch (DataAccessException ex)
+        {
+            throw new UnknownPersistenceException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public StudentAttemptAnswer createNewStudentAttemptAnswer(Long leftQuizQuestionOptionId, Long rightQuizQuestionOptionId) throws InputDataValidationException, CreateNewStudentAttemptAnswerException, QuizQuestionOptionNotFoundException, UnknownPersistenceException
+    {
+        try
+        {
+            if (leftQuizQuestionOptionId != null)
+            {
+                QuizQuestionOption leftQuizQuestionOption = quizQuestionOptionService.getQuizQuestionOptionByQuizQuestionOptionId(leftQuizQuestionOptionId);
+                QuizQuestionOption rightQuizQuestionOption = quizQuestionOptionService.getQuizQuestionOptionByQuizQuestionOptionId(rightQuizQuestionOptionId);
+                StudentAttemptAnswer newStudentAttemptAnswer;
+
+                newStudentAttemptAnswer = new StudentAttemptAnswer(leftQuizQuestionOption.getLeftContent(), rightQuizQuestionOption.getRightContent());
+
+                Set<ConstraintViolation<StudentAttemptAnswer>> constraintViolations = validator.validate(newStudentAttemptAnswer);
+                if (constraintViolations.isEmpty())
+                {
+                    // Persist StudentAttemptQuestion
+                    studentAttemptAnswerRepository.saveAndFlush(newStudentAttemptAnswer);
+                    return newStudentAttemptAnswer;
+                }
+                else
+                {
+                    throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                }
+            }
+            else
+            {
+                throw new CreateNewStudentAttemptAnswerException("QuizQuestionOptionId cannot be null");
             }
         }
         catch (DataAccessException ex)
@@ -90,5 +127,34 @@ public class StudentAttemptAnswerServiceImpl implements StudentAttemptAnswerServ
     public List<StudentAttemptAnswer> getAllStudentAttemptAnswers()
     {
         return studentAttemptAnswerRepository.findAll();
+    }
+
+    @Override
+    public StudentAttemptAnswer updateStudentAttemptAnswer(StudentAttemptAnswer studentAttemptAnswer) throws UpdateStudentAttemptAnswerException, StudentAttemptAnswerNotFoundException
+    {
+        if (studentAttemptAnswer != null)
+        {
+            if (studentAttemptAnswer.getStudentAttemptAnswerId() != null)
+            {
+                StudentAttemptAnswer studentAttemptAnswerToUpdate = getStudentAttemptAnswerByStudentAttemptAnswerId(studentAttemptAnswer.getStudentAttemptAnswerId());
+
+                // Update Non-Relational Fields
+                studentAttemptAnswerToUpdate.setLeftContent(studentAttemptAnswer.getLeftContent());
+                studentAttemptAnswerToUpdate.setRightContent(studentAttemptAnswer.getRightContent());
+                studentAttemptAnswerToUpdate.setCorrect(studentAttemptAnswer.getCorrect());
+                studentAttemptAnswerToUpdate.setMarks(studentAttemptAnswer.getMarks());
+
+                studentAttemptAnswerToUpdate = studentAttemptAnswerRepository.saveAndFlush(studentAttemptAnswerToUpdate);
+                return studentAttemptAnswerToUpdate;
+            }
+            else
+            {
+                throw new UpdateStudentAttemptAnswerException("StudentAttemptAnswer ID not provided for account to be updated");
+            }
+        }
+        else
+        {
+            throw new UpdateStudentAttemptAnswerException("StudentAttemptAnswer not provided for account to be updated");
+        }
     }
 }

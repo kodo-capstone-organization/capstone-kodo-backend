@@ -1,11 +1,9 @@
 package com.spring.kodo.config;
 
-import com.spring.kodo.KodoApplication;
 import com.spring.kodo.entity.*;
 import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.enumeration.MultimediaType;
 import com.spring.kodo.util.enumeration.QuestionType;
-import com.spring.kodo.util.exception.TagNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -13,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 
-import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -122,7 +119,8 @@ public class DatabaseConfig
     private final Integer QUIZ_QUESTION_OPTION_COUNT = 3;
 
     private final Integer STUDENT_ENROLLED_COUNT = (int) (0.5 * (LANGUAGES_COUNT * STUDENT_COUNT));
-    private final Integer STUDENT_ATTEMPT_COUNT = 5;
+    private final Integer STUDENT_ATTEMPT_COUNT = 3;
+    private final Integer STUDENT_ATTEMPT_ANSWERS_COUNT = (int) (STUDENT_ENROLLED_COUNT * QUIZ_COUNT * QUIZ_QUESTION_COUNT * STUDENT_ATTEMPT_COUNT);
 
     private final Integer FORUM_CATEGORY_COUNT = 1;
     private final Integer FORUM_THREAD_COUNT = 3;
@@ -131,6 +129,8 @@ public class DatabaseConfig
     private final Integer COMPLETE_CONTENT_COUNT = (int) (0.5 * (STUDENT_ENROLLED_COUNT * LESSON_COUNT * (MULTIMEDIA_COUNT + QUIZ_COUNT)));
 
     private final Integer RATE_ENROLLED_COURSES_COUNT = (int) (0.2 * STUDENT_ENROLLED_COUNT);
+
+    private final Integer MARK_STUDENT_ATTEMPTS_COUNT = 30;
 
     // Don't Edit these
     private final Integer PREFIXED_ADMIN_COUNT = 1;
@@ -241,6 +241,7 @@ public class DatabaseConfig
         createForumPosts();
         completeContent();
         rateEnrolledCourses();
+        autoMarkStudentAttempts();
 
         System.out.println("\n===== Init Data Fully Loaded to Database =====");
 
@@ -560,6 +561,8 @@ public class DatabaseConfig
 
     private void createStudentAttemptAnswers() throws Exception
     {
+        int studentAttemptAnswersCounter = 0;
+
         StudentAttemptAnswer studentAttemptAnswer;
 
         for (StudentAttempt studentAttempt : studentAttempts)
@@ -570,7 +573,21 @@ public class DatabaseConfig
                 {
                     studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption.getQuizQuestionOptionId());
                     studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
+
+                    studentAttemptAnswersCounter++;
+                    if (studentAttemptAnswersCounter == STUDENT_ATTEMPT_ANSWERS_COUNT)
+                    {
+                        break;
+                    }
                 }
+                if (studentAttemptAnswersCounter == STUDENT_ATTEMPT_ANSWERS_COUNT)
+                {
+                    break;
+                }
+            }
+            if (studentAttemptAnswersCounter == STUDENT_ATTEMPT_ANSWERS_COUNT)
+            {
+                break;
             }
         }
 
@@ -760,18 +777,27 @@ public class DatabaseConfig
         }
 
         System.out.printf(">> Rated EnrolledCourses (%d)\n", courseRatingSet);
+    }
 
-        // Testing getAllCoursesToRecommendByAccountId
-//        for (int i = 1; i <= 5; i++)
-//        {
-//            List<Course> courses = courseService.getAllCoursesToRecommendByAccountId((long) i);
-//            System.out.println(courses.size());
-//            for (Course course : courses)
-//            {
-//                System.out.println(course.getName());
-//            }
-//            System.out.println();
-//        }
+    private void autoMarkStudentAttempts() throws Exception
+    {
+        int markedStudentAttempts = 0;
+
+        for (StudentAttempt studentAttempt : studentAttempts)
+        {
+            if (studentAttemptService.isStudentAttemptCompleted(studentAttempt.getStudentAttemptId()))
+            {
+                studentAttemptService.markStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId());
+                markedStudentAttempts++;
+
+                if (markedStudentAttempts == MARK_STUDENT_ATTEMPTS_COUNT)
+                {
+                    break;
+                }
+            }
+        }
+
+        System.out.printf(">> Marked StudentAttempts (%d)\n", markedStudentAttempts);
     }
 
     private void addAccounts() throws Exception

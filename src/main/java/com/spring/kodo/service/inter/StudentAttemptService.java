@@ -16,4 +16,8 @@ public interface StudentAttemptService
     Integer getNumberOfStudentAttemptsLeft(Long accountId, Long quizId) throws AccountNotFoundException, QuizNotFoundException;
 
     Long deleteStudentAttemptByStudentAttemptId(Long studentAttemptId) throws StudentAttemptNotFoundException;
+
+    Boolean isStudentAttemptCompleted(Long studentAttemptId) throws StudentAttemptNotFoundException;
+
+    StudentAttempt markStudentAttemptByStudentAttemptId(Long studentAttemptId) throws StudentAttemptNotFoundException, UpdateStudentAttemptAnswerException, StudentAttemptAnswerNotFoundException;
 }
