@@ -7,7 +7,7 @@ import com.spring.kodo.repository.ForumPostRepository;
 import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.ForumPostService;
 import com.spring.kodo.service.inter.ForumThreadService;
-import com.spring.kodo.util.MessageFormatterUtil;
+import com.spring.kodo.util.FormatterUtil;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -50,7 +50,7 @@ public class ForumPostServiceImpl implements ForumPostService {
                 forumPostRepository.saveAndFlush(newForumPost);
                 return newForumPost;
             } else {
-                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
         } catch (DataAccessException ex) {
             throw new UnknownPersistenceException(ex.getMessage());
@@ -93,7 +93,7 @@ public class ForumPostServiceImpl implements ForumPostService {
                     throw new ForumPostNotFoundException("Forum Post with ID: " + updatedForumPost.getForumPostId() + " does not exist!");
                 }
             } else {
-                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
         } else {
             throw new ForumPostNotFoundException("Forum Post ID is not provided for forum post to be updated");

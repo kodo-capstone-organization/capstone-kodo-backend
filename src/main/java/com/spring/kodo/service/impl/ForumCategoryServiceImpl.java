@@ -7,7 +7,7 @@ import com.spring.kodo.repository.ForumCategoryRepository;
 import com.spring.kodo.service.inter.CourseService;
 import com.spring.kodo.service.inter.ForumCategoryService;
 import com.spring.kodo.service.inter.ForumThreadService;
-import com.spring.kodo.util.MessageFormatterUtil;
+import com.spring.kodo.util.FormatterUtil;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -49,7 +49,7 @@ public class ForumCategoryServiceImpl implements ForumCategoryService {
                 forumCategoryRepository.saveAndFlush(newForumCategory);
                 return newForumCategory;
             } else {
-                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
         } catch (DataAccessException ex) {
             throw new UnknownPersistenceException(ex.getMessage());
@@ -98,7 +98,7 @@ public class ForumCategoryServiceImpl implements ForumCategoryService {
                     throw new ForumCategoryNotFoundException("Forum Category with ID: " + updatedForumCategory.getForumCategoryId() + " does not exist!");
                 }
             } else {
-                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
         } else {
             throw new ForumCategoryNotFoundException("Forum Category ID is not provided for forum category to be updated");

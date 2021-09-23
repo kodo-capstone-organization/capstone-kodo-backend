@@ -1,12 +1,11 @@
 package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.QuizQuestionOption;
-import com.spring.kodo.entity.StudentAttempt;
 import com.spring.kodo.entity.StudentAttemptAnswer;
 import com.spring.kodo.repository.StudentAttemptAnswerRepository;
 import com.spring.kodo.service.inter.QuizQuestionOptionService;
 import com.spring.kodo.service.inter.StudentAttemptAnswerService;
-import com.spring.kodo.util.MessageFormatterUtil;
+import com.spring.kodo.util.FormatterUtil;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -58,7 +57,7 @@ public class StudentAttemptAnswerServiceImpl implements StudentAttemptAnswerServ
                 }
                 else
                 {
-                    throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                    throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
                 }
             }
             else
@@ -94,7 +93,7 @@ public class StudentAttemptAnswerServiceImpl implements StudentAttemptAnswerServ
                 }
                 else
                 {
-                    throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                    throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
                 }
             }
             else

@@ -3,13 +3,13 @@ package com.spring.kodo.util;
 import javax.validation.ConstraintViolation;
 import java.util.Set;
 
-public class MessageFormatterUtil
+public class FormatterUtil
 {
     public static String prepareInputDataValidationErrorsMessage(Set<? extends ConstraintViolation<?>> constraintViolations)
     {
         String msg = "Input data validation error!:";
 
-        for(ConstraintViolation constraintViolation:constraintViolations)
+        for (ConstraintViolation constraintViolation : constraintViolations)
         {
             msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
         }
@@ -30,5 +30,27 @@ public class MessageFormatterUtil
         {
             return "";
         }
+    }
+
+    public static String getOrdinal(int i)
+    {
+        String[] suffixes = new String[]{"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"};
+        switch (i % 100)
+        {
+            case 11:
+            case 12:
+            case 13:
+                return i + "th";
+            default:
+                return i + suffixes[i % 10];
+        }
+    }
+
+    public static double round(double value, int places)
+    {
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
     }
 }

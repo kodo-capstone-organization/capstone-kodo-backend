@@ -3,7 +3,7 @@ package com.spring.kodo.service.impl;
 import com.spring.kodo.entity.*;
 import com.spring.kodo.repository.StudentAttemptRepository;
 import com.spring.kodo.service.inter.*;
-import com.spring.kodo.util.MessageFormatterUtil;
+import com.spring.kodo.util.FormatterUtil;
 import com.spring.kodo.util.enumeration.QuestionType;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +79,7 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
             }
             else
             {
-                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
         }
         catch (DataAccessException ex)
@@ -232,12 +232,12 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
                                     if (quizQuestionOption.getLeftContent().equals(studentAttemptAnswer.getLeftContent()))
                                     {
                                         studentAttemptAnswer.setCorrect(true);
-                                        studentAttemptAnswer.setMarks(quizQuestion.getMarks());
+                                        studentAttemptAnswer.setMarks((double) quizQuestion.getMarks());
                                     }
                                     else
                                     {
                                         studentAttemptAnswer.setCorrect(false);
-                                        studentAttemptAnswer.setMarks(0);
+                                        studentAttemptAnswer.setMarks(0.0);
                                     }
 
                                     studentAttemptAnswerService.updateStudentAttemptAnswer(studentAttemptAnswer);
@@ -261,12 +261,12 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
                                     if (quizQuestionOption.getLeftContent().equals(studentAttemptAnswer.getLeftContent()))
                                     {
                                         studentAttemptAnswer.setCorrect(true);
-                                        studentAttemptAnswer.setMarks(quizQuestion.getMarks());
+                                        studentAttemptAnswer.setMarks((double) quizQuestion.getMarks());
                                     }
                                     else
                                     {
                                         studentAttemptAnswer.setCorrect(false);
-                                        studentAttemptAnswer.setMarks(0);
+                                        studentAttemptAnswer.setMarks(0.0);
                                     }
 
                                     studentAttemptAnswerService.updateStudentAttemptAnswer(studentAttemptAnswer);
@@ -282,18 +282,18 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
                     {
                         for (StudentAttemptAnswer studentAttemptAnswer : studentAttemptAnswers)
                         {
-                            if (studentAttemptAnswer.getCorrect() == null)
+                            if (studentAttemptAnswer.getCorrect() == null || !studentAttemptAnswer.getCorrect())
                             {
                                 if (quizQuestionOption.getLeftContent().equals(studentAttemptAnswer.getLeftContent())
                                         && quizQuestionOption.getRightContent().equals(studentAttemptAnswer.getRightContent()))
                                 {
                                     studentAttemptAnswer.setCorrect(true);
-                                    // how to set the marks?
+                                    studentAttemptAnswer.setMarks(FormatterUtil.round(quizQuestion.getMarks() / (double) quizQuestion.getQuizQuestionOptions().size(), 2));
                                 }
                                 else
                                 {
                                     studentAttemptAnswer.setCorrect(false);
-                                    // how to set the marks?
+                                    studentAttemptAnswer.setMarks(0.0);
                                 }
 
                                 studentAttemptAnswerService.updateStudentAttemptAnswer(studentAttemptAnswer);

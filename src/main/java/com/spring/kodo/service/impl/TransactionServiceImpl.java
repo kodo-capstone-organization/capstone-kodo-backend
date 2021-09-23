@@ -7,7 +7,7 @@ import com.spring.kodo.repository.TransactionRepository;
 import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.CourseService;
 import com.spring.kodo.service.inter.TransactionService;
-import com.spring.kodo.util.MessageFormatterUtil;
+import com.spring.kodo.util.FormatterUtil;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -17,7 +17,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -71,7 +70,7 @@ public class TransactionServiceImpl implements TransactionService
             }
             else
             {
-                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
         }
         catch (DataAccessException ex)

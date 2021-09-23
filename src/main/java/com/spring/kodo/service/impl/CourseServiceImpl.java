@@ -3,7 +3,7 @@ package com.spring.kodo.service.impl;
 import com.spring.kodo.entity.*;
 import com.spring.kodo.repository.CourseRepository;
 import com.spring.kodo.service.inter.*;
-import com.spring.kodo.util.MessageFormatterUtil;
+import com.spring.kodo.util.FormatterUtil;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -79,7 +79,7 @@ public class CourseServiceImpl implements CourseService
             }
             else
             {
-                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
         }
         catch (DataAccessException ex)
@@ -268,7 +268,7 @@ public class CourseServiceImpl implements CourseService
             }
             else
             {
-                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
 
         }

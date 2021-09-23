@@ -3,10 +3,7 @@ package com.spring.kodo.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -34,9 +31,10 @@ public class StudentAttemptAnswer
     @Column
     private Boolean correct;
 
-    @Column
-    @Min(0)
-    private Integer marks;
+    @Column(precision = 11, scale = 2)
+    @DecimalMin("0.00")
+    @Digits(integer = 9, fraction = 2)
+    private Double marks;
 
     public StudentAttemptAnswer()
     {
@@ -107,12 +105,12 @@ public class StudentAttemptAnswer
         this.correct = correct;
     }
 
-    public Integer getMarks()
+    public Double getMarks()
     {
         return marks;
     }
 
-    public void setMarks(Integer marks)
+    public void setMarks(Double marks)
     {
         this.marks = marks;
     }
