@@ -1,24 +1,15 @@
 package com.spring.kodo.controller;
 
-import com.spring.kodo.entity.Content;
-import com.spring.kodo.entity.Lesson;
-import com.spring.kodo.entity.Multimedia;
-import com.spring.kodo.entity.Quiz;
+import com.spring.kodo.entity.*;
 import com.spring.kodo.restentity.request.MultimediaReq;
 import com.spring.kodo.restentity.request.UpdateLessonReq;
-import com.spring.kodo.service.inter.FileService;
-import com.spring.kodo.service.inter.LessonService;
-import com.spring.kodo.service.inter.MultimediaService;
-import com.spring.kodo.service.inter.QuizService;
+import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -44,6 +35,9 @@ public class LessonController
     @Autowired
     private FileService fileService;
 
+    @Autowired
+    private CourseService courseService;
+
     @GetMapping("/getAllLessons")
     public List<Lesson> getAllLessons()
     {
@@ -58,6 +52,29 @@ public class LessonController
             return this.lessonService.getLessonByLessonId(lessonId);
         }
         catch (LessonNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
+    @PostMapping("/createNewLesson")
+    public Lesson createNewLesson(@RequestPart(name = "courseId", required = true) Long courseId, @RequestPart(name = "name", required = true) String name,
+                                  @RequestPart(name = "description", required = true) String description, @RequestPart(name = "sequence", required = true) Integer sequence)
+    {
+        try
+        {
+            Lesson lesson = this.lessonService.createNewLesson(new Lesson(name, description, sequence));
+
+            Course course = this.courseService.getCourseByCourseId(courseId);
+            this.courseService.addLessonToCourse(course, lesson);
+
+            return lesson;
+        }
+        catch (UnknownPersistenceException | InputDataValidationException | UpdateCourseException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
+        catch (CourseNotFoundException | LessonNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
