@@ -23,5 +23,5 @@ public interface QuizQuestionOptionService
 
     Boolean deleteQuizQuestionOptionByQuizQuestionOptionId(Long quizQuestionOptionId) throws DeleteQuizQuestionOptionException, QuizQuestionOptionNotFoundException;
 
-    Boolean isQuizQuestionOptionContainsStudentAttemptAnswersByQuizQuestionOptionId(Long quizQuestionOptionId);
+//    Boolean isQuizQuestionOptionContainsStudentAttemptAnswersByQuizQuestionOptionId(Long quizQuestionOptionId);
 }

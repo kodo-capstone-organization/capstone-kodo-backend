@@ -176,15 +176,18 @@ public class QuizQuestionOptionServiceImpl implements QuizQuestionOptionService
         {
             QuizQuestionOption quizQuestionOptionToDelete = getQuizQuestionOptionByQuizQuestionOptionId(quizQuestionOptionId);
 
-            if (!isQuizQuestionOptionContainsStudentAttemptAnswersByQuizQuestionOptionId(quizQuestionOptionId))
-            {
-                quizQuestionOptionRepository.delete(quizQuestionOptionToDelete);
-                return true;
-            }
-            else
-            {
-                throw new DeleteQuizQuestionOptionException("QuizQuestionOption that has StudentAttemptAnswers cannot be deleted");
-            }
+            quizQuestionOptionRepository.delete(quizQuestionOptionToDelete);
+            return true;
+
+//            if (!isQuizQuestionOptionContainsStudentAttemptAnswersByQuizQuestionOptionId(quizQuestionOptionId))
+//            {
+//                quizQuestionOptionRepository.delete(quizQuestionOptionToDelete);
+//                return true;
+//            }
+//            else
+//            {
+//                throw new DeleteQuizQuestionOptionException("QuizQuestionOption that has StudentAttemptAnswers cannot be deleted");
+//            }
         }
         else
         {
@@ -192,9 +195,9 @@ public class QuizQuestionOptionServiceImpl implements QuizQuestionOptionService
         }
     }
 
-    @Override
-    public Boolean isQuizQuestionOptionContainsStudentAttemptAnswersByQuizQuestionOptionId(Long quizQuestionOptionId)
-    {
-        return quizQuestionOptionRepository.containsStudentAttemptQuestions(quizQuestionOptionId);
-    }
+//    @Override
+//    public Boolean isQuizQuestionOptionContainsStudentAttemptAnswersByQuizQuestionOptionId(Long quizQuestionOptionId)
+//    {
+//        return quizQuestionOptionRepository.containsStudentAttemptQuestions(quizQuestionOptionId);
+//    }
 }

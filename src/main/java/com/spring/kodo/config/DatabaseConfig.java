@@ -1,11 +1,10 @@
 package com.spring.kodo.config;
 
-import com.spring.kodo.KodoApplication;
 import com.spring.kodo.entity.*;
 import com.spring.kodo.service.inter.*;
+import com.spring.kodo.util.RandomGeneratorUtil;
 import com.spring.kodo.util.enumeration.MultimediaType;
 import com.spring.kodo.util.enumeration.QuestionType;
-import com.spring.kodo.util.exception.TagNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -13,10 +12,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 
-import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import static com.spring.kodo.util.Constants.*;
@@ -118,11 +119,13 @@ public class DatabaseConfig
     private final Integer MULTIMEDIA_COUNT = 2;
 
     private final Integer QUIZ_COUNT = 1;
-    private final Integer QUIZ_QUESTION_COUNT = 3;
+    private final Integer QUIZ_QUESTION_COUNT = 6;
     private final Integer QUIZ_QUESTION_OPTION_COUNT = 3;
+    private final Integer QUIZ_QUESTION_TYPES = QuestionType.values().length;
 
     private final Integer STUDENT_ENROLLED_COUNT = (int) (0.5 * (LANGUAGES_COUNT * STUDENT_COUNT));
-    private final Integer STUDENT_ATTEMPT_COUNT = 5;
+    private final Integer STUDENT_ATTEMPT_COUNT = 3;
+    private final Integer STUDENT_ATTEMPT_ANSWERS_COUNT = (int) (STUDENT_ENROLLED_COUNT * QUIZ_COUNT * QUIZ_QUESTION_COUNT * STUDENT_ATTEMPT_COUNT);
 
     private final Integer FORUM_CATEGORY_COUNT = 1;
     private final Integer FORUM_THREAD_COUNT = 3;
@@ -131,6 +134,8 @@ public class DatabaseConfig
     private final Integer COMPLETE_CONTENT_COUNT = (int) (0.5 * (STUDENT_ENROLLED_COUNT * LESSON_COUNT * (MULTIMEDIA_COUNT + QUIZ_COUNT)));
 
     private final Integer RATE_ENROLLED_COURSES_COUNT = (int) (0.2 * STUDENT_ENROLLED_COUNT);
+
+    private final Integer MARK_STUDENT_ATTEMPTS_COUNT = 30;
 
     // Don't Edit these
     private final Integer PREFIXED_ADMIN_COUNT = 1;
@@ -145,8 +150,6 @@ public class DatabaseConfig
     private final Integer TUTOR_SIZE = PREFIXED_TUTOR_COUNT + TUTOR_FIRST_INDEX + TUTOR_COUNT;
 
     private final Long START_TIME;
-
-    private final Random random;
 
     public DatabaseConfig()
     {
@@ -169,7 +172,6 @@ public class DatabaseConfig
         forumPosts = new ArrayList<>();
 
         START_TIME = System.currentTimeMillis();
-        random = new Random();
     }
 
     @EventListener(ApplicationReadyEvent.class)
@@ -244,6 +246,7 @@ public class DatabaseConfig
         createForumPosts();
         completeContent();
         rateEnrolledCourses();
+        autoMarkStudentAttempts();
 
         System.out.println("\n===== Init Data Fully Loaded to Database =====");
 
@@ -440,11 +443,23 @@ public class DatabaseConfig
                     {
                         quizQuestion = quizQuestions.get(quizQuestionIndex);
 
-                        for (int a = 0; a < QUIZ_QUESTION_OPTION_COUNT; a++, quizQuestionOptionIndex++)
+                        if (quizQuestion.getQuestionType().equals(QuestionType.MCQ) || quizQuestion.getQuestionType().equals(QuestionType.MATCHING))
                         {
-                            quizQuestionOption = quizQuestionOptionService.createNewQuizQuestionOption(quizQuestionOptions.get(quizQuestionOptionIndex));
+                            for (int a = 0; a < QUIZ_QUESTION_OPTION_COUNT; a++, quizQuestionOptionIndex++)
+                            {
+                                quizQuestionOption = quizQuestionOptionService.createNewQuizQuestionOption(quizQuestionOptions.get(quizQuestionOptionIndex));
 
-                            quizQuestionService.addQuizQuestionOptionToQuizQuestion(quizQuestion, quizQuestionOption);
+                                quizQuestionService.addQuizQuestionOptionToQuizQuestion(quizQuestion, quizQuestionOption);
+                            }
+                        }
+                        else if (quizQuestion.getQuestionType().equals(QuestionType.TF))
+                        {
+                            for (int a = 0; a < 2; a++, quizQuestionOptionIndex++)
+                            {
+                                quizQuestionOption = quizQuestionOptionService.createNewQuizQuestionOption(quizQuestionOptions.get(quizQuestionOptionIndex));
+
+                                quizQuestionService.addQuizQuestionOptionToQuizQuestion(quizQuestion, quizQuestionOption);
+                            }
                         }
                     }
                 }
@@ -481,11 +496,15 @@ public class DatabaseConfig
 
     private void createEnrolledCoursesAndEnrolledLessonsEnrolledContents() throws Exception
     {
+        Account tutor;
         Account student;
         Course course;
         EnrolledCourse enrolledCourse;
         EnrolledLesson enrolledLesson;
         EnrolledContent enrolledContent;
+        Transaction transaction;
+
+        String dummyUniqueStripeSessionId;
 
         int i = 0;
         while (i < STUDENT_ENROLLED_COUNT)
@@ -498,17 +517,16 @@ public class DatabaseConfig
                     {
                         student = accounts.get(studentIndex);
                         course = courses.get(courseIndex);
+                        tutor = accountService.getAccountByCourseId(course.getCourseId());
+                        dummyUniqueStripeSessionId = "acct_" + RandomGeneratorUtil.getRandomString(16);
 
                         enrolledCourse = enrolledCourseService.createNewEnrolledCourse(student.getAccountId(), course.getCourseId());
                         accountService.addEnrolledCourseToAccount(student, enrolledCourse);
 
                         // Create transaction records assuming students successfully made the payments
                         // Using a unique value in place of a real stripe sessionId
-                        String randomString = Long.toString(Math.abs(random.nextLong()), 36);
-                        String dummyUniqueStripeSessionId = "cs_test_dummy_" + randomString;
-                        Long tutorId = accountService.getAccountByCourseId(course.getCourseId()).getAccountId();
-                        Transaction newTransaction = new Transaction(dummyUniqueStripeSessionId, course.getPrice());
-                        transactionService.createNewTransaction(newTransaction, student.getAccountId(), tutorId, course.getCourseId());
+                        transaction = new Transaction(dummyUniqueStripeSessionId, course.getPrice());
+                        transactionService.createNewTransaction(transaction, student.getAccountId(), tutor.getAccountId(), course.getCourseId());
 
                         for (Lesson lesson : course.getLessons())
                         {
@@ -571,6 +589,8 @@ public class DatabaseConfig
 
     private void createStudentAttemptAnswers() throws Exception
     {
+        int studentAttemptAnswersCounter = 0;
+
         StudentAttemptAnswer studentAttemptAnswer;
 
         for (StudentAttempt studentAttempt : studentAttempts)
@@ -579,9 +599,31 @@ public class DatabaseConfig
             {
                 for (QuizQuestionOption quizQuestionOption : studentAttemptQuestion.getQuizQuestion().getQuizQuestionOptions())
                 {
-                    studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption.getQuizQuestionOptionId());
+                    if (studentAttemptQuestion.getQuizQuestion().getQuestionType().equals(QuestionType.MATCHING))
+                    {
+                        studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption.getQuizQuestionOptionId(), quizQuestionOption.getQuizQuestionOptionId());
+                    }
+                    else
+                    {
+                        studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption.getQuizQuestionOptionId());
+                    }
+
                     studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
+
+                    studentAttemptAnswersCounter++;
+                    if (studentAttemptAnswersCounter == STUDENT_ATTEMPT_ANSWERS_COUNT)
+                    {
+                        break;
+                    }
                 }
+                if (studentAttemptAnswersCounter == STUDENT_ATTEMPT_ANSWERS_COUNT)
+                {
+                    break;
+                }
+            }
+            if (studentAttemptAnswersCounter == STUDENT_ATTEMPT_ANSWERS_COUNT)
+            {
+                break;
             }
         }
 
@@ -697,7 +739,7 @@ public class DatabaseConfig
             for (int i = STUDENT_FIRST_INDEX; i < STUDENT_SIZE; i++)
             {
                 student = accounts.get(i);
-                contentPerStudent = getRandomNumber(1, 10);
+                contentPerStudent = 5;
                 contentPerStudentIndex = 0;
 
                 for (EnrolledCourse enrolledCourse : student.getEnrolledCourses())
@@ -771,18 +813,27 @@ public class DatabaseConfig
         }
 
         System.out.printf(">> Rated EnrolledCourses (%d)\n", courseRatingSet);
+    }
 
-        // Testing getAllCoursesToRecommendByAccountId
-//        for (int i = 1; i <= 5; i++)
-//        {
-//            List<Course> courses = courseService.getAllCoursesToRecommendByAccountId((long) i);
-//            System.out.println(courses.size());
-//            for (Course course : courses)
-//            {
-//                System.out.println(course.getName());
-//            }
-//            System.out.println();
-//        }
+    private void autoMarkStudentAttempts() throws Exception
+    {
+        int markedStudentAttempts = 0;
+
+        for (StudentAttempt studentAttempt : studentAttempts)
+        {
+            if (studentAttemptService.isStudentAttemptCompleted(studentAttempt.getStudentAttemptId()))
+            {
+                studentAttemptService.markStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId());
+                markedStudentAttempts++;
+
+                if (markedStudentAttempts == MARK_STUDENT_ATTEMPTS_COUNT)
+                {
+                    break;
+                }
+            }
+        }
+
+        System.out.printf(">> Marked StudentAttempts (%d)\n", markedStudentAttempts);
     }
 
     private void addAccounts() throws Exception
@@ -944,12 +995,24 @@ public class DatabaseConfig
                     {
                         for (int k = 1; k <= QUIZ_QUESTION_COUNT; k++)
                         {
-                            quizQuestions.add(
-                                    new QuizQuestion(
-                                            String.format("%s question of quiz for lesson %d of %s %s course", ordinal(k), i, level, language),
-                                            QuestionType.MCQ,
-                                            1)
-                            );
+                            QuizQuestion mcqQuestion = new QuizQuestion(
+                                    String.format("%s %s question of quiz for lesson %d of %s %s course", ordinal(k++), QuestionType.MCQ, i, level, language),
+                                    QuestionType.MCQ,
+                                    1);
+
+                            QuizQuestion tfQuestion = new QuizQuestion(
+                                    String.format("%s %s question of quiz for lesson %d of %s %s course", ordinal(k++), QuestionType.TF, i, level, language),
+                                    QuestionType.TF,
+                                    1);
+
+                            QuizQuestion matchingQuestion = new QuizQuestion(
+                                    String.format("%s %s question of quiz for lesson %d of %s %s course", ordinal(k++), QuestionType.MATCHING, i, level, language),
+                                    QuestionType.MATCHING,
+                                    1);
+
+                            quizQuestions.add(mcqQuestion);
+                            quizQuestions.add(tfQuestion);
+                            quizQuestions.add(matchingQuestion);
                         }
                     }
                 }
@@ -969,10 +1032,24 @@ public class DatabaseConfig
                     {
                         for (int k = 1; k <= QUIZ_QUESTION_COUNT; k++)
                         {
+                            // MCQ
                             for (int l = 1; l <= QUIZ_QUESTION_OPTION_COUNT; l++)
                             {
                                 quizQuestionOptions.add(new QuizQuestionOption("Option " + l, null, l == 1));
                             }
+                            k++;
+
+                            // TF
+                            quizQuestionOptions.add(new QuizQuestionOption(Boolean.TRUE.toString(), null, k % 2 == 0));
+                            quizQuestionOptions.add(new QuizQuestionOption(Boolean.FALSE.toString(), null, k % 2 == 0));
+                            k++;
+
+                            // Matching
+                            for (int l = 1; l <= QUIZ_QUESTION_OPTION_COUNT; l++)
+                            {
+                                quizQuestionOptions.add(new QuizQuestionOption("Left Option " + l, "Right Option " + l, l == 1));
+                            }
+                            k++;
                         }
                     }
                 }
@@ -1044,11 +1121,6 @@ public class DatabaseConfig
                 }
             }
         }
-    }
-
-    private int getRandomNumber(int min, int max)
-    {
-        return (int) ((Math.random() * (max - min)) + min);
     }
 
     private String ordinal(int i)

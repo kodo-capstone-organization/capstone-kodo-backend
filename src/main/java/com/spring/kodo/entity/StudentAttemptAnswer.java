@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,24 +22,39 @@ public class StudentAttemptAnswer
     @NotNull
     private LocalDateTime dateTimeOfAttempt;
 
-    @Column(nullable = false)
-    @NotNull
+    @Column(nullable = false, length = 512)
+    @NotBlank(message = "Left Content cannot be blank")
+    @Size(min = 0, max = 512)
+    private String leftContent;
+
+    @Column(length = 512)
+    @Size(min = 0, max = 512)
+    private String rightContent;
+
+    @Column
+    private Boolean correct;
+
+    @Column
     @Min(0)
     private Integer marks;
-
-    @ManyToOne(optional = false, targetEntity = QuizQuestionOption.class, fetch = FetchType.LAZY)
-    private QuizQuestionOption quizQuestionOption;
 
     public StudentAttemptAnswer()
     {
         this.dateTimeOfAttempt = LocalDateTime.now();
-        this.marks = 0;
     }
 
-    public StudentAttemptAnswer(QuizQuestionOption quizQuestionOption)
+    public StudentAttemptAnswer(String leftContent)
     {
         this();
-        this.quizQuestionOption = quizQuestionOption;
+
+        this.leftContent = leftContent;
+    }
+
+    public StudentAttemptAnswer(String leftContent, String rightContent)
+    {
+        this(leftContent);
+
+        this.rightContent = rightContent;
     }
 
     public Long getStudentAttemptAnswerId()
@@ -60,6 +77,36 @@ public class StudentAttemptAnswer
         this.dateTimeOfAttempt = dateTimeOfAttempt;
     }
 
+    public String getLeftContent()
+    {
+        return leftContent;
+    }
+
+    public void setLeftContent(String leftContent)
+    {
+        this.leftContent = leftContent;
+    }
+
+    public String getRightContent()
+    {
+        return rightContent;
+    }
+
+    public void setRightContent(String rightContent)
+    {
+        this.rightContent = rightContent;
+    }
+
+    public Boolean getCorrect()
+    {
+        return correct;
+    }
+
+    public void setCorrect(Boolean correct)
+    {
+        this.correct = correct;
+    }
+
     public Integer getMarks()
     {
         return marks;
@@ -70,22 +117,16 @@ public class StudentAttemptAnswer
         this.marks = marks;
     }
 
-    public QuizQuestionOption getQuizQuestionOption()
-    {
-        return quizQuestionOption;
-    }
-
-    public void setQuizQuestionOption(QuizQuestionOption quizQuestionOption)
-    {
-        this.quizQuestionOption = quizQuestionOption;
-    }
-
     @Override
     public String toString()
     {
         return "StudentAttemptAnswer{" +
                 "studentAttemptAnswerId=" + studentAttemptAnswerId +
-                ", quizQuestionOption=" + quizQuestionOption +
+                ", dateTimeOfAttempt=" + dateTimeOfAttempt +
+                ", leftContent='" + leftContent + '\'' +
+                ", rightContent='" + rightContent + '\'' +
+                ", correct=" + correct +
+                ", marks=" + marks +
                 '}';
     }
 }
