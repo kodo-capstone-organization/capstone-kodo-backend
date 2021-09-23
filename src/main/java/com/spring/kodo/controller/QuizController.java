@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -33,6 +34,24 @@ public class QuizController
 
     @Autowired
     private QuizQuestionOptionService quizQuestionOptionService;
+
+    @PostMapping("/createNewBasicQuiz")
+    public Quiz createQuiz(@RequestPart(name = "name", required = true) String name, @RequestPart(name = "description", required = true) String description,
+                           @RequestPart(name = "hours", required = true) Integer hours, @RequestPart(name = "minutes", required = true) Integer minutes, @RequestPart(name = "maxAttemptsPerStudent", required = true) Integer maxAttemptsPerStudent)
+    {
+        try
+        {
+            Quiz quiz = quizService.createNewQuiz(new Quiz(name, description, LocalTime.of(hours, minutes), maxAttemptsPerStudent));
+            return quiz;
+        } catch (UnknownPersistenceException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        }
+        catch (CreateNewQuizException | InputDataValidationException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
+    }
 
     @PostMapping("/createNewQuiz")
     public Quiz createQuiz(@RequestPart(name = "quiz", required = true) CreateNewQuizReq createNewQuizReq)
