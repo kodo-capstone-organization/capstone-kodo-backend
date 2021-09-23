@@ -1,11 +1,13 @@
 package com.spring.kodo.controller;
 
+import com.spring.kodo.entity.Lesson;
 import com.spring.kodo.entity.Quiz;
 import com.spring.kodo.entity.QuizQuestion;
 import com.spring.kodo.entity.QuizQuestionOption;
 import com.spring.kodo.restentity.request.CreateNewQuizReq;
 import com.spring.kodo.restentity.request.UpdateQuizReq;
 import com.spring.kodo.restentity.response.QuizWithStudentAttemptCountResp;
+import com.spring.kodo.service.inter.LessonService;
 import com.spring.kodo.service.inter.QuizQuestionOptionService;
 import com.spring.kodo.service.inter.QuizQuestionService;
 import com.spring.kodo.service.inter.QuizService;
@@ -17,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -33,6 +36,35 @@ public class QuizController
 
     @Autowired
     private QuizQuestionOptionService quizQuestionOptionService;
+
+    @Autowired
+    private LessonService lessonService;
+
+    @PostMapping("/createNewBasicQuiz")
+    public Quiz createQuiz(@RequestPart(name = "name", required = true) String name, @RequestPart(name = "description", required = true) String description,
+                           @RequestPart(name = "hours", required = true) Integer hours, @RequestPart(name = "minutes", required = true) Integer minutes,
+                           @RequestPart(name = "maxAttemptsPerStudent", required = true) Integer maxAttemptsPerStudent, @RequestPart(name = "lessonId", required = true) Long lessonId)
+    {
+        try
+        {
+            Quiz quiz = quizService.createNewQuiz(new Quiz(name, description, LocalTime.of(hours, minutes), maxAttemptsPerStudent));
+
+            Lesson lesson = lessonService.getLessonByLessonId(lessonId);
+            lessonService.addContentToLesson(lesson, quiz);
+
+            return quiz;
+        } catch (UnknownPersistenceException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        }
+        catch (CreateNewQuizException | InputDataValidationException | UpdateContentException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
+        catch (LessonNotFoundException | ContentNotFoundException ex) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
 
     @PostMapping("/createNewQuiz")
     public Quiz createQuiz(@RequestPart(name = "quiz", required = true) CreateNewQuizReq createNewQuizReq)
