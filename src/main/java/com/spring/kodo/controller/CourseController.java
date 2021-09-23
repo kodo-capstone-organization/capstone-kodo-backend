@@ -160,6 +160,22 @@ public class CourseController
         }
     }
 
+    @GetMapping("/getNewReleasesCourses")
+    public List<CourseWithTutorAndRatingResp> getNewReleasesCourses()
+    {
+        try
+        {
+            List<Course> courses = this.courseService.getAllCoursesInTheLast14Days();
+            List<CourseWithTutorAndRatingResp> courseWithTutorAndRatingResps = getAllCoursesWithTutorsByCourses(courses);
+
+            return courseWithTutorAndRatingResps;
+        }
+        catch (AccountNotFoundException | CourseNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @PostMapping("/createNewCourse")
     public Course createNewCourse(
             @RequestPart(name = "course", required = true) CreateNewCourseReq createNewCourseReq,
@@ -210,7 +226,8 @@ public class CourseController
     @PutMapping("/updateCourse")
     public Course updateCourse(
             @RequestPart(name="updateCourseReq", required = true) UpdateCourseReq updateCourseReq,
-            @RequestPart(name="bannerPicture", required = false) MultipartFile updatedBannerPicture
+            @RequestPart(name="bannerPicture", required = false) MultipartFile updatedBannerPicture,
+            @RequestPart(name="lessonMultimedias", required = false) List<MultipartFile> lessonMultimedias
     )
     {
         if (updateCourseReq != null)
@@ -219,7 +236,7 @@ public class CourseController
             try
             {
                 // Update all lessons and their contents first
-                List<Long> updatedLessonIds = lessonController.updateLessonsInACourse(updateCourseReq.getUpdateLessonReqs());
+                List<Long> updatedLessonIds = lessonController.updateLessonsInACourse(updateCourseReq.getUpdateLessonReqs(), lessonMultimedias);
 
                 // Update course
                 Course updatedCourse = this.courseService.updateCourse(
@@ -312,6 +329,7 @@ public class CourseController
                 course.getDescription(),
                 course.getPrice(),
                 course.getBannerUrl(),
+                course.getDateTimeOfCreation(),
                 course.getEnrollment(),
                 course.getCourseTags(),
                 course.getLessons(),

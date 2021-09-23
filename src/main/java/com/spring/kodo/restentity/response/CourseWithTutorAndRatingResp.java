@@ -3,6 +3,7 @@ package com.spring.kodo.restentity.response;
 import com.spring.kodo.entity.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class CourseWithTutorAndRatingResp
@@ -12,6 +13,7 @@ public class CourseWithTutorAndRatingResp
     private String description;
     private BigDecimal price;
     private String bannerUrl;
+    private LocalDateTime dateTimeOfCreation;
     private List<EnrolledCourse> enrollment;
     private List<Tag> courseTags;
     private List<Lesson> lessons;
@@ -24,13 +26,14 @@ public class CourseWithTutorAndRatingResp
     {
     }
 
-    public CourseWithTutorAndRatingResp(Long courseId, String name, String description, BigDecimal price, String bannerUrl, List<EnrolledCourse> enrollment, List<Tag> courseTags, List<Lesson> lessons, Account tutor, String bannerPictureFileName, Boolean isEnrollmentActive, Double courseRating)
+    public CourseWithTutorAndRatingResp(Long courseId, String name, String description, BigDecimal price, String bannerUrl, LocalDateTime dateTimeOfCreation, List<EnrolledCourse> enrollment, List<Tag> courseTags, List<Lesson> lessons, Account tutor, String bannerPictureFileName, Boolean isEnrollmentActive, Double courseRating)
     {
         this.courseId = courseId;
         this.name = name;
         this.description = description;
         this.price = price;
         this.bannerUrl = bannerUrl;
+        this.dateTimeOfCreation = dateTimeOfCreation;
         this.enrollment = enrollment;
         this.courseTags = courseTags;
         this.lessons = lessons;
@@ -174,5 +177,13 @@ public class CourseWithTutorAndRatingResp
     public void setCourseRating(Double courseRating)
     {
         this.courseRating = courseRating;
+    }
+
+    public LocalDateTime getDateTimeOfCreation() {
+        return dateTimeOfCreation;
+    }
+
+    public void setDateTimeOfCreation(LocalDateTime dateTimeOfCreation) {
+        this.dateTimeOfCreation = dateTimeOfCreation;
     }
 }

@@ -2,6 +2,7 @@ package com.spring.kodo.config;
 
 import com.spring.kodo.entity.*;
 import com.spring.kodo.service.inter.*;
+import com.spring.kodo.util.RandomGeneratorUtil;
 import com.spring.kodo.util.enumeration.MultimediaType;
 import com.spring.kodo.util.enumeration.QuestionType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +84,9 @@ public class DatabaseConfig
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private TransactionService transactionService;
 
     @Autowired
     private Environment env;
@@ -479,11 +483,15 @@ public class DatabaseConfig
 
     private void createEnrolledCoursesAndEnrolledLessonsEnrolledContents() throws Exception
     {
+        Account tutor;
         Account student;
         Course course;
         EnrolledCourse enrolledCourse;
         EnrolledLesson enrolledLesson;
         EnrolledContent enrolledContent;
+        Transaction transaction;
+
+        String dummyUniqueStripeSessionId;
 
         int i = 0;
         while (i < STUDENT_ENROLLED_COUNT)
@@ -496,9 +504,16 @@ public class DatabaseConfig
                     {
                         student = accounts.get(studentIndex);
                         course = courses.get(courseIndex);
+                        tutor = accountService.getAccountByCourseId(course.getCourseId());
+                        dummyUniqueStripeSessionId = "acct_" + RandomGeneratorUtil.getRandomString(16);
 
                         enrolledCourse = enrolledCourseService.createNewEnrolledCourse(student.getAccountId(), course.getCourseId());
                         accountService.addEnrolledCourseToAccount(student, enrolledCourse);
+
+                        // Create transaction records assuming students successfully made the payments
+                        // Using a unique value in place of a real stripe sessionId
+                        transaction = new Transaction(dummyUniqueStripeSessionId, course.getPrice());
+                        transactionService.createNewTransaction(transaction, student.getAccountId(), tutor.getAccountId(), course.getCourseId());
 
                         for (Lesson lesson : course.getLessons())
                         {
@@ -703,7 +718,7 @@ public class DatabaseConfig
             for (int i = STUDENT_FIRST_INDEX; i < STUDENT_SIZE; i++)
             {
                 student = accounts.get(i);
-                contentPerStudent = getRandomNumber(1, 10);
+                contentPerStudent = 5;
                 contentPerStudentIndex = 0;
 
                 for (EnrolledCourse enrolledCourse : student.getEnrolledCourses())
@@ -1059,11 +1074,6 @@ public class DatabaseConfig
                 }
             }
         }
-    }
-
-    private int getRandomNumber(int min, int max)
-    {
-        return (int) ((Math.random() * (max - min)) + min);
     }
 
     private String ordinal(int i)

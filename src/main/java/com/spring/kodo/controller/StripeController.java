@@ -81,7 +81,7 @@ public class StripeController
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
-        catch (InputDataValidationException | AccountEmailExistException | TagNameExistsException ex)
+        catch (InputDataValidationException | AccountEmailExistException | TagNameExistsException | TransactionStripeTransactionIdExistsException ex)
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }

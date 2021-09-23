@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.URL;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,11 +65,16 @@ public class Course
     )
     private List<Tag> courseTags;
 
+    @Column(nullable = false)
+    @NotNull
+    private LocalDateTime dateTimeOfCreation;
+
     public Course()
     {
         this.enrollment = new ArrayList<>();
         this.lessons = new ArrayList<>();
         this.courseTags = new ArrayList<>();
+        this.dateTimeOfCreation = LocalDateTime.now();
         this.isEnrollmentActive = false; // A new course is inactive by default
     }
 
@@ -195,6 +201,14 @@ public class Course
 
     public void setIsEnrollmentActive(Boolean enrollmentActive) {
         isEnrollmentActive = enrollmentActive;
+    }
+
+    public LocalDateTime getDateTimeOfCreation() {
+        return dateTimeOfCreation;
+    }
+
+    public void setDateTimeOfCreation(LocalDateTime dateTimeOfCreation) {
+        this.dateTimeOfCreation = dateTimeOfCreation;
     }
 
     @Override

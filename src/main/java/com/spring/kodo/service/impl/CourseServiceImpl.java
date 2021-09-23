@@ -184,6 +184,12 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
+    public List<Course> getAllCoursesInTheLast14Days()
+    {
+        return courseRepository.findAllCoursesCreatedInTheLast14Days();
+    }
+
+    @Override
     public Course updateCourse(
             Course course,
             List<Long> enrolledCourseIds,

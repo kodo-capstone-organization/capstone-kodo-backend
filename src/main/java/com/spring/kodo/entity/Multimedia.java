@@ -6,10 +6,7 @@ import com.spring.kodo.util.MessageFormatterUtil;
 import com.spring.kodo.util.enumeration.MultimediaType;
 import org.hibernate.validator.constraints.URL;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -28,6 +25,10 @@ public class Multimedia extends Content
     @Column(nullable = false)
     @NotNull
     private MultimediaType multimediaType;
+
+    // Used only for updateCourse to match file to incoming MultipartFile
+    @Transient
+    private String newFilename;
 
     public Multimedia()
     {
@@ -53,6 +54,14 @@ public class Multimedia extends Content
     public String getUrlFilename()
     {
         return MessageFormatterUtil.getGCSObjectNameFromMediaLink(this.url);
+    }
+
+    public String getNewFilename() {
+        return newFilename;
+    }
+
+    public void setNewFilename(String newFilename) {
+        this.newFilename = newFilename;
     }
 
     public MultimediaType getMultimediaType()

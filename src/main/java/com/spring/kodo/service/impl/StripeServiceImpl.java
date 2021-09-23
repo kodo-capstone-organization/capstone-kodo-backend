@@ -3,11 +3,9 @@ package com.spring.kodo.service.impl;
 import com.google.gson.JsonSyntaxException;
 import com.spring.kodo.entity.Course;
 import com.spring.kodo.entity.EnrolledCourse;
+import com.spring.kodo.entity.Transaction;
 import com.spring.kodo.restentity.request.StripePaymentReq;
-import com.spring.kodo.service.inter.AccountService;
-import com.spring.kodo.service.inter.CourseService;
-import com.spring.kodo.service.inter.EnrolledCourseService;
-import com.spring.kodo.service.inter.StripeService;
+import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.Constants;
 import com.spring.kodo.util.exception.*;
 import com.stripe.Stripe;
@@ -24,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.Map;
 
 @Service
@@ -46,6 +45,9 @@ public class StripeServiceImpl implements StripeService
 
     @Autowired
     private CourseService courseService;
+
+    @Autowired
+    private TransactionService transactionService;
 
     @Override
     public Account createNewStripeAccount(Long accountId) throws StripeException
@@ -91,13 +93,13 @@ public class StripeServiceImpl implements StripeService
                         .addLineItem(
                                 SessionCreateParams.LineItem.builder()
                                         .setName(stripePaymentReq.getTutorName())
-                                        .setAmount(stripePaymentReq.getAmount().longValue() * 100)
+                                        .setAmount(stripePaymentReq.getAmount().multiply(new BigDecimal(100)).longValue())
                                         .setCurrency("sgd")
                                         .setQuantity(1L)
                                         .build())
                         .setPaymentIntentData(
                                 SessionCreateParams.PaymentIntentData.builder()
-                                        .setApplicationFeeAmount(stripePaymentReq.getAmount().multiply(Constants.PLATFORM_FEE_PERCENTAGE).longValue() * 100)
+                                        .setApplicationFeeAmount(stripePaymentReq.getAmount().multiply(new BigDecimal(100)).multiply(Constants.PLATFORM_FEE_PERCENTAGE).longValue())
                                         .setTransferData(
                                                 SessionCreateParams.PaymentIntentData.TransferData.builder()
                                                         .setDestination(stripePaymentReq.getTutorStripeAccountId())
@@ -112,8 +114,7 @@ public class StripeServiceImpl implements StripeService
     }
 
     @Override
-    public void handleIncomingStripeWebhook(String payload, HttpServletRequest request) throws SignatureVerificationException, JsonSyntaxException, AccountNotFoundException, UnknownPersistenceException, InputDataValidationException, UpdateAccountException, CreateNewEnrolledCourseException, EnrolledCourseNotFoundException, CourseNotFoundException, StudentAttemptNotFoundException, TagNotFoundException, TagNameExistsException, AccountEmailExistException
-    {
+    public void handleIncomingStripeWebhook(String payload, HttpServletRequest request) throws SignatureVerificationException, JsonSyntaxException, AccountNotFoundException, UnknownPersistenceException, InputDataValidationException, UpdateAccountException, CreateNewEnrolledCourseException, EnrolledCourseNotFoundException, CourseNotFoundException, StudentAttemptNotFoundException, TagNotFoundException, TagNameExistsException, AccountEmailExistException, TransactionStripeTransactionIdExistsException {
         Stripe.apiKey = stripeApiKey;
         String header = request.getHeader("Stripe-Signature");
         String endpointSecret = stripeEndpointSecret;
@@ -152,7 +153,7 @@ public class StripeServiceImpl implements StripeService
     }
 
 
-    public void handleCompletedCheckoutSession(Session session) throws AccountNotFoundException, CourseNotFoundException, UnknownPersistenceException, CreateNewEnrolledCourseException, InputDataValidationException, EnrolledCourseNotFoundException, UpdateAccountException {
+    public void handleCompletedCheckoutSession(Session session) throws AccountNotFoundException, CourseNotFoundException, UnknownPersistenceException, CreateNewEnrolledCourseException, InputDataValidationException, EnrolledCourseNotFoundException, UpdateAccountException, TransactionStripeTransactionIdExistsException {
         // Update Transaction entity
         System.out.println(session);
 
@@ -166,5 +167,8 @@ public class StripeServiceImpl implements StripeService
 
         EnrolledCourse enrolledCourse = enrolledCourseService.createNewEnrolledCourse(student.getAccountId(), course.getCourseId());
         accountService.addEnrolledCourseToAccount(student, enrolledCourse);
+
+        Transaction newTransaction = new Transaction(session.getId(), new BigDecimal(session.getAmountTotal()).divide(new BigDecimal(100)));
+        newTransaction = this.transactionService.createNewTransaction(newTransaction, studentId, tutorId, courseId);
     }
 }
