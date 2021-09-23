@@ -119,8 +119,9 @@ public class DatabaseConfig
     private final Integer MULTIMEDIA_COUNT = 2;
 
     private final Integer QUIZ_COUNT = 1;
-    private final Integer QUIZ_QUESTION_COUNT = 3;
+    private final Integer QUIZ_QUESTION_COUNT = 6;
     private final Integer QUIZ_QUESTION_OPTION_COUNT = 3;
+    private final Integer QUIZ_QUESTION_TYPES = QuestionType.values().length;
 
     private final Integer STUDENT_ENROLLED_COUNT = (int) (0.5 * (LANGUAGES_COUNT * STUDENT_COUNT));
     private final Integer STUDENT_ATTEMPT_COUNT = 3;
@@ -442,11 +443,23 @@ public class DatabaseConfig
                     {
                         quizQuestion = quizQuestions.get(quizQuestionIndex);
 
-                        for (int a = 0; a < QUIZ_QUESTION_OPTION_COUNT; a++, quizQuestionOptionIndex++)
+                        if (quizQuestion.getQuestionType().equals(QuestionType.MCQ) || quizQuestion.getQuestionType().equals(QuestionType.MATCHING))
                         {
-                            quizQuestionOption = quizQuestionOptionService.createNewQuizQuestionOption(quizQuestionOptions.get(quizQuestionOptionIndex));
+                            for (int a = 0; a < QUIZ_QUESTION_OPTION_COUNT; a++, quizQuestionOptionIndex++)
+                            {
+                                quizQuestionOption = quizQuestionOptionService.createNewQuizQuestionOption(quizQuestionOptions.get(quizQuestionOptionIndex));
 
-                            quizQuestionService.addQuizQuestionOptionToQuizQuestion(quizQuestion, quizQuestionOption);
+                                quizQuestionService.addQuizQuestionOptionToQuizQuestion(quizQuestion, quizQuestionOption);
+                            }
+                        }
+                        else if (quizQuestion.getQuestionType().equals(QuestionType.TF))
+                        {
+                            for (int a = 0; a < 2; a++, quizQuestionOptionIndex++)
+                            {
+                                quizQuestionOption = quizQuestionOptionService.createNewQuizQuestionOption(quizQuestionOptions.get(quizQuestionOptionIndex));
+
+                                quizQuestionService.addQuizQuestionOptionToQuizQuestion(quizQuestion, quizQuestionOption);
+                            }
                         }
                     }
                 }
@@ -586,7 +599,15 @@ public class DatabaseConfig
             {
                 for (QuizQuestionOption quizQuestionOption : studentAttemptQuestion.getQuizQuestion().getQuizQuestionOptions())
                 {
-                    studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption.getQuizQuestionOptionId());
+                    if (studentAttemptQuestion.getQuizQuestion().getQuestionType().equals(QuestionType.MATCHING))
+                    {
+                        studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption.getQuizQuestionOptionId(), quizQuestionOption.getQuizQuestionOptionId());
+                    }
+                    else
+                    {
+                        studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption.getQuizQuestionOptionId());
+                    }
+
                     studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
 
                     studentAttemptAnswersCounter++;
@@ -974,12 +995,24 @@ public class DatabaseConfig
                     {
                         for (int k = 1; k <= QUIZ_QUESTION_COUNT; k++)
                         {
-                            quizQuestions.add(
-                                    new QuizQuestion(
-                                            String.format("%s question of quiz for lesson %d of %s %s course", ordinal(k), i, level, language),
-                                            QuestionType.MCQ,
-                                            1)
-                            );
+                            QuizQuestion mcqQuestion = new QuizQuestion(
+                                    String.format("%s %s question of quiz for lesson %d of %s %s course", ordinal(k++), QuestionType.MCQ, i, level, language),
+                                    QuestionType.MCQ,
+                                    1);
+
+                            QuizQuestion tfQuestion = new QuizQuestion(
+                                    String.format("%s %s question of quiz for lesson %d of %s %s course", ordinal(k++), QuestionType.TF, i, level, language),
+                                    QuestionType.TF,
+                                    1);
+
+                            QuizQuestion matchingQuestion = new QuizQuestion(
+                                    String.format("%s %s question of quiz for lesson %d of %s %s course", ordinal(k++), QuestionType.MATCHING, i, level, language),
+                                    QuestionType.MATCHING,
+                                    1);
+
+                            quizQuestions.add(mcqQuestion);
+                            quizQuestions.add(tfQuestion);
+                            quizQuestions.add(matchingQuestion);
                         }
                     }
                 }
@@ -999,10 +1032,24 @@ public class DatabaseConfig
                     {
                         for (int k = 1; k <= QUIZ_QUESTION_COUNT; k++)
                         {
+                            // MCQ
                             for (int l = 1; l <= QUIZ_QUESTION_OPTION_COUNT; l++)
                             {
                                 quizQuestionOptions.add(new QuizQuestionOption("Option " + l, null, l == 1));
                             }
+                            k++;
+
+                            // TF
+                            quizQuestionOptions.add(new QuizQuestionOption(Boolean.TRUE.toString(), null, k % 2 == 0));
+                            quizQuestionOptions.add(new QuizQuestionOption(Boolean.FALSE.toString(), null, k % 2 == 0));
+                            k++;
+
+                            // Matching
+                            for (int l = 1; l <= QUIZ_QUESTION_OPTION_COUNT; l++)
+                            {
+                                quizQuestionOptions.add(new QuizQuestionOption("Left Option " + l, "Right Option " + l, l == 1));
+                            }
+                            k++;
                         }
                     }
                 }
