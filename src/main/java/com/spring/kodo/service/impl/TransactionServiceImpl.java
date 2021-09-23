@@ -17,8 +17,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import java.util.List;
-import java.util.Set;
+import java.math.BigDecimal;
+import java.util.*;
 
 @Service
 public class TransactionServiceImpl implements TransactionService
@@ -104,4 +104,59 @@ public class TransactionServiceImpl implements TransactionService
         Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
         return this.transactionRepository.getAllTransactionByPayerId(requestingAccount.getAccountId());
     }
+
+    @Override
+    public BigDecimal getLifetimeTotalEarningsByAccountId(Long requestingAccountId) throws AccountNotFoundException
+    {
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
+        return this.transactionRepository.getLifetimeEarningsByPayeeId(requestingAccount.getAccountId()).orElse(new BigDecimal(0));
+    }
+
+    @Override
+    public List<Map<String, String>> getLifetimeEarningsByCourseByAccountId(Long requestingAccountId) throws AccountNotFoundException {
+
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
+        List<Course> myCourses = requestingAccount.getCourses();
+
+        // return format: [{'courseId': '5', 'courseName': 'Some Course', 'lifetimeEarnings': '18.50'}, {...}, ...]
+        List<Map<String, String>> outputList = new ArrayList<>();
+        for (Course c: myCourses)
+        {
+            BigDecimal lifetimeEarningFromCourse = this.transactionRepository.getLifetimeTutorPayoutByCourseId(c.getCourseId()).orElse(new BigDecimal(0));
+            Map<String,String> inputData = new HashMap<>();
+            inputData.put("courseId", c.getCourseId().toString());
+            inputData.put("courseName", c.getName());
+            inputData.put("lifetimeEarnings", lifetimeEarningFromCourse.toString());
+            outputList.add(inputData);
+        }
+        return outputList;
+    }
+
+    @Override
+    public BigDecimal getCurrentMonthTotalEarningsByAccountId(Long requestingAccountId) throws AccountNotFoundException
+    {
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
+        return this.transactionRepository.getCurrentMonthEarningsByPayeeId(requestingAccount.getAccountId()).orElse(new BigDecimal(0));
+    }
+
+    @Override
+    public List<Map<String, String>> getCurrentMonthEarningsByCourseByAccountId(Long requestingAccountId) throws AccountNotFoundException {
+
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
+        List<Course> myCourses = requestingAccount.getCourses();
+
+        // return format: [{'courseId': '5', 'courseName': 'Some Course', 'lifetimeEarnings': '18.50'}, {...}, ...]
+        List<Map<String, String>> outputList = new ArrayList<>();
+        for (Course c: myCourses)
+        {
+            BigDecimal lifetimeEarningFromCourse = this.transactionRepository.getCurrentMonthTutorPayoutByCourseId(c.getCourseId()).orElse(new BigDecimal(0));
+            Map<String,String> inputData = new HashMap<>();
+            inputData.put("courseId", c.getCourseId().toString());
+            inputData.put("courseName", c.getName());
+            inputData.put("lifetimeEarnings", lifetimeEarningFromCourse.toString());
+            outputList.add(inputData);
+        }
+        return outputList;
+    }
+
 }
