@@ -126,7 +126,7 @@ public class TransactionServiceImpl implements TransactionService
             Map<String,String> inputData = new HashMap<>();
             inputData.put("courseId", c.getCourseId().toString());
             inputData.put("courseName", c.getName());
-            inputData.put("lifetimeEarnings", lifetimeEarningFromCourse.toString());
+            inputData.put("earnings", lifetimeEarningFromCourse.toString());
             outputList.add(inputData);
         }
         return outputList;
@@ -153,7 +153,7 @@ public class TransactionServiceImpl implements TransactionService
             Map<String,String> inputData = new HashMap<>();
             inputData.put("courseId", c.getCourseId().toString());
             inputData.put("courseName", c.getName());
-            inputData.put("lifetimeEarnings", lifetimeEarningFromCourse.toString());
+            inputData.put("earnings", lifetimeEarningFromCourse.toString());
             outputList.add(inputData);
         }
         return outputList;
