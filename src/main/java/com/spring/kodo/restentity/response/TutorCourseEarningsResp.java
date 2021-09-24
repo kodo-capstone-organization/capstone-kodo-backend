@@ -8,7 +8,7 @@ import java.util.Map;
 public class TutorCourseEarningsResp
 {
       private BigDecimal lifetimeTotalEarnings;
-      private List<Map<String, String>> lifetimeEarningsByCourse; // [{'courseId': '5', 'courseName': 'Some Course', 'earnings': '18.50'}, {...}, ...]
+      private List<Map<String, String>> lifetimeEarningsByCourse; // [{'courseId': '5', 'courseName': 'Some Course', 'earnings': '18.50', 'courseNameWithEarnings': 'Some Course ($xx)'}, {...}, ...]
       private BigDecimal currentMonthTotalEarnings;
       private List<Map<String, String>> currentMonthEarningsByCourse;
 
