@@ -68,12 +68,14 @@ public class TransactionController
             List<Map<String, String>> lifetimeEarningsByCourse = this.transactionService.getLifetimeEarningsByCourseByAccountId(accountId);
             BigDecimal currentMonthTotalEarnings = this.transactionService.getCurrentMonthTotalEarningsByAccountId(accountId);
             List<Map<String, String>> currentMonthEarningsByCourse = this.transactionService.getCurrentMonthEarningsByCourseByAccountId(accountId);
+            List<Map<String, String>> courseStatsByMonthForLastYear = this.transactionService.getCourseStatsByMonthForLastYear(accountId);
 
             TutorCourseEarningsResp responseObj = new TutorCourseEarningsResp();
             responseObj.setLifetimeTotalEarnings(lifetimeTotalEarnings);
             responseObj.setLifetimeEarningsByCourse(lifetimeEarningsByCourse);
             responseObj.setCurrentMonthTotalEarnings(currentMonthTotalEarnings);
             responseObj.setCurrentMonthEarningsByCourse(currentMonthEarningsByCourse);
+            responseObj.setCourseStatsByMonthForLastYear(courseStatsByMonthForLastYear);
 
             return responseObj;
         }

@@ -7,15 +7,20 @@ import java.util.Map;
 
 public class TutorCourseEarningsResp
 {
+      // Summary stats
       private BigDecimal lifetimeTotalEarnings;
       private List<Map<String, String>> lifetimeEarningsByCourse; // [{'courseId': '5', 'courseName': 'Some Course', 'earnings': '18.50', 'courseNameWithEarnings': 'Some Course ($xx)'}, {...}, ...]
       private BigDecimal currentMonthTotalEarnings;
       private List<Map<String, String>> currentMonthEarningsByCourse;
 
+      // Course stats
+      private List<Map<String, String>> courseStatsByMonthForLastYear;
+
       public TutorCourseEarningsResp()
       {
             lifetimeEarningsByCourse = new ArrayList<>();
             currentMonthEarningsByCourse = new ArrayList<>();
+            courseStatsByMonthForLastYear = new ArrayList<>();
       }
 
       public BigDecimal getLifetimeTotalEarnings() {
@@ -48,5 +53,13 @@ public class TutorCourseEarningsResp
 
       public void setCurrentMonthEarningsByCourse(List<Map<String, String>> currentMonthEarningsByCourse) {
             this.currentMonthEarningsByCourse = currentMonthEarningsByCourse;
+      }
+
+      public List<Map<String, String>> getCourseStatsByMonthForLastYear() {
+            return courseStatsByMonthForLastYear;
+      }
+
+      public void setCourseStatsByMonthForLastYear(List<Map<String, String>> courseStatsByMonthForLastYear) {
+            this.courseStatsByMonthForLastYear = courseStatsByMonthForLastYear;
       }
 }

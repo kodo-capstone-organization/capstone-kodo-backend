@@ -1,5 +1,6 @@
 package com.spring.kodo.service.impl;
 
+import com.google.gson.Gson;
 import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Course;
 import com.spring.kodo.entity.Transaction;
@@ -8,6 +9,7 @@ import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.CourseService;
 import com.spring.kodo.service.inter.TransactionService;
 import com.spring.kodo.util.FormatterUtil;
+import com.spring.kodo.util.NowMonthYearUtil;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -18,6 +20,8 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.*;
 
 @Service
@@ -118,7 +122,6 @@ public class TransactionServiceImpl implements TransactionService
         Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
         List<Course> myCourses = requestingAccount.getCourses();
 
-        // return format: [{'courseId': '5', 'courseName': 'Some Course', 'lifetimeEarnings': '18.50'}, {...}, ...]
         List<Map<String, String>> outputList = new ArrayList<>();
         for (Course c: myCourses)
         {
@@ -146,7 +149,7 @@ public class TransactionServiceImpl implements TransactionService
         Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
         List<Course> myCourses = requestingAccount.getCourses();
 
-        // return format: [{'courseId': '5', 'courseName': 'Some Course', 'lifetimeEarnings': '18.50'}, {...}, ...]
+        // return format: [{'courseId': '5', 'courseName': 'Some Course', 'earnings': '18.50', 'courseNameWithEarnings': 'XXX $(YY)}' }, {...}, ...]
         List<Map<String, String>> outputList = new ArrayList<>();
         for (Course c: myCourses)
         {
@@ -158,6 +161,46 @@ public class TransactionServiceImpl implements TransactionService
             inputData.put("earnings", lifetimeEarningFromCourse.toString());
             outputList.add(inputData);
         }
+        return outputList;
+    }
+
+    @Override
+    public List<Map<String, String>> getCourseStatsByMonthForLastYear(Long requestingAccountId) throws AccountNotFoundException
+    {
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
+        List<Course> myCourses = requestingAccount.getCourses();
+        List<Map<String, String>> outputList = new ArrayList<>();
+
+        for (Course c: myCourses)
+        {
+            Map<String,String> inputData = new HashMap<>();
+            inputData.put("courseId", c.getCourseId().toString());
+            inputData.put("courseName", c.getName());
+
+            LocalDate today = LocalDate.now();
+            LocalDate firstOfCurMonth = today.withDayOfMonth(1);
+            List<String> monthListShortName = NowMonthYearUtil.getMonthListShortName();
+            List<Map<String, String>> data = new ArrayList<>();
+
+            int iter = 12;
+            while (iter > 0) {
+                Map<String, String> dataInput = new HashMap<>();
+                Month month = firstOfCurMonth.getMonth();
+                int year = firstOfCurMonth.getYear();
+                dataInput.put("monthyear", monthListShortName.get(month.getValue()-1) + " " + year); // SEP 2021
+                BigDecimal tutorPayoutByMonthByCourseId = this.transactionRepository.getTutorPayoutByMonthByCourseId(c.getCourseId(), year, month.getValue()).orElse(new BigDecimal(0));
+                dataInput.put("earnings", tutorPayoutByMonthByCourseId.toString());
+
+                data.add(dataInput);
+                iter--;
+                firstOfCurMonth = firstOfCurMonth.minusMonths(1);
+            }
+
+            Gson gson = new Gson();
+            inputData.put("data", gson.toJson(data)); // stringify the list
+            outputList.add(inputData);
+        }
+
         return outputList;
     }
 
