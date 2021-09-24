@@ -171,27 +171,19 @@ public class QuizController
         }
     }
 
-    @DeleteMapping("/deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId/{quizId}")
-    public Boolean deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId(@PathVariable Long quizId)
+    @DeleteMapping("/deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId")
+    public Boolean deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId(@RequestPart List<Long> quizIds)
     {
-        if (quizId != null)
-        {
-            try
-            {
-                return quizService.deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId(quizId);
-            }
-            catch (QuizNotFoundException | QuizQuestionOptionNotFoundException | QuizQuestionNotFoundException | LessonNotFoundException | ContentNotFoundException ex)
-            {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-            }
-            catch (DeleteQuizQuestionOptionException | DeleteQuizQuestionException | DeleteQuizException | UpdateContentException | InputDataValidationException | UnknownPersistenceException ex)
-            {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
-            }
-        }
-        else
-        {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Quiz ID");
-        }
+       try
+       {
+           return quizService.deleteQuizzesWithQuizQuestionsAndQuizQuestionOptionsByQuizId(quizIds);
+       }
+       catch (QuizNotFoundException | QuizQuestionOptionNotFoundException | QuizQuestionNotFoundException | LessonNotFoundException | ContentNotFoundException ex)
+       {
+           throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+       }
+       catch (DeleteQuizQuestionOptionException | DeleteQuizQuestionException | DeleteQuizException | UpdateContentException | InputDataValidationException | UnknownPersistenceException ex) {
+           throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+       }
     }
 }

@@ -275,8 +275,8 @@ public class QuizServiceImpl implements QuizService
     }
 
     @Override
-    public Boolean deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId(Long quizId) throws DeleteQuizException, QuizNotFoundException, QuizQuestionOptionNotFoundException, DeleteQuizQuestionOptionException, QuizQuestionNotFoundException, DeleteQuizQuestionException, LessonNotFoundException, UpdateContentException, InputDataValidationException, ContentNotFoundException, UnknownPersistenceException {
-        if (quizId != null)
+    public Boolean deleteQuizzesWithQuizQuestionsAndQuizQuestionOptionsByQuizId(List<Long> quizIds) throws DeleteQuizException, QuizNotFoundException, QuizQuestionOptionNotFoundException, DeleteQuizQuestionOptionException, QuizQuestionNotFoundException, DeleteQuizQuestionException, LessonNotFoundException, UpdateContentException, InputDataValidationException, ContentNotFoundException, UnknownPersistenceException {
+        for (Long quizId : quizIds)
         {
             Quiz quizToDelete = getQuizByQuizId(quizId);
 
@@ -301,16 +301,12 @@ public class QuizServiceImpl implements QuizService
                 this.lessonService.updateLesson(lesson, updatedContentIds);
 
                 quizRepository.delete(quizToDelete);
-                return true;
             }
             else
             {
                 throw new DeleteQuizException("Quiz that has StudentAttempts cannot be deleted");
             }
         }
-        else
-        {
-            throw new DeleteQuizException("Quiz ID cannot be null");
-        }
+        return true;
     }
 }
