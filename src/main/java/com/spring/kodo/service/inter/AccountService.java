@@ -57,11 +57,8 @@ public interface AccountService
 
     Account updateAccount(Account account) throws UpdateAccountException, AccountNotFoundException, AccountEmailExistException;
 
-    Account updateAccount(Account account, String password) throws UpdateAccountException, AccountNotFoundException, InputDataValidationException, AccountEmailExistException;
-
     Account updateAccount(
             Account account,
-            String password,
             List<String> tagTitles,
             List<Long> enrolledCourseIds,
             List<Long> courseIds,
@@ -78,6 +75,8 @@ public interface AccountService
             EnrolledCourseNotFoundException,
             StudentAttemptNotFoundException;
 
+    Account updateAccountPassword(Long accountId, String username, String oldPassword, String newPassword) throws UpdateAccountException, AccountNotFoundException, InputDataValidationException;
+
     Account addTagToAccount(Account account, Tag tag) throws AccountNotFoundException, TagNotFoundException, UpdateAccountException;
 
     Account addEnrolledCourseToAccount(Account account, EnrolledCourse enrolledCourse) throws UpdateAccountException, AccountNotFoundException, EnrolledCourseNotFoundException;
@@ -89,6 +88,8 @@ public interface AccountService
     Boolean isAccountExistsByUsername(String username);
 
     Boolean isAccountExistsByEmail(String email);
+
+    Long reactivateAccount(Long reactivatingAccountId, Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException;
 
     Long deactivateAccount(Long deactivatingAccountId, Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException;
 

@@ -3,7 +3,7 @@ package com.spring.kodo.service.impl;
 import com.spring.kodo.entity.*;
 import com.spring.kodo.repository.AccountRepository;
 import com.spring.kodo.service.inter.*;
-import com.spring.kodo.util.MessageFormatterUtil;
+import com.spring.kodo.util.FormatterUtil;
 import com.spring.kodo.util.cryptography.CryptographicHelper;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,7 +81,7 @@ public class AccountServiceImpl implements AccountService
             }
             else
             {
-                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
         }
         catch (DataAccessException ex)
@@ -306,28 +306,8 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
-    public Account updateAccount(Account account, String password) throws UpdateAccountException, AccountNotFoundException, InputDataValidationException, AccountEmailExistException
-    {
-        Account accountToUpdate = updateAccount(account);
-        // Update Non-Relational Fields
-
-        if (password != null)
-        {
-            accountToUpdate.setPassword(password);
-        }
-        else
-        {
-            throw new UpdateAccountException("Password not provided for account to be updated");
-        }
-
-        accountToUpdate = accountRepository.saveAndFlush(accountToUpdate);
-        return accountToUpdate;
-    }
-
-    @Override
     public Account updateAccount(
             Account account,
-            String password,
             List<String> tagTitles,
             List<Long> enrolledCourseIds,
             List<Long> courseIds,
@@ -344,7 +324,7 @@ public class AccountServiceImpl implements AccountService
             EnrolledCourseNotFoundException,
             StudentAttemptNotFoundException
     {
-        Account accountToUpdate = updateAccount(account, password);
+        Account accountToUpdate = updateAccount(account);
 
         // Update Tags (interests) - Unidirectional
         if (tagTitles != null)
@@ -393,6 +373,57 @@ public class AccountServiceImpl implements AccountService
 
         accountToUpdate = accountRepository.saveAndFlush(accountToUpdate);
         return accountToUpdate;
+    }
+
+    @Override
+    public Account updateAccountPassword(Long accountId, String username, String oldPassword, String newPassword) throws UpdateAccountException, AccountNotFoundException, InputDataValidationException
+    {
+        if (username != null)
+        {
+            if (oldPassword != null)
+            {
+                if (newPassword != null)
+                {
+                    Account account = getAccountByAccountId(accountId);
+
+                    if (account.getUsername().equals(username))
+                    {
+                        String salt = account.getSalt();
+                        String oldHashedPassword = CryptographicHelper.getSHA256Digest(oldPassword, salt);
+                        String storedHashedPassword = account.getPassword();
+
+                        if (oldHashedPassword.equals(storedHashedPassword))
+                        {
+                            account.setPassword(newPassword);
+
+                            accountRepository.saveAndFlush(account);
+                            return account;
+                        }
+                        else
+                        {
+                            throw new UpdateAccountException("Old password does not match existing account record");
+                        }
+                    }
+                    else
+                    {
+                        throw new UpdateAccountException("Username does not match any existing account record");
+                    }
+                }
+                else
+                {
+                    throw new UpdateAccountException("New Password not provided for account to be updated");
+                }
+            }
+            else
+            {
+                throw new UpdateAccountException("Old Password not provided for account to be updated");
+            }
+        }
+        else
+        {
+            throw new UpdateAccountException("Username not provided for account to be updated");
+
+        }
     }
 
     @Override
@@ -576,11 +607,35 @@ public class AccountServiceImpl implements AccountService
         return accountRepository.existsByEmail(email);
     }
 
+    @Override
+    public Long reactivateAccount(Long reactivatingAccountId, Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException
+    {
+        Account requestingAccount = getAccountByAccountId(requestingAccountId);
+        Account reactivatingAccount = getAccountByAccountId(reactivatingAccountId);
+
+        if (reactivatingAccountId == requestingAccountId)
+        {
+//            throw new AccountPermissionDeniedException("You cannot deactivate your own account");
+            reactivatingAccount.setIsActive(Boolean.TRUE);
+            Account deactivatedAccount = accountRepository.saveAndFlush(reactivatingAccount);
+            return deactivatedAccount.getAccountId();
+        }
+        // Check that requestingAccount is an admin account
+        else if (requestingAccount.getIsAdmin())
+        {
+            reactivatingAccount.setIsActive(Boolean.TRUE);
+            Account deactivatedAccount = accountRepository.saveAndFlush(reactivatingAccount);
+            return deactivatedAccount.getAccountId();
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("You do not have the rights to deactivate accounts.");
+        }
+    }
 
     @Override
     public Long deactivateAccount(Long deactivatingAccountId, Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException
     {
-
         Account requestingAccount = getAccountByAccountId(requestingAccountId);
         Account deactivatingAccount = getAccountByAccountId(deactivatingAccountId);
 
@@ -591,9 +646,8 @@ public class AccountServiceImpl implements AccountService
             Account deactivatedAccount = accountRepository.saveAndFlush(deactivatingAccount);
             return deactivatedAccount.getAccountId();
         }
-
         // Check that requestingAccount is an admin account
-        if (requestingAccount.getIsAdmin())
+        else if (requestingAccount.getIsAdmin())
         {
             deactivatingAccount.setIsActive(Boolean.FALSE);
             Account deactivatedAccount = accountRepository.saveAndFlush(deactivatingAccount);
@@ -601,7 +655,7 @@ public class AccountServiceImpl implements AccountService
         }
         else
         {
-            throw new AccountPermissionDeniedException("You do not have administrative rights to deactivate accounts.");
+            throw new AccountPermissionDeniedException("You do not have the rights to deactivate accounts.");
         }
     }
 

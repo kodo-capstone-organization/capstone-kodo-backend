@@ -8,7 +8,6 @@ import java.util.List;
 public class UpdateAccountReq
 {
     private Account account;
-    private String password;
     private List<String> tagTitles; // leave as null if not updating
     private List<Long> enrolledCourseIds; // leave as null if not updating
     private List<Long> courseIds; // leave as null if not updating
@@ -16,10 +15,9 @@ public class UpdateAccountReq
     private List<Long> forumPostIds; // leave as null if not updating
     private List<Long> studentAttemptIds; // leave as null if not updating
 
-    public UpdateAccountReq(Account account, String password, List<String> tagTitles, List<Long> enrolledCourseIds, List<Long> courseIds, List<Long> forumThreadIds, List<Long> forumPostIds, List<Long> studentAttemptIds) throws InputDataValidationException
+    public UpdateAccountReq(Account account, List<String> tagTitles, List<Long> enrolledCourseIds, List<Long> courseIds, List<Long> forumThreadIds, List<Long> forumPostIds, List<Long> studentAttemptIds) throws InputDataValidationException
     {
         this.account = account;
-        this.password = password;
         this.tagTitles = tagTitles;
         this.enrolledCourseIds = enrolledCourseIds;
         this.courseIds = courseIds;
@@ -36,16 +34,6 @@ public class UpdateAccountReq
     public void setAccount(Account account)
     {
         this.account = account;
-    }
-
-    public String getPassword()
-    {
-        return password;
-    }
-
-    public void setPassword(String password)
-    {
-        this.password = password;
     }
 
     public List<String> getTagTitles()

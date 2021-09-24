@@ -1,11 +1,9 @@
 package com.spring.kodo.service.impl;
 
-import com.spring.kodo.entity.Course;
-import com.spring.kodo.entity.QuizQuestion;
 import com.spring.kodo.entity.QuizQuestionOption;
 import com.spring.kodo.repository.QuizQuestionOptionRepository;
 import com.spring.kodo.service.inter.QuizQuestionOptionService;
-import com.spring.kodo.util.MessageFormatterUtil;
+import com.spring.kodo.util.FormatterUtil;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -46,7 +44,7 @@ public class QuizQuestionOptionServiceImpl implements QuizQuestionOptionService
             }
             else
             {
-                throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
         }
         catch (DataAccessException ex)
@@ -71,7 +69,7 @@ public class QuizQuestionOptionServiceImpl implements QuizQuestionOptionService
                 }
                 else
                 {
-                    throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                    throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
                 }
             }
             return newQuizQuestionOptions;
@@ -155,7 +153,7 @@ public class QuizQuestionOptionServiceImpl implements QuizQuestionOptionService
                 }
                 else
                 {
-                    throw new InputDataValidationException(MessageFormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                    throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
                 }
             }
             else

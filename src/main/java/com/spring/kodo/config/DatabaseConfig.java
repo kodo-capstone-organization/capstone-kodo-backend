@@ -2,6 +2,7 @@ package com.spring.kodo.config;
 
 import com.spring.kodo.entity.*;
 import com.spring.kodo.service.inter.*;
+import com.spring.kodo.util.FormatterUtil;
 import com.spring.kodo.util.RandomGeneratorUtil;
 import com.spring.kodo.util.enumeration.MultimediaType;
 import com.spring.kodo.util.enumeration.QuestionType;
@@ -597,25 +598,27 @@ public class DatabaseConfig
         {
             for (StudentAttemptQuestion studentAttemptQuestion : studentAttempt.getStudentAttemptQuestions())
             {
-                for (QuizQuestionOption quizQuestionOption : studentAttemptQuestion.getQuizQuestion().getQuizQuestionOptions())
+                if (studentAttemptQuestion.getQuizQuestion().getQuestionType().equals(QuestionType.MATCHING))
                 {
-                    if (studentAttemptQuestion.getQuizQuestion().getQuestionType().equals(QuestionType.MATCHING))
+                    for (QuizQuestionOption quizQuestionOption : studentAttemptQuestion.getQuizQuestion().getQuizQuestionOptions())
                     {
                         studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption.getQuizQuestionOptionId(), quizQuestionOption.getQuizQuestionOptionId());
-                    }
-                    else
-                    {
-                        studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption.getQuizQuestionOptionId());
-                    }
-
-                    studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
-
-                    studentAttemptAnswersCounter++;
-                    if (studentAttemptAnswersCounter == STUDENT_ATTEMPT_ANSWERS_COUNT)
-                    {
-                        break;
+                        studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
                     }
                 }
+                else
+                {
+                    QuizQuestionOption quizQuestionOption = studentAttemptQuestion.getQuizQuestion().getQuizQuestionOptions().get(0);
+                    studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption.getQuizQuestionOptionId());
+                    studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
+                }
+
+                studentAttemptAnswersCounter++;
+                if (studentAttemptAnswersCounter == STUDENT_ATTEMPT_ANSWERS_COUNT)
+                {
+                    break;
+                }
+
                 if (studentAttemptAnswersCounter == STUDENT_ATTEMPT_ANSWERS_COUNT)
                 {
                     break;
@@ -953,7 +956,7 @@ public class DatabaseConfig
                     lessons.add(
                             new Lesson(
                                     String.format("%s %s Lesson %d", level, language, i),
-                                    "A very interesting " + ordinal(i) + " lesson on " + language, i)
+                                    "A very interesting " + FormatterUtil.getOrdinal(i) + " lesson on " + language, i)
                     );
                 }
             }
@@ -973,7 +976,7 @@ public class DatabaseConfig
                         quizzes.add(
                                 new Quiz(
                                         String.format("%s %s Quiz #%d", level, language, j),
-                                        "A very interesting " + ordinal(j) + " quiz on " + language,
+                                        "A very interesting " + FormatterUtil.getOrdinal(j) + " quiz on " + language,
                                         LocalTime.of(0, 30),
                                         10)
                         );
@@ -996,17 +999,17 @@ public class DatabaseConfig
                         for (int k = 1; k <= QUIZ_QUESTION_COUNT; k++)
                         {
                             QuizQuestion mcqQuestion = new QuizQuestion(
-                                    String.format("%s %s question of quiz for lesson %d of %s %s course", ordinal(k++), QuestionType.MCQ, i, level, language),
+                                    String.format("%s %s question of quiz for lesson %d of %s %s course", FormatterUtil.getOrdinal(k++), QuestionType.MCQ, i, level, language),
                                     QuestionType.MCQ,
                                     1);
 
                             QuizQuestion tfQuestion = new QuizQuestion(
-                                    String.format("%s %s question of quiz for lesson %d of %s %s course", ordinal(k++), QuestionType.TF, i, level, language),
+                                    String.format("%s %s question of quiz for lesson %d of %s %s course", FormatterUtil.getOrdinal(k++), QuestionType.TF, i, level, language),
                                     QuestionType.TF,
                                     1);
 
                             QuizQuestion matchingQuestion = new QuizQuestion(
-                                    String.format("%s %s question of quiz for lesson %d of %s %s course", ordinal(k++), QuestionType.MATCHING, i, level, language),
+                                    String.format("%s %s question of quiz for lesson %d of %s %s course", FormatterUtil.getOrdinal(k++), QuestionType.MATCHING, i, level, language),
                                     QuestionType.MATCHING,
                                     1);
 
@@ -1047,7 +1050,7 @@ public class DatabaseConfig
                             // Matching
                             for (int l = 1; l <= QUIZ_QUESTION_OPTION_COUNT; l++)
                             {
-                                quizQuestionOptions.add(new QuizQuestionOption("Left Option " + l, "Right Option " + l, l == 1));
+                                quizQuestionOptions.add(new QuizQuestionOption(String.valueOf(l), FormatterUtil.getOrdinal(l), l == 1));
                             }
                             k++;
                         }
@@ -1065,8 +1068,8 @@ public class DatabaseConfig
             {
                 for (int i = 1; i <= LESSON_COUNT; i++)
                 {
-                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-1", "A very interesting " + ordinal(i) + " PDF on " + language, "http://www.africau.edu/images/default/sample.pdf", MultimediaType.PDF));
-                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-2", "A very interesting " + ordinal(i) + " video on " + language, "https://www.youtube.com/watch?v=T8y_RsF4TSw&list=RDmvkbCZfwWzA&index=16", MultimediaType.VIDEO));
+                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-1", "A very interesting " + FormatterUtil.getOrdinal(i) + " PDF on " + language, "http://www.africau.edu/images/default/sample.pdf", MultimediaType.PDF));
+                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-2", "A very interesting " + FormatterUtil.getOrdinal(i) + " video on " + language, "https://www.youtube.com/watch?v=T8y_RsF4TSw&list=RDmvkbCZfwWzA&index=16", MultimediaType.VIDEO));
                 }
             }
         }
@@ -1120,20 +1123,6 @@ public class DatabaseConfig
                     }
                 }
             }
-        }
-    }
-
-    private String ordinal(int i)
-    {
-        String[] suffixes = new String[]{"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"};
-        switch (i % 100)
-        {
-            case 11:
-            case 12:
-            case 13:
-                return i + "th";
-            default:
-                return i + suffixes[i % 10];
         }
     }
 
