@@ -1,10 +1,12 @@
 package com.spring.kodo.service.impl;
 
+import com.spring.kodo.entity.Lesson;
 import com.spring.kodo.entity.Quiz;
 import com.spring.kodo.entity.QuizQuestion;
 import com.spring.kodo.entity.QuizQuestionOption;
 import com.spring.kodo.repository.QuizRepository;
 import com.spring.kodo.restentity.response.QuizWithStudentAttemptCountResp;
+import com.spring.kodo.service.inter.LessonService;
 import com.spring.kodo.service.inter.QuizQuestionOptionService;
 import com.spring.kodo.service.inter.QuizQuestionService;
 import com.spring.kodo.service.inter.QuizService;
@@ -33,6 +35,9 @@ public class QuizServiceImpl implements QuizService
 
     @Autowired
     private QuizQuestionOptionService quizQuestionOptionService;
+
+    @Autowired
+    private LessonService lessonService;
 
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -274,8 +279,7 @@ public class QuizServiceImpl implements QuizService
     }
 
     @Override
-    public Boolean deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId(Long quizId) throws DeleteQuizException, QuizNotFoundException, QuizQuestionOptionNotFoundException, DeleteQuizQuestionOptionException, QuizQuestionNotFoundException, DeleteQuizQuestionException
-    {
+    public Boolean deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId(Long quizId) throws DeleteQuizException, QuizNotFoundException, QuizQuestionOptionNotFoundException, DeleteQuizQuestionOptionException, QuizQuestionNotFoundException, DeleteQuizQuestionException, LessonNotFoundException, UpdateContentException, InputDataValidationException, ContentNotFoundException, UnknownPersistenceException {
         if (quizId != null)
         {
             Quiz quizToDelete = getQuizByQuizId(quizId);
@@ -292,6 +296,13 @@ public class QuizServiceImpl implements QuizService
                     quizQuestionService.deleteQuizQuestionByQuizQuestionId(quizQuestion.getQuizQuestionId());
                 }
                 quizToDelete.getQuizQuestions().clear();
+
+                Lesson lesson = this.lessonService.getLessonByContentId(quizId);
+
+                List<Quiz> quizzes = lesson.getQuizzes();
+                List<Long> updatedContentIds = quizzes.stream().filter((Quiz quiz) -> quiz.getContentId() != quizId).map((Quiz quiz) -> quiz.getContentId()).toList();
+
+                this.lessonService.updateLesson(lesson, updatedContentIds);
 
                 quizRepository.delete(quizToDelete);
                 return true;

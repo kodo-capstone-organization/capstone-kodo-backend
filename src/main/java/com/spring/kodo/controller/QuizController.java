@@ -171,7 +171,7 @@ public class QuizController
         }
     }
 
-    @GetMapping("/deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId/{quizId}")
+    @DeleteMapping("/deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId/{quizId}")
     public Boolean deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId(@PathVariable Long quizId)
     {
         if (quizId != null)
@@ -180,11 +180,11 @@ public class QuizController
             {
                 return quizService.deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId(quizId);
             }
-            catch (QuizNotFoundException | QuizQuestionOptionNotFoundException | QuizQuestionNotFoundException ex)
+            catch (QuizNotFoundException | QuizQuestionOptionNotFoundException | QuizQuestionNotFoundException | LessonNotFoundException | ContentNotFoundException ex)
             {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
             }
-            catch (DeleteQuizQuestionOptionException | DeleteQuizQuestionException | DeleteQuizException ex)
+            catch (DeleteQuizQuestionOptionException | DeleteQuizQuestionException | DeleteQuizException | UpdateContentException | InputDataValidationException | UnknownPersistenceException ex)
             {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
             }

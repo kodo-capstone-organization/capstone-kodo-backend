@@ -27,5 +27,5 @@ public interface QuizService
 
     List<QuizWithStudentAttemptCountResp> getAllQuizzesWithStudentAttemptCountByEnrolledLessonId(Long enrolledLessonId);
 
-    Boolean deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId(Long quizId) throws DeleteQuizException, QuizNotFoundException, QuizQuestionOptionNotFoundException, DeleteQuizQuestionOptionException, QuizQuestionNotFoundException, DeleteQuizQuestionException;
+    Boolean deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId(Long quizId) throws DeleteQuizException, QuizNotFoundException, QuizQuestionOptionNotFoundException, DeleteQuizQuestionOptionException, QuizQuestionNotFoundException, DeleteQuizQuestionException, LessonNotFoundException, UpdateContentException, InputDataValidationException, ContentNotFoundException, UnknownPersistenceException;
 }
