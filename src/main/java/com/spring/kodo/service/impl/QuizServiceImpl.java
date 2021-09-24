@@ -1,9 +1,6 @@
 package com.spring.kodo.service.impl;
 
-import com.spring.kodo.entity.Lesson;
-import com.spring.kodo.entity.Quiz;
-import com.spring.kodo.entity.QuizQuestion;
-import com.spring.kodo.entity.QuizQuestionOption;
+import com.spring.kodo.entity.*;
 import com.spring.kodo.repository.QuizRepository;
 import com.spring.kodo.restentity.response.QuizWithStudentAttemptCountResp;
 import com.spring.kodo.service.inter.LessonService;
@@ -298,8 +295,8 @@ public class QuizServiceImpl implements QuizService
 
                 Lesson lesson = this.lessonService.getLessonByContentId(quizId);
 
-                List<Quiz> quizzes = lesson.getQuizzes();
-                List<Long> updatedContentIds = quizzes.stream().filter((Quiz quiz) -> quiz.getContentId() != quizId).map((Quiz quiz) -> quiz.getContentId()).toList();
+                List<Content> contents = lesson.getContents();
+                List<Long> updatedContentIds = contents.stream().filter((Content content) -> !content.getContentId().equals(quizId)).map((Content content) -> content.getContentId()).toList();
 
                 this.lessonService.updateLesson(lesson, updatedContentIds);
 

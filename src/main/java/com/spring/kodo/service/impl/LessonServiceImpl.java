@@ -127,8 +127,8 @@ public class LessonServiceImpl implements LessonService
             {
                 lessonToUpdate = getLessonByLessonId(lesson.getLessonId());
 
-                // Update Content (quiz / multimedia) Unidirectional
-                // TODO: Deletion of removed content
+                lessonToUpdate.getContents().clear();
+
                 if (contentIds != null)
                 {
                     lessonToUpdate.getContents().clear();
