@@ -2,6 +2,7 @@ package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.Account;
 import com.spring.kodo.restentity.request.CreateNewAccountReq;
+import com.spring.kodo.restentity.request.UpdateAccountPasswordReq;
 import com.spring.kodo.restentity.request.UpdateAccountReq;
 import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.FileService;
@@ -158,6 +159,37 @@ public class AccountController
         else
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Update Account Request");
+        }
+    }
+
+    @PutMapping("/updateAccountPassword")
+    Account updateAccountPassword(@RequestPart(name = "updateAccountPasswordReq", required = true) UpdateAccountPasswordReq updateAccountPasswordReq)
+    {
+        if (updateAccountPasswordReq != null)
+        {
+            try
+            {
+                Long accountId = updateAccountPasswordReq.getAccountId();
+                String username = updateAccountPasswordReq.getUsername();
+                String oldPassword = updateAccountPasswordReq.getOldPassword();
+                String newPassword = updateAccountPasswordReq.getNewPassword();
+
+                Account account = accountService.updateAccountPassword(accountId, username, oldPassword, newPassword);
+
+                return account;
+            }
+            catch (AccountNotFoundException ex)
+            {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+            }
+            catch (UpdateAccountException | InputDataValidationException ex)
+            {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+            }
+        }
+        else
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Update Account Password Request");
         }
     }
 

@@ -396,6 +396,57 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
+    public Account updateAccountPassword(Long accountId, String username, String oldPassword, String newPassword) throws UpdateAccountException, AccountNotFoundException, InputDataValidationException
+    {
+        if (username != null)
+        {
+            if (oldPassword != null)
+            {
+                if (newPassword != null)
+                {
+                    Account account = getAccountByAccountId(accountId);
+
+                    if (account.getUsername().equals(username))
+                    {
+                        String salt = account.getSalt();
+                        String oldHashedPassword = CryptographicHelper.getSHA256Digest(oldPassword, salt);
+                        String storedHashedPassword = account.getPassword();
+
+                        if (oldHashedPassword.equals(storedHashedPassword))
+                        {
+                            account.setPassword(newPassword);
+
+                            accountRepository.saveAndFlush(account);
+                            return account;
+                        }
+                        else
+                        {
+                            throw new UpdateAccountException("Old password does not match existing account record");
+                        }
+                    }
+                    else
+                    {
+                        throw new UpdateAccountException("Username does not match any existing account record");
+                    }
+                }
+                else
+                {
+                    throw new UpdateAccountException("New Password not provided for account to be updated");
+                }
+            }
+            else
+            {
+                throw new UpdateAccountException("Old Password not provided for account to be updated");
+            }
+        }
+        else
+        {
+            throw new UpdateAccountException("Username not provided for account to be updated");
+
+        }
+    }
+
+    @Override
     public Account addTagToAccount(Account account, Tag tag) throws AccountNotFoundException, TagNotFoundException, UpdateAccountException
     {
         account = getAccountByAccountId(account.getAccountId());
