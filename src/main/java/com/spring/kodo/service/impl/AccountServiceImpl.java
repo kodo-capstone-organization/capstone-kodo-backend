@@ -306,28 +306,8 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
-    public Account updateAccount(Account account, String password) throws UpdateAccountException, AccountNotFoundException, InputDataValidationException, AccountEmailExistException
-    {
-        Account accountToUpdate = updateAccount(account);
-        // Update Non-Relational Fields
-
-        if (password != null)
-        {
-            accountToUpdate.setPassword(password);
-        }
-        else
-        {
-            throw new UpdateAccountException("Password not provided for account to be updated");
-        }
-
-        accountToUpdate = accountRepository.saveAndFlush(accountToUpdate);
-        return accountToUpdate;
-    }
-
-    @Override
     public Account updateAccount(
             Account account,
-            String password,
             List<String> tagTitles,
             List<Long> enrolledCourseIds,
             List<Long> courseIds,
@@ -344,7 +324,7 @@ public class AccountServiceImpl implements AccountService
             EnrolledCourseNotFoundException,
             StudentAttemptNotFoundException
     {
-        Account accountToUpdate = updateAccount(account, password);
+        Account accountToUpdate = updateAccount(account);
 
         // Update Tags (interests) - Unidirectional
         if (tagTitles != null)

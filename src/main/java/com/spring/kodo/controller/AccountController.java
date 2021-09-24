@@ -117,7 +117,6 @@ public class AccountController
             {
                 Account updatedAccount = accountService.updateAccount(
                         updateAccountReq.getAccount(),
-                        updateAccountReq.getPassword(),
                         updateAccountReq.getTagTitles(),
                         updateAccountReq.getEnrolledCourseIds(),
                         updateAccountReq.getCourseIds(),

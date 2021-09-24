@@ -57,11 +57,8 @@ public interface AccountService
 
     Account updateAccount(Account account) throws UpdateAccountException, AccountNotFoundException, AccountEmailExistException;
 
-    Account updateAccount(Account account, String password) throws UpdateAccountException, AccountNotFoundException, InputDataValidationException, AccountEmailExistException;
-
     Account updateAccount(
             Account account,
-            String password,
             List<String> tagTitles,
             List<Long> enrolledCourseIds,
             List<Long> courseIds,
