@@ -210,6 +210,24 @@ public class AccountController
         }
     }
 
+    @DeleteMapping("/deactivateAccount/{reactivatingAccountId}&{requestingAccountId}")
+    public ResponseEntity reactivateAccount(@PathVariable Long reactivatingAccountId, @PathVariable Long requestingAccountId)
+    {
+        try
+        {
+            Long reactivatedAccountId = this.accountService.reactivateAccount(reactivatingAccountId, requestingAccountId);
+            return ResponseEntity.status(HttpStatus.OK).body("Successfully reactivated account with Account ID: " + reactivatedAccountId);
+        }
+        catch (AccountPermissionDeniedException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
+        }
+        catch (AccountNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @PostMapping("/login")
     public ResponseEntity login(@RequestPart(name = "username", required = true) String username, @RequestPart(name = "password", required = true) String password)
     {

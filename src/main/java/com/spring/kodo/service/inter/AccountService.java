@@ -89,6 +89,8 @@ public interface AccountService
 
     Boolean isAccountExistsByEmail(String email);
 
+    Long reactivateAccount(Long reactivatingAccountId, Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException;
+
     Long deactivateAccount(Long deactivatingAccountId, Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException;
 
     Account userLogin(String username, String password) throws InvalidLoginCredentialsException;

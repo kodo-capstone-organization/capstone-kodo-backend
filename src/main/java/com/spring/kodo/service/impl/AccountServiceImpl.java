@@ -607,11 +607,35 @@ public class AccountServiceImpl implements AccountService
         return accountRepository.existsByEmail(email);
     }
 
+    @Override
+    public Long reactivateAccount(Long reactivatingAccountId, Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException
+    {
+        Account requestingAccount = getAccountByAccountId(requestingAccountId);
+        Account reactivatingAccount = getAccountByAccountId(reactivatingAccountId);
+
+        if (reactivatingAccountId == requestingAccountId)
+        {
+//            throw new AccountPermissionDeniedException("You cannot deactivate your own account");
+            reactivatingAccount.setIsActive(Boolean.TRUE);
+            Account deactivatedAccount = accountRepository.saveAndFlush(reactivatingAccount);
+            return deactivatedAccount.getAccountId();
+        }
+        // Check that requestingAccount is an admin account
+        else if (requestingAccount.getIsAdmin())
+        {
+            reactivatingAccount.setIsActive(Boolean.TRUE);
+            Account deactivatedAccount = accountRepository.saveAndFlush(reactivatingAccount);
+            return deactivatedAccount.getAccountId();
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("You do not have the rights to deactivate accounts.");
+        }
+    }
 
     @Override
     public Long deactivateAccount(Long deactivatingAccountId, Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException
     {
-
         Account requestingAccount = getAccountByAccountId(requestingAccountId);
         Account deactivatingAccount = getAccountByAccountId(deactivatingAccountId);
 
@@ -622,9 +646,8 @@ public class AccountServiceImpl implements AccountService
             Account deactivatedAccount = accountRepository.saveAndFlush(deactivatingAccount);
             return deactivatedAccount.getAccountId();
         }
-
         // Check that requestingAccount is an admin account
-        if (requestingAccount.getIsAdmin())
+        else if (requestingAccount.getIsAdmin())
         {
             deactivatingAccount.setIsActive(Boolean.FALSE);
             Account deactivatedAccount = accountRepository.saveAndFlush(deactivatingAccount);
@@ -632,7 +655,7 @@ public class AccountServiceImpl implements AccountService
         }
         else
         {
-            throw new AccountPermissionDeniedException("You do not have administrative rights to deactivate accounts.");
+            throw new AccountPermissionDeniedException("You do not have the rights to deactivate accounts.");
         }
     }
 
