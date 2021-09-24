@@ -226,8 +226,7 @@ public class CourseController
     @PutMapping("/updateCourse")
     public Course updateCourse(
             @RequestPart(name="updateCourseReq", required = true) UpdateCourseReq updateCourseReq,
-            @RequestPart(name="bannerPicture", required = false) MultipartFile updatedBannerPicture,
-            @RequestPart(name="lessonMultimedias", required = false) List<MultipartFile> lessonMultimedias
+            @RequestPart(name="bannerPicture", required = false) MultipartFile updatedBannerPicture
     )
     {
         if (updateCourseReq != null)
@@ -235,14 +234,11 @@ public class CourseController
             logger.info("HIT course/updateCourse | PUT");
             try
             {
-                // Update all lessons and their contents first
-                List<Long> updatedLessonIds = lessonController.updateLessonsInACourse(updateCourseReq.getUpdateLessonReqs(), lessonMultimedias);
-
                 // Update course
                 Course updatedCourse = this.courseService.updateCourse(
                         updateCourseReq.getCourse(),
-                        updateCourseReq.getEnrolledCourseIds(),
-                        updatedLessonIds,
+                        null,
+                        null,
                         updateCourseReq.getCourseTagTitles());
 
                 // Check if banner picture is also updated
@@ -266,11 +262,11 @@ public class CourseController
 
                 return updatedCourse;
             }
-            catch (TagNotFoundException | EnrolledCourseNotFoundException | CourseNotFoundException | ContentNotFoundException | LessonNotFoundException | MultimediaNotFoundException ex)
+            catch (TagNotFoundException | EnrolledCourseNotFoundException | CourseNotFoundException | LessonNotFoundException ex)
             {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
             }
-            catch (UnknownPersistenceException | InputDataValidationException | TagNameExistsException | FileUploadToGCSException | UpdateContentException | CreateNewQuizException | MultimediaExistsException | UpdateCourseException ex)
+            catch (UnknownPersistenceException | InputDataValidationException | TagNameExistsException | FileUploadToGCSException | UpdateCourseException ex)
             {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
             }
