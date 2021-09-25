@@ -17,14 +17,4 @@ public class StudentAttemptController {
 
     @Autowired
     private StudentAttemptService studentAttemptService;
-
-    @GetMapping("/getNumberOfStudentAttemptsLeft/{accountId}&{quizId}")
-    public Integer getNumberOfStudentAttemptsLeft(@PathVariable(name = "accountId", required = true) Long accountId, @PathVariable(name = "quizId", required = true) Long quizId) {
-        try {
-            Integer numberOfStudentAttemptsLeft = studentAttemptService.getNumberOfStudentAttemptsLeft(accountId, quizId);
-            return numberOfStudentAttemptsLeft;
-        } catch (AccountNotFoundException | QuizNotFoundException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        }
-    }
 }

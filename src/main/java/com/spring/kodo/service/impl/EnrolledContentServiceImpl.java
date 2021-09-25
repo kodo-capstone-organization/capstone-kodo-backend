@@ -1,14 +1,8 @@
 package com.spring.kodo.service.impl;
 
-import com.spring.kodo.entity.Content;
-import com.spring.kodo.entity.EnrolledContent;
-import com.spring.kodo.entity.EnrolledCourse;
-import com.spring.kodo.entity.EnrolledLesson;
+import com.spring.kodo.entity.*;
 import com.spring.kodo.repository.EnrolledContentRepository;
-import com.spring.kodo.service.inter.ContentService;
-import com.spring.kodo.service.inter.EnrolledContentService;
-import com.spring.kodo.service.inter.EnrolledCourseService;
-import com.spring.kodo.service.inter.EnrolledLessonService;
+import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.FormatterUtil;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +28,9 @@ public class EnrolledContentServiceImpl implements EnrolledContentService
 
     @Autowired
     private EnrolledLessonService enrolledLessonService;
+
+    @Autowired
+    private StudentAttemptService studentAttemptService;
 
     @Autowired
     private ContentService contentService;
@@ -115,6 +112,61 @@ public class EnrolledContentServiceImpl implements EnrolledContentService
     public List<EnrolledContent> getAllEnrolledContents()
     {
         return enrolledContentRepository.findAll();
+    }
+
+    @Override
+    public EnrolledContent addStudentAttemptToEnrolledContent(EnrolledContent enrolledContent, StudentAttempt studentAttempt) throws UpdateEnrolledContentException, EnrolledContentNotFoundException, StudentAttemptNotFoundException
+    {
+        if (enrolledContent != null)
+        {
+            if (enrolledContent.getEnrolledContentId() != null)
+            {
+                enrolledContent = getEnrolledContentByEnrolledContentId(enrolledContent.getEnrolledContentId());
+                if (studentAttempt != null)
+                {
+                    if (studentAttempt.getStudentAttemptId() != null)
+                    {
+                        studentAttempt = studentAttemptService.getStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId());
+
+                        if (!enrolledContent.getStudentAttempts().contains(studentAttempt))
+                        {
+                            if (enrolledContent.getStudentAttempts().size() < studentAttempt.getQuiz().getMaxAttemptsPerStudent())
+                            {
+                                enrolledContent.getStudentAttempts().add(studentAttempt);
+
+                                enrolledContentRepository.save(enrolledContent);
+                                return enrolledContent;
+                            }
+                            else
+                            {
+                                studentAttemptService.deleteStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId()); // Needs work
+                                throw new UpdateEnrolledContentException("This enrolledContent has ran out of attempts for quiz: " + studentAttempt.getQuiz().getName() + ". Attempt is thus deleted");
+                            }
+                        }
+                        else
+                        {
+                            throw new UpdateEnrolledContentException("EnrolledContent with ID " + enrolledContent.getEnrolledContentId() + " already contains StudentAttempt with ID " + studentAttempt.getStudentAttemptId());
+                        }
+                    }
+                    else
+                    {
+                        throw new UpdateEnrolledContentException("StudentAttempt ID cannot be null");
+                    }
+                }
+                else
+                {
+                    throw new UpdateEnrolledContentException("StudentAttempt cannot be null");
+                }
+            }
+            else
+            {
+                throw new UpdateEnrolledContentException("EnrolledContent ID cannot be null");
+            }
+        }
+        else
+        {
+            throw new UpdateEnrolledContentException("EnrolledContent cannot be null");
+        }
     }
 
     @Override

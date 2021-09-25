@@ -42,11 +42,4 @@ public interface AccountRepository extends JpaRepository<Account, Long>
     Boolean existsByUsername(String username);
 
     Boolean existsByEmail(String email);
-
-    // TODO check if legit works
-    @Query("SELECT COUNT(sa) FROM Account a JOIN a.studentAttempts sa WHERE a.accountId = :accountId AND sa.quiz.contentId = :quizContentId")
-    Long getNumberOfStudentAttemptsByStudentForQuiz(
-            @Param("quizContentId") Long quizContentId,
-            @Param("accountId") Long accountId
-    );
 }

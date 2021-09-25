@@ -125,8 +125,8 @@ public class DatabaseConfig
     private final Integer QUIZ_QUESTION_TYPES = QuestionType.values().length;
 
     private final Integer STUDENT_ENROLLED_COUNT = (int) (0.5 * (LANGUAGES_COUNT * STUDENT_COUNT));
-    private final Integer STUDENT_ATTEMPT_COUNT = 3;
-    private final Integer STUDENT_ATTEMPT_ANSWERS_COUNT = (int) (STUDENT_ENROLLED_COUNT * QUIZ_COUNT * QUIZ_QUESTION_COUNT * STUDENT_ATTEMPT_COUNT);
+    private final Integer STUDENT_ATTEMPT_COUNT = (int) (0.5 * STUDENT_ENROLLED_COUNT * LESSON_COUNT * QUIZ_COUNT);
+    private final Integer STUDENT_ATTEMPT_ANSWERS_COUNT = (int) (0.5 * STUDENT_ATTEMPT_COUNT * QUIZ_QUESTION_OPTION_COUNT);
 
     private final Integer FORUM_CATEGORY_COUNT = 1;
     private final Integer FORUM_THREAD_COUNT = 3;
@@ -560,23 +560,25 @@ public class DatabaseConfig
 
     private void createStudentAttemptsAndStudentAttemptQuestions() throws Exception
     {
-        Account student;
+        EnrolledContent enrolledContent;
         StudentAttempt studentAttempt;
 
-        int quizIndex = 0;
+        int studentAttemptCounter = 0;
 
-        for (EnrolledCourse enrolledCourse : enrolledCourses)
+        for (int i = 0; i < enrolledContents.size(); i++)
         {
-            for (int i = 0; i < STUDENT_ATTEMPT_COUNT; i++, quizIndex++)
+            enrolledContent = enrolledContents.get(i);
+
+            if (enrolledContent.getParentContent() instanceof Quiz)
             {
-                student = accountService.getAccountByEnrolledCourseId(enrolledCourse.getEnrolledCourseId());
-                studentAttempt = studentAttemptService.createNewStudentAttempt(quizzes.get(quizIndex).getContentId());
+                studentAttempt = studentAttemptService.createNewStudentAttempt(enrolledContent.getParentContent().getContentId());
 
-                accountService.addStudentAttemptToAccount(student, studentAttempt);
+                enrolledContentService.addStudentAttemptToEnrolledContent(enrolledContent, studentAttempt);
 
-                if (quizIndex == quizzes.size() - 1)
+                studentAttemptCounter++;
+                if (studentAttemptCounter == STUDENT_ATTEMPT_COUNT)
                 {
-                    quizIndex = 0;
+                   break;
                 }
             }
         }
@@ -608,7 +610,7 @@ public class DatabaseConfig
                 }
                 else
                 {
-                    QuizQuestionOption quizQuestionOption = studentAttemptQuestion.getQuizQuestion().getQuizQuestionOptions().get(0);
+                    QuizQuestionOption quizQuestionOption = studentAttemptQuestion.getQuizQuestion().getQuizQuestionOptions().get(1);
                     studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption.getQuizQuestionOptionId());
                     studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
                 }
@@ -1043,8 +1045,8 @@ public class DatabaseConfig
                             k++;
 
                             // TF
-                            quizQuestionOptions.add(new QuizQuestionOption(Boolean.TRUE.toString(), null, k % 2 == 0));
-                            quizQuestionOptions.add(new QuizQuestionOption(Boolean.FALSE.toString(), null, k % 2 == 0));
+                            quizQuestionOptions.add(new QuizQuestionOption(Boolean.TRUE.toString(), null, true));
+                            quizQuestionOptions.add(new QuizQuestionOption(Boolean.FALSE.toString(), null, false));
                             k++;
 
                             // Matching

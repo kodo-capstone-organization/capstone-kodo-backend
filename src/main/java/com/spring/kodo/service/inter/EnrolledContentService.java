@@ -2,6 +2,7 @@ package com.spring.kodo.service.inter;
 
 import com.spring.kodo.entity.EnrolledContent;
 import com.spring.kodo.entity.EnrolledCourse;
+import com.spring.kodo.entity.StudentAttempt;
 import com.spring.kodo.util.exception.*;
 
 import java.util.List;
@@ -15,6 +16,8 @@ public interface EnrolledContentService
     EnrolledContent getEnrolledContentByAccountIdAndContentId(Long accountId, Long contentId) throws EnrolledContentNotFoundException;
 
     List<EnrolledContent> getAllEnrolledContents();
+
+    EnrolledContent addStudentAttemptToEnrolledContent(EnrolledContent enrolledContent, StudentAttempt studentAttempt) throws UpdateEnrolledContentException, EnrolledContentNotFoundException, StudentAttemptNotFoundException;
 
     EnrolledContent setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(boolean complete, Long enrolledContentId) throws EnrolledContentNotFoundException, EnrolledLessonNotFoundException, EnrolledCourseNotFoundException;
 

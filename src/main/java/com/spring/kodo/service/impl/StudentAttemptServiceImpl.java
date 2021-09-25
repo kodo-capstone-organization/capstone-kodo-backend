@@ -111,23 +111,6 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
     }
 
     @Override
-    public Integer getNumberOfStudentAttemptsLeft(Long accountId, Long quizId) throws AccountNotFoundException, QuizNotFoundException
-    {
-        Account user = accountService.getAccountByAccountId(accountId);
-        Quiz quiz = quizService.getQuizByQuizId(quizId);
-        Integer numberOfStudentAttemptsLeft = quiz.getMaxAttemptsPerStudent();
-
-        for (StudentAttempt attempt : user.getStudentAttempts())
-        {
-            if (attempt.getQuiz().getContentId().equals(quiz.getContentId()))
-            {
-                numberOfStudentAttemptsLeft--;
-            }
-        }
-        return numberOfStudentAttemptsLeft;
-    }
-
-    @Override
     public Long deleteStudentAttemptByStudentAttemptId(Long studentAttemptId) throws StudentAttemptNotFoundException
     {
         StudentAttempt studentAttempt = getStudentAttemptByStudentAttemptId(studentAttemptId);
