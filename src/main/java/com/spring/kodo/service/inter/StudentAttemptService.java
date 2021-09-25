@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface StudentAttemptService
 {
-    StudentAttempt createNewStudentAttempt(Long quizId) throws CreateNewStudentAttemptException, QuizNotFoundException, InputDataValidationException, CreateNewStudentAttemptQuestionException, QuizQuestionNotFoundException, UnknownPersistenceException;
+    StudentAttempt createNewStudentAttempt(Long quizId) throws UnknownPersistenceException, InputDataValidationException, CreateNewStudentAttemptException, EnrolledContentNotFoundException, CreateNewStudentAttemptQuestionException, QuizQuestionNotFoundException;
 
     StudentAttempt getStudentAttemptByStudentAttemptId(Long studentAttemptId) throws StudentAttemptNotFoundException;
 

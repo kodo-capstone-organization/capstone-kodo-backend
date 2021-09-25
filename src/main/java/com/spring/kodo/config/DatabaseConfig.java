@@ -569,18 +569,19 @@ public class DatabaseConfig
         {
             enrolledContent = enrolledContents.get(i);
 
-            if (enrolledContent.getParentContent() instanceof Quiz)
+            try
             {
-                studentAttempt = studentAttemptService.createNewStudentAttempt(enrolledContent.getParentContent().getContentId());
+                studentAttempt = studentAttemptService.createNewStudentAttempt(enrolledContent.getEnrolledContentId());
 
                 enrolledContentService.addStudentAttemptToEnrolledContent(enrolledContent, studentAttempt);
 
                 studentAttemptCounter++;
                 if (studentAttemptCounter == STUDENT_ATTEMPT_COUNT)
                 {
-                   break;
+                    break;
                 }
             }
+            catch (Exception ex) { }
         }
 
         studentAttempts = studentAttemptService.getAllStudentAttempts();
