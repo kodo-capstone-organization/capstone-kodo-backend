@@ -94,4 +94,8 @@ public interface AccountService
     Account userLogin(String username, String password) throws InvalidLoginCredentialsException;
 
     Account adminLogin(String username, String password) throws InvalidLoginCredentialsException;
+
+    Account upgradeAdminStatus(Long accountId) throws AccountNotFoundException;
+
+    Account downgradeAdminStatus(Long accountId) throws AccountNotFoundException;
 }
