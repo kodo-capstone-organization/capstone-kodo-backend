@@ -19,6 +19,11 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
     @Query(value = "SELECT SUM(t.platform_fee) FROM `Transaction` t", nativeQuery = true)
     BigDecimal getAllPlatformEarning();
 
+    @Query(value = "SELECT SUM(t.platform_fee) FROM `Transaction` t WHERE MONTH(t.date_time_of_transaction) = MONTH(NOW())", nativeQuery = true)
+    BigDecimal getCurrentMonthPlatformEarning();
+
+    @Query(value = "SELECT SUM(t.platform_fee) FROM `Transaction` t WHERE YEAR(t.date_time_of_transaction) =:inputYear AND MONTH(t.date_time_of_transaction) = :inputMonth", nativeQuery = true)
+    BigDecimal getMonthlyPlatformEarning(@Param("inputYear") int inputYear, @Param("inputMonth") int inputMonth);
 
     // Used to get all transactions by course id
     @Query(value = "SELECT * FROM `Transaction` t JOIN Course c ON t.course_course_id = c.course_id WHERE c.course_id = :courseId", nativeQuery = true)

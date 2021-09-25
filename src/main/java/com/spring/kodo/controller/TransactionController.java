@@ -1,6 +1,7 @@
 package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.Transaction;
+import com.spring.kodo.restentity.response.PlatformEarningsResp;
 import com.spring.kodo.restentity.response.TutorCourseEarningsResp;
 import com.spring.kodo.service.inter.TransactionService;
 import com.spring.kodo.util.exception.AccountNotFoundException;
@@ -59,6 +60,19 @@ public class TransactionController
         }
     }
 
+    @GetMapping("/getTutorEarningsByAccountId/{accountId}")
+    public BigDecimal getTutorEarningsByAccountId(@PathVariable Long accountId)
+    {
+        try
+        {
+            return this.transactionService.getLifetimeTotalEarningsByAccountId(accountId);
+        }
+        catch (AccountNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @GetMapping("/getCourseEarningsPageDataByAccountId/{accountId}")
     public TutorCourseEarningsResp getCourseEarningsPageDataByAccountId(@PathVariable Long accountId)
     {
@@ -82,6 +96,32 @@ public class TransactionController
         catch (AccountNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
+    @GetMapping("/getPlatformEarningsAdminData/{accountId}")
+    public PlatformEarningsResp getPlatformEarningsAdminData(@PathVariable Long accountId)
+    {
+        try
+        {
+            BigDecimal lifetimePlatformEarnings = this.transactionService.getLifetimePlatformEarnings(accountId);
+            BigDecimal currentMonthPlatformEarnings = this.transactionService.getCurrentMonthPlatformEarnings(accountId);
+            Map<String, BigDecimal> monthlyPlatformEarningsForLastYear = this.transactionService.getMonthlyPlatformEarningsForLastYear(accountId);
+
+            PlatformEarningsResp platformEarningsResp = new PlatformEarningsResp();
+            platformEarningsResp.setLifetimePlatformEarnings(lifetimePlatformEarnings);
+            platformEarningsResp.setCurrentMonthPlatformEarnings(currentMonthPlatformEarnings);
+            platformEarningsResp.setMonthlyPlatformEarningsForLastYear(monthlyPlatformEarningsForLastYear);
+
+            return platformEarningsResp;
+        }
+        catch (AccountNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+        catch (AccountPermissionDeniedException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
     }
 }
