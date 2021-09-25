@@ -2,7 +2,10 @@ package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.*;
 import com.spring.kodo.repository.StudentAttemptRepository;
-import com.spring.kodo.service.inter.*;
+import com.spring.kodo.service.inter.EnrolledContentService;
+import com.spring.kodo.service.inter.StudentAttemptAnswerService;
+import com.spring.kodo.service.inter.StudentAttemptQuestionService;
+import com.spring.kodo.service.inter.StudentAttemptService;
 import com.spring.kodo.util.FormatterUtil;
 import com.spring.kodo.util.enumeration.QuestionType;
 import com.spring.kodo.util.exception.*;
@@ -24,16 +27,13 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
     private StudentAttemptRepository studentAttemptRepository;
 
     @Autowired
-    private AccountService accountService;
-
-    @Autowired
     private StudentAttemptQuestionService studentAttemptQuestionService;
 
     @Autowired
     private StudentAttemptAnswerService studentAttemptAnswerService;
 
     @Autowired
-    private QuizService quizService;
+    private EnrolledContentService enrolledContentService;
 
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -45,7 +45,7 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
     }
 
     @Override
-    public StudentAttempt createNewStudentAttempt(Long quizId) throws CreateNewStudentAttemptException, QuizNotFoundException, InputDataValidationException, CreateNewStudentAttemptQuestionException, QuizQuestionNotFoundException, UnknownPersistenceException
+    public StudentAttempt createNewStudentAttempt(Long enrolledContentId) throws UnknownPersistenceException, InputDataValidationException, CreateNewStudentAttemptException, EnrolledContentNotFoundException, CreateNewStudentAttemptQuestionException, QuizQuestionNotFoundException
     {
         try
         {
@@ -54,23 +54,32 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
             Set<ConstraintViolation<StudentAttempt>> constraintViolations = validator.validate(newStudentAttempt);
             if (constraintViolations.isEmpty())
             {
-                if (quizId != null)
+                if (enrolledContentId != null)
                 {
-                    Quiz quiz = quizService.getQuizByQuizId(quizId);
-                    newStudentAttempt.setQuiz(quiz);
-                    quiz.getStudentAttempts().add(newStudentAttempt);
+                    EnrolledContent enrolledContent = enrolledContentService.getEnrolledContentByEnrolledContentId(enrolledContentId);
 
-                    // Create StudentAttemptQuestion
-                    // Link QuizQuestions to StudentAttemptQuestions
-                    for (QuizQuestion quizQuestion : quiz.getQuizQuestions())
+                    if (enrolledContent.getParentContent() instanceof Quiz)
                     {
-                        StudentAttemptQuestion studentAttemptQuestion = studentAttemptQuestionService.createNewStudentAttemptQuestion(quizQuestion.getQuizQuestionId());
-                        newStudentAttempt.getStudentAttemptQuestions().add(studentAttemptQuestion);
-                    }
+                        Quiz quiz = (Quiz) enrolledContent.getParentContent();
+                        newStudentAttempt.setQuiz(quiz);
+                        quiz.getStudentAttempts().add(newStudentAttempt);
 
-                    // Persist StudentAttempt
-                    studentAttemptRepository.saveAndFlush(newStudentAttempt);
-                    return newStudentAttempt;
+                        // Create StudentAttemptQuestion
+                        // Link QuizQuestions to StudentAttemptQuestions
+                        for (QuizQuestion quizQuestion : quiz.getQuizQuestions())
+                        {
+                            StudentAttemptQuestion studentAttemptQuestion = studentAttemptQuestionService.createNewStudentAttemptQuestion(quizQuestion.getQuizQuestionId());
+                            newStudentAttempt.getStudentAttemptQuestions().add(studentAttemptQuestion);
+                        }
+
+                        // Persist StudentAttempt
+                        studentAttemptRepository.saveAndFlush(newStudentAttempt);
+                        return newStudentAttempt;
+                    }
+                    else
+                    {
+                        throw new CreateNewStudentAttemptException("Quiz ID cannot be null");
+                    }
                 }
                 else
                 {
@@ -108,23 +117,6 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
     public List<StudentAttempt> getAllStudentAttempts()
     {
         return studentAttemptRepository.findAll();
-    }
-
-    @Override
-    public Integer getNumberOfStudentAttemptsLeft(Long accountId, Long quizId) throws AccountNotFoundException, QuizNotFoundException
-    {
-        Account user = accountService.getAccountByAccountId(accountId);
-        Quiz quiz = quizService.getQuizByQuizId(quizId);
-        Integer numberOfStudentAttemptsLeft = quiz.getMaxAttemptsPerStudent();
-
-        for (StudentAttempt attempt : user.getStudentAttempts())
-        {
-            if (attempt.getQuiz().getContentId().equals(quiz.getContentId()))
-            {
-                numberOfStudentAttemptsLeft--;
-            }
-        }
-        return numberOfStudentAttemptsLeft;
     }
 
     @Override

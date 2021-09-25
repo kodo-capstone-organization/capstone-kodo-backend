@@ -36,9 +36,6 @@ public class AccountServiceImpl implements AccountService
     @Autowired
     private CourseService courseService;
 
-    @Autowired
-    private StudentAttemptService studentAttemptService;
-
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
 
@@ -356,21 +353,6 @@ public class AccountServiceImpl implements AccountService
             throw new UpdateAccountException("EnrolledCourse IDs not provided for account to be updated");
         }
 
-        // Update StudentAttempts - Unidirectional
-        if (studentAttemptIds != null)
-        {
-            accountToUpdate.getStudentAttempts().clear();
-            for (Long studentAttemptId : studentAttemptIds)
-            {
-                StudentAttempt studentAttempt = studentAttemptService.getStudentAttemptByStudentAttemptId(studentAttemptId);
-                addStudentAttemptToAccount(accountToUpdate, studentAttempt);
-            }
-        }
-        else
-        {
-            throw new UpdateAccountException("StudentAttempt IDs not provided for account to be updated");
-        }
-
         accountToUpdate = accountRepository.saveAndFlush(accountToUpdate);
         return accountToUpdate;
     }
@@ -527,61 +509,6 @@ public class AccountServiceImpl implements AccountService
                 else
                 {
                     throw new UpdateAccountException("Course cannot be null");
-                }
-            }
-            else
-            {
-                throw new UpdateAccountException("Account ID cannot be null");
-            }
-        }
-        else
-        {
-            throw new UpdateAccountException("Account cannot be null");
-        }
-    }
-
-    @Override
-    public Account addStudentAttemptToAccount(Account account, StudentAttempt studentAttempt) throws UpdateAccountException, AccountNotFoundException, StudentAttemptNotFoundException
-    {
-        if (account != null)
-        {
-            if (account.getAccountId() != null)
-            {
-                account = getAccountByAccountId(account.getAccountId());
-                if (studentAttempt != null)
-                {
-                    if (studentAttempt.getStudentAttemptId() != null)
-                    {
-                        studentAttempt = studentAttemptService.getStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId());
-
-                        if (!account.getStudentAttempts().contains(studentAttempt))
-                        {
-                            if (accountRepository.getNumberOfStudentAttemptsByStudentForQuiz(studentAttempt.getQuiz().getContentId(), account.getAccountId()) < studentAttempt.getQuiz().getMaxAttemptsPerStudent())
-                            {
-                                account.getStudentAttempts().add(studentAttempt);
-
-                                accountRepository.save(account);
-                                return account;
-                            }
-                            else
-                            {
-                                studentAttemptService.deleteStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId()); // Needs work
-                                throw new UpdateAccountException("This account has ran out of attempts for quiz: " + studentAttempt.getQuiz().getName() + ". Attempt is thus deleted");
-                            }
-                        }
-                        else
-                        {
-                            throw new UpdateAccountException("Account with ID " + account.getAccountId() + " already contains StudentAttempt with ID " + studentAttempt.getStudentAttemptId());
-                        }
-                    }
-                    else
-                    {
-                        throw new UpdateAccountException("StudentAttempt ID cannot be null");
-                    }
-                }
-                else
-                {
-                    throw new UpdateAccountException("StudentAttempt cannot be null");
                 }
             }
             else

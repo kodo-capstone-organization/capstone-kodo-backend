@@ -176,26 +176,10 @@ public class QuizQuestionOptionServiceImpl implements QuizQuestionOptionService
 
             quizQuestionOptionRepository.delete(quizQuestionOptionToDelete);
             return true;
-
-//            if (!isQuizQuestionOptionContainsStudentAttemptAnswersByQuizQuestionOptionId(quizQuestionOptionId))
-//            {
-//                quizQuestionOptionRepository.delete(quizQuestionOptionToDelete);
-//                return true;
-//            }
-//            else
-//            {
-//                throw new DeleteQuizQuestionOptionException("QuizQuestionOption that has StudentAttemptAnswers cannot be deleted");
-//            }
         }
         else
         {
             throw new DeleteQuizQuestionOptionException("QuizQuestionOption ID cannot be null");
         }
     }
-
-//    @Override
-//    public Boolean isQuizQuestionOptionContainsStudentAttemptAnswersByQuizQuestionOptionId(Long quizQuestionOptionId)
-//    {
-//        return quizQuestionOptionRepository.containsStudentAttemptQuestions(quizQuestionOptionId);
-//    }
 }

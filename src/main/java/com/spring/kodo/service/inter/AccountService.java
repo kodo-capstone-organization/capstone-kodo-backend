@@ -83,8 +83,6 @@ public interface AccountService
 
     Account addCourseToAccount(Account account, Course course) throws UpdateAccountException, AccountNotFoundException, CourseNotFoundException;
 
-    Account addStudentAttemptToAccount(Account account, StudentAttempt studentAttempt) throws UpdateAccountException, AccountNotFoundException, StudentAttemptNotFoundException;
-
     Boolean isAccountExistsByUsername(String username);
 
     Boolean isAccountExistsByEmail(String email);

@@ -106,21 +106,12 @@ public class Account
     )
     private List<Course> courses;
 
-    @OneToMany(targetEntity = StudentAttempt.class, fetch = FetchType.LAZY)
-    @JoinTable(
-            joinColumns = @JoinColumn(name = "account_id", referencedColumnName = "accountId"),
-            inverseJoinColumns = @JoinColumn(name = "student_attempt_id", referencedColumnName = "studentAttemptId"),
-            uniqueConstraints = @UniqueConstraint(columnNames = {"account_id", "student_attempt_id"})
-    )
-    private List<StudentAttempt> studentAttempts;
-
     public Account()
     {
         this.salt = CryptographicHelper.generateRandomString(64);
         this.enrolledCourses = new ArrayList<>();
         this.courses = new ArrayList<>();
         this.interests = new ArrayList<>();
-        this.studentAttempts = new ArrayList<>();
         this.isActive = true;
     }
 
@@ -303,16 +294,6 @@ public class Account
         this.courses = courses;
     }
 
-    public List<StudentAttempt> getStudentAttempts()
-    {
-        return studentAttempts;
-    }
-
-    public void setStudentAttempts(List<StudentAttempt> studentAttempts)
-    {
-        this.studentAttempts = studentAttempts;
-    }
-
     public String getStripeAccountId()
     {
         return stripeAccountId;
@@ -340,7 +321,6 @@ public class Account
                 ", enrolledCourses=" + enrolledCourses +
                 ", courses=" + courses +
                 ", interests=" + interests +
-                ", studentAttempts=" + studentAttempts +
                 '}';
     }
 }

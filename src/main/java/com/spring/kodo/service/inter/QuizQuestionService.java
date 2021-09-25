@@ -33,5 +33,7 @@ public interface QuizQuestionService
 
     Boolean deleteQuizQuestionByQuizQuestionId(Long quizQuestionId) throws DeleteQuizQuestionException, QuizQuestionNotFoundException;
 
+    Boolean deleteQuizQuestionWithQuizQuestionOptionsByQuizQuestionId(Long quizQuestionId) throws DeleteQuizQuestionException, QuizQuestionNotFoundException, QuizQuestionOptionNotFoundException, DeleteQuizQuestionOptionException;
+
     Boolean isQuizQuestionContainsStudentAttemptQuestionsByQuizQuestionId(Long quizQuestionId);
 }

@@ -41,9 +41,11 @@ public class QuizController
     private LessonService lessonService;
 
     @PostMapping("/createNewBasicQuiz")
-    public Quiz createQuiz(@RequestPart(name = "name", required = true) String name, @RequestPart(name = "description", required = true) String description,
-                           @RequestPart(name = "hours", required = true) Integer hours, @RequestPart(name = "minutes", required = true) Integer minutes,
-                           @RequestPart(name = "maxAttemptsPerStudent", required = true) Integer maxAttemptsPerStudent, @RequestPart(name = "lessonId", required = true) Long lessonId)
+    public Quiz createQuiz(
+            @RequestPart(name = "name", required = true) String name, @RequestPart(name = "description", required = true) String description,
+            @RequestPart(name = "hours", required = true) Integer hours, @RequestPart(name = "minutes", required = true) Integer minutes,
+            @RequestPart(name = "maxAttemptsPerStudent", required = true) Integer maxAttemptsPerStudent, @RequestPart(name = "lessonId", required = true) Long lessonId
+    )
     {
         try
         {
@@ -53,7 +55,8 @@ public class QuizController
             lessonService.addContentToLesson(lesson, quiz);
 
             return quiz;
-        } catch (UnknownPersistenceException ex)
+        }
+        catch (UnknownPersistenceException ex)
         {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
         }
@@ -61,7 +64,8 @@ public class QuizController
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
-        catch (LessonNotFoundException | ContentNotFoundException ex) {
+        catch (LessonNotFoundException | ContentNotFoundException ex)
+        {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
     }
@@ -160,7 +164,15 @@ public class QuizController
             {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
             }
-            catch (CreateNewQuizQuestionException | UpdateQuizQuestionOptionException | UpdateQuizException | UpdateQuizQuestionException | InputDataValidationException | UnknownPersistenceException ex)
+            catch (CreateNewQuizQuestionException | UpdateQuizException | UpdateQuizQuestionException ex)
+            {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+            }
+            catch (DeleteQuizQuestionException | DeleteQuizQuestionOptionException ex)
+            {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+            }
+            catch (InputDataValidationException | UnknownPersistenceException ex)
             {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
             }
@@ -174,16 +186,17 @@ public class QuizController
     @DeleteMapping("/deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId")
     public Boolean deleteQuizWithQuizQuestionsAndQuizQuestionOptionsByQuizId(@RequestPart List<Long> quizIds)
     {
-       try
-       {
-           return quizService.deleteQuizzesWithQuizQuestionsAndQuizQuestionOptionsByQuizId(quizIds);
-       }
-       catch (QuizNotFoundException | QuizQuestionOptionNotFoundException | QuizQuestionNotFoundException | LessonNotFoundException | ContentNotFoundException ex)
-       {
-           throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-       }
-       catch (DeleteQuizQuestionOptionException | DeleteQuizQuestionException | DeleteQuizException | UpdateContentException | InputDataValidationException | UnknownPersistenceException ex) {
-           throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
-       }
+        try
+        {
+            return quizService.deleteQuizzesWithQuizQuestionsAndQuizQuestionOptionsByQuizId(quizIds);
+        }
+        catch (QuizNotFoundException | QuizQuestionOptionNotFoundException | QuizQuestionNotFoundException | LessonNotFoundException | ContentNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+        catch (DeleteQuizQuestionOptionException | DeleteQuizQuestionException | DeleteQuizException | UpdateContentException | InputDataValidationException | UnknownPersistenceException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
     }
 }

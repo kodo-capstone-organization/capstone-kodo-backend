@@ -219,53 +219,66 @@ public class QuizServiceImpl implements QuizService
     }
 
     @Override
-    public Quiz updateQuiz(Quiz quiz, List<QuizQuestion> quizQuestions, List<List<QuizQuestionOption>> quizQuestionOptionLists) throws QuizNotFoundException, UpdateQuizException, InputDataValidationException, QuizQuestionOptionNotFoundException, QuizQuestionNotFoundException, UpdateQuizQuestionException, UpdateQuizQuestionOptionException, CreateNewQuizQuestionException, UnknownPersistenceException
+    public Quiz updateQuiz(Quiz quiz, List<QuizQuestion> quizQuestions, List<List<QuizQuestionOption>> quizQuestionOptionLists) throws UpdateQuizException, QuizNotFoundException, InputDataValidationException, QuizQuestionOptionNotFoundException, QuizQuestionNotFoundException, DeleteQuizQuestionOptionException, DeleteQuizQuestionException, CreateNewQuizQuestionException, UnknownPersistenceException, UpdateQuizQuestionException
     {
-        Quiz quizToUpdate = updateQuiz(quiz);
-
-        if (quizQuestions != null && quizQuestionOptionLists != null)
+        if (quiz != null)
         {
-            if (quizQuestions.size() == quizQuestionOptionLists.size())
+            if (quizQuestions != null)
             {
-                boolean update;
-                QuizQuestion quizQuestion;
-                List<QuizQuestionOption> quizQuestionOptions;
-
-                for (int i = 0; i < quizQuestions.size(); i++)
+                if (quizQuestionOptionLists != null)
                 {
-                    update = false;
-                    quizQuestion = quizQuestions.get(i);
-                    quizQuestionOptions = quizQuestionOptionLists.get(i);
-
-                    for (QuizQuestion quizQuestionToCheck : quizToUpdate.getQuizQuestions())
+                    if (quizQuestions.size() == quizQuestionOptionLists.size())
                     {
-                        if (quizQuestionToCheck.getQuizQuestionId().equals(quizQuestion.getQuizQuestionId()))
+                        Quiz quizToUpdate = updateQuiz(quiz);
+
+                        // Deletion
+                        // Includes deleting QuizQuestionOptions
+                        List<QuizQuestion> quizQuestionsToDelete = quizToUpdate.getQuizQuestions();
+
+                        for (QuizQuestion quizQuestion : quizQuestionsToDelete)
                         {
-                            update = true;
-                            break;
+                            quizQuestionService.deleteQuizQuestionWithQuizQuestionOptionsByQuizQuestionId(quizQuestion.getQuizQuestionId());
                         }
-                    }
+                        quizToUpdate.getQuizQuestions().clear();
 
-                    if (update)
-                    {
-                        quizQuestionService.updateQuizQuestion(quizQuestion, quizQuestionOptions);
+                        // Recreation
+                        QuizQuestion quizQuestion;
+                        List<QuizQuestionOption> quizQuestionOptions;
+
+                        for (int i = 0; i < quizQuestions.size(); i++)
+                        {
+                            quizQuestion = quizQuestions.get(i);
+                            quizQuestionOptions = quizQuestionOptionLists.get(i);
+
+                            quizQuestion = quizQuestionService.createNewQuizQuestion(quizQuestion, quizToUpdate.getContentId());
+                            quizQuestionOptions = quizQuestionOptionService.createNewQuizQuestionOptions(quizQuestionOptions);
+
+                            quizQuestion = quizQuestionService.addQuizQuestionOptionsToQuizQuestion(quizQuestion, quizQuestionOptions);
+                            quizToUpdate = addQuizQuestionToQuiz(quizToUpdate, quizQuestion);
+                        }
+
+                        quizRepository.saveAndFlush(quizToUpdate);
+                        return quizToUpdate;
                     }
                     else
                     {
-                        quizQuestion = quizQuestionService.createNewQuizQuestion(quizQuestion, quiz.getContentId());
-                        quizQuestion = quizQuestionService.addQuizQuestionOptionsToQuizQuestion(quizQuestion, quizQuestionOptions);
-                        quizToUpdate = addQuizQuestionToQuiz(quizToUpdate, quizQuestion);
+                        throw new UpdateQuizException("QuizQuestions and QuizQuestionOptionLists have to have the same size");
                     }
+                }
+                else
+                {
+                    throw new UpdateQuizException("Quiz Questions cannot be null");
                 }
             }
             else
             {
-                throw new UpdateQuizException("QuizQuestions and QuizQuestionOptionLists have to have the same size");
+                throw new UpdateQuizException("QuizQuestionOptionLists cannot be null");
             }
         }
-
-        quizRepository.saveAndFlush(quizToUpdate);
-        return quizToUpdate;
+        else
+        {
+            throw new UpdateQuizException("Quiz cannot be null");
+        }
     }
 
     @Override
@@ -275,7 +288,8 @@ public class QuizServiceImpl implements QuizService
     }
 
     @Override
-    public Boolean deleteQuizzesWithQuizQuestionsAndQuizQuestionOptionsByQuizId(List<Long> quizIds) throws DeleteQuizException, QuizNotFoundException, QuizQuestionOptionNotFoundException, DeleteQuizQuestionOptionException, QuizQuestionNotFoundException, DeleteQuizQuestionException, LessonNotFoundException, UpdateContentException, InputDataValidationException, ContentNotFoundException, UnknownPersistenceException {
+    public Boolean deleteQuizzesWithQuizQuestionsAndQuizQuestionOptionsByQuizId(List<Long> quizIds) throws DeleteQuizException, QuizNotFoundException, QuizQuestionOptionNotFoundException, DeleteQuizQuestionOptionException, QuizQuestionNotFoundException, DeleteQuizQuestionException, LessonNotFoundException, UpdateContentException, InputDataValidationException, ContentNotFoundException, UnknownPersistenceException
+    {
         for (Long quizId : quizIds)
         {
             Quiz quizToDelete = getQuizByQuizId(quizId);
