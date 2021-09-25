@@ -34,6 +34,15 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
     @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t WHERE t.course_course_id = :courseId AND YEAR(t.date_time_of_transaction) =:inputYear AND MONTH(t.date_time_of_transaction) = :inputMonth", nativeQuery = true)
     BigDecimal getMonthlyCourseEarningForLastYear(@Param("courseId") Long courseId, @Param("inputYear") int inputYear, @Param("inputMonth") int inputMonth);
 
+    @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t JOIN Course_Course_Tags cct ON t.course_course_id = cct.course_id WHERE cct.tag_id = :tagId", nativeQuery = true)
+    BigDecimal getLifetimeTagEarning(@Param("tagId") Long tagId);
+
+    @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t JOIN Course_Course_Tags cct ON t.course_course_id = cct.course_id WHERE cct.tag_id = :tagId AND MONTH(t.date_time_of_transaction) = MONTH(NOW())", nativeQuery = true)
+    BigDecimal getCurrentMonthTagEarning(@Param("tagId") Long tagId);
+
+    @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t JOIN Course_Course_Tags cct ON t.course_course_id = cct.course_id WHERE cct.tag_id = :tagId AND YEAR(t.date_time_of_transaction) =:inputYear AND MONTH(t.date_time_of_transaction) = :inputMonth", nativeQuery = true)
+    BigDecimal getMonthlyTagEarningForLastYear(@Param("tagId") Long tagId, @Param("inputYear") int inputYear, @Param("inputMonth") int inputMonth);
+
     // Used to get all transactions by course id
     @Query(value = "SELECT * FROM `Transaction` t JOIN Course c ON t.course_course_id = c.course_id WHERE c.course_id = :courseId", nativeQuery = true)
     List<Transaction> getAllTransactionByCourseId(@Param("courseId") Long courseId);

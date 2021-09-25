@@ -3,10 +3,12 @@ package com.spring.kodo.service.impl;
 import com.google.gson.Gson;
 import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Course;
+import com.spring.kodo.entity.Tag;
 import com.spring.kodo.entity.Transaction;
 import com.spring.kodo.repository.TransactionRepository;
 import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.CourseService;
+import com.spring.kodo.service.inter.TagService;
 import com.spring.kodo.service.inter.TransactionService;
 import com.spring.kodo.util.FormatterUtil;
 import com.spring.kodo.util.NowMonthYearUtil;
@@ -35,6 +37,9 @@ public class TransactionServiceImpl implements TransactionService
 
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private TagService tagService;
 
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -321,6 +326,71 @@ public class TransactionServiceImpl implements TransactionService
                 int year = currentMonth.getYear();
 
                 BigDecimal earningsForCurrentMonth = this.transactionRepository.getMonthlyCourseEarningForLastYear(course.getCourseId(), year, month);
+
+                monthlyCourseEarningsForLastYear.put(monthListShortName.get(month-1) + " " + year, earningsForCurrentMonth);
+            }
+
+            return monthlyCourseEarningsForLastYear;
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("Account is not a admin");
+        }
+    }
+
+    @Override
+    public BigDecimal getLifetimeTagEarning(Long requestingAccountId, Long tagId) throws AccountPermissionDeniedException, AccountNotFoundException, TagNotFoundException
+    {
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
+        Tag tag = this.tagService.getTagByTagId(tagId);
+
+        if (requestingAccount.getIsAdmin())
+        {
+            return this.transactionRepository.getLifetimeTagEarning(tag.getTagId());
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("Account is not a admin");
+        }
+    }
+
+    @Override
+    public BigDecimal getCurrentMonthTagEarning(Long requestingAccountId, Long tagId) throws AccountPermissionDeniedException, AccountNotFoundException, TagNotFoundException
+    {
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
+        Tag tag = this.tagService.getTagByTagId(tagId);
+
+        if (requestingAccount.getIsAdmin())
+        {
+            return this.transactionRepository.getCurrentMonthTagEarning(tag.getTagId());
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("Account is not a admin");
+        }
+    }
+
+    @Override
+    public Map<String, BigDecimal> getMonthlyTagEarningForLastYear(Long requestingAccountId, Long tagId) throws AccountPermissionDeniedException, AccountNotFoundException, TagNotFoundException
+    {
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
+        Tag tag = this.tagService.getTagByTagId(tagId);
+
+        if (requestingAccount.getIsAdmin())
+        {
+            LocalDate today = LocalDate.now();
+            LocalDate currentMonth = today.withDayOfMonth(1);
+
+            Map<String,BigDecimal> monthlyCourseEarningsForLastYear = new HashMap<>();
+
+            List<String> monthListShortName = NowMonthYearUtil.getMonthListShortName();
+
+            for (int i = 0; i < 12; i++)
+            {
+                int month = currentMonth.getMonth().getValue();
+                int year = currentMonth.getYear();
+
+                BigDecimal earningsForCurrentMonth = this.transactionRepository.getMonthlyTagEarningForLastYear(tagId, year, month);
 
                 monthlyCourseEarningsForLastYear.put(monthListShortName.get(month-1) + " " + year, earningsForCurrentMonth);
             }
