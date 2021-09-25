@@ -204,4 +204,60 @@ public class TransactionServiceImpl implements TransactionService
         return outputList;
     }
 
+    @Override
+    public BigDecimal getLifetimePlatformEarnings(Long requestingAccountId) throws AccountPermissionDeniedException, AccountNotFoundException {
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
+
+        if (requestingAccount.getIsAdmin())
+        {
+            return this.transactionRepository.getAllPlatformEarning();
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("Account is not a admin");
+        }
+    }
+
+    public BigDecimal getCurrentMonthPlatformEarnings(Long requestingAccountId) throws AccountPermissionDeniedException, AccountNotFoundException {
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
+
+        if (requestingAccount.getIsAdmin())
+        {
+            return this.transactionRepository.getCurrentMonthPlatformEarning();
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("Account is not a admin");
+        }
+    }
+
+    public Map<String, BigDecimal> getMonthlyPlatformEarningsForLastYear(Long requestingAccountId) throws AccountPermissionDeniedException, AccountNotFoundException {
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
+
+        if (requestingAccount.getIsAdmin())
+        {
+            LocalDate today = LocalDate.now();
+            LocalDate currentMonth = today.withDayOfMonth(1);
+
+            Map<String,BigDecimal> monthlyPlatformEarningsForLastYear = new HashMap<>();
+
+            List<String> monthListShortName = NowMonthYearUtil.getMonthListShortName();
+
+            for (int i = 0; i < 12; i++)
+            {
+                int month = currentMonth.getMonth().getValue();
+                int year = currentMonth.getYear();
+
+                BigDecimal earningsForCurrentMonth = this.transactionRepository.getMonthlyPlatformEarning(year, month);
+
+                monthlyPlatformEarningsForLastYear.put(monthListShortName.get(month-1) + " " + year, earningsForCurrentMonth);
+            }
+
+            return monthlyPlatformEarningsForLastYear;
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("Account is not a admin");
+        }
+    }
 }
