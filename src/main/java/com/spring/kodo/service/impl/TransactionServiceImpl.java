@@ -102,12 +102,14 @@ public class TransactionServiceImpl implements TransactionService
         }
     }
 
+    // takes in payer's account id
     @Override
     public List<Transaction> getAllPaymentsByAccountId(Long requestingAccountId) throws AccountNotFoundException
     {
         Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
         return this.transactionRepository.getAllTransactionByPayerId(requestingAccount.getAccountId());
     }
+
 
     @Override
     public BigDecimal getLifetimeTotalEarningsByAccountId(Long requestingAccountId) throws AccountNotFoundException

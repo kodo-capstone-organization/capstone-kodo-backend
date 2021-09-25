@@ -60,6 +60,19 @@ public class TransactionController
         }
     }
 
+    @GetMapping("/getTutorEarningsByAccountId/{accountId}")
+    public BigDecimal getTutorEarningsByAccountId(@PathVariable Long accountId)
+    {
+        try
+        {
+            return this.transactionService.getLifetimeTotalEarningsByAccountId(accountId);
+        }
+        catch (AccountNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @GetMapping("/getCourseEarningsPageDataByAccountId/{accountId}")
     public TutorCourseEarningsResp getCourseEarningsPageDataByAccountId(@PathVariable Long accountId)
     {
