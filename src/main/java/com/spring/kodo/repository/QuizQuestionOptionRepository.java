@@ -14,9 +14,4 @@ public interface QuizQuestionOptionRepository extends JpaRepository<QuizQuestion
     Optional<QuizQuestionOption> findByLeftContent(String leftContent);
 
     Optional<QuizQuestionOption> findByRightContent(String rightContent);
-
-//    @Query("SELECT COUNT(saa) > 0\n" +
-//            "FROM StudentAttemptAnswer saa\n" +
-//            "WHERE saa.quizQuestionOption.quizQuestionOptionId = :quizQuestionOptionId")
-//    Boolean containsStudentAttemptQuestions(@Param("quizQuestionOptionId") Long quizQuestionOptionId);
 }

@@ -327,6 +327,29 @@ public class QuizQuestionServiceImpl implements QuizQuestionService
     }
 
     @Override
+    public Boolean deleteQuizQuestionWithQuizQuestionOptionsByQuizQuestionId(Long quizQuestionId) throws DeleteQuizQuestionException, QuizQuestionNotFoundException, QuizQuestionOptionNotFoundException, DeleteQuizQuestionOptionException
+    {
+        if (quizQuestionId != null)
+        {
+            QuizQuestion quizQuestionToDelete = getQuizQuestionByQuizQuestionId(quizQuestionId);
+            List<QuizQuestionOption> quizQuestionOptionsToDelete = quizQuestionToDelete.getQuizQuestionOptions();
+
+            for (QuizQuestionOption quizQuestionOption : quizQuestionOptionsToDelete)
+            {
+                quizQuestionOptionService.deleteQuizQuestionOptionByQuizQuestionOptionId(quizQuestionOption.getQuizQuestionOptionId());
+            }
+            quizQuestionToDelete.getQuizQuestionOptions().clear();
+
+            quizQuestionRepository.delete(quizQuestionToDelete);
+            return true;
+        }
+        else
+        {
+            throw new DeleteQuizQuestionException("QuizQuestion ID cannot be null");
+        }
+    }
+
+    @Override
     public Boolean isQuizQuestionContainsStudentAttemptQuestionsByQuizQuestionId(Long quizQuestionId)
     {
         return quizQuestionRepository.containsStudentAttemptQuestions(quizQuestionId);
