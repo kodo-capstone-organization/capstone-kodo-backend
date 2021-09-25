@@ -1,11 +1,14 @@
 package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.Transaction;
+import com.spring.kodo.restentity.response.CourseEarningsResp;
 import com.spring.kodo.restentity.response.PlatformEarningsResp;
 import com.spring.kodo.restentity.response.TutorCourseEarningsResp;
 import com.spring.kodo.service.inter.TransactionService;
 import com.spring.kodo.util.exception.AccountNotFoundException;
 import com.spring.kodo.util.exception.AccountPermissionDeniedException;
+import com.spring.kodo.util.exception.CourseNotFoundException;
+import org.checkerframework.checker.units.qual.C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,6 +119,32 @@ public class TransactionController
             return platformEarningsResp;
         }
         catch (AccountNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+        catch (AccountPermissionDeniedException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
+    }
+
+    @GetMapping("/getCourseEarningsAdminData/{courseId}&{accountId}")
+    public CourseEarningsResp getCourseEarningsAdminData(@PathVariable Long courseId, @PathVariable Long accountId)
+    {
+        try
+        {
+            BigDecimal lifetimeCourseEarnings = this.transactionService.getLifetimeCourseEarning(accountId, courseId);
+            BigDecimal currentMonthCourseEarnings = this.transactionService.getCurrentMonthCourseEarning(accountId, courseId);
+            Map<String, BigDecimal> monthlyCourseEarningsForLastYear = this.transactionService.getMonthlyCourseEarningForLastYear(accountId, courseId);
+
+            CourseEarningsResp courseEarningsResp = new CourseEarningsResp();
+            courseEarningsResp.setLifetimeCourseEarning(lifetimeCourseEarnings);
+            courseEarningsResp.setCurrentMonthCourseEarning(currentMonthCourseEarnings);
+            courseEarningsResp.setMonthlyCourseEarningForLastYear(monthlyCourseEarningsForLastYear);
+
+            return courseEarningsResp;
+        }
+        catch (AccountNotFoundException | CourseNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
