@@ -124,6 +124,12 @@ public class TransactionServiceImpl implements TransactionService
     }
 
     @Override
+    public BigDecimal getLifetimeTutorPayoutByCourseId(Long courseId)
+    {
+        return this.transactionRepository.getLifetimeTutorPayoutByCourseId(courseId).orElse(new BigDecimal(0));
+    }
+
+    @Override
     public List<Map<String, String>> getLifetimeEarningsByCourseByAccountId(Long requestingAccountId) throws AccountNotFoundException {
 
         Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
@@ -132,7 +138,7 @@ public class TransactionServiceImpl implements TransactionService
         List<Map<String, String>> outputList = new ArrayList<>();
         for (Course c: myCourses)
         {
-            BigDecimal lifetimeEarningFromCourse = this.transactionRepository.getLifetimeTutorPayoutByCourseId(c.getCourseId()).orElse(new BigDecimal(0));
+            BigDecimal lifetimeEarningFromCourse = getLifetimeTutorPayoutByCourseId(c.getCourseId());
             Map<String,String> inputData = new HashMap<>();
             inputData.put("courseId", c.getCourseId().toString());
             inputData.put("courseName", c.getName());
@@ -148,6 +154,28 @@ public class TransactionServiceImpl implements TransactionService
     {
         Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
         return this.transactionRepository.getCurrentMonthEarningsByPayeeId(requestingAccount.getAccountId()).orElse(new BigDecimal(0));
+    }
+
+    @Override
+    public BigDecimal getAverageMonthlyCourseEarning(Long courseId)
+    {
+        return this.transactionRepository.getAverageMonthlyEarningByCourseId(courseId).orElse(new BigDecimal(0));
+    }
+
+    @Override
+    public String getHighestEarningMonthWithValueByCourseId(Long courseId)
+    {
+        Map<String, Object> result = this.transactionRepository.getHighestEarningMonthWithValue(courseId);
+        if (result.get("MonthSum") != null)
+        {
+            String monthShortName = NowMonthYearUtil.getMonthListShortName().get((int) result.get("DisMonth") - 1);
+            // E.g. Aug 2021 ($123.00)
+            return monthShortName + " " + result.get("DisYear") + " ($" + result.get("MonthSum") + ")";
+        }
+        else
+        {
+            return "";
+        }
     }
 
     @Override
@@ -172,8 +200,8 @@ public class TransactionServiceImpl implements TransactionService
     }
 
     @Override
-    public List<Map<String, String>> getCourseStatsByMonthForLastYear(Long requestingAccountId) throws AccountNotFoundException
-    {
+    public List<Map<String, String>> getCourseStatsByMonthForLastYear(Long requestingAccountId) throws AccountNotFoundException, CourseNotFoundException, AccountPermissionDeniedException {
+
         Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
         List<Course> myCourses = requestingAccount.getCourses();
         List<Map<String, String>> outputList = new ArrayList<>();
@@ -183,6 +211,10 @@ public class TransactionServiceImpl implements TransactionService
             Map<String,String> inputData = new HashMap<>();
             inputData.put("courseId", c.getCourseId().toString());
             inputData.put("courseName", c.getName());
+            inputData.put("lifetimeEarnings",  getLifetimeTutorPayoutByCourseId(c.getCourseId()).toString());
+            inputData.put("currentMonthEarnings", getCurrentMonthCourseEarning(requestingAccountId, c.getCourseId()).toString());
+            inputData.put("monthlyAverageEarnings", getAverageMonthlyCourseEarning(c.getCourseId()).toString());
+            inputData.put("highestEarningMonthWithValue", getHighestEarningMonthWithValueByCourseId(c.getCourseId()));
 
             LocalDate today = LocalDate.now();
             LocalDate firstOfCurMonth = today.withDayOfMonth(1);
@@ -295,13 +327,13 @@ public class TransactionServiceImpl implements TransactionService
         Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
         Course course = this.courseService.getCourseByCourseId(courseId);
 
-        if (requestingAccount.getIsAdmin())
+        if (requestingAccount.getIsAdmin() || requestingAccount.getCourses().contains(course))
         {
-            return this.transactionRepository.getCurrentMonthCourseEarning(course.getCourseId());
+            return this.transactionRepository.getCurrentMonthCourseEarning(course.getCourseId()).orElse(new BigDecimal(0));
         }
         else
         {
-            throw new AccountPermissionDeniedException("Account is not a admin");
+            throw new AccountPermissionDeniedException("Account is not a admin or course owner");
         }
     }
 

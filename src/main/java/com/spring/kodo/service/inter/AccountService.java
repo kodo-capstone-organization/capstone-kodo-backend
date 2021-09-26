@@ -98,4 +98,10 @@ public interface AccountService
     Account upgradeAdminStatus(Long accountId) throws AccountNotFoundException;
 
     Account downgradeAdminStatus(Long accountId) throws AccountNotFoundException;
+
+    Integer getTotalEnrollmentCountByAccountId(Long requestingAccountId) throws AccountNotFoundException;
+
+    Integer getTotalPublishedCourseCountByAccountId(Long requestingAccountId) throws AccountNotFoundException;
+
+    Integer getTotalCourseCountByAccountId(Long requestingAccountId) throws AccountNotFoundException;
 }

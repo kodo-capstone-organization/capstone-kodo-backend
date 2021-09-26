@@ -677,5 +677,27 @@ public class AccountServiceImpl implements AccountService
             throw new InvalidLoginCredentialsException("Username or Password is invalid");
         }
     }
+
+    @Override
+    public Integer getTotalEnrollmentCountByAccountId(Long requestingAccountId) throws AccountNotFoundException
+    {
+        Account requestingAccount = getAccountByAccountId(requestingAccountId);
+        return this.accountRepository.getTotalEnrollmentCountByAccountId(requestingAccount.getAccountId()).orElse(0);
+    }
+
+    @Override
+    public Integer getTotalPublishedCourseCountByAccountId(Long requestingAccountId) throws AccountNotFoundException
+    {
+        Account requestingAccount = getAccountByAccountId(requestingAccountId);
+        return this.accountRepository.getTotalPublishedCourseCountByAccountId(requestingAccount.getAccountId()).orElse(0);
+    }
+
+    @Override
+    public Integer getTotalCourseCountByAccountId(Long requestingAccountId) throws AccountNotFoundException
+    {
+        Account requestingAccount = getAccountByAccountId(requestingAccountId);
+        return this.accountRepository.getTotalCourseCountByAccountId(requestingAccount.getAccountId()).orElse(0);
+    }
+
 }
 
