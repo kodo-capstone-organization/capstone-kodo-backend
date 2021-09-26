@@ -8,6 +8,9 @@ import java.util.Map;
 public class TutorCourseEarningsResp
 {
       // Summary stats
+      private Integer totalEnrollmentCount;
+      private Integer totalPublishedCourseCount;
+      private Integer totalCourseCount;
       private BigDecimal lifetimeTotalEarnings;
       private List<Map<String, String>> lifetimeEarningsByCourse; // [{'courseId': '5', 'courseName': 'Some Course', 'earnings': '18.50', 'courseNameWithEarnings': 'Some Course ($xx)'}, {...}, ...]
       private BigDecimal currentMonthTotalEarnings;
@@ -61,5 +64,29 @@ public class TutorCourseEarningsResp
 
       public void setCourseStatsByMonthForLastYear(List<Map<String, String>> courseStatsByMonthForLastYear) {
             this.courseStatsByMonthForLastYear = courseStatsByMonthForLastYear;
+      }
+
+      public Integer getTotalEnrollmentCount() {
+            return totalEnrollmentCount;
+      }
+
+      public void setTotalEnrollmentCount(Integer totalEnrollmentCount) {
+            this.totalEnrollmentCount = totalEnrollmentCount;
+      }
+
+      public Integer getTotalPublishedCourseCount() {
+            return totalPublishedCourseCount;
+      }
+
+      public void setTotalPublishedCourseCount(Integer totalPublishedCourseCount) {
+            this.totalPublishedCourseCount = totalPublishedCourseCount;
+      }
+
+      public Integer getTotalCourseCount() {
+            return totalCourseCount;
+      }
+
+      public void setTotalCourseCount(Integer totalCourseCount) {
+            this.totalCourseCount = totalCourseCount;
       }
 }

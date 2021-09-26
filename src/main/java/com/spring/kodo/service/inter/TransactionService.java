@@ -19,13 +19,19 @@ public interface TransactionService
 
     BigDecimal getLifetimeTotalEarningsByAccountId(Long requestingAccountId) throws AccountNotFoundException;
 
+    BigDecimal getLifetimeTutorPayoutByCourseId(Long courseId);
+
     List<Map<String, String>> getLifetimeEarningsByCourseByAccountId(Long requestingAccountId) throws AccountNotFoundException;
 
     BigDecimal getCurrentMonthTotalEarningsByAccountId(Long requestingAccountId) throws AccountNotFoundException;
 
+    BigDecimal getAverageMonthlyCourseEarning(Long courseId);
+
+    String getHighestEarningMonthWithValueByCourseId(Long courseId);
+
     List<Map<String, String>> getCurrentMonthEarningsByCourseByAccountId(Long requestingAccountId) throws AccountNotFoundException;
 
-    List<Map<String, String>> getCourseStatsByMonthForLastYear(Long requestingAccountId) throws AccountNotFoundException;
+    List<Map<String, String>> getCourseStatsByMonthForLastYear(Long requestingAccountId) throws AccountNotFoundException, CourseNotFoundException, AccountPermissionDeniedException;
 
     BigDecimal getLifetimePlatformEarnings(Long requestingAccountId) throws AccountPermissionDeniedException, AccountNotFoundException;
 

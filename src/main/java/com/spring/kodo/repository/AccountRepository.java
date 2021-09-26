@@ -42,4 +42,13 @@ public interface AccountRepository extends JpaRepository<Account, Long>
     Boolean existsByUsername(String username);
 
     Boolean existsByEmail(String email);
+
+    @Query(value = "SELECT COUNT(*) FROM Account a JOIN Account_Courses ac on a.account_id = ac.account_id JOIN Course c ON c.course_id = ac.course_id JOIN enrolled_course ec ON ec.parent_course_course_id = c.course_id WHERE a.account_id = :accountId", nativeQuery = true)
+    Optional<Integer> getTotalEnrollmentCountByAccountId(@Param("accountId") Long accountId);
+
+    @Query(value = "SELECT COUNT(*) FROM Account a JOIN Account_Courses ac on a.account_id = ac.account_id JOIN Course c ON c.course_id = ac.course_id WHERE a.account_id = :accountId AND c.is_enrollment_active = TRUE", nativeQuery = true)
+    Optional<Integer> getTotalPublishedCourseCountByAccountId(@Param("accountId") Long accountId);
+
+    @Query(value = "SELECT COUNT(*) FROM Account a JOIN Account_Courses ac on a.account_id = ac.account_id JOIN Course c ON c.course_id = ac.course_id WHERE a.account_id = :accountId", nativeQuery = true)
+    Optional<Integer> getTotalCourseCountByAccountId(@Param("accountId") Long accountId);
 }
