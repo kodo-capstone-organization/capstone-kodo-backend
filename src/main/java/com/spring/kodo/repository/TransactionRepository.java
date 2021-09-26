@@ -77,8 +77,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
     @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t JOIN Account a ON t.payee_account_id = a.account_id AND t.payee_account_id = :payeeId", nativeQuery = true)
     Optional<BigDecimal> getLifetimeEarningsByPayeeId(@Param("payeeId") Long payeeId);
 
-    @Query(value = "SELECT * FROM `Transaction` t JOIN Account a ON t.payee_account_id = a.account_id AND t.payee_account_id = :payeeId WHERE YEAR(t.date_time_of_transaction) = :inputYear AND MONTH(t.date_time_of_transaction) = :inputMonth", nativeQuery = true)
-    List<Transaction> getMonthlyTransactionByPayeeId(@Param("payeeId") Long payeeId, @Param("inputYear") Year inputYear, @Param("inputMonth") int inputMonth);
+    @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t JOIN Account a ON t.payee_account_id = a.account_id AND t.payee_account_id = :payeeId WHERE YEAR(t.date_time_of_transaction) = :inputYear AND MONTH(t.date_time_of_transaction) = :inputMonth", nativeQuery = true)
+    BigDecimal getMonthlyTransactionByPayeeId(@Param("payeeId") Long payeeId, @Param("inputYear") int inputYear, @Param("inputMonth") int inputMonth);
 
     @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t JOIN Account a ON t.payee_account_id = a.account_id AND t.payee_account_id = :payeeId WHERE YEAR(t.date_time_of_transaction) = YEAR(NOW()) AND MONTH(t.date_time_of_transaction) = MONTH(NOW())", nativeQuery = true)
     Optional<BigDecimal> getCurrentMonthEarningsByPayeeId(@Param("payeeId") Long payeeId);

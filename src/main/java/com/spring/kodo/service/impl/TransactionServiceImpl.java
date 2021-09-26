@@ -381,7 +381,7 @@ public class TransactionServiceImpl implements TransactionService
             LocalDate today = LocalDate.now();
             LocalDate currentMonth = today.withDayOfMonth(1);
 
-            Map<String,BigDecimal> monthlyCourseEarningsForLastYear = new HashMap<>();
+            Map<String,BigDecimal> monthlyTagEarningsForLastYear = new HashMap<>();
 
             List<String> monthListShortName = NowMonthYearUtil.getMonthListShortName();
 
@@ -392,10 +392,75 @@ public class TransactionServiceImpl implements TransactionService
 
                 BigDecimal earningsForCurrentMonth = this.transactionRepository.getMonthlyTagEarningForLastYear(tagId, year, month);
 
-                monthlyCourseEarningsForLastYear.put(monthListShortName.get(month-1) + " " + year, earningsForCurrentMonth);
+                monthlyTagEarningsForLastYear.put(monthListShortName.get(month-1) + " " + year, earningsForCurrentMonth);
             }
 
-            return monthlyCourseEarningsForLastYear;
+            return monthlyTagEarningsForLastYear;
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("Account is not a admin");
+        }
+    }
+
+    @Override
+    public BigDecimal getLifetimeTutorEarning(Long requestingAccountId, Long tutorId) throws AccountPermissionDeniedException, AccountNotFoundException
+    {
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
+        Account tutorAccount = this.accountService.getAccountByAccountId(tutorId);
+
+        if (requestingAccount.getIsAdmin())
+        {
+            return this.transactionRepository.getLifetimeEarningsByPayeeId(tutorAccount.getAccountId()).get();
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("Account is not a admin");
+        }
+    }
+
+    @Override
+    public BigDecimal getCurrentMonthTutorEarning(Long requestingAccountId, Long tutorId) throws AccountPermissionDeniedException, AccountNotFoundException
+    {
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
+        Account tutorAccount = this.accountService.getAccountByAccountId(tutorId);
+
+        if (requestingAccount.getIsAdmin())
+        {
+            return this.transactionRepository.getCurrentMonthEarningsByPayeeId(tutorAccount.getAccountId()).get();
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("Account is not a admin");
+        }
+    }
+
+    @Override
+    public Map<String, BigDecimal> getMonthlyTutorEarningForLastYear(Long requestingAccountId, Long tutorId) throws AccountPermissionDeniedException, AccountNotFoundException
+    {
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
+        Account tutorAccount = this.accountService.getAccountByAccountId(tutorId);
+
+        if (requestingAccount.getIsAdmin())
+        {
+            LocalDate today = LocalDate.now();
+            LocalDate currentMonth = today.withDayOfMonth(1);
+
+            Map<String,BigDecimal> monthlyTutorEarningsForLastYear = new HashMap<>();
+
+            List<String> monthListShortName = NowMonthYearUtil.getMonthListShortName();
+
+            for (int i = 0; i < 12; i++)
+            {
+                int month = currentMonth.getMonth().getValue();
+                int year = currentMonth.getYear();
+
+                BigDecimal earningsForCurrentMonth = this.transactionRepository.getMonthlyTransactionByPayeeId(tutorAccount.getAccountId(), year, month);
+
+                monthlyTutorEarningsForLastYear.put(monthListShortName.get(month-1) + " " + year, earningsForCurrentMonth);
+            }
+
+            return monthlyTutorEarningsForLastYear;
         }
         else
         {

@@ -1,10 +1,7 @@
 package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.Transaction;
-import com.spring.kodo.restentity.response.CourseEarningsResp;
-import com.spring.kodo.restentity.response.PlatformEarningsResp;
-import com.spring.kodo.restentity.response.TagEarningsResp;
-import com.spring.kodo.restentity.response.TutorCourseEarningsResp;
+import com.spring.kodo.restentity.response.*;
 import com.spring.kodo.service.inter.TransactionService;
 import com.spring.kodo.util.exception.AccountNotFoundException;
 import com.spring.kodo.util.exception.AccountPermissionDeniedException;
@@ -14,6 +11,7 @@ import org.checkerframework.checker.units.qual.C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -173,6 +171,32 @@ public class TransactionController
             return tagEarningsResp;
         }
         catch (AccountNotFoundException | TagNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+        catch (AccountPermissionDeniedException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
+    }
+
+    @GetMapping("/getTutorEarningsAdminData/{tutorId}&{requestingAccountId}")
+    public TutorEarningsResp getTutorEarningsAdminData(@PathVariable Long tutorId, @PathVariable Long requestingAccountId)
+    {
+        try
+        {
+            BigDecimal lifetimeTutorEarnings = this.transactionService.getLifetimeTutorEarning(requestingAccountId, tutorId);
+            BigDecimal currentMonthTutorEarnings = this.transactionService.getCurrentMonthTutorEarning(requestingAccountId, tutorId);
+            Map<String, BigDecimal> monthlyTutorEarningsForLastYear = this.transactionService.getMonthlyTutorEarningForLastYear(requestingAccountId, tutorId);
+
+            TutorEarningsResp tutorEarningsResp = new TutorEarningsResp();
+            tutorEarningsResp.setLifetimeTutorEarning(lifetimeTutorEarnings);
+            tutorEarningsResp.setCurrentMonthTutorEarning(currentMonthTutorEarnings);
+            tutorEarningsResp.setMonthlyTutorEarningsForLastYear(monthlyTutorEarningsForLastYear);
+
+            return tutorEarningsResp;
+        }
+        catch (AccountNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
