@@ -91,7 +91,7 @@ public class LessonController
             lesson.setName(name);
             lesson.setDescription(description);
 
-            return this.lessonService.updateLesson(lesson, null);
+            return this.lessonService.updateLesson(lesson, lesson.getContents().stream().map((Content content) -> content.getContentId()).toList());
         }
         catch (LessonNotFoundException | ContentNotFoundException ex)
         {
