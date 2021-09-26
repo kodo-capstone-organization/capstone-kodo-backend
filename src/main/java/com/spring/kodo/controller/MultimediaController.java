@@ -56,6 +56,37 @@ public class MultimediaController
         }
     }
 
+    @PostMapping("/updateMultimedia")
+    public Multimedia updateMultimedia(@RequestPart(name = "multimediaId", required = true) Long multimediaId, @RequestPart(name = "file", required = false) MultipartFile file,
+                                       @RequestPart(name = "name", required = true) String name, @RequestPart(name = "description", required = true) String description)
+    {
+        try
+        {
+            Multimedia multimedia = this.multimediaService.getMultimediaByMultimediaId(multimediaId);
+
+            if (file != null)
+            {
+                this.fileService.delete(multimedia.getUrlFilename());
+                String newUrl = this.fileService.upload(file);
+                multimedia.setUrl(newUrl);
+                multimedia.setMultimediaType(FileTypeUtil.getMultimediaType(file.getOriginalFilename()));
+            }
+
+            multimedia.setName(name);
+            multimedia.setDescription(description);
+
+            return this.multimediaService.updateMultimedia(multimedia);
+        }
+        catch (MultimediaNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+        catch (FileUploadToGCSException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
+    }
+
     @DeleteMapping("/deleteMultimediasFromLesson")
     public Boolean deleteMultimediasFromLesson(@RequestPart(name = "lessonId", required = true) Long lessonId,@RequestPart(name = "contentIds", required = true) List<Long> contentIds)
     {

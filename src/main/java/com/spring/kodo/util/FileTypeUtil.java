@@ -6,7 +6,8 @@ public class FileTypeUtil
 {
     public static MultimediaType getMultimediaType(String url)
     {
-        switch (url)
+        String[] splitUrl = url.split("\\.");
+        switch (splitUrl[splitUrl.length - 1])
         {
             case "png":
             case "jpg":
