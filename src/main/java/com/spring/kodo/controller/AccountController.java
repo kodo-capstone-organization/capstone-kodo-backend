@@ -210,7 +210,7 @@ public class AccountController
         }
     }
 
-    @DeleteMapping("/deactivateAccount/{reactivatingAccountId}&{requestingAccountId}")
+    @DeleteMapping("/reactivateAccount/{reactivatingAccountId}&{requestingAccountId}")
     public ResponseEntity reactivateAccount(@PathVariable Long reactivatingAccountId, @PathVariable Long requestingAccountId)
     {
         try
@@ -225,6 +225,26 @@ public class AccountController
         catch (AccountNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
+    @GetMapping("/downgradeAccount/{accountId}")
+    public Account downgradeAdmin(@PathVariable Long accountId) {
+        try {
+            Account updatedAccount = this.accountService.downgradeAdminStatus(accountId);
+            return updatedAccount;
+        } catch(AccountNotFoundException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
+        }
+    }
+
+    @GetMapping("/upgradeAccount/{accountId}")
+    public Account upgradeAdmin(@PathVariable Long accountId) {
+        try {
+            Account updatedAccount = this.accountService.upgradeAdminStatus(accountId);
+            return updatedAccount;
+        } catch(AccountNotFoundException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 
@@ -255,4 +275,5 @@ public class AccountController
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
+
 }

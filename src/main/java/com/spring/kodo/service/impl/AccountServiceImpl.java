@@ -251,6 +251,30 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
+    public Account downgradeAdminStatus(Long accountId) throws AccountNotFoundException {
+        if (accountId != null) {
+            Account accountToUpdate = getAccountByAccountId(accountId);
+            accountToUpdate.setIsAdmin(false);
+            accountToUpdate = accountRepository.saveAndFlush(accountToUpdate);
+            return accountToUpdate;
+        } else {
+            throw new AccountNotFoundException("Account with id " + accountId + " cannot be found");
+        }
+    }
+
+    @Override
+    public Account upgradeAdminStatus(Long accountId) throws AccountNotFoundException {
+        if (accountId != null) {
+            Account accountToUpdate = getAccountByAccountId(accountId);
+            accountToUpdate.setIsAdmin(true);
+            accountToUpdate = accountRepository.saveAndFlush(accountToUpdate);
+            return accountToUpdate;
+        } else {
+            throw new AccountNotFoundException("Account with id " + accountId + " cannot be found");
+        }
+    }
+
+    @Override
     public Account updateAccount(Account account) throws UpdateAccountException, AccountNotFoundException, AccountEmailExistException
     {
         if (account != null)
