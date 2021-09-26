@@ -104,14 +104,14 @@ public class TransactionController
         }
     }
 
-    @GetMapping("/getPlatformEarningsAdminData/{accountId}")
-    public PlatformEarningsResp getPlatformEarningsAdminData(@PathVariable Long accountId)
+    @GetMapping("/getPlatformEarningsAdminData/{requestingAccountId}")
+    public PlatformEarningsResp getPlatformEarningsAdminData(@PathVariable Long requestingAccountId)
     {
         try
         {
-            BigDecimal lifetimePlatformEarnings = this.transactionService.getLifetimePlatformEarnings(accountId);
-            BigDecimal currentMonthPlatformEarnings = this.transactionService.getCurrentMonthPlatformEarnings(accountId);
-            Map<String, BigDecimal> monthlyPlatformEarningsForLastYear = this.transactionService.getMonthlyPlatformEarningsForLastYear(accountId);
+            BigDecimal lifetimePlatformEarnings = this.transactionService.getLifetimePlatformEarnings(requestingAccountId);
+            BigDecimal currentMonthPlatformEarnings = this.transactionService.getCurrentMonthPlatformEarnings(requestingAccountId);
+            Map<String, BigDecimal> monthlyPlatformEarningsForLastYear = this.transactionService.getMonthlyPlatformEarningsForLastYear(requestingAccountId);
 
             PlatformEarningsResp platformEarningsResp = new PlatformEarningsResp();
             platformEarningsResp.setLifetimePlatformEarnings(lifetimePlatformEarnings);
@@ -130,14 +130,14 @@ public class TransactionController
         }
     }
 
-    @GetMapping("/getCourseEarningsAdminData/{courseId}&{accountId}")
-    public CourseEarningsResp getCourseEarningsAdminData(@PathVariable Long courseId, @PathVariable Long accountId)
+    @GetMapping("/getCourseEarningsAdminData/{courseId}&{requestingAccountId}")
+    public CourseEarningsResp getCourseEarningsAdminData(@PathVariable Long courseId, @PathVariable Long requestingAccountId)
     {
         try
         {
-            BigDecimal lifetimeCourseEarnings = this.transactionService.getLifetimeCourseEarning(accountId, courseId);
-            BigDecimal currentMonthCourseEarnings = this.transactionService.getCurrentMonthCourseEarning(accountId, courseId);
-            Map<String, BigDecimal> monthlyCourseEarningsForLastYear = this.transactionService.getMonthlyCourseEarningForLastYear(accountId, courseId);
+            BigDecimal lifetimeCourseEarnings = this.transactionService.getLifetimeCourseEarning(requestingAccountId, courseId);
+            BigDecimal currentMonthCourseEarnings = this.transactionService.getCurrentMonthCourseEarning(requestingAccountId, courseId);
+            Map<String, BigDecimal> monthlyCourseEarningsForLastYear = this.transactionService.getMonthlyCourseEarningForLastYear(requestingAccountId, courseId);
 
             CourseEarningsResp courseEarningsResp = new CourseEarningsResp();
             courseEarningsResp.setLifetimeCourseEarning(lifetimeCourseEarnings);
@@ -156,14 +156,14 @@ public class TransactionController
         }
     }
 
-    @GetMapping("/getTagEarningsAdminData/{tagId}&{accountId}")
-    public TagEarningsResp getTagEarningsAdminData(@PathVariable Long tagId, @PathVariable Long accountId)
+    @GetMapping("/getTagEarningsAdminData/{tagId}&{requestingAccountId}")
+    public TagEarningsResp getTagEarningsAdminData(@PathVariable Long tagId, @PathVariable Long requestingAccountId)
     {
         try
         {
-            BigDecimal lifetimeTagEarnings = this.transactionService.getLifetimeTagEarning(accountId, tagId);
-            BigDecimal currentMonthTagEarnings = this.transactionService.getCurrentMonthTagEarning(accountId, tagId);
-            Map<String, BigDecimal> monthlyTagEarningsForLastYear = this.transactionService.getMonthlyTagEarningForLastYear(accountId, tagId);
+            BigDecimal lifetimeTagEarnings = this.transactionService.getLifetimeTagEarning(requestingAccountId, tagId);
+            BigDecimal currentMonthTagEarnings = this.transactionService.getCurrentMonthTagEarning(requestingAccountId, tagId);
+            Map<String, BigDecimal> monthlyTagEarningsForLastYear = this.transactionService.getMonthlyTagEarningForLastYear(requestingAccountId, tagId);
 
             TagEarningsResp tagEarningsResp = new TagEarningsResp();
             tagEarningsResp.setLifetimeTagEarning(lifetimeTagEarnings);
