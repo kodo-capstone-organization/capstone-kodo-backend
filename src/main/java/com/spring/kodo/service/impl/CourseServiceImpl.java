@@ -14,6 +14,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -190,9 +191,17 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
-    public List<Course> getAllCoursesThatArePopular()
+    public List<Course> getAllCoursesThatArePopular() throws CourseNotFoundException
     {
-        return courseRepository.findAllCoursesThatArePopular();
+        List<Long> popularCourseIds = courseRepository.findAllCoursesThatArePopular();
+
+        List<Course> popularCourses = new ArrayList<Course>();
+
+        for (Long courseId : popularCourseIds)
+        {
+            popularCourses.add(getCourseByCourseId(courseId));
+        }
+        return popularCourses;
     }
 
     @Override

@@ -47,7 +47,7 @@ public interface CourseService
 
     List<Course> getAllCoursesInTheLast14Days();
 
-    List<Course> getAllCoursesThatArePopular();
+    List<Course> getAllCoursesThatArePopular() throws CourseNotFoundException;
 
     Course updateCourse(
             Course course,

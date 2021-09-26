@@ -168,9 +168,15 @@ public class CourseController
     @GetMapping("/getAllCoursesThatArePopular")
     public List<Course> getAllCoursesThatArePopular()
     {
-        List<Course> courses = this.courseService.getAllCoursesThatArePopular();
-
-        return courses;
+        try
+        {
+            List<Course> courses = this.courseService.getAllCoursesThatArePopular();
+            return courses;
+        }
+        catch (CourseNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
     }
 
     @GetMapping("/getNewReleasesCourses")

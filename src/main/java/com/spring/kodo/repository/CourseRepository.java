@@ -99,7 +99,7 @@ public interface CourseRepository extends JpaRepository<Course, Long>
     // Popular courses are determined by courses that have
     // COUNT(enrolledCourse) >= FLOOR(MAX(enrolledCourse of All Courses) / 2)
     @Query(value =
-            "SELECT *\n" +
+            "SELECT c.course_id\n" +
             "FROM Course c\n" +
             "         JOIN Enrolled_course ec\n" +
             "              ON c.course_id = ec.parent_course_course_id\n" +
@@ -115,7 +115,7 @@ public interface CourseRepository extends JpaRepository<Course, Long>
             "                ) AS enrolled_course_count_results\n" +
             "       );",
             nativeQuery = true)
-    List<Course> findAllCoursesThatArePopular();
+    List<Long> findAllCoursesThatArePopular();
 
     @Query(value = "SELECT AVG(ec.course_rating) FROM Course c JOIN Enrolled_Course ec WHERE c.course_id = :courseId", nativeQuery = true)
     Double findCourseRatingByCourseId(@Param("courseId") Long courseId);
