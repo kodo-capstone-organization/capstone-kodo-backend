@@ -234,10 +234,12 @@ public class QuizServiceImpl implements QuizService
                         // Deletion
                         // Includes deleting QuizQuestionOptions
                         List<QuizQuestion> quizQuestionsToDelete = quizToUpdate.getQuizQuestions();
+                        QuizQuestion quizQuestionToDelete;
 
-                        for (QuizQuestion quizQuestion : quizQuestionsToDelete)
+                        for (int i = 0; i < quizQuestionsToDelete.size(); i++)
                         {
-                            quizQuestionService.deleteQuizQuestionWithQuizQuestionOptionsByQuizQuestionId(quizQuestion.getQuizQuestionId());
+                            quizQuestionToDelete = quizQuestionsToDelete.get(i);
+                            quizQuestionService.deleteQuizQuestionWithQuizQuestionOptionsByQuizQuestionId(quizQuestionToDelete.getQuizQuestionId());
                         }
                         quizToUpdate.getQuizQuestions().clear();
 

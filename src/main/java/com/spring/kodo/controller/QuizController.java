@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/quiz")
@@ -152,10 +153,15 @@ public class QuizController
         {
             try
             {
+                // Remove IDs from QuizQuestions and QuizQuestionOptionLists, if any
+                updateQuizReq = disassociatingAndRemovingIdsOfUpdateQuizReq(updateQuizReq);
+
+                // Get items from UpdateQuizReq
                 Quiz quiz = updateQuizReq.getQuiz();
                 List<QuizQuestion> quizQuestions = updateQuizReq.getQuizQuestions();
                 List<List<QuizQuestionOption>> quizQuestionOptionLists = updateQuizReq.getQuizQuestionOptionLists();
 
+                // Update
                 quiz = quizService.updateQuiz(quiz, quizQuestions, quizQuestionOptionLists);
 
                 return quiz;
@@ -198,5 +204,38 @@ public class QuizController
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
+    }
+
+    // Very unique method
+    private UpdateQuizReq disassociatingAndRemovingIdsOfUpdateQuizReq(UpdateQuizReq updateQuizReq)
+    {
+        List<QuizQuestion> quizQuestions = updateQuizReq
+                .getQuizQuestions()
+                .stream()
+                .map(quizQuestion ->
+                {
+                    quizQuestion.setQuizQuestionId(null);
+                    quizQuestion.getQuizQuestionOptions().clear();
+                    quizQuestion.setQuiz(null);
+                    return quizQuestion;
+                })
+                .collect(Collectors.toList());
+
+        List<List<QuizQuestionOption>> quizQuestionOptionLists = updateQuizReq
+                .getQuizQuestionOptionLists()
+                .stream()
+                .map(quizQuestionOptionList ->
+                        quizQuestionOptionList
+                                .stream()
+                                .map(quizQuestionOption ->
+                                {
+                                    quizQuestionOption.setQuizQuestionOptionId(null);
+                                    return quizQuestionOption;
+                                })
+                                .collect(Collectors.toList())
+                )
+                .collect(Collectors.toList());
+
+        return updateQuizReq;
     }
 }
