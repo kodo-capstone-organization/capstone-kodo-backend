@@ -80,6 +80,23 @@ public class LessonController
         }
     }
 
+    @DeleteMapping("/deleteLesson/{lessonId}")
+    public Boolean deleteLesson(@PathVariable Long lessonId)
+    {
+        try
+        {
+            return this.lessonService.deleteLesson(lessonId);
+        }
+        catch (CourseNotFoundException | TagNotFoundException | LessonNotFoundException | EnrolledCourseNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+        catch (TagNameExistsException | InputDataValidationException | UnknownPersistenceException | UpdateCourseException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
+    }
+
     // To be called from CourseController. Lesson should not be updated as a standalone API
     protected List<Long> updateLessonsInACourse(List<UpdateLessonReq> updateLessonReqs, List<MultipartFile>  lessonMultimedias) throws ContentNotFoundException, LessonNotFoundException, UpdateContentException, UnknownPersistenceException, CreateNewQuizException, InputDataValidationException, MultimediaExistsException, FileUploadToGCSException, MultimediaNotFoundException, CourseNotFoundException {
 
