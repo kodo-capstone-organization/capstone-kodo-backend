@@ -1,11 +1,16 @@
 package com.spring.kodo.controller;
 
-import com.spring.kodo.entity.*;
+import com.spring.kodo.entity.Account;
+import com.spring.kodo.entity.Course;
+import com.spring.kodo.entity.Tag;
 import com.spring.kodo.restentity.request.CreateNewCourseReq;
 import com.spring.kodo.restentity.request.UpdateCourseReq;
 import com.spring.kodo.restentity.response.CourseWithTutorAndRatingResp;
 import com.spring.kodo.restentity.response.RecommendedCoursesWithTagsResp;
-import com.spring.kodo.service.inter.*;
+import com.spring.kodo.service.inter.AccountService;
+import com.spring.kodo.service.inter.CourseService;
+import com.spring.kodo.service.inter.FileService;
+import com.spring.kodo.service.inter.TagService;
 import com.spring.kodo.util.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,6 +165,14 @@ public class CourseController
         }
     }
 
+    @GetMapping("/getAllCoursesThatArePopular")
+    public List<Course> getAllCoursesThatArePopular()
+    {
+        List<Course> courses = this.courseService.getAllCoursesThatArePopular();
+
+        return courses;
+    }
+
     @GetMapping("/getNewReleasesCourses")
     public List<CourseWithTutorAndRatingResp> getNewReleasesCourses()
     {
@@ -225,8 +238,8 @@ public class CourseController
 
     @PutMapping("/updateCourse")
     public Course updateCourse(
-            @RequestPart(name="updateCourseReq", required = true) UpdateCourseReq updateCourseReq,
-            @RequestPart(name="bannerPicture", required = false) MultipartFile updatedBannerPicture
+            @RequestPart(name = "updateCourseReq", required = true) UpdateCourseReq updateCourseReq,
+            @RequestPart(name = "bannerPicture", required = false) MultipartFile updatedBannerPicture
     )
     {
         if (updateCourseReq != null)

@@ -96,6 +96,27 @@ public interface CourseRepository extends JpaRepository<Course, Long>
     @Query(value = "SELECT * FROM Course c WHERE c.date_time_of_creation > NOW() - INTERVAL 14 DAY", nativeQuery = true)
     List<Course> findAllCoursesCreatedInTheLast14Days();
 
+    // Popular courses are determined by courses that have
+    // COUNT(enrolledCourse) >= FLOOR(MAX(enrolledCourse of All Courses) / 2)
+    @Query(value =
+            "SELECT *\n" +
+            "FROM Course c\n" +
+            "         JOIN Enrolled_course ec\n" +
+            "              ON c.course_id = ec.parent_course_course_id\n" +
+            "GROUP BY c.course_id\n" +
+            "HAVING COUNT(ec.enrolled_course_id) >=\n" +
+            "       (\n" +
+            "           SELECT FLOOR(MAX(enrolled_course_count) / 2)\n" +
+            "           FROM (\n" +
+            "                    SELECT ec.parent_course_course_id,\n" +
+            "                           COUNT(ec.enrolled_course_id) AS enrolled_course_count\n" +
+            "                    FROM Enrolled_Course ec\n" +
+            "                    GROUP BY ec.parent_course_course_id\n" +
+            "                ) AS enrolled_course_count_results\n" +
+            "       );",
+            nativeQuery = true)
+    List<Course> findAllCoursesThatArePopular();
+
     @Query(value = "SELECT AVG(ec.course_rating) FROM Course c JOIN Enrolled_Course ec WHERE c.course_id = :courseId", nativeQuery = true)
     Double findCourseRatingByCourseId(@Param("courseId") Long courseId);
 

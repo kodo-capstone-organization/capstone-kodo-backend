@@ -190,6 +190,12 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
+    public List<Course> getAllCoursesThatArePopular()
+    {
+        return courseRepository.findAllCoursesThatArePopular();
+    }
+
+    @Override
     public Course updateCourse(
             Course course,
             List<Long> enrolledCourseIds,

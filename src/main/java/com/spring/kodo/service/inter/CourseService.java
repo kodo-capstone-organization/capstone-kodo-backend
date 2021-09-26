@@ -47,6 +47,8 @@ public interface CourseService
 
     List<Course> getAllCoursesInTheLast14Days();
 
+    List<Course> getAllCoursesThatArePopular();
+
     Course updateCourse(
             Course course,
             List<Long> enrolledCourseIds,
