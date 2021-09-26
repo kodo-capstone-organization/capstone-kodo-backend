@@ -80,6 +80,29 @@ public class LessonController
         }
     }
 
+    @PostMapping("/updateLesson")
+    public Lesson updateLesson(@RequestPart(name = "lessonId", required = true) Long lessonId, @RequestPart(name = "name", required = true) String name,
+                               @RequestPart(name = "description", required = true) String description)
+    {
+        try
+        {
+            Lesson lesson = this.lessonService.getLessonByLessonId(lessonId);
+
+            lesson.setName(name);
+            lesson.setDescription(description);
+
+            return this.lessonService.updateLesson(lesson, null);
+        }
+        catch (LessonNotFoundException | ContentNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+        catch (UpdateContentException | InputDataValidationException | UnknownPersistenceException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
+    }
+
     @DeleteMapping("/deleteLesson/{lessonId}")
     public Boolean deleteLesson(@PathVariable Long lessonId)
     {
