@@ -518,30 +518,7 @@ public class DatabaseConfig
                 {
                     try
                     {
-                        student = accounts.get(studentIndex);
-                        course = courses.get(courseIndex);
-                        tutor = accountService.getAccountByCourseId(course.getCourseId());
-                        dummyUniqueStripeSessionId = "acct_" + RandomGeneratorUtil.getRandomString(16);
-
-                        enrolledCourse = enrolledCourseService.createNewEnrolledCourse(student.getAccountId(), course.getCourseId());
-                        accountService.addEnrolledCourseToAccount(student, enrolledCourse);
-
-                        // Create transaction records assuming students successfully made the payments
-                        // Using a unique value in place of a real stripe sessionId
-                        transaction = new Transaction(dummyUniqueStripeSessionId, course.getPrice());
-                        transactionService.createNewTransaction(transaction, student.getAccountId(), tutor.getAccountId(), course.getCourseId());
-
-                        for (Lesson lesson : course.getLessons())
-                        {
-                            enrolledLesson = enrolledLessonService.createNewEnrolledLesson(lesson.getLessonId());
-                            enrolledCourseService.addEnrolledLessonToEnrolledCourse(enrolledCourse, enrolledLesson);
-
-                            for (Content content : lesson.getContents())
-                            {
-                                enrolledContent = enrolledContentService.createNewEnrolledContent(content.getContentId());
-                                enrolledLessonService.addEnrolledContentToEnrolledLesson(enrolledLesson, enrolledContent);
-                            }
-                        }
+                        createEnrolledCourseAndEnrolledLessonsEnrolledContents(studentIndex, courseIndex);
                     }
                     catch (Exception ex)
                     {
@@ -559,30 +536,7 @@ public class DatabaseConfig
 
             try
             {
-                student = accounts.get(studentIndex);
-                course = courses.get(courseIndex);
-                tutor = accountService.getAccountByCourseId(course.getCourseId());
-                dummyUniqueStripeSessionId = "acct_" + RandomGeneratorUtil.getRandomString(16);
-
-                enrolledCourse = enrolledCourseService.createNewEnrolledCourse(student.getAccountId(), course.getCourseId());
-                accountService.addEnrolledCourseToAccount(student, enrolledCourse);
-
-                // Create transaction records assuming students successfully made the payments
-                // Using a unique value in place of a real stripe sessionId
-                transaction = new Transaction(dummyUniqueStripeSessionId, course.getPrice());
-                transactionService.createNewTransaction(transaction, student.getAccountId(), tutor.getAccountId(), course.getCourseId());
-
-                for (Lesson lesson : course.getLessons())
-                {
-                    enrolledLesson = enrolledLessonService.createNewEnrolledLesson(lesson.getLessonId());
-                    enrolledCourseService.addEnrolledLessonToEnrolledCourse(enrolledCourse, enrolledLesson);
-
-                    for (Content content : lesson.getContents())
-                    {
-                        enrolledContent = enrolledContentService.createNewEnrolledContent(content.getContentId());
-                        enrolledLessonService.addEnrolledContentToEnrolledLesson(enrolledLesson, enrolledContent);
-                    }
-                }
+                createEnrolledCourseAndEnrolledLessonsEnrolledContents(studentIndex, courseIndex);
 
                 i++;
             }
@@ -599,6 +553,44 @@ public class DatabaseConfig
         System.out.printf(">> Created EnrolledCourses (%d)\n", enrolledCourses.size());
         System.out.printf(">> Created EnrolledLessons (%d)\n", enrolledLessons.size());
         System.out.printf(">> Created EnrolledContents (%d)\n", enrolledContents.size());
+    }
+
+    private void createEnrolledCourseAndEnrolledLessonsEnrolledContents(int studentIndex, int courseIndex) throws Exception
+    {
+        Account tutor;
+        Account student;
+        Course course;
+        EnrolledCourse enrolledCourse;
+        EnrolledLesson enrolledLesson;
+        EnrolledContent enrolledContent;
+        Transaction transaction;
+
+        String dummyUniqueStripeSessionId;
+
+        student = accounts.get(studentIndex);
+        course = courses.get(courseIndex);
+        tutor = accountService.getAccountByCourseId(course.getCourseId());
+        dummyUniqueStripeSessionId = "acct_" + RandomGeneratorUtil.getRandomString(16);
+
+        enrolledCourse = enrolledCourseService.createNewEnrolledCourse(student.getAccountId(), course.getCourseId());
+        accountService.addEnrolledCourseToAccount(student, enrolledCourse);
+
+        // Create transaction records assuming students successfully made the payments
+        // Using a unique value in place of a real stripe sessionId
+        transaction = new Transaction(dummyUniqueStripeSessionId, course.getPrice());
+        transactionService.createNewTransaction(transaction, student.getAccountId(), tutor.getAccountId(), course.getCourseId());
+
+        for (Lesson lesson : course.getLessons())
+        {
+            enrolledLesson = enrolledLessonService.createNewEnrolledLesson(lesson.getLessonId());
+            enrolledCourseService.addEnrolledLessonToEnrolledCourse(enrolledCourse, enrolledLesson);
+
+            for (Content content : lesson.getContents())
+            {
+                enrolledContent = enrolledContentService.createNewEnrolledContent(content.getContentId());
+                enrolledLessonService.addEnrolledContentToEnrolledLesson(enrolledLesson, enrolledContent);
+            }
+        }
     }
 
     private void createStudentAttemptsAndStudentAttemptQuestions() throws Exception
@@ -985,7 +977,8 @@ public class DatabaseConfig
                                 String.format("%s %s Course", level, language),
                                 String.format("A %s course in %s language", level.toLowerCase(Locale.ROOT), language.toLowerCase(Locale.ROOT)),
                                 price,
-                                String.format("https://%s%scoursebanner.com", level.toLowerCase(Locale.ROOT), language.toLowerCase(Locale.ROOT)),
+                                null,
+//                                String.format("https://%s%scoursebanner.com", level.toLowerCase(Locale.ROOT), language.toLowerCase(Locale.ROOT)),
                                 true // Assume that enrollment is already active
                         )
                 );
