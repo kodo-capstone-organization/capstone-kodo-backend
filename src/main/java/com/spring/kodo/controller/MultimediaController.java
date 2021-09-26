@@ -56,6 +56,19 @@ public class MultimediaController
         }
     }
 
+    @GetMapping("/getMultimediaByMultimediaId/{multimediaId}")
+    public Multimedia getMultimediaByMultimediaId(@PathVariable Long multimediaId)
+    {
+        try
+        {
+            return multimediaService.getMultimediaByMultimediaId(multimediaId);
+        }
+        catch (MultimediaNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @PostMapping("/updateMultimedia")
     public Multimedia updateMultimedia(@RequestPart(name = "multimediaId", required = true) Long multimediaId, @RequestPart(name = "file", required = false) MultipartFile file,
                                        @RequestPart(name = "name", required = true) String name, @RequestPart(name = "description", required = true) String description)
