@@ -1,9 +1,7 @@
 package com.spring.kodo.service.impl;
 
 import com.google.gson.JsonSyntaxException;
-import com.spring.kodo.entity.Course;
-import com.spring.kodo.entity.EnrolledCourse;
-import com.spring.kodo.entity.Transaction;
+import com.spring.kodo.entity.*;
 import com.spring.kodo.restentity.request.StripePaymentReq;
 import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.Constants;
@@ -12,6 +10,7 @@ import com.stripe.Stripe;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.*;
+import com.stripe.model.Account;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
 import com.stripe.param.AccountCreateParams;
@@ -39,6 +38,12 @@ public class StripeServiceImpl implements StripeService
 
     @Autowired
     private EnrolledCourseService enrolledCourseService;
+
+    @Autowired
+    private EnrolledLessonService enrolledLessonService;
+
+    @Autowired
+    private EnrolledContentService enrolledContentService;
 
     @Autowired
     private AccountService accountService;
@@ -114,7 +119,8 @@ public class StripeServiceImpl implements StripeService
     }
 
     @Override
-    public void handleIncomingStripeWebhook(String payload, HttpServletRequest request) throws SignatureVerificationException, JsonSyntaxException, AccountNotFoundException, UnknownPersistenceException, InputDataValidationException, UpdateAccountException, CreateNewEnrolledCourseException, EnrolledCourseNotFoundException, CourseNotFoundException, StudentAttemptNotFoundException, TagNotFoundException, TagNameExistsException, AccountEmailExistException, TransactionStripeTransactionIdExistsException {
+    public void handleIncomingStripeWebhook(String payload, HttpServletRequest request) throws SignatureVerificationException, JsonSyntaxException, AccountNotFoundException, UnknownPersistenceException, InputDataValidationException, UpdateAccountException, CreateNewEnrolledCourseException, EnrolledCourseNotFoundException, CourseNotFoundException, StudentAttemptNotFoundException, TagNotFoundException, TagNameExistsException, AccountEmailExistException, TransactionStripeTransactionIdExistsException, EnrolledLessonNotFoundException, UpdateEnrolledCourseException, ContentNotFoundException, LessonNotFoundException, UpdateEnrolledLessonException, CreateNewEnrolledLessonException, EnrolledContentNotFoundException, CreateNewEnrolledContentException
+    {
         Stripe.apiKey = stripeApiKey;
         String header = request.getHeader("Stripe-Signature");
         String endpointSecret = stripeEndpointSecret;
@@ -153,7 +159,7 @@ public class StripeServiceImpl implements StripeService
     }
 
 
-    public void handleCompletedCheckoutSession(Session session) throws AccountNotFoundException, CourseNotFoundException, UnknownPersistenceException, CreateNewEnrolledCourseException, InputDataValidationException, EnrolledCourseNotFoundException, UpdateAccountException, TransactionStripeTransactionIdExistsException {
+    public void handleCompletedCheckoutSession(Session session) throws AccountNotFoundException, CourseNotFoundException, UnknownPersistenceException, CreateNewEnrolledCourseException, InputDataValidationException, EnrolledCourseNotFoundException, UpdateAccountException, TransactionStripeTransactionIdExistsException, LessonNotFoundException, CreateNewEnrolledLessonException, EnrolledLessonNotFoundException, UpdateEnrolledCourseException, ContentNotFoundException, CreateNewEnrolledContentException, UpdateEnrolledLessonException, EnrolledContentNotFoundException {
         // Update Transaction entity
         System.out.println(session);
 
@@ -165,8 +171,22 @@ public class StripeServiceImpl implements StripeService
         com.spring.kodo.entity.Account student = accountService.getAccountByAccountId(studentId);
         Course course = courseService.getCourseByCourseId(courseId);
 
+        // 1 - Create Enrolled Course
         EnrolledCourse enrolledCourse = enrolledCourseService.createNewEnrolledCourse(student.getAccountId(), course.getCourseId());
         accountService.addEnrolledCourseToAccount(student, enrolledCourse);
+
+        // 2 - Create relevant Enrolled Lessons and Enrolled Contents
+        for (Lesson lesson : course.getLessons())
+        {
+            EnrolledLesson enrolledLesson = enrolledLessonService.createNewEnrolledLesson(lesson.getLessonId());
+            enrolledCourseService.addEnrolledLessonToEnrolledCourse(enrolledCourse, enrolledLesson);
+
+            for (Content content : lesson.getContents())
+            {
+                EnrolledContent enrolledContent = enrolledContentService.createNewEnrolledContent(content.getContentId());
+                enrolledLessonService.addEnrolledContentToEnrolledLesson(enrolledLesson, enrolledContent);
+            }
+        }
 
         Transaction newTransaction = new Transaction(session.getId(), new BigDecimal(session.getAmountTotal()).divide(new BigDecimal(100)));
         newTransaction = this.transactionService.createNewTransaction(newTransaction, studentId, tutorId, courseId);

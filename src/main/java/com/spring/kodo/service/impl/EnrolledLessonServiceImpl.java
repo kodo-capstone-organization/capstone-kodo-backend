@@ -147,10 +147,10 @@ public class EnrolledLessonServiceImpl implements EnrolledLessonService
                     {
                         enrolledContent = enrolledContentService.getEnrolledContentByEnrolledContentId(enrolledContent.getEnrolledContentId());
 
-                        if (!enrolledLesson.getEnrolledContents().contains(enrolledContent))
+                        // New Enrolled Lesson with no enrolled contents yet OR enrolled lesson does not already have the enrolled content
+                        if (enrolledLesson.getEnrolledContents() == null || !enrolledLesson.getEnrolledContents().contains(enrolledContent))
                         {
                             enrolledLesson.getEnrolledContents().add(enrolledContent);
-
                             enrolledLessonRepository.save(enrolledLesson);
                             return enrolledLesson;
                         }

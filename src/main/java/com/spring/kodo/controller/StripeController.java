@@ -77,11 +77,11 @@ public class StripeController
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
-        catch (AccountNotFoundException | CourseNotFoundException | UpdateAccountException | CreateNewEnrolledCourseException | EnrolledCourseNotFoundException | TagNotFoundException | StudentAttemptNotFoundException ex)
+        catch (AccountNotFoundException | CourseNotFoundException | UpdateAccountException | CreateNewEnrolledCourseException | LessonNotFoundException | ContentNotFoundException | EnrolledCourseNotFoundException | TagNotFoundException | StudentAttemptNotFoundException | EnrolledLessonNotFoundException | EnrolledContentNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
-        catch (InputDataValidationException | AccountEmailExistException | TagNameExistsException | TransactionStripeTransactionIdExistsException ex)
+        catch (InputDataValidationException | AccountEmailExistException | CreateNewEnrolledLessonException | CreateNewEnrolledContentException | TagNameExistsException | TransactionStripeTransactionIdExistsException | UpdateEnrolledLessonException | UpdateEnrolledCourseException ex)
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
