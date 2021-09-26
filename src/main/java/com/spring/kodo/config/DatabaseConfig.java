@@ -124,7 +124,7 @@ public class DatabaseConfig
     private final Integer QUIZ_QUESTION_OPTION_COUNT = 3;
     private final Integer QUIZ_QUESTION_TYPES = QuestionType.values().length;
 
-    private final Integer STUDENT_ENROLLED_COUNT = (int) (0.5 * (LANGUAGES_COUNT * STUDENT_COUNT));
+    private final Integer STUDENT_ENROLLED_COUNT = (int) (0.75 * (LANGUAGES_COUNT * STUDENT_COUNT));
     private final Integer STUDENT_ATTEMPT_COUNT = (int) (0.5 * STUDENT_ENROLLED_COUNT * LESSON_COUNT * QUIZ_COUNT);
     private final Integer STUDENT_ATTEMPT_ANSWERS_COUNT = (int) (0.5 * STUDENT_ATTEMPT_COUNT * QUIZ_QUESTION_OPTION_COUNT);
 
@@ -508,11 +508,13 @@ public class DatabaseConfig
         String dummyUniqueStripeSessionId;
 
         int i = 0;
-        while (i < STUDENT_ENROLLED_COUNT)
+
+        // Ensure fixed students
+        while (i < STUDENT_ENROLLED_COUNT / 2)
         {
             for (int courseIndex = 0; courseIndex < courses.size(); courseIndex++)
             {
-                for (int studentIndex = STUDENT_FIRST_INDEX; studentIndex < STUDENT_SIZE && i < STUDENT_ENROLLED_COUNT; studentIndex++, i++)
+                for (int studentIndex = STUDENT_FIRST_INDEX; studentIndex < STUDENT_SIZE && i < STUDENT_ENROLLED_COUNT / 2; studentIndex++, i++)
                 {
                     try
                     {
@@ -549,6 +551,47 @@ public class DatabaseConfig
             }
         }
 
+        // Randomisation for data variation
+        while (i < STUDENT_ENROLLED_COUNT)
+        {
+            int courseIndex = RandomGeneratorUtil.getRandomInteger(0, (courses.size() - 1) * 3 / 4);
+            int studentIndex = RandomGeneratorUtil.getRandomInteger(0, (STUDENT_SIZE - 1) * 3 / 4);
+
+            try
+            {
+                student = accounts.get(studentIndex);
+                course = courses.get(courseIndex);
+                tutor = accountService.getAccountByCourseId(course.getCourseId());
+                dummyUniqueStripeSessionId = "acct_" + RandomGeneratorUtil.getRandomString(16);
+
+                enrolledCourse = enrolledCourseService.createNewEnrolledCourse(student.getAccountId(), course.getCourseId());
+                accountService.addEnrolledCourseToAccount(student, enrolledCourse);
+
+                // Create transaction records assuming students successfully made the payments
+                // Using a unique value in place of a real stripe sessionId
+                transaction = new Transaction(dummyUniqueStripeSessionId, course.getPrice());
+                transactionService.createNewTransaction(transaction, student.getAccountId(), tutor.getAccountId(), course.getCourseId());
+
+                for (Lesson lesson : course.getLessons())
+                {
+                    enrolledLesson = enrolledLessonService.createNewEnrolledLesson(lesson.getLessonId());
+                    enrolledCourseService.addEnrolledLessonToEnrolledCourse(enrolledCourse, enrolledLesson);
+
+                    for (Content content : lesson.getContents())
+                    {
+                        enrolledContent = enrolledContentService.createNewEnrolledContent(content.getContentId());
+                        enrolledLessonService.addEnrolledContentToEnrolledLesson(enrolledLesson, enrolledContent);
+                    }
+                }
+
+                i++;
+            }
+            catch (Exception ex)
+            {
+                i--;
+            }
+        }
+
         enrolledCourses = enrolledCourseService.getAllEnrolledCourses();
         enrolledLessons = enrolledLessonService.getAllEnrolledLessons();
         enrolledContents = enrolledContentService.getAllEnrolledContents();
@@ -581,7 +624,9 @@ public class DatabaseConfig
                     break;
                 }
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+            }
         }
 
         studentAttempts = studentAttemptService.getAllStudentAttempts();

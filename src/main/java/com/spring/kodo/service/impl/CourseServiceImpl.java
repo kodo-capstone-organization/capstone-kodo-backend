@@ -193,15 +193,18 @@ public class CourseServiceImpl implements CourseService
     @Override
     public List<Course> getAllCoursesThatArePopular() throws CourseNotFoundException
     {
-        List<Long> popularCourseIds = courseRepository.findAllCoursesThatArePopular();
+        List<Course> courses = courseRepository.findAllCoursesThatArePopular();
 
-        List<Course> popularCourses = new ArrayList<Course>();
-
-        for (Long courseId : popularCourseIds)
-        {
-            popularCourses.add(getCourseByCourseId(courseId));
-        }
-        return popularCourses;
+        return courses;
+//        List<Long> popularCourseIds = courseRepository.findAllCoursesThatArePopular();
+//
+//        List<Course> popularCourses = new ArrayList<Course>();
+//
+//        for (Long courseId : popularCourseIds)
+//        {
+//            popularCourses.add(getCourseByCourseId(courseId));
+//        }
+//        return popularCourses;
     }
 
     @Override

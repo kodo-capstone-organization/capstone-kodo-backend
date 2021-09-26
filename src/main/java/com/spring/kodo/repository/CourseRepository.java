@@ -99,23 +99,20 @@ public interface CourseRepository extends JpaRepository<Course, Long>
     // Popular courses are determined by courses that have
     // COUNT(enrolledCourse) >= FLOOR(MAX(enrolledCourse of All Courses) / 2)
     @Query(value =
-            "SELECT c.course_id\n" +
-            "FROM Course c\n" +
-            "         JOIN Enrolled_course ec\n" +
-            "              ON c.course_id = ec.parent_course_course_id\n" +
-            "GROUP BY c.course_id\n" +
-            "HAVING COUNT(ec.enrolled_course_id) >=\n" +
-            "       (\n" +
-            "           SELECT FLOOR(MAX(enrolled_course_count) / 2)\n" +
-            "           FROM (\n" +
-            "                    SELECT ec.parent_course_course_id,\n" +
-            "                           COUNT(ec.enrolled_course_id) AS enrolled_course_count\n" +
-            "                    FROM Enrolled_Course ec\n" +
-            "                    GROUP BY ec.parent_course_course_id\n" +
-            "                ) AS enrolled_course_count_results\n" +
-            "       );",
+            "SELECT c.*\n" +
+            "FROM (\n" +
+            "         SELECT ec.parent_course_course_id                                    AS course_id,\n" +
+            "                PERCENT_RANK() over ( ORDER BY COUNT(ec.enrolled_course_id) ) AS percentile\n" +
+            "         FROM Enrolled_Course ec\n" +
+            "         GROUP BY ec.parent_course_course_id\n" +
+            "         ORDER BY percentile DESC\n" +
+            "     ) AS course_enrollment_percentile\n" +
+            "JOIN Course c\n" +
+            "    ON c.course_id = course_enrollment_percentile.course_id\n" +
+            "WHERE course_enrollment_percentile.percentile >= 0.75\n" +
+            "ORDER BY c.name",
             nativeQuery = true)
-    List<Long> findAllCoursesThatArePopular();
+    List<Course> findAllCoursesThatArePopular();
 
     @Query(value = "SELECT AVG(ec.course_rating) FROM Course c JOIN Enrolled_Course ec WHERE c.course_id = :courseId", nativeQuery = true)
     Double findCourseRatingByCourseId(@Param("courseId") Long courseId);
