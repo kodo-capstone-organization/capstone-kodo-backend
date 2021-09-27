@@ -242,6 +242,21 @@ public class TransactionServiceImpl implements TransactionService
     }
 
     @Override
+    public BigDecimal getLastMonthPlatformEarnings(Long requestingAccountId) throws AccountPermissionDeniedException, AccountNotFoundException
+    {
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
+
+        if (requestingAccount.getIsAdmin())
+        {
+            return this.transactionRepository.getLastMonthPlatformEarning();
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("Account is not a admin");
+        }
+    }
+
+    @Override
     public Map<String, BigDecimal> getMonthlyPlatformEarningsForLastYear(Long requestingAccountId) throws AccountPermissionDeniedException, AccountNotFoundException
     {
         Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);

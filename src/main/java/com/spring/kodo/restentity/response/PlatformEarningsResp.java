@@ -9,6 +9,8 @@ public class PlatformEarningsResp
 
     private BigDecimal currentMonthPlatformEarnings;
 
+    private BigDecimal lastMonthPlatformEarnings;
+
     private Map<String, BigDecimal> monthlyPlatformEarningsForLastYear;
 
     public PlatformEarningsResp() {
@@ -42,5 +44,13 @@ public class PlatformEarningsResp
 
     public void setMonthlyPlatformEarningsForLastYear(Map<String, BigDecimal> monthlyPlatformEarningsForLastYear) {
         this.monthlyPlatformEarningsForLastYear = monthlyPlatformEarningsForLastYear;
+    }
+
+    public BigDecimal getLastMonthPlatformEarnings() {
+        return lastMonthPlatformEarnings;
+    }
+
+    public void setLastMonthPlatformEarnings(BigDecimal lastMonthPlatformEarnings) {
+        this.lastMonthPlatformEarnings = lastMonthPlatformEarnings;
     }
 }

@@ -70,7 +70,7 @@ public class TagController
     }
 
     @PostMapping("/createNewTags")
-    public List<String> createNewTags(@RequestPart(name="tag", required = true) CreateNewTagsReq createNewTagsReq) {
+    public List<String> createNewTags(@RequestPart(name="tags", required = true) CreateNewTagsReq createNewTagsReq) {
         if (createNewTagsReq != null) {
             logger.info("HIT account/createNewTags | POST | Received : " + createNewTagsReq);
             try {
