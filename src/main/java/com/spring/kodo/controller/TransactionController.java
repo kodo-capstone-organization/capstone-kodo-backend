@@ -2,16 +2,15 @@ package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.Transaction;
 import com.spring.kodo.restentity.response.*;
+import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.TransactionService;
 import com.spring.kodo.util.exception.AccountNotFoundException;
 import com.spring.kodo.util.exception.AccountPermissionDeniedException;
 import com.spring.kodo.util.exception.CourseNotFoundException;
 import com.spring.kodo.util.exception.TagNotFoundException;
-import org.checkerframework.checker.units.qual.C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +30,9 @@ public class TransactionController
 
     @Autowired
     public TransactionService transactionService;
+
+    @Autowired
+    public AccountService accountService;
 
     @GetMapping("/getAllPlatformTransactions/{accountId}")
     public List<Transaction> getAllPlatformTransactions(@PathVariable Long accountId)
@@ -81,6 +83,9 @@ public class TransactionController
     {
         try
         {
+            Integer totalEnrollmentCount = this.accountService.getTotalEnrollmentCountByAccountId(accountId);
+            Integer totalPublishedCourseCount = this.accountService.getTotalPublishedCourseCountByAccountId(accountId);
+            Integer totalCourseCount = this.accountService.getTotalCourseCountByAccountId(accountId);
             BigDecimal lifetimeTotalEarnings = this.transactionService.getLifetimeTotalEarningsByAccountId(accountId);
             List<Map<String, String>> lifetimeEarningsByCourse = this.transactionService.getLifetimeEarningsByCourseByAccountId(accountId);
             BigDecimal currentMonthTotalEarnings = this.transactionService.getCurrentMonthTotalEarningsByAccountId(accountId);
@@ -88,6 +93,9 @@ public class TransactionController
             List<Map<String, String>> courseStatsByMonthForLastYear = this.transactionService.getCourseStatsByMonthForLastYear(accountId);
 
             TutorCourseEarningsResp responseObj = new TutorCourseEarningsResp();
+            responseObj.setTotalEnrollmentCount(totalEnrollmentCount);
+            responseObj.setTotalPublishedCourseCount(totalPublishedCourseCount);
+            responseObj.setTotalCourseCount(totalCourseCount);
             responseObj.setLifetimeTotalEarnings(lifetimeTotalEarnings);
             responseObj.setLifetimeEarningsByCourse(lifetimeEarningsByCourse);
             responseObj.setCurrentMonthTotalEarnings(currentMonthTotalEarnings);
@@ -96,9 +104,13 @@ public class TransactionController
 
             return responseObj;
         }
-        catch (AccountNotFoundException ex)
+        catch (AccountNotFoundException | CourseNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+        catch (AccountPermissionDeniedException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 

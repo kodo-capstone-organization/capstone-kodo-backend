@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.math.BigDecimal;
 import java.time.Year;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long>
@@ -34,8 +35,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
     @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t WHERE t.course_course_id = :courseId", nativeQuery = true)
     BigDecimal getLifetimeCourseEarning(@Param("courseId") Long courseId);
 
-    @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t WHERE t.course_course_id = :courseId AND MONTH(t.date_time_of_transaction) = MONTH(NOW())", nativeQuery = true)
-    BigDecimal getCurrentMonthCourseEarning(@Param("courseId") Long courseId);
+    @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t WHERE t.course_course_id = :courseId AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) AND YEAR(t.date_time_of_transaction) = YEAR(NOW())", nativeQuery = true)
+    Optional<BigDecimal> getCurrentMonthCourseEarning(@Param("courseId") Long courseId);
 
     @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t WHERE t.course_course_id = :courseId AND YEAR(t.date_time_of_transaction) =:inputYear AND MONTH(t.date_time_of_transaction) = :inputMonth", nativeQuery = true)
     BigDecimal getMonthlyCourseEarningForLastYear(@Param("courseId") Long courseId, @Param("inputYear") int inputYear, @Param("inputMonth") int inputMonth);
@@ -46,7 +47,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
     @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t JOIN Course_Course_Tags cct ON t.course_course_id = cct.course_id WHERE cct.tag_id = :tagId", nativeQuery = true)
     BigDecimal getLifetimeTagEarning(@Param("tagId") Long tagId);
 
-    @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t JOIN Course_Course_Tags cct ON t.course_course_id = cct.course_id WHERE cct.tag_id = :tagId AND MONTH(t.date_time_of_transaction) = MONTH(NOW())", nativeQuery = true)
+    @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t JOIN Course_Course_Tags cct ON t.course_course_id = cct.course_id WHERE cct.tag_id = :tagId AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) AND YEAR(t.date_time_of_transaction) = YEAR(NOW())", nativeQuery = true)
     BigDecimal getCurrentMonthTagEarning(@Param("tagId") Long tagId);
 
     @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t JOIN Course_Course_Tags cct ON t.course_course_id = cct.course_id WHERE cct.tag_id = :tagId AND YEAR(t.date_time_of_transaction) =:inputYear AND MONTH(t.date_time_of_transaction) = :inputMonth", nativeQuery = true)
@@ -69,6 +70,12 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
 
     @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t JOIN Course c ON t.course_course_id = c.course_id WHERE c.course_id = :courseId AND YEAR(t.date_time_of_transaction) = YEAR(NOW()) AND MONTH(t.date_time_of_transaction) = MONTH(NOW())", nativeQuery = true)
     Optional<BigDecimal> getCurrentMonthTutorPayoutByCourseId(@Param("courseId") Long courseId);
+
+    @Query(value = "SELECT ROUND(AVG(Month_Sum), 2) FROM (SELECT SUM(t.tutor_payout) AS Month_Sum FROM `Transaction` t JOIN Course c ON t.course_course_id = :courseId WHERE c.course_id = :courseId GROUP BY YEAR(t.date_time_of_transaction), MONTH(t.date_time_of_transaction)) AS Inner_Query", nativeQuery = true)
+    Optional<BigDecimal> getAverageMonthlyEarningByCourseId(@Param("courseId") Long courseId);
+
+    @Query(value = "SELECT SUM(t.tutor_payout) As MonthSum, YEAR(t.date_time_of_transaction) As DisYear, MONTH(t.date_time_of_transaction) As DisMonth FROM `Transaction` t JOIN Course c ON t.course_course_id = :courseId WHERE c.course_id = :courseId GROUP BY YEAR(t.date_time_of_transaction), MONTH(t.date_time_of_transaction) ORDER BY SUM(t.tutor_payout) DESC LIMIT 1", nativeQuery = true)
+    Map<String, Object> getHighestEarningMonthWithValue(@Param("courseId") Long courseId);
 
     @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t JOIN Course c ON t.course_course_id = c.course_id WHERE c.course_id = :courseId AND YEAR(t.date_time_of_transaction) = :inputYear AND MONTH(t.date_time_of_transaction) = :inputMonth", nativeQuery = true)
     Optional<BigDecimal> getTutorPayoutByMonthByCourseId(@Param("courseId") Long courseId, @Param("inputYear") int inputYear, @Param("inputMonth") int inputMonth);

@@ -80,6 +80,46 @@ public class LessonController
         }
     }
 
+    @PostMapping("/updateLesson")
+    public Lesson updateLesson(@RequestPart(name = "lessonId", required = true) Long lessonId, @RequestPart(name = "name", required = true) String name,
+                               @RequestPart(name = "description", required = true) String description)
+    {
+        try
+        {
+            Lesson lesson = this.lessonService.getLessonByLessonId(lessonId);
+
+            lesson.setName(name);
+            lesson.setDescription(description);
+
+            return this.lessonService.updateLesson(lesson, lesson.getContents().stream().map((Content content) -> content.getContentId()).toList());
+        }
+        catch (LessonNotFoundException | ContentNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+        catch (UpdateContentException | InputDataValidationException | UnknownPersistenceException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
+    }
+
+    @DeleteMapping("/deleteLesson/{lessonId}")
+    public Boolean deleteLesson(@PathVariable Long lessonId)
+    {
+        try
+        {
+            return this.lessonService.deleteLesson(lessonId);
+        }
+        catch (CourseNotFoundException | TagNotFoundException | LessonNotFoundException | EnrolledCourseNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+        catch (TagNameExistsException | InputDataValidationException | UnknownPersistenceException | UpdateCourseException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
+    }
+
     // To be called from CourseController. Lesson should not be updated as a standalone API
     protected List<Long> updateLessonsInACourse(List<UpdateLessonReq> updateLessonReqs, List<MultipartFile>  lessonMultimedias) throws ContentNotFoundException, LessonNotFoundException, UpdateContentException, UnknownPersistenceException, CreateNewQuizException, InputDataValidationException, MultimediaExistsException, FileUploadToGCSException, MultimediaNotFoundException, CourseNotFoundException {
 
