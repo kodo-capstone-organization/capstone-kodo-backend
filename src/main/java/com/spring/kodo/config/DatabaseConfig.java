@@ -6,6 +6,7 @@ import com.spring.kodo.util.FormatterUtil;
 import com.spring.kodo.util.RandomGeneratorUtil;
 import com.spring.kodo.util.enumeration.MultimediaType;
 import com.spring.kodo.util.enumeration.QuestionType;
+import com.spring.kodo.util.exception.InvalidDateTimeOfCompletionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -535,7 +536,7 @@ public class DatabaseConfig
         while (i < STUDENT_ENROLLED_COUNT)
         {
             int courseIndex = RandomGeneratorUtil.getRandomInteger(0, (courses.size() - 1) * 3 / 4);
-            int studentIndex = RandomGeneratorUtil.getRandomInteger(0, (STUDENT_SIZE - 1) * 3 / 4);
+            int studentIndex = RandomGeneratorUtil.getRandomInteger(STUDENT_FIRST_INDEX, (STUDENT_SIZE - 1) * 3 / 4);
 
             try
             {
@@ -581,7 +582,7 @@ public class DatabaseConfig
         // Create transaction records assuming students successfully made the payments
         // Using a unique value in place of a real stripe sessionId
         transaction = new Transaction(dummyUniqueStripeSessionId, course.getPrice());
-        transaction.setDateTimeOfTransaction(getNextDateTime());
+        transaction.setDateTimeOfTransaction(getNextDateTime(0, 6));
         transactionService.createNewTransaction(transaction, student.getAccountId(), tutor.getAccountId(), course.getCourseId());
 
         for (Lesson lesson : course.getLessons())
@@ -795,27 +796,33 @@ public class DatabaseConfig
                     {
                         for (EnrolledContent enrolledContent : enrolledLesson.getEnrolledContents())
                         {
-                            if (enrolledContent.getDateTimeOfCompletion() != null)
+                            try
                             {
-                                continue;
-                            }
-                            else if (completedContent < iterativeBreak)
-                            {
-                                enrolledContent = enrolledContentService.setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId(true, student.getAccountId(), enrolledContent.getParentContent().getContentId());
-                                completedContent++;
-                            }
-                            else if (completedContent >= iterativeBreak)
-                            {
-                                if (completedContent == COMPLETE_CONTENT_COUNT || contentPerStudentIndex == contentPerStudent)
+                                if (enrolledContent.getDateTimeOfCompletion() != null)
                                 {
-                                    break;
+                                    continue;
                                 }
-                                else
+                                else if (completedContent < iterativeBreak)
                                 {
-                                    enrolledContent = enrolledContentService.setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId(true, student.getAccountId(), enrolledContent.getParentContent().getContentId());
-                                    contentPerStudentIndex++;
+                                    enrolledContent = enrolledContentService.setFakeDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(getNextDateTime(0, 3), enrolledContent.getEnrolledContentId());
                                     completedContent++;
                                 }
+                                else if (completedContent >= iterativeBreak)
+                                {
+                                    if (completedContent == COMPLETE_CONTENT_COUNT || contentPerStudentIndex == contentPerStudent)
+                                    {
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        enrolledContent = enrolledContentService.setFakeDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(getNextDateTime(0, 3), enrolledContent.getEnrolledContentId());
+                                        contentPerStudentIndex++;
+                                        completedContent++;
+                                    }
+                                }
+                            }
+                            catch (InvalidDateTimeOfCompletionException ex) {
+//                                System.out.println(ex.getMessage());
                             }
                         }
                         if (completedContent == COMPLETE_CONTENT_COUNT)
@@ -999,7 +1006,7 @@ public class DatabaseConfig
                         )
                 );
 
-                courses.get(i).setDateTimeOfCreation(getNextDateTime());
+                courses.get(i).setDateTimeOfCreation(getNextDateTime(11, 12));
             }
         }
     }
@@ -1185,7 +1192,7 @@ public class DatabaseConfig
         }
     }
 
-    private LocalDateTime getNextDateTime()
+    private LocalDateTime getNextDateTime(int minMonthsBefore, int maxMonthsBefore)
     {
         int days = RandomGeneratorUtil.getRandomInteger(0, 30);
         int hours = RandomGeneratorUtil.getRandomInteger(0, 24);
@@ -1197,10 +1204,10 @@ public class DatabaseConfig
         COURSE_REFERENCE_DATE = COURSE_REFERENCE_DATE.plusMinutes(minutes);
         COURSE_REFERENCE_DATE = COURSE_REFERENCE_DATE.plusSeconds(seconds);
 
-        if (COURSE_REFERENCE_DATE.isAfter(LocalDateTime.now()))
+        if (COURSE_REFERENCE_DATE.isAfter(LocalDateTime.now().minusMonths(minMonthsBefore)))
         {
-            COURSE_REFERENCE_DATE = LocalDateTime.now().minusMonths(6);
-            return getNextDateTime();
+            COURSE_REFERENCE_DATE = LocalDateTime.now().minusMonths(maxMonthsBefore);
+            return getNextDateTime(minMonthsBefore, maxMonthsBefore);
         }
         else
         {

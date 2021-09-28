@@ -6,6 +6,7 @@ import com.spring.kodo.restentity.response.EnrolledCourseWithStudentCompletion;
 import com.spring.kodo.restentity.response.EnrolledCourseWithStudentResp;
 import com.spring.kodo.util.exception.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EnrolledCourseService
@@ -15,6 +16,8 @@ public interface EnrolledCourseService
     EnrolledCourse getEnrolledCourseByEnrolledCourseId(Long enrolledCourseId) throws EnrolledCourseNotFoundException;
 
     EnrolledCourse getEnrolledCourseByEnrolledLessonId(Long enrolledLessonId) throws EnrolledCourseNotFoundException;
+
+    EnrolledCourse getEnrolledCourseByEnrolledContentId(Long enrolledContentId) throws EnrolledCourseNotFoundException;
 
     EnrolledCourse getEnrolledCourseByStudentIdAndCourseName(Long studentId, String courseName) throws EnrolledCourseNotFoundException;
 
@@ -26,7 +29,7 @@ public interface EnrolledCourseService
 
     EnrolledCourse addEnrolledLessonToEnrolledCourse(EnrolledCourse enrolledCourse, EnrolledLesson enrolledLesson) throws UpdateEnrolledCourseException, EnrolledCourseNotFoundException, EnrolledLessonNotFoundException;
 
-    EnrolledCourse checkDateTimeOfCompletionOfEnrolledCourseByEnrolledLessonId(Long enrolledLessonId) throws EnrolledCourseNotFoundException;
+    EnrolledCourse checkDateTimeOfCompletionOfEnrolledCourseByEnrolledLessonId(Long enrolledLessonId, LocalDateTime dateTimeOfCompletion) throws EnrolledCourseNotFoundException;
 
     List<EnrolledCourseWithStudentResp> getAllCompletionPercentagesByCourseId(Long courseId);
 

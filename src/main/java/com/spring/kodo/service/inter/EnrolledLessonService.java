@@ -5,6 +5,7 @@ import com.spring.kodo.entity.EnrolledCourse;
 import com.spring.kodo.entity.EnrolledLesson;
 import com.spring.kodo.util.exception.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EnrolledLessonService
@@ -23,5 +24,5 @@ public interface EnrolledLessonService
 
     EnrolledLesson addEnrolledContentToEnrolledLesson(EnrolledLesson enrolledLesson, EnrolledContent enrolledContent) throws UpdateEnrolledLessonException, EnrolledLessonNotFoundException, EnrolledContentNotFoundException;
 
-    EnrolledLesson checkDateTimeOfCompletionOfEnrolledLessonByEnrolledContentId(Long enrolledContentId) throws EnrolledLessonNotFoundException;
+    EnrolledLesson checkDateTimeOfCompletionOfEnrolledLessonByEnrolledContentId(Long enrolledContentId, LocalDateTime dateTimeOfCompletion) throws EnrolledLessonNotFoundException;
 }

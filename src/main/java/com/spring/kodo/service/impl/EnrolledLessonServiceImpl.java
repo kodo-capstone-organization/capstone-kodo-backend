@@ -181,7 +181,7 @@ public class EnrolledLessonServiceImpl implements EnrolledLessonService
     }
 
     @Override
-    public EnrolledLesson checkDateTimeOfCompletionOfEnrolledLessonByEnrolledContentId(Long enrolledContentId) throws EnrolledLessonNotFoundException
+    public EnrolledLesson checkDateTimeOfCompletionOfEnrolledLessonByEnrolledContentId(Long enrolledContentId, LocalDateTime dateTimeOfCompletion) throws EnrolledLessonNotFoundException
     {
         EnrolledLesson enrolledLesson = getEnrolledLessonByEnrolledContentId(enrolledContentId);
 
@@ -198,7 +198,7 @@ public class EnrolledLessonServiceImpl implements EnrolledLessonService
 
         if (setDateTimeOfCompletion)
         {
-            enrolledLesson.setDateTimeOfCompletion(LocalDateTime.now());
+            enrolledLesson.setDateTimeOfCompletion(dateTimeOfCompletion);
         }
         else
         {

@@ -132,6 +132,21 @@ public class EnrolledCourseServiceImpl implements EnrolledCourseService
     }
 
     @Override
+    public EnrolledCourse getEnrolledCourseByEnrolledContentId(Long enrolledContentId) throws EnrolledCourseNotFoundException
+    {
+        EnrolledCourse enrolledCourse = enrolledCourseRepository.findByEnrolledContentId(enrolledContentId).orElse(null);
+
+        if (enrolledCourse != null)
+        {
+            return enrolledCourse;
+        }
+        else
+        {
+            throw new EnrolledCourseNotFoundException("EnrolledContent with ID: " + enrolledContentId + " does not exist!");
+        }
+    }
+
+    @Override
     public EnrolledCourse getEnrolledCourseByStudentIdAndCourseName(Long studentId, String courseName) throws EnrolledCourseNotFoundException
     {
         EnrolledCourse enrolledCourse = enrolledCourseRepository.findByStudentIdAndCourseName(studentId, courseName).orElse(null);
@@ -234,7 +249,7 @@ public class EnrolledCourseServiceImpl implements EnrolledCourseService
     }
 
     @Override
-    public EnrolledCourse checkDateTimeOfCompletionOfEnrolledCourseByEnrolledLessonId(Long enrolledLessonId) throws EnrolledCourseNotFoundException
+    public EnrolledCourse checkDateTimeOfCompletionOfEnrolledCourseByEnrolledLessonId(Long enrolledLessonId, LocalDateTime dateTimeOfCompletion) throws EnrolledCourseNotFoundException
     {
         EnrolledCourse enrolledCourse = getEnrolledCourseByEnrolledLessonId(enrolledLessonId);
 
@@ -251,7 +266,7 @@ public class EnrolledCourseServiceImpl implements EnrolledCourseService
 
         if (setDateTimeOfCompletion)
         {
-            enrolledCourse.setDateTimeOfCompletion(LocalDateTime.now());
+            enrolledCourse.setDateTimeOfCompletion(dateTimeOfCompletion);
         }
         else
         {

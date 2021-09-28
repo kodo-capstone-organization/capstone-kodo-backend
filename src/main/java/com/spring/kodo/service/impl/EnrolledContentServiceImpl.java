@@ -174,7 +174,7 @@ public class EnrolledContentServiceImpl implements EnrolledContentService
     {
         EnrolledContent enrolledContent = getEnrolledContentByEnrolledContentId(enrolledContentId);
 
-        enrolledContent = setDateTimeOfCompletionOfEnrolledContentByEnrolledContent(complete, enrolledContent);
+        enrolledContent = setDateTimeOfCompletionOfEnrolledContentByEnrolledContent(complete, enrolledContent, LocalDateTime.now());
 
         return enrolledContent;
     }
@@ -184,16 +184,35 @@ public class EnrolledContentServiceImpl implements EnrolledContentService
     {
         EnrolledContent enrolledContent = getEnrolledContentByAccountIdAndContentId(accountId, contentId);
 
-        enrolledContent = setDateTimeOfCompletionOfEnrolledContentByEnrolledContent(complete, enrolledContent);
+        enrolledContent = setDateTimeOfCompletionOfEnrolledContentByEnrolledContent(complete, enrolledContent, LocalDateTime.now());
 
         return enrolledContent;
     }
 
-    private EnrolledContent setDateTimeOfCompletionOfEnrolledContentByEnrolledContent(boolean complete, EnrolledContent enrolledContent) throws EnrolledLessonNotFoundException, EnrolledCourseNotFoundException
+    @Override
+    public EnrolledContent setFakeDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(LocalDateTime dateTimeOfCompletion, Long enrolledContentId) throws EnrolledContentNotFoundException, EnrolledLessonNotFoundException, EnrolledCourseNotFoundException, InvalidDateTimeOfCompletionException
+    {
+        EnrolledCourse enrolledCourse = enrolledCourseService.getEnrolledCourseByEnrolledContentId(enrolledContentId);
+
+        if (enrolledCourse.getParentCourse().getDateTimeOfCreation().isBefore(dateTimeOfCompletion))
+        {
+            EnrolledContent enrolledContent = getEnrolledContentByEnrolledContentId(enrolledContentId);
+
+            enrolledContent = setDateTimeOfCompletionOfEnrolledContentByEnrolledContent(true, enrolledContent, dateTimeOfCompletion);
+
+            return enrolledContent;
+        }
+        else
+        {
+            throw new InvalidDateTimeOfCompletionException("Input DateTimeOfCompletion is invalid. Course date of creation in " + enrolledCourse.getParentCourse().getDateTimeOfCreation() + " cannot be after " + dateTimeOfCompletion);
+        }
+    }
+
+    private EnrolledContent setDateTimeOfCompletionOfEnrolledContentByEnrolledContent(boolean complete, EnrolledContent enrolledContent, LocalDateTime dateTimeOfCompletion) throws EnrolledLessonNotFoundException, EnrolledCourseNotFoundException
     {
         if (complete)
         {
-            enrolledContent.setDateTimeOfCompletion(LocalDateTime.now());
+            enrolledContent.setDateTimeOfCompletion(dateTimeOfCompletion);
             enrolledContentRepository.saveAndFlush(enrolledContent);
         }
         else
@@ -201,8 +220,8 @@ public class EnrolledContentServiceImpl implements EnrolledContentService
             enrolledContent.setDateTimeOfCompletion(null);
         }
 
-        EnrolledLesson enrolledLesson = enrolledLessonService.checkDateTimeOfCompletionOfEnrolledLessonByEnrolledContentId(enrolledContent.getEnrolledContentId());
-        EnrolledCourse enrolledCourse = enrolledCourseService.checkDateTimeOfCompletionOfEnrolledCourseByEnrolledLessonId(enrolledLesson.getEnrolledLessonId());
+        EnrolledLesson enrolledLesson = enrolledLessonService.checkDateTimeOfCompletionOfEnrolledLessonByEnrolledContentId(enrolledContent.getEnrolledContentId(), dateTimeOfCompletion);
+        EnrolledCourse enrolledCourse = enrolledCourseService.checkDateTimeOfCompletionOfEnrolledCourseByEnrolledLessonId(enrolledLesson.getEnrolledLessonId(), dateTimeOfCompletion);
 
         return enrolledContent;
     }
