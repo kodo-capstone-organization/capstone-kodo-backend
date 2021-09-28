@@ -14,6 +14,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -110,10 +111,12 @@ public class DatabaseConfig
     private List<ForumThread> forumThreads;
     private List<ForumPost> forumPosts;
 
+    private LocalDateTime COURSE_REFERENCE_DATE = LocalDateTime.now().minusYears(1);
+
     private final Integer LANGUAGES_COUNT = 10; // Current max is 25
 
     private final Integer TUTOR_COUNT = 25;
-    private final Integer STUDENT_COUNT = 25;
+    private final Integer STUDENT_COUNT = 50;
 
     private final Integer LESSON_COUNT = 3;
 
@@ -134,12 +137,12 @@ public class DatabaseConfig
 
     private final Integer COMPLETE_CONTENT_COUNT = (int) (0.5 * (STUDENT_ENROLLED_COUNT * LESSON_COUNT * (MULTIMEDIA_COUNT + QUIZ_COUNT)));
 
-    private final Integer RATE_ENROLLED_COURSES_COUNT = (int) (0.2 * STUDENT_ENROLLED_COUNT);
+    private final Integer RATE_ENROLLED_COURSES_COUNT = (int) (0.5 * STUDENT_ENROLLED_COUNT);
 
     private final Integer MARK_STUDENT_ATTEMPTS_COUNT = 30;
 
     // Don't Edit these
-    private final Integer PREFIXED_ADMIN_COUNT = 1;
+    private final Integer PREFIXED_ADMIN_COUNT = 7;
     private final Integer PREFIXED_TUTOR_COUNT = 0;
     private final Integer PREFIXED_STUDENT_COUNT = 0;
 
@@ -578,6 +581,7 @@ public class DatabaseConfig
         // Create transaction records assuming students successfully made the payments
         // Using a unique value in place of a real stripe sessionId
         transaction = new Transaction(dummyUniqueStripeSessionId, course.getPrice());
+        transaction.setDateTimeOfTransaction(getNextDateTime());
         transactionService.createNewTransaction(transaction, student.getAccountId(), tutor.getAccountId(), course.getCourseId());
 
         for (Lesson lesson : course.getLessons())
@@ -890,6 +894,18 @@ public class DatabaseConfig
         String biography;
 
         accounts.add(new Account("admin", "Password1", "Admin Adam", "I am Admin", "admin@gmail.com", DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex), true));
+        accounts.add(new Account("chloe", "Password1", "Admin Chloe", "I am Chloe", "chloe@gmail.com", DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex), true));
+        accounts.add(new Account("bryson", "Password1", "Admin Bryson", "I am Bryson", "bryson@gmail.com", DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex), true));
+        accounts.add(new Account("chandya", "Password1", "Admin Chandya", "I am Chandya", "chandya@gmail.com", DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex), true));
+        accounts.add(new Account("ayush", "Password1", "Admin Ayush", "I am Ayush", "ayush@gmail.com", DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex), true));
+        accounts.add(new Account("elaine", "Password1", "Admin Elaine", "I am Elaine", "elaine@gmail.com", DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex), true));
+        accounts.add(new Account("theodoric", "Password1", "Admin Theodoric", "I am Theodoric", "theodoric@gmail.com", DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex), true));
+
+        // Deactive User specific admins;
+        for (int i = 1; i < PREFIXED_ADMIN_COUNT; i++)
+        {
+            accounts.get(i).setIsActive(false);
+        }
 
         for (int i = 1; i <= STUDENT_COUNT; i++, nameIndex++, displayPictureUrlIndex++, biographyIndex++)
         {
@@ -957,8 +973,8 @@ public class DatabaseConfig
     {
         String level;
         BigDecimal price = BigDecimal.valueOf(19.99);
-
         List<BigDecimal> prices = new ArrayList<>();
+
         for (int i = 0; i < LEVELS.size(); i++)
         {
             prices.add(price);
@@ -982,6 +998,8 @@ public class DatabaseConfig
                                 true // Assume that enrollment is already active
                         )
                 );
+
+                courses.get(i).setDateTimeOfCreation(getNextDateTime());
             }
         }
     }
@@ -1164,6 +1182,29 @@ public class DatabaseConfig
                     }
                 }
             }
+        }
+    }
+
+    private LocalDateTime getNextDateTime()
+    {
+        int days = RandomGeneratorUtil.getRandomInteger(0, 30);
+        int hours = RandomGeneratorUtil.getRandomInteger(0, 24);
+        int minutes = RandomGeneratorUtil.getRandomInteger(0, 60);
+        int seconds = RandomGeneratorUtil.getRandomInteger(0, 60);
+
+        COURSE_REFERENCE_DATE = COURSE_REFERENCE_DATE.plusDays(days);
+        COURSE_REFERENCE_DATE = COURSE_REFERENCE_DATE.plusHours(hours);
+        COURSE_REFERENCE_DATE = COURSE_REFERENCE_DATE.plusMinutes(minutes);
+        COURSE_REFERENCE_DATE = COURSE_REFERENCE_DATE.plusSeconds(seconds);
+
+        if (COURSE_REFERENCE_DATE.isAfter(LocalDateTime.now()))
+        {
+            COURSE_REFERENCE_DATE = LocalDateTime.now().minusMonths(6);
+            return getNextDateTime();
+        }
+        else
+        {
+            return COURSE_REFERENCE_DATE;
         }
     }
 
