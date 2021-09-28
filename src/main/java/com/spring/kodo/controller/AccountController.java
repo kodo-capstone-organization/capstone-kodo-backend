@@ -249,12 +249,17 @@ public class AccountController
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestPart(name = "username", required = true) String username, @RequestPart(name = "password", required = true) String password)
+    public Account login(@RequestPart(name = "username", required = true) String username, @RequestPart(name = "password", required = true) String password)
     {
         try
         {
             Account accountLoggedIn = this.accountService.userLogin(username, password);
-            return ResponseEntity.status(HttpStatus.OK).body(accountLoggedIn.getAccountId());
+
+            accountLoggedIn.getInterests().clear();
+            accountLoggedIn.getEnrolledCourses().clear();
+            accountLoggedIn.getCourses().clear();
+
+            return accountLoggedIn;
         }
         catch (InvalidLoginCredentialsException ex)
         {
