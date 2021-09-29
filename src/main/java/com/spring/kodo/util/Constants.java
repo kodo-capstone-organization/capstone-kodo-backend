@@ -95,4 +95,8 @@ public class Constants
             "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/fecaee3c-b8af-4fa9-9145-b66030873c2b.gif?generation=1631514493573881&alt=media",
             "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/zdbd4b7a-4e88-45e4-9daa-3642de02a60d.gif?generation=1631514381268497&alt=media"
     );
+
+    public static final List<String> PDF_URLS = Arrays.asList(
+            ""
+    );
 }

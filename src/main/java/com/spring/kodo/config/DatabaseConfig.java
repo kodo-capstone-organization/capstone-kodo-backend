@@ -126,17 +126,15 @@ public class DatabaseConfig
     private final Integer QUIZ_COUNT = 1;
     private final Integer QUIZ_QUESTION_COUNT = 6;
     private final Integer QUIZ_QUESTION_OPTION_COUNT = 3;
-    private final Integer QUIZ_QUESTION_TYPES = QuestionType.values().length;
 
     private final Integer STUDENT_ENROLLED_COUNT = (int) (0.75 * (LANGUAGES_COUNT * STUDENT_COUNT));
     private final Integer STUDENT_ATTEMPT_COUNT = (int) (0.5 * STUDENT_ENROLLED_COUNT * LESSON_COUNT * QUIZ_COUNT);
-    private final Integer STUDENT_ATTEMPT_ANSWERS_COUNT = (int) (0.5 * STUDENT_ATTEMPT_COUNT * QUIZ_QUESTION_OPTION_COUNT);
 
     private final Integer FORUM_CATEGORY_COUNT = 1;
     private final Integer FORUM_THREAD_COUNT = 3;
     private final Integer FORUM_POST_COUNT = 3;
 
-    private final Integer COMPLETE_CONTENT_COUNT = (int) (0.5 * (STUDENT_ENROLLED_COUNT * LESSON_COUNT * (MULTIMEDIA_COUNT + QUIZ_COUNT)));
+    private final Integer COMPLETE_CONTENT_COUNT = (int) (0.1 * (STUDENT_ENROLLED_COUNT * LESSON_COUNT * (MULTIMEDIA_COUNT + QUIZ_COUNT)));
 
     private final Integer RATE_ENROLLED_COURSES_COUNT = (int) (0.5 * STUDENT_ENROLLED_COUNT);
 
@@ -244,8 +242,7 @@ public class DatabaseConfig
         createQuizQuestionOptions();
         createMultimedias();
         createEnrolledCoursesAndEnrolledLessonsEnrolledContents();
-        createStudentAttemptsAndStudentAttemptQuestions();
-        createStudentAttemptAnswers();
+        createStudentAttemptsAndStudentAttemptQuestionsAndStudentAttemptAnswersAndCompleteContent();
         createForumCategories();
         createForumThreads();
         createForumPosts();
@@ -598,10 +595,11 @@ public class DatabaseConfig
         }
     }
 
-    private void createStudentAttemptsAndStudentAttemptQuestions() throws Exception
+    private void createStudentAttemptsAndStudentAttemptQuestionsAndStudentAttemptAnswersAndCompleteContent() throws Exception
     {
         EnrolledContent enrolledContent;
         StudentAttempt studentAttempt;
+        StudentAttemptAnswer studentAttemptAnswer;
 
         int studentAttemptCounter = 0;
 
@@ -615,7 +613,26 @@ public class DatabaseConfig
 
                 enrolledContentService.addStudentAttemptToEnrolledContent(enrolledContent, studentAttempt);
 
+                for (StudentAttemptQuestion studentAttemptQuestion : studentAttempt.getStudentAttemptQuestions())
+                {
+                    if (studentAttemptQuestion.getQuizQuestion().getQuestionType().equals(QuestionType.MATCHING))
+                    {
+                        for (QuizQuestionOption quizQuestionOption : studentAttemptQuestion.getQuizQuestion().getQuizQuestionOptions())
+                        {
+                            studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption.getQuizQuestionOptionId(), quizQuestionOption.getQuizQuestionOptionId());
+                            studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
+                        }
+                    }
+                    else
+                    {
+                        QuizQuestionOption quizQuestionOption = studentAttemptQuestion.getQuizQuestion().getQuizQuestionOptions().get(1);
+                        studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption.getQuizQuestionOptionId());
+                        studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
+                    }
+                }
+
                 studentAttemptCounter++;
+
                 if (studentAttemptCounter == STUDENT_ATTEMPT_COUNT)
                 {
                     break;
@@ -628,55 +645,10 @@ public class DatabaseConfig
 
         studentAttempts = studentAttemptService.getAllStudentAttempts();
         studentAttemptQuestions = studentAttemptQuestionService.getAllStudentAttemptQuestions();
+        studentAttemptAnswers = studentAttemptAnswerService.getAllStudentAttemptAnswers();
 
         System.out.printf(">> Created StudentAttempts (%d)\n", studentAttempts.size());
         System.out.printf(">> Created StudentAttemptQuestions (%d)\n", studentAttemptQuestions.size());
-    }
-
-    private void createStudentAttemptAnswers() throws Exception
-    {
-        int studentAttemptAnswersCounter = 0;
-
-        StudentAttemptAnswer studentAttemptAnswer;
-
-        for (StudentAttempt studentAttempt : studentAttempts)
-        {
-            for (StudentAttemptQuestion studentAttemptQuestion : studentAttempt.getStudentAttemptQuestions())
-            {
-                if (studentAttemptQuestion.getQuizQuestion().getQuestionType().equals(QuestionType.MATCHING))
-                {
-                    for (QuizQuestionOption quizQuestionOption : studentAttemptQuestion.getQuizQuestion().getQuizQuestionOptions())
-                    {
-                        studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption.getQuizQuestionOptionId(), quizQuestionOption.getQuizQuestionOptionId());
-                        studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
-                    }
-                }
-                else
-                {
-                    QuizQuestionOption quizQuestionOption = studentAttemptQuestion.getQuizQuestion().getQuizQuestionOptions().get(1);
-                    studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption.getQuizQuestionOptionId());
-                    studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
-                }
-
-                studentAttemptAnswersCounter++;
-                if (studentAttemptAnswersCounter == STUDENT_ATTEMPT_ANSWERS_COUNT)
-                {
-                    break;
-                }
-
-                if (studentAttemptAnswersCounter == STUDENT_ATTEMPT_ANSWERS_COUNT)
-                {
-                    break;
-                }
-            }
-            if (studentAttemptAnswersCounter == STUDENT_ATTEMPT_ANSWERS_COUNT)
-            {
-                break;
-            }
-        }
-
-        studentAttemptAnswers = studentAttemptAnswerService.getAllStudentAttemptAnswers();
-
         System.out.printf(">> Created StudentAttemptAnswers (%d)\n", studentAttemptAnswers.size());
     }
 
@@ -1116,7 +1088,7 @@ public class DatabaseConfig
                             // Matching
                             for (int l = 1; l <= QUIZ_QUESTION_OPTION_COUNT; l++)
                             {
-                                quizQuestionOptions.add(new QuizQuestionOption(String.valueOf(l), FormatterUtil.getOrdinal(l), l == 1));
+                                quizQuestionOptions.add(new QuizQuestionOption(String.valueOf(l), FormatterUtil.getOrdinal(l), true));
                             }
                             k++;
                         }
