@@ -1062,7 +1062,7 @@ public class DatabaseConfig
                 {
                     for (int j = 1; j <= QUIZ_COUNT; j++)
                     {
-                        for (int k = 1; k <= QUIZ_QUESTION_COUNT; k++)
+                        for (int k = 1; k <= QUIZ_QUESTION_COUNT;)
                         {
                             QuizQuestion mcqQuestion = new QuizQuestion(
                                     String.format("%s %s question of quiz for lesson %d of %s %s course", FormatterUtil.getOrdinal(k++), QuestionType.MCQ, i, level, language),
