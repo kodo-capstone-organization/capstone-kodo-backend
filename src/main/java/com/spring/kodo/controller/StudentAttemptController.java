@@ -1,17 +1,18 @@
 package com.spring.kodo.controller;
 
-import com.spring.kodo.entity.Quiz;
 import com.spring.kodo.entity.StudentAttempt;
+import com.spring.kodo.entity.StudentAttemptAnswer;
+import com.spring.kodo.entity.StudentAttemptQuestion;
+import com.spring.kodo.restentity.request.CreateNewStudentAttemptReq;
+import com.spring.kodo.service.inter.StudentAttemptAnswerService;
+import com.spring.kodo.service.inter.StudentAttemptQuestionService;
 import com.spring.kodo.service.inter.StudentAttemptService;
-import com.spring.kodo.util.exception.StudentAttemptNotFoundException;
+import com.spring.kodo.util.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -24,6 +25,84 @@ public class StudentAttemptController
 
     @Autowired
     private StudentAttemptService studentAttemptService;
+
+    @Autowired
+    private StudentAttemptQuestionService studentAttemptQuestionService;
+
+    @Autowired
+    private StudentAttemptAnswerService studentAttemptAnswerService;
+
+    @PostMapping("/createNewStudentAttempt")
+    public StudentAttempt createNewStudentAttempt(
+            @RequestPart(name = "createNewStudentAttemptReq", required = true) CreateNewStudentAttemptReq createNewStudentAttemptReq
+    )
+    {
+        if (createNewStudentAttemptReq != null)
+        {
+            try
+            {
+                Long enrolledContentId = createNewStudentAttemptReq.getEnrolledContentId();
+                List<List<Long[]>> quizQuestionOptionIdLists = createNewStudentAttemptReq.getQuizQuestionOptionIdLists();
+
+                StudentAttempt studentAttempt = studentAttemptService.createNewStudentAttempt(enrolledContentId);
+                List<StudentAttemptQuestion> studentAttemptQuestions = studentAttempt.getStudentAttemptQuestions();
+
+                List<Long[]> quizQuestionOptionIds;
+                StudentAttemptQuestion studentAttemptQuestion;
+                StudentAttemptAnswer studentAttemptAnswer;
+                Long leftQuizQuestionOptionId;
+                Long rightQuizQuestionOptionId;
+
+                for (int i = 0; i < studentAttemptQuestions.size(); i++)
+                {
+                    quizQuestionOptionIds = quizQuestionOptionIdLists.get(i);
+                    studentAttemptQuestion = studentAttemptQuestions.get(i);
+
+                    for (Long[] quizQuestionOptionPair : quizQuestionOptionIds)
+                    {
+                        if (quizQuestionOptionPair.length == 1)
+                        {
+                            leftQuizQuestionOptionId = quizQuestionOptionPair[0];
+
+                            studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(leftQuizQuestionOptionId);
+                        }
+                        else
+                        {
+                            leftQuizQuestionOptionId = quizQuestionOptionPair[0];
+                            rightQuizQuestionOptionId = quizQuestionOptionPair[1];
+
+                            studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(leftQuizQuestionOptionId, rightQuizQuestionOptionId);
+                        }
+
+                        studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
+                    }
+                }
+
+                studentAttempt = studentAttemptService.getStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId());
+                return studentAttempt;
+            }
+            catch (InputDataValidationException ex)
+            {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+            }
+            catch (EnrolledContentNotFoundException | QuizQuestionNotFoundException | QuizQuestionOptionNotFoundException | StudentAttemptQuestionNotFoundException | StudentAttemptAnswerNotFoundException | StudentAttemptNotFoundException ex)
+            {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+            }
+            catch (CreateNewStudentAttemptException | CreateNewStudentAttemptQuestionException | CreateNewStudentAttemptAnswerException | UpdateStudentAttemptQuestionException ex)
+            {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+            }
+            catch (UnknownPersistenceException ex)
+            {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+            }
+        }
+        else
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Create New StudentAttempt Request");
+        }
+    }
 
     @GetMapping("/getStudentAttemptByStudentAttemptId/{studentAttemptId}")
     public StudentAttempt getStudentAttemptByStudentAttemptId(@PathVariable Long studentAttemptId)
