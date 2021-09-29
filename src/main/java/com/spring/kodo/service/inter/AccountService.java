@@ -51,6 +51,8 @@ public interface AccountService
 
     Account getAccountByStudentAttemptId(Long studentAttemptId) throws AccountNotFoundException;
 
+    Account getAccountByQuizId(Long quizId) throws AccountNotFoundException;
+
     List<Account> getAllAccounts();
 
     List<Account> getAllAccountsByTagId(Long tagId);

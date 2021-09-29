@@ -62,6 +62,19 @@ public class AccountController
         }
     }
 
+    @GetMapping("/getAccountByQuizId/{quizId}")
+    public Account getAccountByQuizId(@PathVariable Long quizId)
+    {
+        try
+        {
+            return this.accountService.getAccountByQuizId(quizId);
+        }
+        catch (AccountNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @PostMapping("/createNewAccount")
     public Account createNewAccount(
             @RequestPart(name = "account", required = true) CreateNewAccountReq createNewAccountReq,
