@@ -115,7 +115,7 @@ public class DatabaseConfig
 
     private LocalDateTime COURSE_REFERENCE_DATE = LocalDateTime.now().minusYears(1);
 
-    private final Integer LANGUAGES_COUNT = 5; // Current max is 25
+    private final Integer LANGUAGES_COUNT = 6; // Current max is 25
 
     private final Integer TUTOR_COUNT = 15;
     private final Integer STUDENT_COUNT = 50;
@@ -327,6 +327,8 @@ public class DatabaseConfig
                 tagTitles.add(LEVELS.get(j).toLowerCase(Locale.ROOT));
 
                 courseService.createNewCourse(course, tutor.getAccountId(), tagTitles);
+                tutor.setStripeAccountId("acct_" + RandomGeneratorUtil.getRandomString(16));
+                accountService.updateAccount(tutor);
                 accountService.addCourseToAccount(tutor, course);
 
                 tagTitles.clear();
@@ -1005,6 +1007,11 @@ public class DatabaseConfig
             {
                 break;
             }
+        }
+
+        for (int i = 0; i < LEVELS.size(); i++)
+        {
+            courses.get(courses.size() - 1 - i).setIsEnrollmentActive(false);
         }
     }
 
