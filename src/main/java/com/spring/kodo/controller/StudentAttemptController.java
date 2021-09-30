@@ -72,16 +72,16 @@ public class StudentAttemptController
                             leftQuizQuestionOptionId = quizQuestionOptionPair[0];
 
                             studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(leftQuizQuestionOptionId);
+                            studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
                         }
-                        else
+                        else if (quizQuestionOptionPair.length == 2)
                         {
                             leftQuizQuestionOptionId = quizQuestionOptionPair[0];
                             rightQuizQuestionOptionId = quizQuestionOptionPair[1];
 
                             studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(leftQuizQuestionOptionId, rightQuizQuestionOptionId);
+                            studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
                         }
-
-                        studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
                     }
                 }
 
