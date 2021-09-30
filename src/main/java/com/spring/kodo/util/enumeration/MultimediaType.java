@@ -2,7 +2,6 @@ package com.spring.kodo.util.enumeration;
 
 public enum MultimediaType
 {
-    PDF("PDF"),
     IMAGE("IMAGE"),
     VIDEO("VIDEO"),
     ZIP("ZIP"),

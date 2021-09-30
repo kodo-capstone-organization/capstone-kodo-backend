@@ -1137,7 +1137,7 @@ public class DatabaseConfig
             {
                 for (int i = 1; i <= LESSON_COUNT; i++)
                 {
-                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-1", "A very interesting " + FormatterUtil.getOrdinal(i) + " PDF on " + language, "http://www.africau.edu/images/default/sample.pdf", MultimediaType.PDF));
+                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-1", "A very interesting " + FormatterUtil.getOrdinal(i) + " PDF on " + language, "http://www.africau.edu/images/default/sample.pdf", MultimediaType.DOCUMENT));
                     multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-2", "A very interesting " + FormatterUtil.getOrdinal(i) + " video on " + language, "https://www.youtube.com/watch?v=T8y_RsF4TSw&list=RDmvkbCZfwWzA&index=16", MultimediaType.VIDEO));
                 }
             }
