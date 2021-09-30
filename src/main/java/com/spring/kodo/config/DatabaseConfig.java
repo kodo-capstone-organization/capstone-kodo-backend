@@ -2,6 +2,7 @@ package com.spring.kodo.config;
 
 import com.spring.kodo.entity.*;
 import com.spring.kodo.service.inter.*;
+import com.spring.kodo.util.Constants;
 import com.spring.kodo.util.FormatterUtil;
 import com.spring.kodo.util.RandomGeneratorUtil;
 import com.spring.kodo.util.enumeration.MultimediaType;
@@ -114,14 +115,14 @@ public class DatabaseConfig
 
     private LocalDateTime COURSE_REFERENCE_DATE = LocalDateTime.now().minusYears(1);
 
-    private final Integer LANGUAGES_COUNT = 10; // Current max is 25
+    private final Integer LANGUAGES_COUNT = 5; // Current max is 25
 
     private final Integer TUTOR_COUNT = 15;
     private final Integer STUDENT_COUNT = 50;
 
     private final Integer LESSON_COUNT = 3;
 
-    private final Integer MULTIMEDIA_COUNT = 2;
+    private final Integer MULTIMEDIA_COUNT = 4;
 
     private final Integer QUIZ_COUNT = 1;
     private final Integer QUIZ_QUESTION_COUNT = 6;
@@ -137,8 +138,6 @@ public class DatabaseConfig
     private final Integer COMPLETE_CONTENT_COUNT = (int) (0.1 * (STUDENT_ENROLLED_COUNT * LESSON_COUNT * (MULTIMEDIA_COUNT + QUIZ_COUNT)));
 
     private final Integer RATE_ENROLLED_COURSES_COUNT = (int) (0.5 * STUDENT_ENROLLED_COUNT);
-
-    private final Integer MARK_STUDENT_ATTEMPTS_COUNT = 30;
 
     // Don't Edit these
     private final Integer PREFIXED_ADMIN_COUNT = 7;
@@ -331,11 +330,21 @@ public class DatabaseConfig
                 accountService.addCourseToAccount(tutor, course);
 
                 tagTitles.clear();
+
+                if (courseIndex == courses.size() - 1)
+                {
+                    break;
+                }
             }
 
             if (tutorIndex == TUTOR_SIZE - 1)
             {
                 tutorIndex = TUTOR_FIRST_INDEX;
+            }
+
+            if (courseIndex == courses.size() - 1)
+            {
+                break;
             }
         }
 
@@ -497,16 +506,6 @@ public class DatabaseConfig
 
     private void createEnrolledCoursesAndEnrolledLessonsEnrolledContents() throws Exception
     {
-        Account tutor;
-        Account student;
-        Course course;
-        EnrolledCourse enrolledCourse;
-        EnrolledLesson enrolledLesson;
-        EnrolledContent enrolledContent;
-        Transaction transaction;
-
-        String dummyUniqueStripeSessionId;
-
         int i = 0;
 
         // Ensure fixed students
@@ -537,12 +536,10 @@ public class DatabaseConfig
             try
             {
                 createEnrolledCourseAndEnrolledLessonsEnrolledContents(studentIndex, courseIndex);
-
                 i++;
             }
             catch (Exception ex)
             {
-                i--;
             }
         }
 
@@ -968,6 +965,8 @@ public class DatabaseConfig
         BigDecimal price = BigDecimal.valueOf(19.99);
         List<BigDecimal> prices = new ArrayList<>();
 
+        int langaugeCounter = 0;
+
         for (int i = 0; i < LEVELS.size(); i++)
         {
             prices.add(price);
@@ -993,6 +992,12 @@ public class DatabaseConfig
                 );
 
                 courses.get(i).setDateTimeOfCreation(getNextDateTime(11, 12));
+            }
+
+            langaugeCounter++;
+            if (langaugeCounter == LANGUAGES_COUNT)
+            {
+                break;
             }
         }
     }
@@ -1114,14 +1119,41 @@ public class DatabaseConfig
 
     private void addMultimedias()
     {
+        int pdfUrlIndex = 0;
+        int mp4UrlIndex = 0;
+        int docxUrlIndex = 0;
+        int zipUrlIndex = 0;
+
         for (String language : LANGUAGES)
         {
             for (String level : LEVELS)
             {
                 for (int i = 1; i <= LESSON_COUNT; i++)
                 {
-                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-1", "A very interesting " + FormatterUtil.getOrdinal(i) + " PDF on " + language, "http://www.africau.edu/images/default/sample.pdf", MultimediaType.PDF));
-                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-2", "A very interesting " + FormatterUtil.getOrdinal(i) + " video on " + language, "https://www.youtube.com/watch?v=T8y_RsF4TSw&list=RDmvkbCZfwWzA&index=16", MultimediaType.VIDEO));
+                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-1", "A very interesting " + FormatterUtil.getOrdinal(i) + " PDF on " + language, PDF_URLS.get(pdfUrlIndex++), MultimediaType.DOCUMENT));
+                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-2", "A very interesting " + FormatterUtil.getOrdinal(i) + " MP4 on " + language, MP4_URLS.get(mp4UrlIndex++), MultimediaType.VIDEO));
+                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-3", "A very interesting " + FormatterUtil.getOrdinal(i) + " DOCX on " + language, DOCX_URLS.get(docxUrlIndex++), MultimediaType.DOCUMENT));
+                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-4", "A very interesting " + FormatterUtil.getOrdinal(i) + " ZIP on " + language, ZIP_URLS.get(zipUrlIndex++), MultimediaType.ZIP));
+
+                    if (pdfUrlIndex == PDF_URLS.size())
+                    {
+                        pdfUrlIndex = 0;
+                    }
+
+                    if (mp4UrlIndex == MP4_URLS.size())
+                    {
+                        mp4UrlIndex = 0;
+                    }
+
+                    if (docxUrlIndex == DOCX_URLS.size())
+                    {
+                        docxUrlIndex = 0;
+                    }
+
+                    if (zipUrlIndex == ZIP_URLS.size())
+                    {
+                        zipUrlIndex = 0;
+                    }
                 }
             }
         }
