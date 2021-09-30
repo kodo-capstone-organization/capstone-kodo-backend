@@ -75,7 +75,7 @@ public class Constants
                     "courses that cater to learners of all ages and skill levels. Enroll in a course with me and let's work together to further your software engineering skills!",
 
             "Tutor %s here! As a previous educator in Green University and Maple Polytechnic, I believe strongly in education as a tool of enablement. " +
-                    "It is my hope that the material I have uploaded onto this platform will be able to help students in understanding programming concepts that may be difficult to understand!" +
+                    "It is my hope that the material I have uploaded onto this platform will be able to help students in understanding programming concepts that may be difficult to understand! " +
                     "Feel free to reach out to me through a session here."
     );
 

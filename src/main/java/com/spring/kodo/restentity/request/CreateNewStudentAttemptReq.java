@@ -5,13 +5,13 @@ import java.util.List;
 public class CreateNewStudentAttemptReq
 {
     private Long enrolledContentId;
-    private List<List<Long[]>> quizQuestionOptionIdLists;
+    private List<List<Integer[]>> quizQuestionOptionIdLists;
 
     public CreateNewStudentAttemptReq()
     {
     }
 
-    public CreateNewStudentAttemptReq(Long enrolledContentId, List<List<Long[]>> quizQuestionOptionIdLists)
+    public CreateNewStudentAttemptReq(Long enrolledContentId, List<List<Integer[]>> quizQuestionOptionIdLists)
     {
         this.enrolledContentId = enrolledContentId;
         this.quizQuestionOptionIdLists = quizQuestionOptionIdLists;
@@ -27,12 +27,12 @@ public class CreateNewStudentAttemptReq
         this.enrolledContentId = enrolledContentId;
     }
 
-    public List<List<Long[]>> getQuizQuestionOptionIdLists()
+    public List<List<Integer[]>> getQuizQuestionOptionIdLists()
     {
         return quizQuestionOptionIdLists;
     }
 
-    public void setQuizQuestionOptionIdLists(List<List<Long[]>> quizQuestionOptionIdLists)
+    public void setQuizQuestionOptionIdLists(List<List<Integer[]>> quizQuestionOptionIdLists)
     {
         this.quizQuestionOptionIdLists = quizQuestionOptionIdLists;
     }

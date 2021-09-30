@@ -1,5 +1,6 @@
 package com.spring.kodo.controller;
 
+import com.spring.kodo.entity.QuizQuestionOption;
 import com.spring.kodo.entity.StudentAttempt;
 import com.spring.kodo.entity.StudentAttemptAnswer;
 import com.spring.kodo.entity.StudentAttemptQuestion;
@@ -16,7 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/studentAttempt")
@@ -47,7 +50,24 @@ public class StudentAttemptController
             {
                 // Get items from CreateNewStudentAttemptReq
                 Long enrolledContentId = createNewStudentAttemptReq.getEnrolledContentId();
-                List<List<Long[]>> quizQuestionOptionIdLists = createNewStudentAttemptReq.getQuizQuestionOptionIdLists();
+                List<List<Integer[]>> tempLists = createNewStudentAttemptReq.getQuizQuestionOptionIdLists();
+
+                List<List<Long[]>> quizQuestionOptionIdLists = new ArrayList<>();
+
+                for (List<Integer[]> a : tempLists)
+                {
+                    List<Long[]> tmpList = new ArrayList<>();
+                    for (Integer[] b : a)
+                    {
+                        Long[] longArr = new Long[b.length];
+                        for (int i = 0; i < longArr.length; i++)
+                        {
+                            longArr[i] = b[i].longValue();
+                        }
+                        tmpList.add(longArr);
+                    }
+                    quizQuestionOptionIdLists.add(tmpList);
+                }
 
                 // Create new StudentAttempt and StudentAttemptQuestions
                 StudentAttempt studentAttempt = studentAttemptService.createNewStudentAttempt(enrolledContentId);
