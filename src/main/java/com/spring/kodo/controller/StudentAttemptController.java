@@ -85,12 +85,21 @@ public class StudentAttemptController
                     }
                 }
 
-                // Set EnrolledContent DateTimeOfCompletion
-                enrolledContentService.setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(true, enrolledContentId);
+                // Check if quiz is completed
 
-                studentAttempt = studentAttemptService.markStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId());
+                if (studentAttemptService.isStudentAttemptCompleted(studentAttempt.getStudentAttemptId()))
+                {
+                    // Set EnrolledContent DateTimeOfCompletion
+                    enrolledContentService.setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(true, enrolledContentId);
 
-                return studentAttempt;
+                    studentAttempt = studentAttemptService.markStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId());
+
+                    return studentAttempt;
+                }
+                else
+                {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "StudentAttempt is not completed");
+                }
             }
             catch (InputDataValidationException ex)
             {
