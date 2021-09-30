@@ -122,4 +122,16 @@ public class Constants
             "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/9bdc4f05-51f4-4030-b253-c764a885caf8.zip?generation=1632965041441863&alt=media",
             "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/e9314925-9ae3-4fdb-a039-cb6d4ad86f82.zip?generation=1632965046662913&alt=media"
     );
+
+    public static final List<String> BANNER_URLS = Arrays.asList(
+            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/54ac91ee-583b-4cfd-99e9-1540388bb952.png?generation=1632977979927790&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/be5d7a30-7ed8-4477-8ccd-6d2c753e15d6.png?generation=1632977984509668&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/03c59cfa-e4c5-4ccb-8fc7-ae6f7c746bf8.png?generation=1632977990663019&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/78feb644-9831-4ad4-8fd3-662014d3156b.png?generation=1632977997412681&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/c37c293c-f1d6-4e0b-a30c-66f21db4ee18.png?generation=1632978001877833&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/5233d316-c7b1-43dc-b04f-a839291c78f2.png?generation=1632978006764388&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/1c8529d1-89d5-4fb5-b924-1057af6acfe5.png?generation=1632978012444772&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/26551397-6c40-403b-8987-9efc070f582a.png?generation=1632978017461782&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/fe5f7255-40fb-4ade-be88-6fb8024e1ca7.png?generation=1632978022267549&alt=media"
+    );
 }

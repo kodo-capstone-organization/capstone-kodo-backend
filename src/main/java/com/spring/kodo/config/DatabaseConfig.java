@@ -965,6 +965,7 @@ public class DatabaseConfig
         BigDecimal price = BigDecimal.valueOf(19.99);
         List<BigDecimal> prices = new ArrayList<>();
 
+        int bannerUrlIndex = 0;
         int langaugeCounter = 0;
 
         for (int i = 0; i < LEVELS.size(); i++)
@@ -985,13 +986,18 @@ public class DatabaseConfig
                                 String.format("%s %s Course", level, language),
                                 String.format("A %s course in %s language", level.toLowerCase(Locale.ROOT), language.toLowerCase(Locale.ROOT)),
                                 price,
-                                "",
+                                BANNER_URLS.get(bannerUrlIndex++),
 //                                String.format("https://%s%scoursebanner.com", level.toLowerCase(Locale.ROOT), language.toLowerCase(Locale.ROOT)),
                                 true // Assume that enrollment is already active
                         )
                 );
 
                 courses.get(i).setDateTimeOfCreation(getNextDateTime(11, 12));
+
+                if (bannerUrlIndex == BANNER_URLS.size() - 1)
+                {
+                    bannerUrlIndex = 0;
+                }
             }
 
             langaugeCounter++;
