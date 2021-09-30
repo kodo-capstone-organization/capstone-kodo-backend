@@ -4,6 +4,7 @@ import com.spring.kodo.entity.StudentAttempt;
 import com.spring.kodo.entity.StudentAttemptAnswer;
 import com.spring.kodo.entity.StudentAttemptQuestion;
 import com.spring.kodo.restentity.request.CreateNewStudentAttemptReq;
+import com.spring.kodo.service.inter.EnrolledContentService;
 import com.spring.kodo.service.inter.StudentAttemptAnswerService;
 import com.spring.kodo.service.inter.StudentAttemptQuestionService;
 import com.spring.kodo.service.inter.StudentAttemptService;
@@ -32,6 +33,9 @@ public class StudentAttemptController
     @Autowired
     private StudentAttemptAnswerService studentAttemptAnswerService;
 
+    @Autowired
+    private EnrolledContentService enrolledContentService;
+
     @PostMapping("/createNewStudentAttempt")
     public StudentAttempt createNewStudentAttempt(
             @RequestPart(name = "createNewStudentAttemptReq", required = true) CreateNewStudentAttemptReq createNewStudentAttemptReq
@@ -41,12 +45,15 @@ public class StudentAttemptController
         {
             try
             {
+                // Get items from CreateNewStudentAttemptReq
                 Long enrolledContentId = createNewStudentAttemptReq.getEnrolledContentId();
                 List<List<Long[]>> quizQuestionOptionIdLists = createNewStudentAttemptReq.getQuizQuestionOptionIdLists();
 
+                // Create new StudentAttempt and StudentAttemptQuestions
                 StudentAttempt studentAttempt = studentAttemptService.createNewStudentAttempt(enrolledContentId);
                 List<StudentAttemptQuestion> studentAttemptQuestions = studentAttempt.getStudentAttemptQuestions();
 
+                // Create new StudentAttemptAnswers
                 List<Long[]> quizQuestionOptionIds;
                 StudentAttemptQuestion studentAttemptQuestion;
                 StudentAttemptAnswer studentAttemptAnswer;
@@ -78,18 +85,22 @@ public class StudentAttemptController
                     }
                 }
 
-                studentAttempt = studentAttemptService.getStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId());
+                // Set EnrolledContent DateTimeOfCompletion
+                enrolledContentService.setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(true, enrolledContentId);
+
+                studentAttempt = studentAttemptService.markStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId());
+
                 return studentAttempt;
             }
             catch (InputDataValidationException ex)
             {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
             }
-            catch (EnrolledContentNotFoundException | QuizQuestionNotFoundException | QuizQuestionOptionNotFoundException | StudentAttemptQuestionNotFoundException | StudentAttemptAnswerNotFoundException | StudentAttemptNotFoundException ex)
+            catch (EnrolledCourseNotFoundException | EnrolledLessonNotFoundException | EnrolledContentNotFoundException | QuizQuestionNotFoundException | QuizQuestionOptionNotFoundException | StudentAttemptQuestionNotFoundException | StudentAttemptAnswerNotFoundException | StudentAttemptNotFoundException ex)
             {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
             }
-            catch (CreateNewStudentAttemptException | CreateNewStudentAttemptQuestionException | CreateNewStudentAttemptAnswerException | UpdateStudentAttemptQuestionException ex)
+            catch (CreateNewStudentAttemptException | CreateNewStudentAttemptQuestionException | CreateNewStudentAttemptAnswerException | UpdateStudentAttemptQuestionException | UpdateStudentAttemptAnswerException ex)
             {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
             }
