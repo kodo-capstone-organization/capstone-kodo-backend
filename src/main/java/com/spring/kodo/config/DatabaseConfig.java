@@ -116,7 +116,7 @@ public class DatabaseConfig
 
     private final Integer LANGUAGES_COUNT = 10; // Current max is 25
 
-    private final Integer TUTOR_COUNT = 25;
+    private final Integer TUTOR_COUNT = 15;
     private final Integer STUDENT_COUNT = 50;
 
     private final Integer LESSON_COUNT = 3;
@@ -242,13 +242,12 @@ public class DatabaseConfig
         createQuizQuestionOptions();
         createMultimedias();
         createEnrolledCoursesAndEnrolledLessonsEnrolledContents();
-        createStudentAttemptsAndStudentAttemptQuestionsAndStudentAttemptAnswersAndCompleteContent();
+        createStudentAttemptsAndStudentAttemptQuestionsAndStudentAttemptAnswersAndCompleteContentAndMarkStudentAttempt();
         createForumCategories();
         createForumThreads();
         createForumPosts();
         completeContent();
         rateEnrolledCourses();
-        autoMarkStudentAttempts();
 
         System.out.println("\n===== Init Data Fully Loaded to Database =====");
 
@@ -595,7 +594,7 @@ public class DatabaseConfig
         }
     }
 
-    private void createStudentAttemptsAndStudentAttemptQuestionsAndStudentAttemptAnswersAndCompleteContent() throws Exception
+    private void createStudentAttemptsAndStudentAttemptQuestionsAndStudentAttemptAnswersAndCompleteContentAndMarkStudentAttempt() throws Exception
     {
         boolean change = true;
 
@@ -604,6 +603,7 @@ public class DatabaseConfig
         StudentAttemptAnswer studentAttemptAnswer;
 
         int studentAttemptCounter = 0;
+        int markedStudentAttempts = 0;
 
         for (int i = 0; i < enrolledContents.size(); i++)
         {
@@ -658,10 +658,13 @@ public class DatabaseConfig
 
                     change = !change;
                 }
+                studentAttemptCounter++;
 
+                // User Click Submit
                 enrolledContentService.setFakeDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(getNextDateTime(0, 3), enrolledContent.getEnrolledContentId());
 
-                studentAttemptCounter++;
+                studentAttemptService.markStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId());
+                markedStudentAttempts++;
 
                 if (studentAttemptCounter == STUDENT_ATTEMPT_COUNT)
                 {
@@ -680,6 +683,7 @@ public class DatabaseConfig
         System.out.printf(">> Created StudentAttempts (%d)\n", studentAttempts.size());
         System.out.printf(">> Created StudentAttemptQuestions (%d)\n", studentAttemptQuestions.size());
         System.out.printf(">> Created StudentAttemptAnswers (%d)\n", studentAttemptAnswers.size());
+        System.out.printf(">> Marked StudentAttempts (%d)\n", markedStudentAttempts);
     }
 
     private void createForumCategories() throws Exception
@@ -870,27 +874,6 @@ public class DatabaseConfig
         }
 
         System.out.printf(">> Rated EnrolledCourses (%d)\n", courseRatingSet);
-    }
-
-    private void autoMarkStudentAttempts() throws Exception
-    {
-        int markedStudentAttempts = 0;
-
-        for (StudentAttempt studentAttempt : studentAttempts)
-        {
-            if (studentAttemptService.isStudentAttemptCompleted(studentAttempt.getStudentAttemptId()))
-            {
-                studentAttemptService.markStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId());
-                markedStudentAttempts++;
-
-                if (markedStudentAttempts == MARK_STUDENT_ATTEMPTS_COUNT)
-                {
-                    break;
-                }
-            }
-        }
-
-        System.out.printf(">> Marked StudentAttempts (%d)\n", markedStudentAttempts);
     }
 
     private void addAccounts() throws Exception
