@@ -597,6 +597,8 @@ public class DatabaseConfig
 
     private void createStudentAttemptsAndStudentAttemptQuestionsAndStudentAttemptAnswersAndCompleteContent() throws Exception
     {
+        boolean change = true;
+
         EnrolledContent enrolledContent;
         StudentAttempt studentAttempt;
         StudentAttemptAnswer studentAttemptAnswer;
@@ -617,19 +619,47 @@ public class DatabaseConfig
                 {
                     if (studentAttemptQuestion.getQuizQuestion().getQuestionType().equals(QuestionType.MATCHING))
                     {
-                        for (QuizQuestionOption quizQuestionOption : studentAttemptQuestion.getQuizQuestion().getQuizQuestionOptions())
+                        if (change)
                         {
-                            studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption.getQuizQuestionOptionId(), quizQuestionOption.getQuizQuestionOptionId());
+                            for (QuizQuestionOption quizQuestionOption : studentAttemptQuestion.getQuizQuestion().getQuizQuestionOptions())
+                            {
+                                studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption.getQuizQuestionOptionId(), quizQuestionOption.getQuizQuestionOptionId());
+                                studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
+                            }
+                        }
+                        else
+                        {
+                            QuizQuestionOption quizQuestionOption1;
+                            QuizQuestionOption quizQuestionOption2;
+                            List<QuizQuestionOption> quizQuestionOptions = studentAttemptQuestion.getQuizQuestion().getQuizQuestionOptions();
+
+                            for (int j = 0; j < quizQuestionOptions.size() - 1; j++)
+                            {
+                                quizQuestionOption1 = quizQuestionOptions.get(j);
+                                quizQuestionOption2 = quizQuestionOptions.get(j + 1);
+
+                                studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption1.getQuizQuestionOptionId(), quizQuestionOption2.getQuizQuestionOptionId());
+                                studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
+                            }
+
+                            quizQuestionOption1 = quizQuestionOptions.get(quizQuestionOptions.size() - 1);
+                            quizQuestionOption2 = quizQuestionOptions.get(0);
+
+                            studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption1.getQuizQuestionOptionId(), quizQuestionOption2.getQuizQuestionOptionId());
                             studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
                         }
                     }
                     else
                     {
-                        QuizQuestionOption quizQuestionOption = studentAttemptQuestion.getQuizQuestion().getQuizQuestionOptions().get(1);
+                        QuizQuestionOption quizQuestionOption = studentAttemptQuestion.getQuizQuestion().getQuizQuestionOptions().get(change ? 0 : 1);
                         studentAttemptAnswer = studentAttemptAnswerService.createNewStudentAttemptAnswer(quizQuestionOption.getQuizQuestionOptionId());
                         studentAttemptQuestionService.addStudentAttemptAnswerToStudentAttemptQuestion(studentAttemptQuestion, studentAttemptAnswer);
                     }
+
+                    change = !change;
                 }
+
+                enrolledContentService.setFakeDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(getNextDateTime(0, 3), enrolledContent.getEnrolledContentId());
 
                 studentAttemptCounter++;
 
@@ -793,7 +823,8 @@ public class DatabaseConfig
                                     }
                                 }
                             }
-                            catch (InvalidDateTimeOfCompletionException ex) {
+                            catch (InvalidDateTimeOfCompletionException ex)
+                            {
 //                                System.out.println(ex.getMessage());
                             }
                         }
@@ -1034,7 +1065,7 @@ public class DatabaseConfig
                 {
                     for (int j = 1; j <= QUIZ_COUNT; j++)
                     {
-                        for (int k = 1; k <= QUIZ_QUESTION_COUNT;)
+                        for (int k = 1; k <= QUIZ_QUESTION_COUNT; )
                         {
                             QuizQuestion mcqQuestion = new QuizQuestion(
                                     String.format("%s %s question of quiz for lesson %d of %s %s course", FormatterUtil.getOrdinal(k++), QuestionType.MCQ, i, level, language),
