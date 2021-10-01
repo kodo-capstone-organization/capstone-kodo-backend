@@ -4,6 +4,7 @@ import com.spring.kodo.entity.Account;
 import com.spring.kodo.restentity.request.CreateNewAccountReq;
 import com.spring.kodo.restentity.request.UpdateAccountPasswordReq;
 import com.spring.kodo.restentity.request.UpdateAccountReq;
+import com.spring.kodo.restentity.response.AccountResp;
 import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.FileService;
 import com.spring.kodo.util.exception.*;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -34,6 +36,26 @@ public class AccountController
     public List<Account> getAllAccounts()
     {
         return this.accountService.getAllAccounts();
+    }
+
+    @GetMapping("/getAllAccountsWithoutEnrollment")
+    public List<AccountResp> getAllAccountsWithoutEnrollment()
+    {
+        List<Account> accounts = this.accountService.getAllAccounts();
+        List<AccountResp> accountResps = new ArrayList<>();
+
+        for (Account account : accounts)
+        {
+            accountResps.add(new AccountResp(
+                    account.getAccountId(),
+                    account.getName(),
+                    account.getUsername(),
+                    account.getEmail(),
+                    account.getIsAdmin()
+            ));
+        }
+
+        return accountResps;
     }
 
     @GetMapping("/getAccountByAccountId/{accountId}")
