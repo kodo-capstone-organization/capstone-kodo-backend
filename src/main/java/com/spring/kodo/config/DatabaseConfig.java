@@ -299,6 +299,7 @@ public class DatabaseConfig
         }
 
         accounts = accountService.getAllAccounts();
+        accounts.get(TUTOR_FIRST_INDEX).setStripeAccountId("acct_1JZ8h5PDe56gk95T");
 
         System.out.printf(">> Created Accounts (%d)\n", accounts.size());
     }
@@ -327,7 +328,7 @@ public class DatabaseConfig
                 tagTitles.add(LEVELS.get(j).toLowerCase(Locale.ROOT));
 
                 courseService.createNewCourse(course, tutor.getAccountId(), tagTitles);
-                tutor.setStripeAccountId("acct_" + RandomGeneratorUtil.getRandomString(16));
+
                 accountService.updateAccount(tutor);
                 accountService.addCourseToAccount(tutor, course);
 
@@ -948,9 +949,6 @@ public class DatabaseConfig
 
             accounts.add(new Account("tutor" + i, "Password1", "Tutor " + name, biography, "tutor" + name.toLowerCase(Locale.ROOT) + i + "@gmail.com", displayPictureUrl, false));
         }
-
-        // UNIQUE for Trisha
-        accounts.get(TUTOR_FIRST_INDEX).setStripeAccountId("acct_1JZ8h5PDe56gk95T");
     }
 
     private void addTags()
