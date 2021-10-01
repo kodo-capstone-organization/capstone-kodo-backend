@@ -114,17 +114,13 @@ public class StudentAttemptController
                     enrolledContentService.setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(true, enrolledContentId);
 
                     studentAttempt = studentAttemptService.markStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId());
-
-                    System.out.println("StudentAttempt ID Complete: " + studentAttempt.getStudentAttemptId());
-
-                    return studentAttempt;
                 }
-                else
-                {
-                    System.out.println("StudentAttempt ID Not Complete: " + studentAttempt.getStudentAttemptId());
-
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "StudentAttempt is not completed");
-                }
+//                else
+//                {
+//
+//                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "StudentAttempt is not completed");
+//                }
+                return studentAttempt;
             }
             catch (InputDataValidationException ex)
             {
