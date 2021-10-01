@@ -122,7 +122,7 @@ public class DatabaseConfig
 
     private final Integer LESSON_COUNT = 3;
 
-    private final Integer MULTIMEDIA_COUNT = 4;
+    private final Integer MULTIMEDIA_COUNT = 5;
 
     private final Integer QUIZ_COUNT = 1;
     private final Integer QUIZ_QUESTION_COUNT = 6;
@@ -1136,6 +1136,7 @@ public class DatabaseConfig
         int mp4UrlIndex = 0;
         int docxUrlIndex = 0;
         int zipUrlIndex = 0;
+        int pngUrlIndex = 0;
 
         for (String language : LANGUAGES)
         {
@@ -1147,6 +1148,7 @@ public class DatabaseConfig
                     multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-2", "A very interesting " + FormatterUtil.getOrdinal(i) + " MP4 on " + language, MP4_URLS.get(mp4UrlIndex++), MultimediaType.VIDEO));
                     multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-3", "A very interesting " + FormatterUtil.getOrdinal(i) + " DOCX on " + language, DOCX_URLS.get(docxUrlIndex++), MultimediaType.DOCUMENT));
                     multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-4", "A very interesting " + FormatterUtil.getOrdinal(i) + " ZIP on " + language, ZIP_URLS.get(zipUrlIndex++), MultimediaType.ZIP));
+                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-5", "A very interesting " + FormatterUtil.getOrdinal(i) + " PNG on " + language, PNG_URLS.get(pngUrlIndex++), MultimediaType.IMAGE));
 
                     if (pdfUrlIndex == PDF_URLS.size())
                     {
@@ -1166,6 +1168,11 @@ public class DatabaseConfig
                     if (zipUrlIndex == ZIP_URLS.size())
                     {
                         zipUrlIndex = 0;
+                    }
+
+                    if (pngUrlIndex == PNG_URLS.size())
+                    {
+                        pngUrlIndex = 0;
                     }
                 }
             }

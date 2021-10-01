@@ -134,4 +134,10 @@ public class Constants
             "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/26551397-6c40-403b-8987-9efc070f582a.png?generation=1632978017461782&alt=media",
             "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/fe5f7255-40fb-4ade-be88-6fb8024e1ca7.png?generation=1632978022267549&alt=media"
     );
+
+    public static final List<String> PNG_URLS = Arrays.asList(
+            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/4bf71562-bb65-40d2-bb0c-8f52bde2e385.png?generation=1633089178006447&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/8809da79-69ff-407b-ac6e-6a04b12352d5.png?generation=1633089184102132&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/e5fc1e76-1e29-4004-813d-8828cab4956c.png?generation=1633089189255294&alt=media"
+    );
 }
