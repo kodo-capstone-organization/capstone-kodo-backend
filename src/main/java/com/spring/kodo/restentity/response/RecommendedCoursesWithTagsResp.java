@@ -7,25 +7,25 @@ import java.util.List;
 
 public class RecommendedCoursesWithTagsResp
 {
-    private List<CourseWithTutorAndRatingResp> courses;
+    private List<CourseResp> courses;
     private List<Tag> tags;
 
     public RecommendedCoursesWithTagsResp()
     {
     }
 
-    public RecommendedCoursesWithTagsResp(List<CourseWithTutorAndRatingResp> courses, List<Tag> tags)
+    public RecommendedCoursesWithTagsResp(List<CourseResp> courses, List<Tag> tags)
     {
         this.courses = courses;
         this.tags = tags;
     }
 
-    public List<CourseWithTutorAndRatingResp> getCourses()
+    public List<CourseResp> getCourses()
     {
         return courses;
     }
 
-    public void setCourses(List<CourseWithTutorAndRatingResp> courses)
+    public void setCourses(List<CourseResp> courses)
     {
         this.courses = courses;
     }

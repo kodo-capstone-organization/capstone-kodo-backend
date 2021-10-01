@@ -5,6 +5,7 @@ import com.spring.kodo.entity.Course;
 import com.spring.kodo.entity.Tag;
 import com.spring.kodo.restentity.request.CreateNewCourseReq;
 import com.spring.kodo.restentity.request.UpdateCourseReq;
+import com.spring.kodo.restentity.response.CourseResp;
 import com.spring.kodo.restentity.response.CourseWithTutorAndRatingResp;
 import com.spring.kodo.restentity.response.RecommendedCoursesWithTagsResp;
 import com.spring.kodo.service.inter.AccountService;
@@ -95,14 +96,14 @@ public class CourseController
     }
 
     @GetMapping("/getAllCourses")
-    public List<CourseWithTutorAndRatingResp> getAllCourses()
+    public List<CourseResp> getAllCourses()
     {
         try
         {
             List<Course> courses = this.courseService.getAllCourses();
-            List<CourseWithTutorAndRatingResp> courseWithTutorAndRatingResps = getAllCoursesWithTutorsByCourses(courses);
+            List<CourseResp> courseResps = getBasicCourses(courses);
 
-            return courseWithTutorAndRatingResps;
+            return courseResps;
         }
         catch (AccountNotFoundException | CourseNotFoundException ex)
         {
@@ -153,22 +154,9 @@ public class CourseController
 
             List<Course> allCoursesToRecommend = this.courseService.getAllCoursesToRecommendByAccountIdAndTagIds(accountId, topTagIds);
 
-            List<CourseWithTutorAndRatingResp> courseWithTutorAndRatingResps = new ArrayList<>(allCoursesToRecommend.size());
+            List<CourseResp> courseResps = getBasicCourses(allCoursesToRecommend);
 
-            Account tutor;
-            double courseRating;
-
-            for (Course course : allCoursesToRecommend)
-            {
-                tutor = this.accountService.getAccountByCourseId(course.getCourseId());
-                courseRating = this.courseService.getCourseRating(course.getCourseId());
-
-                courseWithTutorAndRatingResps.add(
-                        new CourseWithTutorAndRatingResp(course, tutor, courseRating)
-                );
-            }
-
-            RecommendedCoursesWithTagsResp recommendedCoursesWithTagsResp = new RecommendedCoursesWithTagsResp(courseWithTutorAndRatingResps, topTags);
+            RecommendedCoursesWithTagsResp recommendedCoursesWithTagsResp = new RecommendedCoursesWithTagsResp(courseResps, topTags);
 
             return recommendedCoursesWithTagsResp;
         }
@@ -179,28 +167,30 @@ public class CourseController
     }
 
     @GetMapping("/getAllCoursesThatArePopular")
-    public List<Course> getAllCoursesThatArePopular()
+    public List<CourseResp> getAllCoursesThatArePopular()
     {
         try
         {
             List<Course> courses = this.courseService.getAllCoursesThatArePopular();
-            return courses;
+            List<CourseResp> coursesResps = getBasicCourses(courses);
+
+            return coursesResps;
         }
-        catch (CourseNotFoundException ex)
+        catch (CourseNotFoundException | AccountNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
     }
 
     @GetMapping("/getNewReleasesCourses")
-    public List<CourseWithTutorAndRatingResp> getNewReleasesCourses()
+    public List<CourseResp> getNewReleasesCourses()
     {
         try
         {
             List<Course> courses = this.courseService.getAllCoursesInTheLast14Days();
-            List<CourseWithTutorAndRatingResp> courseWithTutorAndRatingResps = getAllCoursesWithTutorsByCourses(courses);
+            List<CourseResp> coursesResps = getBasicCourses(courses);
 
-            return courseWithTutorAndRatingResps;
+            return coursesResps;
         }
         catch (AccountNotFoundException | CourseNotFoundException ex)
         {
@@ -368,5 +358,35 @@ public class CourseController
         );
 
         return courseWithTutorAndRatingResp;
+    }
+
+    private List<CourseResp> getBasicCourses(List<Course> courses) throws AccountNotFoundException, CourseNotFoundException {
+        List<CourseResp> courseResps = new ArrayList<>();
+
+        Account tutor;
+        Double rating;
+
+        for (Course course : courses)
+        {
+            tutor = this.accountService.getAccountByCourseId(course.getCourseId());
+            rating = this.courseService.getCourseRating(course.getCourseId());
+
+            courseResps.add(new CourseResp(
+                    course.getCourseId(),
+                    course.getName(),
+                    course.getDescription(),
+                    course.getPrice(),
+                    course.getBannerUrl(),
+                    course.getDateTimeOfCreation(),
+                    course.getCourseTags(),
+                    tutor,
+                    course.getBannerPictureFilename(),
+                    course.getIsEnrollmentActive(),
+                    rating,
+                    course.getEnrollment().size()
+            ));
+        }
+
+        return courseResps;
     }
 }
