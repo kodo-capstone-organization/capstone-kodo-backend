@@ -1046,10 +1046,10 @@ public class DatabaseConfig
                                         String.format("%s %s Quiz #%d", level, language, j),
                                         "A very interesting " + FormatterUtil.getOrdinal(j) + " quiz on " + language,
                                         i == 1 ?
-                                        LocalTime.of(3, 0, 0)
+                                        LocalTime.of(0, 0, 10)
                                         : i == 2 ?
-                                        LocalTime.of(0, 3, 0) :
-                                        LocalTime.of(0, 0, 3),
+                                        LocalTime.of(0, 3, 30) :
+                                        LocalTime.of(0, 30, 0),
                                         10)
                         );
                     }

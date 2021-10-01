@@ -1,6 +1,9 @@
 package com.spring.kodo.controller;
 
-import com.spring.kodo.entity.*;
+import com.spring.kodo.entity.EnrolledContent;
+import com.spring.kodo.entity.StudentAttempt;
+import com.spring.kodo.entity.StudentAttemptAnswer;
+import com.spring.kodo.entity.StudentAttemptQuestion;
 import com.spring.kodo.restentity.request.CreateNewStudentAttemptReq;
 import com.spring.kodo.service.inter.EnrolledContentService;
 import com.spring.kodo.service.inter.StudentAttemptAnswerService;
@@ -16,7 +19,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/studentAttempt")
@@ -103,18 +105,18 @@ public class StudentAttemptController
                 }
 
                 // Adding StudentAttempt to EnrolledContent
-                EnrolledContent enrolledContent = enrolledContentService.getEnrolledContentByEnrolledContentId(enrolledContentId); 
+                EnrolledContent enrolledContent = enrolledContentService.getEnrolledContentByEnrolledContentId(enrolledContentId);
                 enrolledContentService.addStudentAttemptToEnrolledContent(enrolledContent, studentAttempt);
 
                 // Check if quiz is completed
 
-                if (studentAttemptService.isStudentAttemptCompleted(studentAttempt.getStudentAttemptId()))
-                {
-                    // Set EnrolledContent DateTimeOfCompletion
-                    enrolledContentService.setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(true, enrolledContentId);
+//                if (studentAttemptService.isStudentAttemptCompleted(studentAttempt.getStudentAttemptId()))
+//                {
+                // Set EnrolledContent DateTimeOfCompletion
+                enrolledContentService.setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(true, enrolledContentId);
 
-                    studentAttempt = studentAttemptService.markStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId());
-                }
+                studentAttempt = studentAttemptService.markStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId());
+//                }
 //                else
 //                {
 //
