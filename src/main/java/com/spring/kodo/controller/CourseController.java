@@ -100,6 +100,19 @@ public class CourseController
         }
     }
 
+    @GetMapping("/getCourseByContentId/{contentId}")
+    public Course getCourseByContentId(@PathVariable Long contentId)
+    {
+        try
+        {
+            return this.courseService.getCourseByContentId(contentId);
+        }
+        catch (CourseNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @GetMapping("/getCourseByEnrolledContentId/{enrolledContentId}")
     public Course getCourseByEnrolledContentId(@PathVariable Long enrolledContentId)
     {

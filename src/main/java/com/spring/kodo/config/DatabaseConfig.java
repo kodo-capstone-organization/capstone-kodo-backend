@@ -1045,7 +1045,7 @@ public class DatabaseConfig
                                 new Quiz(
                                         String.format("%s %s Quiz #%d", level, language, j),
                                         "A very interesting " + FormatterUtil.getOrdinal(j) + " quiz on " + language,
-                                        LocalTime.of(0, 30),
+                                        j == 1 ? LocalTime.of(3, 0, 0) : j == 2 ? LocalTime.of(0, 3, 0) : LocalTime.of(0, 0, 3),
                                         10)
                         );
                     }

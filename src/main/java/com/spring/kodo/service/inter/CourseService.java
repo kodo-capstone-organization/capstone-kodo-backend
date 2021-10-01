@@ -27,6 +27,8 @@ public interface CourseService
 
     Course getCourseByName(String name) throws CourseNotFoundException;
 
+    Course getCourseByContentId(Long contentId) throws CourseNotFoundException;
+
     Course getCourseByEnrolledContentId(Long enrolledContentId) throws CourseNotFoundException;
 
     List<Course> getAllCoursesWithActiveEnrollment();
