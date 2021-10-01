@@ -1143,7 +1143,7 @@ public class DatabaseConfig
             {
                 for (int i = 1; i <= LESSON_COUNT; i++)
                 {
-                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-1", "A very interesting " + FormatterUtil.getOrdinal(i) + " PDF on " + language, PDF_URLS.get(pdfUrlIndex++), MultimediaType.DOCUMENT));
+                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-1", "A very interesting " + FormatterUtil.getOrdinal(i) + " PDF on " + language, PDF_URLS.get(pdfUrlIndex++), MultimediaType.PDF));
                     multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-2", "A very interesting " + FormatterUtil.getOrdinal(i) + " MP4 on " + language, MP4_URLS.get(mp4UrlIndex++), MultimediaType.VIDEO));
                     multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-3", "A very interesting " + FormatterUtil.getOrdinal(i) + " DOCX on " + language, DOCX_URLS.get(docxUrlIndex++), MultimediaType.DOCUMENT));
                     multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-4", "A very interesting " + FormatterUtil.getOrdinal(i) + " ZIP on " + language, ZIP_URLS.get(zipUrlIndex++), MultimediaType.ZIP));
