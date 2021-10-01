@@ -1,9 +1,6 @@
 package com.spring.kodo.controller;
 
-import com.spring.kodo.entity.QuizQuestionOption;
-import com.spring.kodo.entity.StudentAttempt;
-import com.spring.kodo.entity.StudentAttemptAnswer;
-import com.spring.kodo.entity.StudentAttemptQuestion;
+import com.spring.kodo.entity.*;
 import com.spring.kodo.restentity.request.CreateNewStudentAttemptReq;
 import com.spring.kodo.service.inter.EnrolledContentService;
 import com.spring.kodo.service.inter.StudentAttemptAnswerService;
@@ -105,6 +102,10 @@ public class StudentAttemptController
                     }
                 }
 
+                // Adding StudentAttempt to EnrolledContent
+                EnrolledContent enrolledContent = enrolledContentService.getEnrolledContentByEnrolledContentId(enrolledContentId); 
+                enrolledContentService.addStudentAttemptToEnrolledContent(enrolledContent, studentAttempt);
+
                 // Check if quiz is completed
 
                 if (studentAttemptService.isStudentAttemptCompleted(studentAttempt.getStudentAttemptId()))
@@ -129,7 +130,7 @@ public class StudentAttemptController
             {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
             }
-            catch (CreateNewStudentAttemptException | CreateNewStudentAttemptQuestionException | CreateNewStudentAttemptAnswerException | UpdateStudentAttemptQuestionException | UpdateStudentAttemptAnswerException ex)
+            catch (CreateNewStudentAttemptException | CreateNewStudentAttemptQuestionException | CreateNewStudentAttemptAnswerException | UpdateStudentAttemptQuestionException | UpdateStudentAttemptAnswerException | UpdateEnrolledContentException ex)
             {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
             }
