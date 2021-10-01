@@ -66,6 +66,40 @@ public class CourseController
         }
     }
 
+    @GetMapping("/getCourseWithoutEnrollmentByCourseId/{courseId}")
+    public CourseWithTutorAndRatingResp getCourseWithoutEnrollmentByCourseId(@PathVariable Long courseId)
+    {
+        try
+        {
+            Course course = this.courseService.getCourseByCourseId(courseId);
+            Account tutor = this.accountService.getAccountByCourseId(courseId);
+            Double rating = this.courseService.getCourseRating(courseId);
+
+            // Explicitly set enrollment to null as it's not needed
+            CourseWithTutorAndRatingResp courseWithTutorAndRatingResp = new CourseWithTutorAndRatingResp(
+                    course.getCourseId(),
+                    course.getName(),
+                    course.getDescription(),
+                    course.getPrice(),
+                    course.getBannerUrl(),
+                    course.getDateTimeOfCreation(),
+                    null,
+                    course.getCourseTags(),
+                    course.getLessons(),
+                    tutor,
+                    course.getBannerPictureFilename(),
+                    course.getIsEnrollmentActive(),
+                    rating
+            );
+
+            return courseWithTutorAndRatingResp;
+        }
+        catch (CourseNotFoundException | AccountNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @GetMapping("/getCourseByEnrolledContentId/{enrolledContentId}")
     public Course getCourseByEnrolledContentId(@PathVariable Long enrolledContentId)
     {
