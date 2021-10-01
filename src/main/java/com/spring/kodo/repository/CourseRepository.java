@@ -18,6 +18,16 @@ public interface CourseRepository extends JpaRepository<Course, Long>
     @Query(value = "SELECT * FROM Course c JOIN Course_Lessons cl ON c.course_id = cl.course_id WHERE cl.lesson_id = :lessonId", nativeQuery = true)
     Optional<Course> findByLessonId(@Param("lessonId") Long lessonId);
 
+    @Query(value = "SELECT c.* FROM Course c\n" +
+            "    JOIN Course_Lessons cl\n" +
+            "    JOIN Lesson_Contents lc\n" +
+            "    JOIN Enrolled_Content ec\n" +
+            "        ON c.course_id = cl.course_id\n" +
+            "               AND cl.lesson_id = lc.lesson_id\n" +
+            "               AND lc.content_id = ec.parent_content_content_id\n" +
+            "WHERE ec.enrolled_content_id = :enrolledContentId", nativeQuery = true)
+    Optional<Course> findByEnrolledContentId(@Param("enrolledContentId") Long enrolledContentId);
+
     @Query("SELECT c FROM Course c WHERE c.isEnrollmentActive = TRUE")
     List<Course> findAllWithActiveEnrollment();
 

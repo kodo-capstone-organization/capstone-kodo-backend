@@ -57,6 +57,19 @@ public class LessonController
         }
     }
 
+    @GetMapping("/getLessonByEnrolledContentId/{enrolledContentId}")
+    public Lesson getLessonByEnrolledContentId(@PathVariable Long enrolledContentId)
+    {
+        try
+        {
+            return this.lessonService.getLessonByEnrolledContentId(enrolledContentId);
+        }
+        catch (LessonNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @PostMapping("/createNewLesson")
     public Lesson createNewLesson(@RequestPart(name = "courseId", required = true) Long courseId, @RequestPart(name = "name", required = true) String name,
                                   @RequestPart(name = "description", required = true) String description, @RequestPart(name = "sequence", required = true) Integer sequence)

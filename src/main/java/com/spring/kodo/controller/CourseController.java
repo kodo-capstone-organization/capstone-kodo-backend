@@ -65,6 +65,19 @@ public class CourseController
         }
     }
 
+    @GetMapping("/getCourseByEnrolledContentId/{enrolledContentId}")
+    public Course getCourseByEnrolledContentId(@PathVariable Long enrolledContentId)
+    {
+        try
+        {
+            return this.courseService.getCourseByEnrolledContentId(enrolledContentId);
+        }
+        catch (CourseNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @GetMapping("/getAllCoursesWithActiveEnrollment")
     public List<CourseWithTutorAndRatingResp> getAllCoursesWithActiveEnrollment()
     {

@@ -16,6 +16,8 @@ public interface LessonService
 
     Lesson getLessonByContentId(Long contentId) throws LessonNotFoundException;
 
+    Lesson getLessonByEnrolledContentId(Long enrolledContentId) throws LessonNotFoundException;
+
     List<Lesson> getAllLessons();
 
     Lesson updateLesson(Lesson lesson, List<Long> contentIds) throws LessonNotFoundException, UpdateContentException, UnknownPersistenceException, ContentNotFoundException, InputDataValidationException;
