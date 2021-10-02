@@ -415,10 +415,17 @@ public class AccountServiceImpl implements AccountService
 
                         if (oldHashedPassword.equals(storedHashedPassword))
                         {
-                            account.setPassword(newPassword);
+                            if (!oldPassword.equals(newPassword))
+                            {
+                                account.setPassword(newPassword);
 
-                            accountRepository.saveAndFlush(account);
-                            return account;
+                                accountRepository.saveAndFlush(account);
+                                return account;
+                            }
+                            else
+                            {
+                                throw new UpdateAccountException("Old password cannot be the same as New password");
+                            }
                         }
                         else
                         {
