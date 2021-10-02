@@ -125,6 +125,21 @@ public class LessonServiceImpl implements LessonService
     }
 
     @Override
+    public Lesson getLessonByStudentAttemptId(Long studentAttemptId) throws LessonNotFoundException
+    {
+        Lesson lesson = lessonRepository.findByStudentAttemptId(studentAttemptId).orElse(null);
+
+        if (lesson != null)
+        {
+            return lesson;
+        }
+        else
+        {
+            throw new LessonNotFoundException("Lesson with StudentAttempt ID: " + studentAttemptId + " does not exist!");
+        }
+    }
+
+    @Override
     public List<Lesson> getAllLessons()
     {
         return lessonRepository.findAll();

@@ -31,6 +31,8 @@ public interface CourseService
 
     Course getCourseByEnrolledContentId(Long enrolledContentId) throws CourseNotFoundException;
 
+    Course getCourseByStudentAttemptId(Long studentAttemptId) throws CourseNotFoundException;
+
     List<Course> getAllCoursesWithActiveEnrollment();
 
     List<Course> getAllCourses();

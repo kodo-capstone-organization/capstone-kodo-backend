@@ -70,9 +70,24 @@ public class LessonController
         }
     }
 
+    @GetMapping("/getLessonByStudentAttemptId/{studentAttemptId}")
+    public Lesson getLessonByStudentAttemptId(@PathVariable Long studentAttemptId)
+    {
+        try
+        {
+            return this.lessonService.getLessonByStudentAttemptId(studentAttemptId);
+        }
+        catch (LessonNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @PostMapping("/createNewLesson")
-    public Lesson createNewLesson(@RequestPart(name = "courseId", required = true) Long courseId, @RequestPart(name = "name", required = true) String name,
-                                  @RequestPart(name = "description", required = true) String description, @RequestPart(name = "sequence", required = true) Integer sequence)
+    public Lesson createNewLesson(
+            @RequestPart(name = "courseId", required = true) Long courseId, @RequestPart(name = "name", required = true) String name,
+            @RequestPart(name = "description", required = true) String description, @RequestPart(name = "sequence", required = true) Integer sequence
+    )
     {
         try
         {
@@ -94,8 +109,10 @@ public class LessonController
     }
 
     @PostMapping("/updateLesson")
-    public Lesson updateLesson(@RequestPart(name = "lessonId", required = true) Long lessonId, @RequestPart(name = "name", required = true) String name,
-                               @RequestPart(name = "description", required = true) String description)
+    public Lesson updateLesson(
+            @RequestPart(name = "lessonId", required = true) Long lessonId, @RequestPart(name = "name", required = true) String name,
+            @RequestPart(name = "description", required = true) String description
+    )
     {
         try
         {
@@ -134,15 +151,17 @@ public class LessonController
     }
 
     // To be called from CourseController. Lesson should not be updated as a standalone API
-    protected List<Long> updateLessonsInACourse(List<UpdateLessonReq> updateLessonReqs, List<MultipartFile>  lessonMultimedias) throws ContentNotFoundException, LessonNotFoundException, UpdateContentException, UnknownPersistenceException, CreateNewQuizException, InputDataValidationException, MultimediaExistsException, FileUploadToGCSException, MultimediaNotFoundException, CourseNotFoundException {
+    protected List<Long> updateLessonsInACourse(List<UpdateLessonReq> updateLessonReqs, List<MultipartFile> lessonMultimedias) throws ContentNotFoundException, LessonNotFoundException, UpdateContentException, UnknownPersistenceException, CreateNewQuizException, InputDataValidationException, MultimediaExistsException, FileUploadToGCSException, MultimediaNotFoundException, CourseNotFoundException
+    {
 
         List<Long> lessonIds = new ArrayList<>();
 
         // Update lessons and its contents first [SPECIAL CASE]
-        for (UpdateLessonReq updateLessonReq: updateLessonReqs)
+        for (UpdateLessonReq updateLessonReq : updateLessonReqs)
         {
             // Create new lesson
-            if (updateLessonReq.getLesson().getLessonId() == null) {
+            if (updateLessonReq.getLesson().getLessonId() == null)
+            {
                 Lesson newLesson = lessonService.createNewLesson(new Lesson(updateLessonReq.getLesson().getName(), updateLessonReq.getLesson().getDescription(), updateLessonReq.getLesson().getSequence()));
                 updateLessonReq.getLesson().setLessonId(newLesson.getLessonId());
             }
@@ -152,14 +171,16 @@ public class LessonController
             // Used to match file to multimediaReq
             HashMap<String, MultipartFile> fileMap = new HashMap<String, MultipartFile>();
 
-            if (lessonMultimedias != null) {
-                for (MultipartFile file : lessonMultimedias) {
+            if (lessonMultimedias != null)
+            {
+                for (MultipartFile file : lessonMultimedias)
+                {
                     fileMap.put(file.getOriginalFilename(), file);
                 }
             }
 
             // Retrieve or create quiz
-            for (Quiz quiz: updateLessonReq.getQuizzes())
+            for (Quiz quiz : updateLessonReq.getQuizzes())
             {
                 if (quiz.getContentId() == null)
                 {
@@ -172,7 +193,7 @@ public class LessonController
             }
 
             // Retrieve or create multimedia
-            for (MultimediaReq multimediaReq: updateLessonReq.getMultimediaReqs())
+            for (MultimediaReq multimediaReq : updateLessonReq.getMultimediaReqs())
             {
                 Multimedia multimedia = null;
 

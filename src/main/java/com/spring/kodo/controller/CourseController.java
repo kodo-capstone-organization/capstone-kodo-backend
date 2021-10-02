@@ -126,6 +126,19 @@ public class CourseController
         }
     }
 
+    @GetMapping("/getCourseByStudentAttemptId/{studentAttemptId}")
+    public Course getCourseByStudentAttemptId(@PathVariable Long studentAttemptId)
+    {
+        try
+        {
+            return this.courseService.getCourseByStudentAttemptId(studentAttemptId);
+        }
+        catch (CourseNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @GetMapping("/getAllCoursesWithActiveEnrollment")
     public List<CourseWithTutorAndRatingResp> getAllCoursesWithActiveEnrollment()
     {
