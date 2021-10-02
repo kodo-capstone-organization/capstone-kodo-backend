@@ -42,6 +42,21 @@ public class EnrolledContentController
         }
     }
 
+    @GetMapping("/getEnrolledContentByAccountIdAndContentId/{accountId}/{contentId}")
+    public EnrolledContent getEnrolledContentByAccountIdAndContentId(@PathVariable Long accountId, @PathVariable Long contentId)
+    {
+        try
+        {
+            EnrolledContent enrolledContent = enrolledContentService.getEnrolledContentByAccountIdAndContentId(accountId, contentId);
+
+            return enrolledContent;
+        }
+        catch (EnrolledContentNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @GetMapping("/getAllEnrolledContents")
     public List<EnrolledContent> getAllEnrolledContents()
     {
