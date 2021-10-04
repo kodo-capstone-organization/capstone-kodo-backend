@@ -17,16 +17,16 @@ public interface EnrolledCourseRepository extends JpaRepository<EnrolledCourse, 
 {
     Optional<EnrolledCourse> findByCourseRating(int courseRating);
 
-    @Query(value = "SELECT * FROM Enrolled_Course ec JOIN Enrolled_Course_Enrolled_Lessons ecel ON ec.enrolled_course_id = ecel.enrolled_course_id WHERE ecel.enrolled_lesson_id = :enrolledLessonId", nativeQuery = true)
+    @Query(value = "SELECT * FROM enrolled_course ec JOIN enrolled_course_enrolled_lessons ecel ON ec.enrolled_course_id = ecel.enrolled_course_id WHERE ecel.enrolled_lesson_id = :enrolledLessonId", nativeQuery = true)
     Optional<EnrolledCourse> findByEnrolledLessonId(@Param("enrolledLessonId") Long enrolledLessonId);
 
-    @Query(value = "SELECT ec.* FROM Enrolled_Course ec JOIN Enrolled_Course_Enrolled_Lessons ecel JOIN Enrolled_Lesson_Enrolled_Contents elec ON ec.enrolled_course_id = ecel.enrolled_course_id AND ecel.enrolled_lesson_id = elec.enrolled_lesson_id WHERE elec.enrolled_content_id = :enrolledContentId", nativeQuery = true)
+    @Query(value = "SELECT ec.* FROM enrolled_course ec JOIN enrolled_course_enrolled_lessons ecel JOIN enrolled_lesson_enrolled_contents elec ON ec.enrolled_course_id = ecel.enrolled_course_id AND ecel.enrolled_lesson_id = elec.enrolled_lesson_id WHERE elec.enrolled_content_id = :enrolledContentId", nativeQuery = true)
     Optional<EnrolledCourse> findByEnrolledContentId(@Param("enrolledContentId") Long enrolledContentId);
 
-    @Query(value = "SELECT * FROM Enrolled_Course ec JOIN Course c JOIN Account_Enrolled_Courses aec ON ec.parent_course_course_id = c.course_id AND ec.enrolled_course_id = aec.enrolled_course_id WHERE c.name LIKE :courseName AND aec.account_id = :studentId", nativeQuery = true)
+    @Query(value = "SELECT * FROM enrolled_course ec JOIN course c JOIN account_enrolled_courses aec ON ec.parent_course_course_id = c.course_id AND ec.enrolled_course_id = aec.enrolled_course_id WHERE c.name LIKE :courseName AND aec.account_id = :studentId", nativeQuery = true)
     Optional<EnrolledCourse> findByStudentIdAndCourseName(@Param("studentId") Long studentId, @Param("courseName") String courseName);
 
-    @Query(value = "SELECT * FROM Enrolled_Course ec JOIN Course c JOIN Account_Enrolled_Courses aec ON ec.parent_course_course_id = c.course_id AND ec.enrolled_course_id = aec.enrolled_course_id WHERE c.course_id LIKE :courseId AND aec.account_id = :studentId", nativeQuery = true)
+    @Query(value = "SELECT * FROM enrolled_course ec JOIN course c JOIN account_enrolled_courses aec ON ec.parent_course_course_id = c.course_id AND ec.enrolled_course_id = aec.enrolled_course_id WHERE c.course_id LIKE :courseId AND aec.account_id = :studentId", nativeQuery = true)
     Optional<EnrolledCourse> findByStudentIdAndCourseId(@Param("studentId") Long studentId, @Param("courseId") Long courseId);
 
     @Query(value = "SELECT \n" +
@@ -36,17 +36,17 @@ public interface EnrolledCourseRepository extends JpaRepository<EnrolledCourse, 
             "       COUNT(ecc.date_time_of_completion) /\n" +
             "(\n" +
             "    SELECT COUNT(*)\n" +
-            "    FROM Course_Lessons cl\n" +
-            "             JOIN Lesson_Contents lc\n" +
+            "    FROM course_lessons cl\n" +
+            "             JOIN lesson_contents lc\n" +
             "                  ON cl.lesson_id = lc.lesson_id\n" +
             "    WHERE cl.course_id = :courseId\n" +
             ") AS 'completionPercentage'\n" +
-            "FROM Account a\n" +
-            "    JOIN Account_Enrolled_Courses aec\n" +
-            "    JOIN Enrolled_Course ec\n" +
-            "    JOIN Enrolled_Course_Enrolled_Lessons ecel\n" +
-            "    JOIN Enrolled_Lesson_Enrolled_Contents elec\n" +
-            "    JOIN Enrolled_Content ecc\n" +
+            "FROM account a\n" +
+            "    JOIN account_enrolled_courses aec\n" +
+            "    JOIN enrolled_course ec\n" +
+            "    JOIN enrolled_course_enrolled_lessons ecel\n" +
+            "    JOIN enrolled_lesson_enrolled_contents elec\n" +
+            "    JOIN enrolled_content ecc\n" +
             "        ON a.account_id = aec.account_id\n" +
             "        AND aec.enrolled_course_id = ec.enrolled_course_id\n" +
             "        AND ec.enrolled_course_id = ecel.enrolled_course_id\n" +
@@ -62,12 +62,12 @@ public interface EnrolledCourseRepository extends JpaRepository<EnrolledCourse, 
             "       a.username AS 'studentUsername', \n" +
             "       a.is_active AS 'studentActive', \n"+
             "       ec.date_time_of_completion AS 'completionDate' \n" +
-            "FROM Account a\n" +
-            "    JOIN Account_Enrolled_Courses aec\n" +
-            "    JOIN Enrolled_Course ec\n" +
-            "    JOIN Enrolled_Course_Enrolled_Lessons ecel\n" +
-            "    JOIN Enrolled_Lesson_Enrolled_Contents elec\n" +
-            "    JOIN Enrolled_Content ecc\n" +
+            "FROM account a\n" +
+            "    JOIN account_enrolled_courses aec\n" +
+            "    JOIN enrolled_course ec\n" +
+            "    JOIN enrolled_course_enrolled_lessons ecel\n" +
+            "    JOIN enrolled_lesson_enrolled_contents elec\n" +
+            "    JOIN enrolled_content ecc\n" +
             "        ON a.account_id = aec.account_id\n" +
             "        AND aec.enrolled_course_id = ec.enrolled_course_id\n" +
             "        AND ec.enrolled_course_id = ecel.enrolled_course_id\n" +

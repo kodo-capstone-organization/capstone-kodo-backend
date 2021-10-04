@@ -6,8 +6,8 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
-@Entity
-@Table
+@Entity(name="student_attempt_answer")
+@Table(name="student_attempt_answer")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class StudentAttemptAnswer
 {

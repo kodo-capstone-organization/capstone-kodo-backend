@@ -21,10 +21,10 @@ public interface QuizRepository extends JpaRepository<Quiz, Long>
             "       q.time_limit AS 'timeLimit',\n" +
             "       q.max_attempts_per_student AS 'maxAttemptsPerStudent',\n" +
             "       (q.max_attempts_per_student - COUNT(sa.student_attempt_id)) AS 'studentAttemptCount'\n" +
-            "FROM Enrolled_Lesson el\n" +
-            "    JOIN Lesson_Contents lc\n" +
-            "    JOIN Quiz q\n" +
-            "    JOIN Student_Attempt sa\n" +
+            "FROM enrolled_lesson el\n" +
+            "    JOIN lesson_contents lc\n" +
+            "    JOIN quiz q\n" +
+            "    JOIN student_attempt sa\n" +
             "ON el.parent_lesson_lesson_id = lc.lesson_id\n" +
             "AND lc.content_id = q.content_id\n" +
             "AND q.content_id = sa.quiz_content_id\n" +

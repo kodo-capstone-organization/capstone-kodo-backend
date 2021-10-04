@@ -5,13 +5,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table
+@Entity(name="enrolled_course")
+@Table(name="enrolled_course")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class EnrolledCourse
 {

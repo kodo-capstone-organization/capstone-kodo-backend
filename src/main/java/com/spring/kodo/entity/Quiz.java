@@ -12,8 +12,8 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table
+@Entity(name="quiz")
+@Table(name="quiz")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "quizQuestions", "studentAttempts"})
 @JsonTypeName("quiz")
 public class Quiz extends Content

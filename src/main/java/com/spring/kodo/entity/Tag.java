@@ -8,8 +8,8 @@ import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Locale;
 
-@Entity
-@Table
+@Entity(name="tag")
+@Table(name="tag")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Tag
 {

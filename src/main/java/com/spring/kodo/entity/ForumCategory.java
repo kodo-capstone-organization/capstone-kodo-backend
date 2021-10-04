@@ -8,8 +8,8 @@ import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table
+@Entity(name="forum_category")
+@Table(name="forum_category")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ForumCategory
 {

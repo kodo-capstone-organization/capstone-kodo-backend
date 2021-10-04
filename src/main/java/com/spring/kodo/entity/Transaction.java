@@ -12,8 +12,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"transactionId", "stripeTransactionId"}))
+@Entity(name="transaction")
+@Table(name="transaction", uniqueConstraints = @UniqueConstraint(columnNames = {"transactionId", "stripeTransactionId"}))
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Transaction
 {

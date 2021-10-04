@@ -15,27 +15,27 @@ public interface CourseRepository extends JpaRepository<Course, Long>
 {
     Optional<Course> findByName(String name);
 
-    @Query(value = "SELECT * FROM Course c JOIN Course_Lessons cl ON c.course_id = cl.course_id WHERE cl.lesson_id = :lessonId", nativeQuery = true)
+    @Query(value = "SELECT * FROM course c JOIN course_lessons cl ON c.course_id = cl.course_id WHERE cl.lesson_id = :lessonId", nativeQuery = true)
     Optional<Course> findByLessonId(@Param("lessonId") Long lessonId);
 
-    @Query(value = "SELECT c.* FROM Course c\n" +
-            "    JOIN Course_Lessons cl\n" +
-            "    JOIN Lesson_Contents lc\n" +
-            "    JOIN Enrolled_Content ec\n" +
+    @Query(value = "SELECT c.* FROM course c\n" +
+            "    JOIN course_lessons cl\n" +
+            "    JOIN lesson_contents lc\n" +
+            "    JOIN enrolled_content ec\n" +
             "        ON c.course_id = cl.course_id\n" +
             "               AND cl.lesson_id = lc.lesson_id\n" +
             "               AND lc.content_id = ec.parent_content_content_id\n" +
             "WHERE ec.enrolled_content_id = :enrolledContentId", nativeQuery = true)
     Optional<Course> findByEnrolledContentId(@Param("enrolledContentId") Long enrolledContentId);
 
-    @Query(value = "SELECT c.* FROM Course c JOIN Course_Lessons cl JOIN Lesson_Contents lc ON c.course_id = cl.course_id AND cl.lesson_id = lc.lesson_id WHERE lc.content_id = :contentId", nativeQuery = true)
+    @Query(value = "SELECT c.* FROM course c JOIN course_lessons cl JOIN lesson_contents lc ON c.course_id = cl.course_id AND cl.lesson_id = lc.lesson_id WHERE lc.content_id = :contentId", nativeQuery = true)
     Optional<Course> findByContentId(@Param("contentId") Long contentId);
 
-    @Query(value = "SELECT c.* FROM Course c\n" +
-            "JOIN Enrolled_Course ec\n" +
-            "    JOIN Enrolled_Course_Enrolled_Lessons ecel\n" +
-            "    JOIN Enrolled_Lesson_Enrolled_Contents elec\n" +
-            "    JOIN Enrolled_Content_Student_Attempts ecsa\n" +
+    @Query(value = "SELECT c.* FROM course c\n" +
+            "JOIN enrolled_course ec\n" +
+            "    JOIN enrolled_course_enrolled_lessons ecel\n" +
+            "    JOIN enrolled_lesson_enrolled_contents elec\n" +
+            "    JOIN enrolled_content_student_attempts ecsa\n" +
             "ON c.course_id = ec.parent_course_course_id\n" +
             "    AND ec.enrolled_course_id = ecel.enrolled_course_id\n" +
             "    AND ecel.enrolled_lesson_id = elec.enrolled_lesson_id\n" +
@@ -43,19 +43,19 @@ public interface CourseRepository extends JpaRepository<Course, Long>
             "WHERE ecsa.student_attempt_id = :studentAttemptId", nativeQuery = true)
     Optional<Course> findByStudentAttemptId(@Param("studentAttemptId") Long studentAttemptId);
 
-    @Query("SELECT c FROM Course c WHERE c.isEnrollmentActive = TRUE")
+    @Query("SELECT c FROM course c WHERE c.isEnrollmentActive = TRUE")
     List<Course> findAllWithActiveEnrollment();
 
-    @Query(value = "SELECT c.* FROM Tag t JOIN Course_Course_Tags cct JOIN Course c ON t.tag_id = cct.tag_id AND c.course_id = cct.course_id WHERE t.title = :tagTitle", nativeQuery = true)
+    @Query(value = "SELECT c.* FROM tag t JOIN course_course_tags cct JOIN course c ON t.tag_id = cct.tag_id AND c.course_id = cct.course_id WHERE t.title = :tagTitle", nativeQuery = true)
     List<Course> findAllCoursesByTagTitle(@Param("tagTitle") String tagTitle);
 
-    @Query(value = "SELECT c.* FROM Course c JOIN Course_Course_Tags cct ON c.course_id = cct.course_id WHERE cct.tag_id = :tagId", nativeQuery = true)
+    @Query(value = "SELECT c.* FROM course c JOIN course_course_tags cct ON c.course_id = cct.course_id WHERE cct.tag_id = :tagId", nativeQuery = true)
     List<Course> findAllCoursesByTagId(@Param("tagId") Long tagId);
 
-    @Query("SELECT c FROM Course c WHERE c.name LIKE %:keyword%")
+    @Query("SELECT c FROM course c WHERE c.name LIKE %:keyword%")
     List<Course> findAllCoursesByKeyword(@Param("keyword") String keyword);
 
-    @Query("SELECT a.courses FROM Account a WHERE a.accountId = :tutorId")
+    @Query("SELECT a.courses FROM account a WHERE a.accountId = :tutorId")
     List<Course> findAllCoursesByTutorId(@Param("tutorId") Long tutorId);
 
     @Query(value =
@@ -63,34 +63,34 @@ public interface CourseRepository extends JpaRepository<Course, Long>
                     "FROM\n" +
                     "(\n" +
                     " SELECT DISTINCT c.*\n" +
-                    " FROM Course c\n" +
+                    " FROM course c\n" +
                     "    JOIN\n" +
                     "      (\n" +
                     "          SELECT limitedTagsTable.tag_id\n" +
                     "          FROM (\n" +
                     "                   SELECT cct.tag_id\n" +
-                    "                   FROM Account_Enrolled_Courses aec\n" +
-                    "                            JOIN Course_Course_Tags cct\n" +
+                    "                   FROM account_enrolled_courses aec\n" +
+                    "                            JOIN course_course_tags cct\n" +
                     "                                 ON aec.enrolled_course_id = cct.course_id\n" +
                     "                   WHERE aec.account_id = :accountId\n" +
                     "                   UNION ALL\n" +
                     "                   SELECT ai.tag_id\n" +
-                    "                   FROM Account_Interests ai\n" +
+                    "                   FROM account_interests ai\n" +
                     "                   WHERE ai.account_id = :accountId\n" +
                     "               ) AS limitedTagsTable\n" +
                     "          GROUP BY limitedTagsTable.tag_id\n" +
                     "          ORDER BY COUNT(limitedTagsTable.tag_id) DESC\n" +
                     "          LIMIT :limit\n" +
                     "      ) AS limitedTagsTable\n" +
-                    "      JOIN Course_Course_Tags cct\n" +
+                    "      JOIN course_course_tags cct\n" +
                     "          ON c.course_id = cct.course_id\n" +
                     "          AND cct.tag_id = limitedTagsTable.tag_id\n" +
                     ") AS interestsAndEnrolledCourses\n" +
                     "LEFT JOIN\n" +
                     "(\n" +
                     "    SELECT ec.parent_course_course_id AS 'course_id'\n" +
-                    "    FROM Account_Enrolled_Courses aec\n" +
-                    "             JOIN Enrolled_Course ec\n" +
+                    "    FROM account_enrolled_courses aec\n" +
+                    "             JOIN enrolled_course ec\n" +
                     "                  on aec.enrolled_course_id = ec.enrolled_course_id\n" +
                     "    WHERE aec.account_id = :accountId\n" +
                     ") AS enrolledCourses\n" +
@@ -101,14 +101,14 @@ public interface CourseRepository extends JpaRepository<Course, Long>
 
     @Query(value =
             "SELECT DISTINCT c.*\n" +
-                    "FROM Course c\n" +
-                    "    JOIN Course_Course_Tags cct\n" +
+                    "FROM course c\n" +
+                    "    JOIN course_course_tags cct\n" +
                     "        ON c.course_id = cct.course_id\n" +
                     "LEFT JOIN\n" +
                     "(\n" +
                     "    SELECT ec.parent_course_course_id AS 'course_id'\n" +
-                    "    FROM Account_Enrolled_Courses aec\n" +
-                    "             JOIN Enrolled_Course ec\n" +
+                    "    FROM account_enrolled_courses aec\n" +
+                    "             JOIN enrolled_course ec\n" +
                     "                  on aec.enrolled_course_id = ec.enrolled_course_id\n" +
                     "    WHERE aec.account_id = :accountId\n" +
                     ") AS enrolledCourses\n" +
@@ -118,7 +118,7 @@ public interface CourseRepository extends JpaRepository<Course, Long>
             nativeQuery = true)
     List<Course> findAllCoursesToRecommendByAccountIdAndTagIds(@Param("accountId") Long accountId, @Param("tagIds") List<Long> tagIds);
 
-    @Query(value = "SELECT * FROM Course c WHERE c.date_time_of_creation > NOW() - INTERVAL 14 DAY", nativeQuery = true)
+    @Query(value = "SELECT * FROM course c WHERE c.date_time_of_creation > NOW() - INTERVAL 14 DAY", nativeQuery = true)
     List<Course> findAllCoursesCreatedInTheLast14Days();
 
     // Popular courses are determined by courses that have
@@ -128,23 +128,23 @@ public interface CourseRepository extends JpaRepository<Course, Long>
             "FROM (\n" +
             "         SELECT ec.parent_course_course_id                                    AS course_id,\n" +
             "                PERCENT_RANK() over ( ORDER BY COUNT(ec.enrolled_course_id) ) AS percentile\n" +
-            "         FROM Enrolled_Course ec\n" +
+            "         FROM enrolled_course ec\n" +
             "         GROUP BY ec.parent_course_course_id\n" +
             "         ORDER BY percentile DESC\n" +
             "     ) AS course_enrollment_percentile\n" +
-            "JOIN Course c\n" +
+            "JOIN course c\n" +
             "    ON c.course_id = course_enrollment_percentile.course_id\n" +
             "WHERE course_enrollment_percentile.percentile >= 0.75\n" +
             "ORDER BY c.name",
             nativeQuery = true)
     List<Course> findAllCoursesThatArePopular();
 
-    @Query(value = "SELECT AVG(ec.course_rating) FROM Course c JOIN Enrolled_Course ec WHERE c.course_id = :courseId", nativeQuery = true)
+    @Query(value = "SELECT AVG(ec.course_rating) FROM course c JOIN enrolled_course ec WHERE c.course_id = :courseId", nativeQuery = true)
     Double findCourseRatingByCourseId(@Param("courseId") Long courseId);
 
-    @Query(value = "SELECT SUM(t.course_price) FROM Transaction t WHERE t.course_course_id = :courseId", nativeQuery = true)
+    @Query(value = "SELECT SUM(t.course_price) FROM `transaction` t WHERE t.course_course_id = :courseId", nativeQuery = true)
     BigDecimal findTotalEarningsByCourseId(@Param("courseId") Long courseId);
 
-    @Query(value = "SELECT SUM(t.course_price) FROM Transaction t WHERE t.course_course_id = :courseId AND YEAR(t.date_time_of_transaction) BETWEEN :year AND YEAR(DATE_ADD(:year, INTERVAL 1 YEAR))", nativeQuery = true)
+    @Query(value = "SELECT SUM(t.course_price) FROM `transaction` t WHERE t.course_course_id = :courseId AND YEAR(t.date_time_of_transaction) BETWEEN :year AND YEAR(DATE_ADD(:year, INTERVAL 1 YEAR))", nativeQuery = true)
     BigDecimal findTotalEarningsByCourseIdAndYear(@Param("courseId") Long courseId, @Param("year") Integer year);
 }

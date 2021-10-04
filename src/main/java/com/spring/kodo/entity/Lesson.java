@@ -10,8 +10,8 @@ import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table
+@Entity(name="lesson")
+@Table(name="lesson")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Lesson
 {

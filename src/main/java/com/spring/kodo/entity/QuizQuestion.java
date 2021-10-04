@@ -11,8 +11,8 @@ import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table
+@Entity(name="quiz_question")
+@Table(name="quiz_question")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class QuizQuestion
 {

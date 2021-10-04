@@ -6,8 +6,8 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table
+@Entity(name="student_attempt_question")
+@Table(name="student_attempt_question")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class StudentAttemptQuestion
 {

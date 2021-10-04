@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-@Entity
-@Table
+@Entity(name="account")
+@Table(name="account")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "forumPosts"})
 public class Account
 {

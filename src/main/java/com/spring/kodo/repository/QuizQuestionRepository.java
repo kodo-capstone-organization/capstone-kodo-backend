@@ -17,23 +17,23 @@ public interface QuizQuestionRepository extends JpaRepository<QuizQuestion, Long
 
     Optional<QuizQuestion> findByQuestionType(QuestionType questionType);
 
-    @Query(value = "SELECT qq.* FROM Quiz_Question qq WHERE Quiz_Content_Id = :quizId", nativeQuery = true)
+    @Query(value = "SELECT qq.* FROM quiz_question qq WHERE Quiz_Content_Id = :quizId", nativeQuery = true)
     List<QuizQuestion> findAllQuizQuestionsByQuizId(@Param("quizId") Long quizId);
 
     @Query(value =
             "SELECT qq.*\n" +
-            "FROM Quiz_Question qq\n" +
-            "    JOIN Lesson_Contents lc\n" +
-            "    JOIN Course_Lessons cl\n" +
-            "    JOIN Account_Courses ac\n" +
+            "FROM quiz_question qq\n" +
+            "    JOIN lesson_contents lc\n" +
+            "    JOIN course_lessons cl\n" +
+            "    JOIN account_courses ac\n" +
             "        ON qq.quiz_content_id = lc.content_id\n" +
             "        AND lc.lesson_id = cl.lesson_id\n" +
             "        AND cl.course_id = ac.course_id\n" +
             "WHERE ac.account_id = :tutorId", nativeQuery = true)
     List<QuizQuestion> findAllQuizQuestionsByTutorId(@Param("tutorId") Long tutorId);
 
-    @Query("SELECT COUNT(saq) > 0\n" +
-            "FROM StudentAttemptQuestion saq\n" +
-            "WHERE saq.quizQuestion.quizQuestionId = :quizQuestionId")
+    @Query(value = "SELECT COUNT(saq) > 0\n" +
+            "FROM student_attempt_question saq\n" +
+            "WHERE saq.quizQuestion.quizQuestionId = :quizQuestionId", nativeQuery = true)
     Boolean containsStudentAttemptQuestions(@Param("quizQuestionId") Long quizQuestionId);
 }

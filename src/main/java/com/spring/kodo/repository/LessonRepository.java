@@ -14,16 +14,16 @@ public interface LessonRepository extends JpaRepository<Lesson, Long>
 {
     Optional<Lesson> findByName(String name);
 
-    @Query(value = "SELECT * FROM Lesson l JOIN Lesson_Contents lc ON l.lesson_id = lc.lesson_id WHERE lc.content_id = :contentId", nativeQuery = true)
+    @Query(value = "SELECT * FROM lesson l JOIN lesson_contents lc ON l.lesson_id = lc.lesson_id WHERE lc.content_id = :contentId", nativeQuery = true)
     Optional<Lesson> findByContentId(@Param("contentId") Long contentId);
 
-    @Query(value = "SELECT l.* FROM Lesson l JOIN Lesson_Contents lc JOIN Enrolled_Content ec ON l.lesson_id = lc.lesson_id AND lc.content_id = ec.parent_content_content_id WHERE ec.enrolled_content_id = :enrolledContentId", nativeQuery = true)
+    @Query(value = "SELECT l.* FROM lesson l JOIN lesson_contents lc JOIN enrolled_content ec ON l.lesson_id = lc.lesson_id AND lc.content_id = ec.parent_content_content_id WHERE ec.enrolled_content_id = :enrolledContentId", nativeQuery = true)
     Optional<Lesson> findByEnrolledContentId(@Param("enrolledContentId") Long enrolledContentId);
 
-    @Query(value = "SELECT l.* FROM Lesson l\n" +
-            "JOIN Enrolled_Lesson el\n" +
-            "    JOIN Enrolled_Lesson_Enrolled_Contents elec\n" +
-            "    JOIN Enrolled_Content_Student_Attempts ecsa\n" +
+    @Query(value = "SELECT l.* FROM lesson l\n" +
+            "JOIN enrolled_lesson el\n" +
+            "    JOIN enrolled_lesson_enrolled_contents elec\n" +
+            "    JOIN enrolled_content_student_attempts ecsa\n" +
             "ON l.lesson_id = el.parent_lesson_lesson_id\n" +
             "    AND el.enrolled_lesson_id = elec.enrolled_lesson_id\n" +
             "    AND elec.enrolled_content_id = ecsa.enrolled_content_id\n" +

@@ -27,33 +27,33 @@ public interface AccountRepository extends JpaRepository<Account, Long>
 
     Optional<Account> findByEmail(String email);
 
-    @Query(value = "SELECT * FROM Account a JOIN Account_Courses ac ON a.account_id = ac.account_id WHERE ac.course_id = :courseId", nativeQuery = true)
+    @Query(value = "SELECT * FROM account a JOIN kodo.account_courses ac ON a.account_id = ac.account_id WHERE ac.course_id = :courseId", nativeQuery = true)
     Optional<Account> findByCourseId(@Param("courseId") Long courseId);
 
-    @Query(value = "SELECT * FROM Account a JOIN Account_Enrolled_Courses aec ON a.account_id = aec.account_id WHERE aec.enrolled_course_id = :enrolledCourseId", nativeQuery = true)
+    @Query(value = "SELECT * FROM account a JOIN kodo.account_enrolled_courses aec ON a.account_id = aec.account_id WHERE aec.enrolled_course_id = :enrolledCourseId", nativeQuery = true)
     Optional<Account> findByEnrolledCourseId(@Param("enrolledCourseId") Long enrolledCourseId);
 
-    @Query(value = "SELECT * FROM Account a JOIN Account_Student_Attempts asa ON a.account_id = asa.account_id WHERE asa.student_attempt_id = :studentAttemptId", nativeQuery = true)
+    @Query(value = "SELECT * FROM account a JOIN account_student_attempts asa ON a.account_id = asa.account_id WHERE asa.student_attempt_id = :studentAttemptId", nativeQuery = true)
     Optional<Account> findByStudentAttemptId(@Param("studentAttemptId") Long studentAttemptId);
 
-    @Query(value = "SELECT * FROM Account a JOIN account_courses ac ON a.account_id = ac.account_id\n"
+    @Query(value = "SELECT * FROM account a JOIN account_courses ac ON a.account_id = ac.account_id\n"
                    + "    JOIN course_lessons cl ON ac.course_id = cl.course_id\n"
                    + "    JOIN lesson_contents lc ON cl.lesson_id = lc.lesson_id WHERE lc.content_id = :quizId", nativeQuery = true)
     Optional<Account> findByQuizId(@Param("quizId") Long quizId);
 
-    @Query(value = "SELECT a.* FROM Account a JOIN Account_Interests ai ON a.account_id = ai.account_id WHERE ai.tag_id = :tagId", nativeQuery = true)
+    @Query(value = "SELECT a.* FROM account a JOIN account_interests ai ON a.account_id = ai.account_id WHERE ai.tag_id = :tagId", nativeQuery = true)
     List<Account> findAllAccountsByTagId(@Param("tagId") Long tagId);
 
     Boolean existsByUsername(String username);
 
     Boolean existsByEmail(String email);
 
-    @Query(value = "SELECT COUNT(*) FROM Account a JOIN Account_Courses ac on a.account_id = ac.account_id JOIN Course c ON c.course_id = ac.course_id JOIN enrolled_course ec ON ec.parent_course_course_id = c.course_id WHERE a.account_id = :accountId", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM account a JOIN account_courses ac on a.account_id = ac.account_id JOIN course c ON c.course_id = ac.course_id JOIN enrolled_course ec ON ec.parent_course_course_id = c.course_id WHERE a.account_id = :accountId", nativeQuery = true)
     Optional<Integer> getTotalEnrollmentCountByAccountId(@Param("accountId") Long accountId);
 
-    @Query(value = "SELECT COUNT(*) FROM Account a JOIN Account_Courses ac on a.account_id = ac.account_id JOIN Course c ON c.course_id = ac.course_id WHERE a.account_id = :accountId AND c.is_enrollment_active = TRUE", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM account a JOIN account_courses ac on a.account_id = ac.account_id JOIN course c ON c.course_id = ac.course_id WHERE a.account_id = :accountId AND c.is_enrollment_active = TRUE", nativeQuery = true)
     Optional<Integer> getTotalPublishedCourseCountByAccountId(@Param("accountId") Long accountId);
 
-    @Query(value = "SELECT COUNT(*) FROM Account a JOIN Account_Courses ac on a.account_id = ac.account_id JOIN Course c ON c.course_id = ac.course_id WHERE a.account_id = :accountId", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM account a JOIN account_courses ac on a.account_id = ac.account_id JOIN course c ON c.course_id = ac.course_id WHERE a.account_id = :accountId", nativeQuery = true)
     Optional<Integer> getTotalCourseCountByAccountId(@Param("accountId") Long accountId);
 }

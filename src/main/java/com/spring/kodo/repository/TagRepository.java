@@ -21,31 +21,31 @@ public interface TagRepository extends JpaRepository<Tag, Long>
                     "t.title AS title,\n" +
                     "(\n" +
                     "    SELECT COUNT(*)\n" +
-                    "    FROM Account_Interests a\n" +
+                    "    FROM account_interests a\n" +
                     "    WHERE a.tag_id = t.tag_id\n" +
                     ") AS accountsCount,\n" +
                     "(\n" +
                     "    SELECT COUNT(*)\n" +
-                    "    FROM Course_Course_Tags cct\n" +
+                    "    FROM course_course_tags cct\n" +
                     "    WHERE cct.tag_id = t.tag_id\n" +
                     ") AS coursesCount\n" +
-                    "FROM Tag t;", nativeQuery = true)
+                    "FROM tag t;", nativeQuery = true)
     List<TagWithAccountsCountAndCoursesCount> findAllTagsWithAccountsCountAndCoursesCount();
 
     @Query(value =
             "SELECT t.*\n" +
                     "FROM (\n" +
                     "         SELECT cct.tag_id\n" +
-                    "         FROM Account_Enrolled_Courses aec\n" +
-                    "                  JOIN Course_Course_Tags cct\n" +
+                    "         FROM account_enrolled_courses aec\n" +
+                    "                  JOIN course_course_tags cct\n" +
                     "                       ON aec.enrolled_course_id = cct.course_id\n" +
                     "         WHERE aec.account_id = :accountId\n" +
                     "         UNION ALL\n" +
                     "         SELECT ai.tag_id\n" +
-                    "         FROM Account_Interests ai\n" +
+                    "         FROM account_interests ai\n" +
                     "         WHERE ai.account_id = :accountId\n" +
                     "     ) AS limitedTagsTable\n" +
-                    "JOIN Tag t\n" +
+                    "JOIN tag t\n" +
                     "    ON t.tag_id = limitedTagsTable.tag_id\n" +
                     "GROUP BY t.tag_id\n" +
                     "ORDER BY COUNT(t.tag_id) DESC\n" +

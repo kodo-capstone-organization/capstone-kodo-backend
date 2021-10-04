@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table
+@Entity(name="enrolled_lesson")
+@Table(name="enrolled_lesson")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class EnrolledLesson
 {

@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table
+@Entity(name="forum_thread")
+@Table(name="forum_thread")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ForumThread
 {

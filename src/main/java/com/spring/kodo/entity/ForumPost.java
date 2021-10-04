@@ -9,8 +9,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
-@Entity
-@Table
+@Entity(name="forum_post")
+@Table(name="forum_post")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ForumPost
 {
