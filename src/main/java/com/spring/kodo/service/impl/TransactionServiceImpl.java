@@ -471,7 +471,7 @@ public class TransactionServiceImpl implements TransactionService
 
         if (requestingAccount.getIsAdmin())
         {
-            return this.transactionRepository.getLifetimeEarningsByPayeeId(tutorAccount.getAccountId()).get();
+            return this.transactionRepository.getLifetimeEarningsByPayeeId(tutorAccount.getAccountId()).orElse(new BigDecimal(0));
         }
         else
         {
@@ -487,7 +487,7 @@ public class TransactionServiceImpl implements TransactionService
 
         if (requestingAccount.getIsAdmin())
         {
-            return this.transactionRepository.getCurrentMonthEarningsByPayeeId(tutorAccount.getAccountId()).get();
+            return this.transactionRepository.getCurrentMonthEarningsByPayeeId(tutorAccount.getAccountId()).orElse(new BigDecimal(0));
         }
         else
         {
@@ -496,7 +496,7 @@ public class TransactionServiceImpl implements TransactionService
     }
 
     @Override
-    public Map<String, BigDecimal> getMonthlyTutorEarningForLastYear(Long requestingAccountId, Long tutorId) throws AccountPermissionDeniedException, AccountNotFoundException
+    public List<MonthlyEarningResp> getMonthlyTutorEarningForLastYear(Long requestingAccountId, Long tutorId) throws AccountPermissionDeniedException, AccountNotFoundException
     {
         Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
         Account tutorAccount = this.accountService.getAccountByAccountId(tutorId);
@@ -506,7 +506,7 @@ public class TransactionServiceImpl implements TransactionService
             LocalDate today = LocalDate.now();
             LocalDate currentMonth = today.withDayOfMonth(1);
 
-            Map<String,BigDecimal> monthlyTutorEarningsForLastYear = new HashMap<>();
+            List<MonthlyEarningResp> monthlyTutorEarningsForLastYear = new ArrayList<>();
 
             List<String> monthListShortName = NowMonthYearUtil.getMonthListShortName();
 
@@ -517,8 +517,13 @@ public class TransactionServiceImpl implements TransactionService
 
                 BigDecimal earningsForCurrentMonth = this.transactionRepository.getMonthlyTransactionByPayeeId(tutorAccount.getAccountId(), year, month).orElse(new BigDecimal(0));
 
-                monthlyTutorEarningsForLastYear.put(monthListShortName.get(month-1) + " " + year, earningsForCurrentMonth);
+                monthlyTutorEarningsForLastYear.add(new MonthlyEarningResp(monthListShortName.get(month-1) + " " + year, earningsForCurrentMonth));
+
+                currentMonth = currentMonth.minusMonths(1);
             }
+
+            // Reverse value to return earnings in sequential ordering
+            Collections.reverse(monthlyTutorEarningsForLastYear);
 
             return monthlyTutorEarningsForLastYear;
         }

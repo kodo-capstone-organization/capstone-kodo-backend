@@ -58,5 +58,5 @@ public interface TransactionService
 
     public BigDecimal getCurrentMonthTutorEarning(Long requestingAccountId, Long tutorId) throws AccountPermissionDeniedException, AccountNotFoundException;
 
-    public Map<String, BigDecimal> getMonthlyTutorEarningForLastYear(Long requestingAccountId, Long tutorId) throws AccountPermissionDeniedException, AccountNotFoundException;
+    public List<MonthlyEarningResp> getMonthlyTutorEarningForLastYear(Long requestingAccountId, Long tutorId) throws AccountPermissionDeniedException, AccountNotFoundException;
 }

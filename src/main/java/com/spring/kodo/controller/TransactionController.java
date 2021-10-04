@@ -224,11 +224,15 @@ public class TransactionController
     {
         try
         {
+            Account tutor = this.accountService.getAccountByAccountId(tutorId);
             BigDecimal lifetimeTutorEarnings = this.transactionService.getLifetimeTutorEarning(requestingAccountId, tutorId);
             BigDecimal currentMonthTutorEarnings = this.transactionService.getCurrentMonthTutorEarning(requestingAccountId, tutorId);
-            Map<String, BigDecimal> monthlyTutorEarningsForLastYear = this.transactionService.getMonthlyTutorEarningForLastYear(requestingAccountId, tutorId);
+            List<MonthlyEarningResp> monthlyTutorEarningsForLastYear = this.transactionService.getMonthlyTutorEarningForLastYear(requestingAccountId, tutorId);
 
             TutorEarningsResp tutorEarningsResp = new TutorEarningsResp();
+            tutorEarningsResp.setTutorId(tutor.getAccountId());
+            tutorEarningsResp.setTutorName(tutor.getName());
+
             tutorEarningsResp.setLifetimeTutorEarning(lifetimeTutorEarnings);
             tutorEarningsResp.setCurrentMonthTutorEarning(currentMonthTutorEarnings);
             tutorEarningsResp.setMonthlyTutorEarningsForLastYear(monthlyTutorEarningsForLastYear);

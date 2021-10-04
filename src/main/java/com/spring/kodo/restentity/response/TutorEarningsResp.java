@@ -1,20 +1,27 @@
 package com.spring.kodo.restentity.response;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 public class TutorEarningsResp
 {
+    private Long tutorId;
+
+    private String tutorName;
+
     private BigDecimal lifetimeTutorEarning;
 
     private BigDecimal currentMonthTutorEarning;
 
-    private Map<String, BigDecimal> monthlyTutorEarningsForLastYear;
+    private List<MonthlyEarningResp> monthlyTutorEarningsForLastYear;
 
     public TutorEarningsResp() {
     }
 
-    public TutorEarningsResp(BigDecimal lifetimeTutorEarning, BigDecimal currentMonthTutorEarning, Map<String, BigDecimal> monthlyTutorEarningsForLastYear) {
+    public TutorEarningsResp(Long tutorId, String tutorName, BigDecimal lifetimeTutorEarning, BigDecimal currentMonthTutorEarning, List<MonthlyEarningResp> monthlyTutorEarningsForLastYear) {
+        this.tutorId = tutorId;
+        this.tutorName = tutorName;
         this.lifetimeTutorEarning = lifetimeTutorEarning;
         this.currentMonthTutorEarning = currentMonthTutorEarning;
         this.monthlyTutorEarningsForLastYear = monthlyTutorEarningsForLastYear;
@@ -36,11 +43,38 @@ public class TutorEarningsResp
         this.currentMonthTutorEarning = currentMonthTutorEarning;
     }
 
-    public Map<String, BigDecimal> getMonthlyTutorEarningsForLastYear() {
+    public Long getTutorId() {
+        return tutorId;
+    }
+
+    public void setTutorId(Long tutorId) {
+        this.tutorId = tutorId;
+    }
+
+    public String getTutorName() {
+        return tutorName;
+    }
+
+    public void setTutorName(String tutorName) {
+        this.tutorName = tutorName;
+    }
+
+    public List<MonthlyEarningResp> getMonthlyTutorEarningsForLastYear() {
         return monthlyTutorEarningsForLastYear;
     }
 
-    public void setMonthlyTutorEarningsForLastYear(Map<String, BigDecimal> monthlyTutorEarningsForLastYear) {
+    public void setMonthlyTutorEarningsForLastYear(List<MonthlyEarningResp> monthlyTutorEarningsForLastYear) {
         this.monthlyTutorEarningsForLastYear = monthlyTutorEarningsForLastYear;
+    }
+
+    @Override
+    public String toString() {
+        return "TutorEarningsResp{" +
+                "tutorId=" + tutorId +
+                ", tutorName='" + tutorName + '\'' +
+                ", lifetimeTutorEarning=" + lifetimeTutorEarning +
+                ", currentMonthTutorEarning=" + currentMonthTutorEarning +
+                ", monthlyTutorEarningsForLastYear=" + monthlyTutorEarningsForLastYear +
+                '}';
     }
 }
