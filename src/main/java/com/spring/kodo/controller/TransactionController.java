@@ -2,10 +2,12 @@ package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Course;
+import com.spring.kodo.entity.Tag;
 import com.spring.kodo.entity.Transaction;
 import com.spring.kodo.restentity.response.*;
 import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.CourseService;
+import com.spring.kodo.service.inter.TagService;
 import com.spring.kodo.service.inter.TransactionService;
 import com.spring.kodo.util.exception.AccountNotFoundException;
 import com.spring.kodo.util.exception.AccountPermissionDeniedException;
@@ -39,6 +41,9 @@ public class TransactionController
 
     @Autowired
     public CourseService courseService;
+
+    @Autowired
+    public TagService tagService;
 
     @GetMapping("/getAllPlatformTransactions/{accountId}")
     public List<Transaction> getAllPlatformTransactions(@PathVariable Long accountId)
@@ -188,11 +193,16 @@ public class TransactionController
     {
         try
         {
+            Tag tag = this.tagService.getTagByTagId(tagId);
+
             BigDecimal lifetimeTagEarnings = this.transactionService.getLifetimeTagEarning(requestingAccountId, tagId);
             BigDecimal currentMonthTagEarnings = this.transactionService.getCurrentMonthTagEarning(requestingAccountId, tagId);
-            Map<String, BigDecimal> monthlyTagEarningsForLastYear = this.transactionService.getMonthlyTagEarningForLastYear(requestingAccountId, tagId);
+            List<MonthlyEarningResp> monthlyTagEarningsForLastYear = this.transactionService.getMonthlyTagEarningForLastYear(requestingAccountId, tagId);
 
             TagEarningsResp tagEarningsResp = new TagEarningsResp();
+            tagEarningsResp.setTagId(tag.getTagId());
+            tagEarningsResp.setTagName(tag.getTitle());
+
             tagEarningsResp.setLifetimeTagEarning(lifetimeTagEarnings);
             tagEarningsResp.setCurrentMonthTagEarning(currentMonthTagEarnings);
             tagEarningsResp.setMonthlyTagEarningForLastYear(monthlyTagEarningsForLastYear);

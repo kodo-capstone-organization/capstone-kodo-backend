@@ -382,6 +382,7 @@ public class TransactionServiceImpl implements TransactionService
                 currentMonth = currentMonth.minusMonths(1);
             }
 
+            // Reverse value to return earnings in sequential ordering
             Collections.reverse(monthlyCourseEarningsForLastYear);
 
             return monthlyCourseEarningsForLastYear;
@@ -425,7 +426,7 @@ public class TransactionServiceImpl implements TransactionService
     }
 
     @Override
-    public Map<String, BigDecimal> getMonthlyTagEarningForLastYear(Long requestingAccountId, Long tagId) throws AccountPermissionDeniedException, AccountNotFoundException, TagNotFoundException
+    public List<MonthlyEarningResp> getMonthlyTagEarningForLastYear(Long requestingAccountId, Long tagId) throws AccountPermissionDeniedException, AccountNotFoundException, TagNotFoundException
     {
         Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
         Tag tag = this.tagService.getTagByTagId(tagId);
@@ -435,7 +436,7 @@ public class TransactionServiceImpl implements TransactionService
             LocalDate today = LocalDate.now();
             LocalDate currentMonth = today.withDayOfMonth(1);
 
-            Map<String,BigDecimal> monthlyTagEarningsForLastYear = new HashMap<>();
+            List<MonthlyEarningResp> monthlyTagEarningsForLastYear = new ArrayList<>();
 
             List<String> monthListShortName = NowMonthYearUtil.getMonthListShortName();
 
@@ -446,10 +447,13 @@ public class TransactionServiceImpl implements TransactionService
 
                 BigDecimal earningsForCurrentMonth = this.transactionRepository.getMonthlyTagEarningForLastYear(tagId, year, month).orElse(new BigDecimal(0));
 
-                monthlyTagEarningsForLastYear.put(monthListShortName.get(month-1) + " " + year, earningsForCurrentMonth);
+                monthlyTagEarningsForLastYear.add(new MonthlyEarningResp(monthListShortName.get(month-1) + " " + year, earningsForCurrentMonth));
 
                 currentMonth = currentMonth.minusMonths(1);
             }
+
+            // Reverse value to return earnings in sequential ordering
+            Collections.reverse(monthlyTagEarningsForLastYear);
 
             return monthlyTagEarningsForLastYear;
         }

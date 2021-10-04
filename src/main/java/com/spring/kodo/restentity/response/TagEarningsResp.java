@@ -1,20 +1,27 @@
 package com.spring.kodo.restentity.response;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 public class TagEarningsResp
 {
+    private Long tagId;
+
+    private String tagName;
+
     private BigDecimal lifetimeTagEarning;
 
     private BigDecimal currentMonthTagEarning;
 
-    private Map<String, BigDecimal> monthlyTagEarningForLastYear;
+    private List<MonthlyEarningResp> monthlyTagEarningForLastYear;
 
     public TagEarningsResp() {
     }
 
-    public TagEarningsResp(BigDecimal lifetimeTagEarning, BigDecimal currentMonthTagEarning, Map<String, BigDecimal> monthlyTagEarningForLastYear) {
+    public TagEarningsResp(Long tagId, String tagName, BigDecimal lifetimeTagEarning, BigDecimal currentMonthTagEarning, List<MonthlyEarningResp> monthlyTagEarningForLastYear) {
+        this.tagId = tagId;
+        this.tagName = tagName;
         this.lifetimeTagEarning = lifetimeTagEarning;
         this.currentMonthTagEarning = currentMonthTagEarning;
         this.monthlyTagEarningForLastYear = monthlyTagEarningForLastYear;
@@ -36,11 +43,38 @@ public class TagEarningsResp
         this.currentMonthTagEarning = currentMonthTagEarning;
     }
 
-    public Map<String, BigDecimal> getMonthlyTagEarningForLastYear() {
+    public List<MonthlyEarningResp> getMonthlyTagEarningForLastYear() {
         return monthlyTagEarningForLastYear;
     }
 
-    public void setMonthlyTagEarningForLastYear(Map<String, BigDecimal> monthlyTagEarningForLastYear) {
+    public void setMonthlyTagEarningForLastYear(List<MonthlyEarningResp> monthlyTagEarningForLastYear) {
         this.monthlyTagEarningForLastYear = monthlyTagEarningForLastYear;
+    }
+
+    public Long getTagId() {
+        return tagId;
+    }
+
+    public void setTagId(Long tagId) {
+        this.tagId = tagId;
+    }
+
+    public String getTagName() {
+        return tagName;
+    }
+
+    public void setTagName(String tagName) {
+        this.tagName = tagName;
+    }
+
+    @Override
+    public String toString() {
+        return "TagEarningsResp{" +
+                "tagId=" + tagId +
+                ", tagName='" + tagName + '\'' +
+                ", lifetimeTagEarning=" + lifetimeTagEarning +
+                ", currentMonthTagEarning=" + currentMonthTagEarning +
+                ", monthlyTagEarningForLastYear=" + monthlyTagEarningForLastYear +
+                '}';
     }
 }
