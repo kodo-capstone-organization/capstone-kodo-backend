@@ -133,7 +133,7 @@ public class TransactionController
             BigDecimal lifetimePlatformEarnings = this.transactionService.getLifetimePlatformEarnings(requestingAccountId);
             BigDecimal currentMonthPlatformEarnings = this.transactionService.getCurrentMonthPlatformEarnings(requestingAccountId);
             BigDecimal lastMonthPlatformEarnings = this.transactionService.getLastMonthPlatformEarnings(requestingAccountId);
-            Map<String, BigDecimal> monthlyPlatformEarningsForLastYear = this.transactionService.getMonthlyPlatformEarningsForLastYear(requestingAccountId);
+            List<MonthlyEarningResp> monthlyPlatformEarningsForLastYear = this.transactionService.getMonthlyPlatformEarningsForLastYear(requestingAccountId);
 
             PlatformEarningsResp platformEarningsResp = new PlatformEarningsResp();
             platformEarningsResp.setLifetimePlatformEarnings(lifetimePlatformEarnings);

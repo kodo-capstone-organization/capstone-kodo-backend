@@ -1,6 +1,7 @@
 package com.spring.kodo.restentity.response;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 public class PlatformEarningsResp
@@ -11,14 +12,15 @@ public class PlatformEarningsResp
 
     private BigDecimal lastMonthPlatformEarnings;
 
-    private Map<String, BigDecimal> monthlyPlatformEarningsForLastYear;
+    private List<MonthlyEarningResp> monthlyPlatformEarningsForLastYear;
 
     public PlatformEarningsResp() {
     }
 
-    public PlatformEarningsResp(BigDecimal lifetimePlatformEarnings, BigDecimal currentMonthPlatformEarnings, Map<String, BigDecimal> monthlyPlatformEarningsForLastYear) {
+    public PlatformEarningsResp(BigDecimal lifetimePlatformEarnings, BigDecimal currentMonthPlatformEarnings, BigDecimal lastMonthPlatformEarnings, List<MonthlyEarningResp> monthlyPlatformEarningsForLastYear) {
         this.lifetimePlatformEarnings = lifetimePlatformEarnings;
         this.currentMonthPlatformEarnings = currentMonthPlatformEarnings;
+        this.lastMonthPlatformEarnings = lastMonthPlatformEarnings;
         this.monthlyPlatformEarningsForLastYear = monthlyPlatformEarningsForLastYear;
     }
 
@@ -38,11 +40,11 @@ public class PlatformEarningsResp
         this.currentMonthPlatformEarnings = currentMonthPlatformEarnings;
     }
 
-    public Map<String, BigDecimal> getMonthlyPlatformEarningsForLastYear() {
+    public List<MonthlyEarningResp> getMonthlyPlatformEarningsForLastYear() {
         return monthlyPlatformEarningsForLastYear;
     }
 
-    public void setMonthlyPlatformEarningsForLastYear(Map<String, BigDecimal> monthlyPlatformEarningsForLastYear) {
+    public void setMonthlyPlatformEarningsForLastYear(List<MonthlyEarningResp> monthlyPlatformEarningsForLastYear) {
         this.monthlyPlatformEarningsForLastYear = monthlyPlatformEarningsForLastYear;
     }
 
@@ -52,5 +54,15 @@ public class PlatformEarningsResp
 
     public void setLastMonthPlatformEarnings(BigDecimal lastMonthPlatformEarnings) {
         this.lastMonthPlatformEarnings = lastMonthPlatformEarnings;
+    }
+
+    @Override
+    public String toString() {
+        return "PlatformEarningsResp{" +
+                "lifetimePlatformEarnings=" + lifetimePlatformEarnings +
+                ", currentMonthPlatformEarnings=" + currentMonthPlatformEarnings +
+                ", lastMonthPlatformEarnings=" + lastMonthPlatformEarnings +
+                ", monthlyPlatformEarningsForLastYear=" + monthlyPlatformEarningsForLastYear +
+                '}';
     }
 }

@@ -290,7 +290,7 @@ public class TransactionServiceImpl implements TransactionService
     }
 
     @Override
-    public Map<String, BigDecimal> getMonthlyPlatformEarningsForLastYear(Long requestingAccountId) throws AccountPermissionDeniedException, AccountNotFoundException
+    public List<MonthlyEarningResp> getMonthlyPlatformEarningsForLastYear(Long requestingAccountId) throws AccountPermissionDeniedException, AccountNotFoundException
     {
         Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
 
@@ -299,7 +299,7 @@ public class TransactionServiceImpl implements TransactionService
             LocalDate today = LocalDate.now();
             LocalDate currentMonth = today.withDayOfMonth(1);
 
-            Map<String,BigDecimal> monthlyPlatformEarningsForLastYear = new HashMap<>();
+            List<MonthlyEarningResp> monthlyPlatformEarningsForLastYear = new ArrayList<>();
 
             List<String> monthListShortName = NowMonthYearUtil.getMonthListShortName();
 
@@ -310,10 +310,13 @@ public class TransactionServiceImpl implements TransactionService
 
                 BigDecimal earningsForCurrentMonth = this.transactionRepository.getMonthlyPlatformEarning(year, month).orElse(new BigDecimal(0));
 
-                monthlyPlatformEarningsForLastYear.put(monthListShortName.get(month-1) + " " + year, earningsForCurrentMonth);
+                monthlyPlatformEarningsForLastYear.add(new MonthlyEarningResp(monthListShortName.get(month-1) + " " + year, earningsForCurrentMonth));
 
                 currentMonth = currentMonth.minusMonths(1);
             }
+
+            // Reverse value to return earnings in sequential ordering
+            Collections.reverse(monthlyPlatformEarningsForLastYear);
 
             return monthlyPlatformEarningsForLastYear;
         }
