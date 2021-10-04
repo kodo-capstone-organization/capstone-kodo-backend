@@ -251,7 +251,7 @@ public class TransactionServiceImpl implements TransactionService
 
         if (requestingAccount.getIsAdmin())
         {
-            return this.transactionRepository.getLifetimePlatformEarning();
+            return this.transactionRepository.getLifetimePlatformEarning().orElse(new BigDecimal(0));
         }
         else
         {
@@ -266,7 +266,7 @@ public class TransactionServiceImpl implements TransactionService
 
         if (requestingAccount.getIsAdmin())
         {
-            return this.transactionRepository.getCurrentMonthPlatformEarning();
+            return this.transactionRepository.getCurrentMonthPlatformEarning().orElse(new BigDecimal(0));
         }
         else
         {
@@ -281,7 +281,7 @@ public class TransactionServiceImpl implements TransactionService
 
         if (requestingAccount.getIsAdmin())
         {
-            return this.transactionRepository.getLastMonthPlatformEarning();
+            return this.transactionRepository.getLastMonthPlatformEarning().orElse(new BigDecimal(0));
         }
         else
         {
@@ -308,7 +308,7 @@ public class TransactionServiceImpl implements TransactionService
                 int month = currentMonth.getMonth().getValue();
                 int year = currentMonth.getYear();
 
-                BigDecimal earningsForCurrentMonth = this.transactionRepository.getMonthlyPlatformEarning(year, month);
+                BigDecimal earningsForCurrentMonth = this.transactionRepository.getMonthlyPlatformEarning(year, month).orElse(new BigDecimal(0));
 
                 monthlyPlatformEarningsForLastYear.put(monthListShortName.get(month-1) + " " + year, earningsForCurrentMonth);
 
@@ -331,7 +331,7 @@ public class TransactionServiceImpl implements TransactionService
 
         if (requestingAccount.getIsAdmin())
         {
-            return this.transactionRepository.getLifetimeCourseEarning(course.getCourseId());
+            return this.transactionRepository.getLifetimeCourseEarning(course.getCourseId()).orElse(new BigDecimal(0));
         }
         else
         {
@@ -400,7 +400,7 @@ public class TransactionServiceImpl implements TransactionService
 
         if (requestingAccount.getIsAdmin())
         {
-            return this.transactionRepository.getLifetimeTagEarning(tag.getTagId());
+            return this.transactionRepository.getLifetimeTagEarning(tag.getTagId()).orElse(new BigDecimal(0));
         }
         else
         {
@@ -416,7 +416,7 @@ public class TransactionServiceImpl implements TransactionService
 
         if (requestingAccount.getIsAdmin())
         {
-            return this.transactionRepository.getCurrentMonthTagEarning(tag.getTagId());
+            return this.transactionRepository.getCurrentMonthTagEarning(tag.getTagId()).orElse(new BigDecimal(0));
         }
         else
         {
@@ -444,7 +444,7 @@ public class TransactionServiceImpl implements TransactionService
                 int month = currentMonth.getMonth().getValue();
                 int year = currentMonth.getYear();
 
-                BigDecimal earningsForCurrentMonth = this.transactionRepository.getMonthlyTagEarningForLastYear(tagId, year, month);
+                BigDecimal earningsForCurrentMonth = this.transactionRepository.getMonthlyTagEarningForLastYear(tagId, year, month).orElse(new BigDecimal(0));
 
                 monthlyTagEarningsForLastYear.put(monthListShortName.get(month-1) + " " + year, earningsForCurrentMonth);
 
@@ -511,7 +511,7 @@ public class TransactionServiceImpl implements TransactionService
                 int month = currentMonth.getMonth().getValue();
                 int year = currentMonth.getYear();
 
-                BigDecimal earningsForCurrentMonth = this.transactionRepository.getMonthlyTransactionByPayeeId(tutorAccount.getAccountId(), year, month);
+                BigDecimal earningsForCurrentMonth = this.transactionRepository.getMonthlyTransactionByPayeeId(tutorAccount.getAccountId(), year, month).orElse(new BigDecimal(0));
 
                 monthlyTutorEarningsForLastYear.put(monthListShortName.get(month-1) + " " + year, earningsForCurrentMonth);
             }

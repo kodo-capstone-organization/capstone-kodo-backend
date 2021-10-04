@@ -18,22 +18,22 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
 
     // -- Used to get Kodo platform earnings for Admin portal
     @Query(value = "SELECT SUM(t.platform_fee) FROM `Transaction` t", nativeQuery = true)
-    BigDecimal getLifetimePlatformEarning();
+    Optional<BigDecimal> getLifetimePlatformEarning();
 
     @Query(value = "SELECT SUM(t.platform_fee) FROM `Transaction` t WHERE MONTH(t.date_time_of_transaction) = MONTH(NOW())", nativeQuery = true)
-    BigDecimal getCurrentMonthPlatformEarning();
+    Optional<BigDecimal> getCurrentMonthPlatformEarning();
 
     @Query(value = "SELECT SUM(t.platform_fee) FROM `Transaction` t WHERE MONTH(t.date_time_of_transaction) = MONTH(NOW() - 1)", nativeQuery = true)
-    BigDecimal getLastMonthPlatformEarning();
+    Optional<BigDecimal> getLastMonthPlatformEarning();
 
     @Query(value = "SELECT SUM(t.platform_fee) FROM `Transaction` t WHERE YEAR(t.date_time_of_transaction) = :inputYear AND MONTH(t.date_time_of_transaction) = :inputMonth", nativeQuery = true)
-    BigDecimal getMonthlyPlatformEarning(@Param("inputYear") int inputYear, @Param("inputMonth") int inputMonth);
+    Optional<BigDecimal> getMonthlyPlatformEarning(@Param("inputYear") int inputYear, @Param("inputMonth") int inputMonth);
     // --
 
 
     // -- Used to get course earnings for Admin portal
     @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t WHERE t.course_course_id = :courseId", nativeQuery = true)
-    BigDecimal getLifetimeCourseEarning(@Param("courseId") Long courseId);
+    Optional<BigDecimal> getLifetimeCourseEarning(@Param("courseId") Long courseId);
 
     @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t WHERE t.course_course_id = :courseId AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) AND YEAR(t.date_time_of_transaction) = YEAR(NOW())", nativeQuery = true)
     Optional<BigDecimal> getCurrentMonthCourseEarning(@Param("courseId") Long courseId);
@@ -45,13 +45,13 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
 
     // -- Used to get tag earnings for Admin portal
     @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t JOIN Course_Course_Tags cct ON t.course_course_id = cct.course_id WHERE cct.tag_id = :tagId", nativeQuery = true)
-    BigDecimal getLifetimeTagEarning(@Param("tagId") Long tagId);
+    Optional<BigDecimal> getLifetimeTagEarning(@Param("tagId") Long tagId);
 
     @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t JOIN Course_Course_Tags cct ON t.course_course_id = cct.course_id WHERE cct.tag_id = :tagId AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) AND YEAR(t.date_time_of_transaction) = YEAR(NOW())", nativeQuery = true)
-    BigDecimal getCurrentMonthTagEarning(@Param("tagId") Long tagId);
+    Optional<BigDecimal> getCurrentMonthTagEarning(@Param("tagId") Long tagId);
 
     @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t JOIN Course_Course_Tags cct ON t.course_course_id = cct.course_id WHERE cct.tag_id = :tagId AND YEAR(t.date_time_of_transaction) = :inputYear AND MONTH(t.date_time_of_transaction) = :inputMonth", nativeQuery = true)
-    BigDecimal getMonthlyTagEarningForLastYear(@Param("tagId") Long tagId, @Param("inputYear") int inputYear, @Param("inputMonth") int inputMonth);
+    Optional<BigDecimal> getMonthlyTagEarningForLastYear(@Param("tagId") Long tagId, @Param("inputYear") int inputYear, @Param("inputMonth") int inputMonth);
     // --
 
 
@@ -88,7 +88,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
     Optional<BigDecimal> getLifetimeEarningsByPayeeId(@Param("payeeId") Long payeeId);
 
     @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t JOIN Account a ON t.payee_account_id = a.account_id AND t.payee_account_id = :payeeId WHERE YEAR(t.date_time_of_transaction) = :inputYear AND MONTH(t.date_time_of_transaction) = :inputMonth", nativeQuery = true)
-    BigDecimal getMonthlyTransactionByPayeeId(@Param("payeeId") Long payeeId, @Param("inputYear") int inputYear, @Param("inputMonth") int inputMonth);
+    Optional<BigDecimal> getMonthlyTransactionByPayeeId(@Param("payeeId") Long payeeId, @Param("inputYear") int inputYear, @Param("inputMonth") int inputMonth);
 
     @Query(value = "SELECT SUM(t.tutor_payout) FROM `Transaction` t JOIN Account a ON t.payee_account_id = a.account_id AND t.payee_account_id = :payeeId WHERE YEAR(t.date_time_of_transaction) = YEAR(NOW()) AND MONTH(t.date_time_of_transaction) = MONTH(NOW())", nativeQuery = true)
     Optional<BigDecimal> getCurrentMonthEarningsByPayeeId(@Param("payeeId") Long payeeId);
