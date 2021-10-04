@@ -1,8 +1,11 @@
 package com.spring.kodo.controller;
 
+import com.spring.kodo.entity.Account;
+import com.spring.kodo.entity.Course;
 import com.spring.kodo.entity.Transaction;
 import com.spring.kodo.restentity.response.*;
 import com.spring.kodo.service.inter.AccountService;
+import com.spring.kodo.service.inter.CourseService;
 import com.spring.kodo.service.inter.TransactionService;
 import com.spring.kodo.util.exception.AccountNotFoundException;
 import com.spring.kodo.util.exception.AccountPermissionDeniedException;
@@ -33,6 +36,9 @@ public class TransactionController
 
     @Autowired
     public AccountService accountService;
+
+    @Autowired
+    public CourseService courseService;
 
     @GetMapping("/getAllPlatformTransactions/{accountId}")
     public List<Transaction> getAllPlatformTransactions(@PathVariable Long accountId)
@@ -147,11 +153,20 @@ public class TransactionController
     {
         try
         {
+            Course course = this.courseService.getCourseByCourseId(courseId);
+            Account tutor = this.accountService.getAccountByCourseId(courseId);
+
             BigDecimal lifetimeCourseEarnings = this.transactionService.getLifetimeCourseEarning(requestingAccountId, courseId);
             BigDecimal currentMonthCourseEarnings = this.transactionService.getCurrentMonthCourseEarning(requestingAccountId, courseId);
-            Map<String, BigDecimal> monthlyCourseEarningsForLastYear = this.transactionService.getMonthlyCourseEarningForLastYear(requestingAccountId, courseId);
+            List<MonthlyEarningResp> monthlyCourseEarningsForLastYear = this.transactionService.getMonthlyCourseEarningForLastYear(requestingAccountId, courseId);
 
             CourseEarningsResp courseEarningsResp = new CourseEarningsResp();
+
+            courseEarningsResp.setCourseId(course.getCourseId());
+            courseEarningsResp.setCourseName(course.getName());
+            courseEarningsResp.setTutorName(tutor.getName());
+            courseEarningsResp.setNumberOfEnrollment(course.getEnrollment().size());
+
             courseEarningsResp.setLifetimeCourseEarning(lifetimeCourseEarnings);
             courseEarningsResp.setCurrentMonthCourseEarning(currentMonthCourseEarnings);
             courseEarningsResp.setMonthlyCourseEarningForLastYear(monthlyCourseEarningsForLastYear);

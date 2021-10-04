@@ -1,6 +1,7 @@
 package com.spring.kodo.service.inter;
 
 import com.spring.kodo.entity.Transaction;
+import com.spring.kodo.restentity.response.MonthlyEarningResp;
 import com.spring.kodo.util.exception.*;
 
 import java.math.BigDecimal;
@@ -45,7 +46,7 @@ public interface TransactionService
 
     public BigDecimal getCurrentMonthCourseEarning(Long requestingAccountId, Long courseId) throws AccountNotFoundException, CourseNotFoundException, AccountPermissionDeniedException;
 
-    public Map<String, BigDecimal> getMonthlyCourseEarningForLastYear(Long requestingAccountId, Long courseId) throws AccountPermissionDeniedException, AccountNotFoundException, CourseNotFoundException;
+    public List<MonthlyEarningResp> getMonthlyCourseEarningForLastYear(Long requestingAccountId, Long courseId) throws AccountPermissionDeniedException, AccountNotFoundException, CourseNotFoundException;
 
     public BigDecimal getLifetimeTagEarning(Long requestingAccountId, Long tagId) throws AccountPermissionDeniedException, AccountNotFoundException, TagNotFoundException;
 

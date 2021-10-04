@@ -6,6 +6,7 @@ import com.spring.kodo.entity.Course;
 import com.spring.kodo.entity.Tag;
 import com.spring.kodo.entity.Transaction;
 import com.spring.kodo.repository.TransactionRepository;
+import com.spring.kodo.restentity.response.MonthlyEarningResp;
 import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.CourseService;
 import com.spring.kodo.service.inter.TagService;
@@ -310,6 +311,8 @@ public class TransactionServiceImpl implements TransactionService
                 BigDecimal earningsForCurrentMonth = this.transactionRepository.getMonthlyPlatformEarning(year, month);
 
                 monthlyPlatformEarningsForLastYear.put(monthListShortName.get(month-1) + " " + year, earningsForCurrentMonth);
+
+                currentMonth = currentMonth.minusMonths(1);
             }
 
             return monthlyPlatformEarningsForLastYear;
@@ -353,7 +356,7 @@ public class TransactionServiceImpl implements TransactionService
     }
 
     @Override
-    public Map<String, BigDecimal> getMonthlyCourseEarningForLastYear(Long requestingAccountId, Long courseId) throws AccountPermissionDeniedException, AccountNotFoundException, CourseNotFoundException
+    public List<MonthlyEarningResp> getMonthlyCourseEarningForLastYear(Long requestingAccountId, Long courseId) throws AccountPermissionDeniedException, AccountNotFoundException, CourseNotFoundException
     {
         Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
         Course course = this.courseService.getCourseByCourseId(courseId);
@@ -363,7 +366,7 @@ public class TransactionServiceImpl implements TransactionService
             LocalDate today = LocalDate.now();
             LocalDate currentMonth = today.withDayOfMonth(1);
 
-            Map<String,BigDecimal> monthlyCourseEarningsForLastYear = new HashMap<>();
+            List<MonthlyEarningResp> monthlyCourseEarningsForLastYear = new ArrayList<>();
 
             List<String> monthListShortName = NowMonthYearUtil.getMonthListShortName();
 
@@ -372,10 +375,14 @@ public class TransactionServiceImpl implements TransactionService
                 int month = currentMonth.getMonth().getValue();
                 int year = currentMonth.getYear();
 
-                BigDecimal earningsForCurrentMonth = this.transactionRepository.getMonthlyCourseEarningForLastYear(course.getCourseId(), year, month);
+                BigDecimal earningsForCurrentMonth = this.transactionRepository.getMonthlyCourseEarningForLastYear(course.getCourseId(), year, month).orElse(new BigDecimal(0));
 
-                monthlyCourseEarningsForLastYear.put(monthListShortName.get(month-1) + " " + year, earningsForCurrentMonth);
+                monthlyCourseEarningsForLastYear.add(new MonthlyEarningResp(monthListShortName.get(month-1) + " " + year, earningsForCurrentMonth));
+
+                currentMonth = currentMonth.minusMonths(1);
             }
+
+            Collections.reverse(monthlyCourseEarningsForLastYear);
 
             return monthlyCourseEarningsForLastYear;
         }
@@ -440,6 +447,8 @@ public class TransactionServiceImpl implements TransactionService
                 BigDecimal earningsForCurrentMonth = this.transactionRepository.getMonthlyTagEarningForLastYear(tagId, year, month);
 
                 monthlyTagEarningsForLastYear.put(monthListShortName.get(month-1) + " " + year, earningsForCurrentMonth);
+
+                currentMonth = currentMonth.minusMonths(1);
             }
 
             return monthlyTagEarningsForLastYear;

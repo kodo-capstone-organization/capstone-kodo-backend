@@ -1,20 +1,33 @@
 package com.spring.kodo.restentity.response;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 public class CourseEarningsResp
 {
+    private Long courseId;
+
+    private String courseName;
+
+    private String tutorName;
+
+    private Integer numberOfEnrollment;
+
     private BigDecimal lifetimeCourseEarning;
 
     private BigDecimal currentMonthCourseEarning;
 
-    private Map<String, BigDecimal> monthlyCourseEarningForLastYear;
+    private List<MonthlyEarningResp> monthlyCourseEarningForLastYear;
 
     public CourseEarningsResp() {
     }
 
-    public CourseEarningsResp(BigDecimal lifetimeCourseEarning, BigDecimal currentMonthCourseEarning, Map<String, BigDecimal> monthlyCourseEarningForLastYear) {
+    public CourseEarningsResp(Long courseId, String courseName, String tutorName, Integer numberOfEnrollment, BigDecimal lifetimeCourseEarning, BigDecimal currentMonthCourseEarning, List<MonthlyEarningResp> monthlyCourseEarningForLastYear) {
+        this.courseId = courseId;
+        this.courseName = courseName;
+        this.tutorName = tutorName;
+        this.numberOfEnrollment = numberOfEnrollment;
         this.lifetimeCourseEarning = lifetimeCourseEarning;
         this.currentMonthCourseEarning = currentMonthCourseEarning;
         this.monthlyCourseEarningForLastYear = monthlyCourseEarningForLastYear;
@@ -36,11 +49,56 @@ public class CourseEarningsResp
         this.currentMonthCourseEarning = currentMonthCourseEarning;
     }
 
-    public Map<String, BigDecimal> getMonthlyCourseEarningForLastYear() {
+    public List<MonthlyEarningResp> getMonthlyCourseEarningForLastYear() {
         return monthlyCourseEarningForLastYear;
     }
 
-    public void setMonthlyCourseEarningForLastYear(Map<String, BigDecimal> monthlyCourseEarningForLastYear) {
+    public void setMonthlyCourseEarningForLastYear(List<MonthlyEarningResp> monthlyCourseEarningForLastYear) {
         this.monthlyCourseEarningForLastYear = monthlyCourseEarningForLastYear;
+    }
+
+    public Long getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(Long courseId) {
+        this.courseId = courseId;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+
+    public String getTutorName() {
+        return tutorName;
+    }
+
+    public void setTutorName(String tutorName) {
+        this.tutorName = tutorName;
+    }
+
+    public Integer getNumberOfEnrollment() {
+        return numberOfEnrollment;
+    }
+
+    public void setNumberOfEnrollment(Integer numberOfEnrollment) {
+        this.numberOfEnrollment = numberOfEnrollment;
+    }
+
+    @Override
+    public String toString() {
+        return "CourseEarningsResp{" +
+                "courseId=" + courseId +
+                ", courseName='" + courseName + '\'' +
+                ", tutorName='" + tutorName + '\'' +
+                ", numberOfEnrollment=" + numberOfEnrollment +
+                ", lifetimeCourseEarning=" + lifetimeCourseEarning +
+                ", currentMonthCourseEarning=" + currentMonthCourseEarning +
+                ", monthlyCourseEarningForLastYear=" + monthlyCourseEarningForLastYear +
+                '}';
     }
 }
