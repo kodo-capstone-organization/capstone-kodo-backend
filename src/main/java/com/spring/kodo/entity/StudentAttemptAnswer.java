@@ -3,11 +3,14 @@ package com.spring.kodo.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
-@Entity(name="student_attempt_answer")
-@Table(name="student_attempt_answer")
+@Entity(name = "student_attempt_answer")
+@Table(name = "student_attempt_answer")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class StudentAttemptAnswer
 {
@@ -31,10 +34,9 @@ public class StudentAttemptAnswer
     @Column
     private Boolean correct;
 
-    @Column(precision = 11, scale = 2)
-    @DecimalMin("0.00")
-    @Digits(integer = 9, fraction = 2)
-    private Double marks;
+    @Column
+    @Min(0)
+    private Integer marks;
 
     public StudentAttemptAnswer()
     {
@@ -105,12 +107,12 @@ public class StudentAttemptAnswer
         this.correct = correct;
     }
 
-    public Double getMarks()
+    public Integer getMarks()
     {
         return marks;
     }
 
-    public void setMarks(Double marks)
+    public void setMarks(Integer marks)
     {
         this.marks = marks;
     }

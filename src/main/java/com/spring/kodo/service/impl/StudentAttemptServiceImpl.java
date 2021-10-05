@@ -224,12 +224,12 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
                                     if (quizQuestionOption.getLeftContent().equals(studentAttemptAnswer.getLeftContent()))
                                     {
                                         studentAttemptAnswer.setCorrect(true);
-                                        studentAttemptAnswer.setMarks((double) quizQuestion.getMarks());
+                                        studentAttemptAnswer.setMarks(quizQuestion.getMarks());
                                     }
                                     else
                                     {
                                         studentAttemptAnswer.setCorrect(false);
-                                        studentAttemptAnswer.setMarks(0.0);
+                                        studentAttemptAnswer.setMarks(0);
                                     }
 
                                     studentAttemptAnswerService.updateStudentAttemptAnswer(studentAttemptAnswer);
@@ -253,12 +253,12 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
                                     if (quizQuestionOption.getLeftContent().equals(studentAttemptAnswer.getLeftContent()))
                                     {
                                         studentAttemptAnswer.setCorrect(true);
-                                        studentAttemptAnswer.setMarks((double) quizQuestion.getMarks());
+                                        studentAttemptAnswer.setMarks(quizQuestion.getMarks());
                                     }
                                     else
                                     {
                                         studentAttemptAnswer.setCorrect(false);
-                                        studentAttemptAnswer.setMarks(0.0);
+                                        studentAttemptAnswer.setMarks(0);
                                     }
 
                                     studentAttemptAnswerService.updateStudentAttemptAnswer(studentAttemptAnswer);
@@ -269,6 +269,7 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
                 }
                 else if (quizQuestion.getQuestionType().equals(QuestionType.MATCHING))
                 {
+                    boolean allCorrect = true;
                     // Check options against one another
                     for (QuizQuestionOption quizQuestionOption : quizQuestionOptions)
                     {
@@ -280,17 +281,24 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
                                         && quizQuestionOption.getRightContent().equals(studentAttemptAnswer.getRightContent()))
                                 {
                                     studentAttemptAnswer.setCorrect(true);
-                                    studentAttemptAnswer.setMarks(FormatterUtil.round(quizQuestion.getMarks() / (double) quizQuestion.getQuizQuestionOptions().size(), 2));
+//                                    studentAttemptAnswer.setMarks(FormatterUtil.round(quizQuestion.getMarks() / (double) quizQuestion.getQuizQuestionOptions().size(), 2));
                                 }
                                 else
                                 {
+                                    allCorrect = false;
                                     studentAttemptAnswer.setCorrect(false);
-                                    studentAttemptAnswer.setMarks(0.0);
                                 }
+
+                                studentAttemptAnswer.setMarks(0);
 
                                 studentAttemptAnswerService.updateStudentAttemptAnswer(studentAttemptAnswer);
                             }
                         }
+                    }
+
+                    if (allCorrect)
+                    {
+                        studentAttemptAnswers.get(0).setMarks(quizQuestion.getMarks());
                     }
                 }
             }
