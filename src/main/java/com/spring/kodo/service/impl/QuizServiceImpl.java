@@ -219,7 +219,7 @@ public class QuizServiceImpl implements QuizService
     }
 
     @Override
-    public Quiz updateQuiz(Quiz quiz, List<QuizQuestion> quizQuestions, List<List<QuizQuestionOption>> quizQuestionOptionLists) throws UpdateQuizException, QuizNotFoundException, InputDataValidationException, QuizQuestionOptionNotFoundException, QuizQuestionNotFoundException, DeleteQuizQuestionOptionException, DeleteQuizQuestionException, CreateNewQuizQuestionException, UnknownPersistenceException, UpdateQuizQuestionException
+    public Quiz updateQuiz(Quiz quiz, List<QuizQuestion> quizQuestions, List<List<QuizQuestionOption>> quizQuestionOptionLists) throws UpdateQuizException, QuizNotFoundException, InputDataValidationException, QuizQuestionOptionNotFoundException, QuizQuestionNotFoundException, DeleteQuizQuestionOptionException, DeleteQuizQuestionException, CreateNewQuizQuestionException, UnknownPersistenceException, UpdateQuizQuestionException, CreateNewQuizQuestionOptionException
     {
         if (quiz != null)
         {

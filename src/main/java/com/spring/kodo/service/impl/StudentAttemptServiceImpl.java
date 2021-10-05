@@ -306,8 +306,11 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
 
                     if (allCorrect)
                     {
-                        studentAttemptAnswers.get(0).setMarks(quizQuestion.getMarks());
-                        studentAttemptAnswerService.updateStudentAttemptAnswer(studentAttemptAnswers.get(0));
+                        if (studentAttemptAnswers.size() > 0)
+                        {
+                            studentAttemptAnswers.get(0).setMarks(quizQuestion.getMarks());
+                            studentAttemptAnswerService.updateStudentAttemptAnswer(studentAttemptAnswers.get(0));
+                        }
                     }
                 }
             }

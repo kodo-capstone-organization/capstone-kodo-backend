@@ -105,7 +105,7 @@ public class QuizController
             {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
             }
-            catch (CreateNewQuizException | CreateNewQuizQuestionException | UpdateQuizException | UpdateQuizQuestionException | InputDataValidationException ex)
+            catch (CreateNewQuizException | CreateNewQuizQuestionException | CreateNewQuizQuestionOptionException | UpdateQuizException | UpdateQuizQuestionException | InputDataValidationException ex)
             {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
             }
@@ -170,7 +170,7 @@ public class QuizController
             {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
             }
-            catch (CreateNewQuizQuestionException | UpdateQuizException | UpdateQuizQuestionException ex)
+            catch (CreateNewQuizQuestionException | CreateNewQuizQuestionOptionException | UpdateQuizException | UpdateQuizQuestionException ex)
             {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
             }

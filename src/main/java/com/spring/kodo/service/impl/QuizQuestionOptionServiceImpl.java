@@ -13,6 +13,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -54,25 +55,45 @@ public class QuizQuestionOptionServiceImpl implements QuizQuestionOptionService
     }
 
     @Override
-    public List<QuizQuestionOption> createNewQuizQuestionOptions(List<QuizQuestionOption> newQuizQuestionOptions) throws InputDataValidationException, UnknownPersistenceException
+    public List<QuizQuestionOption> createNewQuizQuestionOptions(List<QuizQuestionOption> newQuizQuestionOptions) throws InputDataValidationException, UnknownPersistenceException, CreateNewQuizQuestionOptionException
     {
         try
         {
-            for (int i = 0; i < newQuizQuestionOptions.size(); i++)
+            boolean hasRightContent = newQuizQuestionOptions.get(0).getRightContent() != null;
+
+            Set<String> leftContents = new HashSet<>();
+            Set<String> rightContents = new HashSet<>();
+
+            // Check if any options are the same
+            for (QuizQuestionOption quizQuestionOption : newQuizQuestionOptions)
             {
-                QuizQuestionOption newQuizQuestionOption = newQuizQuestionOptions.get(i);
-                Set<ConstraintViolation<QuizQuestionOption>> constraintViolations = validator.validate(newQuizQuestionOption);
-                if (constraintViolations.isEmpty())
-                {
-                    quizQuestionOptionRepository.saveAndFlush(newQuizQuestionOption);
-                    newQuizQuestionOptions.set(i, newQuizQuestionOption);
-                }
-                else
-                {
-                    throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
-                }
+                leftContents.add(quizQuestionOption.getLeftContent());
+                rightContents.add(quizQuestionOption.getRightContent());
             }
-            return newQuizQuestionOptions;
+
+            if ((!hasRightContent && leftContents.size() == newQuizQuestionOptions.size()) || (leftContents.size() == rightContents.size()))
+            {
+                // Create options
+                for (int i = 0; i < newQuizQuestionOptions.size(); i++)
+                {
+                    QuizQuestionOption newQuizQuestionOption = newQuizQuestionOptions.get(i);
+                    Set<ConstraintViolation<QuizQuestionOption>> constraintViolations = validator.validate(newQuizQuestionOption);
+                    if (constraintViolations.isEmpty())
+                    {
+                        quizQuestionOptionRepository.saveAndFlush(newQuizQuestionOption);
+                        newQuizQuestionOptions.set(i, newQuizQuestionOption);
+                    }
+                    else
+                    {
+                        throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                    }
+                }
+                return newQuizQuestionOptions;
+            }
+            else
+            {
+                throw new CreateNewQuizQuestionOptionException("Options should be unique");
+            }
         }
         catch (DataAccessException ex)
         {

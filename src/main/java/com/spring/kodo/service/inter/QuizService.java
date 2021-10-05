@@ -23,7 +23,7 @@ public interface QuizService
 
     Quiz updateQuiz(Quiz quiz) throws UpdateQuizException, QuizNotFoundException, InputDataValidationException;
 
-    Quiz updateQuiz(Quiz quiz, List<QuizQuestion> quizQuestions, List<List<QuizQuestionOption>> quizQuestionOptionLists) throws UpdateQuizException, QuizNotFoundException, InputDataValidationException, QuizQuestionOptionNotFoundException, QuizQuestionNotFoundException, DeleteQuizQuestionOptionException, DeleteQuizQuestionException, CreateNewQuizQuestionException, UnknownPersistenceException, UpdateQuizQuestionException;
+    Quiz updateQuiz(Quiz quiz, List<QuizQuestion> quizQuestions, List<List<QuizQuestionOption>> quizQuestionOptionLists) throws UpdateQuizException, QuizNotFoundException, InputDataValidationException, QuizQuestionOptionNotFoundException, QuizQuestionNotFoundException, DeleteQuizQuestionOptionException, DeleteQuizQuestionException, CreateNewQuizQuestionException, UnknownPersistenceException, UpdateQuizQuestionException, CreateNewQuizQuestionOptionException;
 
     List<QuizWithStudentAttemptCountResp> getAllQuizzesWithStudentAttemptCountByEnrolledLessonId(Long enrolledLessonId);
 

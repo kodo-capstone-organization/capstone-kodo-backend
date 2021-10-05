@@ -186,7 +186,6 @@ public class QuizQuestionServiceImpl implements QuizQuestionService
             if (quizQuestion.getQuizQuestionId() != null)
             {
                 quizQuestion = getQuizQuestionByQuizQuestionId(quizQuestion.getQuizQuestionId());
-
                 for (int i = 0; i < quizQuestionOptions.size(); i++)
                 {
                     QuizQuestionOption quizQuestionOption = quizQuestionOptions.get(i);
