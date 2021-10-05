@@ -18,6 +18,9 @@ public interface TransactionService
 
     List<Transaction> getAllPaymentsByAccountId(Long requestingAccountId) throws AccountNotFoundException;
 
+    // takes in tutor's account id
+    List<Transaction> getAllEarningsByAccountId(Long requestingAccountId) throws AccountNotFoundException;
+
     BigDecimal getLifetimeTotalEarningsByAccountId(Long requestingAccountId) throws AccountNotFoundException;
 
     BigDecimal getLifetimeTutorPayoutByCourseId(Long courseId);

@@ -76,6 +76,19 @@ public class TransactionController
         }
     }
 
+    @GetMapping("/getAllEarningsByAccountId/{accountId}")
+    public List<Transaction> getAllEarningsByAccountId(@PathVariable Long accountId)
+    {
+        try
+        {
+            return this.transactionService.getAllEarningsByAccountId(accountId);
+        }
+        catch (AccountNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @GetMapping("/getTutorEarningsByAccountId/{accountId}")
     public BigDecimal getTutorEarningsByAccountId(@PathVariable Long accountId)
     {
