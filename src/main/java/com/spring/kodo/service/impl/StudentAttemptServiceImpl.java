@@ -285,7 +285,6 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
                                 }
                                 else
                                 {
-                                    allCorrect = false;
                                     studentAttemptAnswer.setCorrect(false);
                                 }
 
@@ -296,9 +295,19 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
                         }
                     }
 
+                    for (StudentAttemptAnswer studentAttemptAnswer : studentAttemptAnswers)
+                    {
+                        if (!studentAttemptAnswer.getCorrect())
+                        {
+                            allCorrect = false;
+                            break;
+                        }
+                    }
+
                     if (allCorrect)
                     {
                         studentAttemptAnswers.get(0).setMarks(quizQuestion.getMarks());
+                        studentAttemptAnswerService.updateStudentAttemptAnswer(studentAttemptAnswers.get(0));
                     }
                 }
             }
