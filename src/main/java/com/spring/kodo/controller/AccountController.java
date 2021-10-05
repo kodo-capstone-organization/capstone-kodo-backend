@@ -84,6 +84,19 @@ public class AccountController
         }
     }
 
+    @GetMapping("/getAccountByEnrolledLessonId/{enrolledLessonId}")
+    public Account getAccountByEnrolledLessonId(@PathVariable Long enrolledLessonId)
+    {
+        try
+        {
+            return this.accountService.getAccountByEnrolledLessonId(enrolledLessonId);
+        }
+        catch (AccountNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @GetMapping("/getAccountByQuizId/{quizId}")
     public Account getAccountByQuizId(@PathVariable Long quizId)
     {
