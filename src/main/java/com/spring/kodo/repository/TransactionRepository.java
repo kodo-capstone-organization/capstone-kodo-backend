@@ -81,7 +81,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
     Optional<BigDecimal> getTutorPayoutByMonthByCourseId(@Param("courseId") Long courseId, @Param("inputYear") int inputYear, @Param("inputMonth") int inputMonth);
 
     // Used to get all transactions by payee/tutor
-    @Query(value = "SELECT * FROM `transaction` t JOIN account a ON t.payee_account_id = a.account_id AND t.payee_account_id = :payeeId", nativeQuery = true)
+    @Query(value = "SELECT * FROM `transaction` t JOIN account a ON t.payee_account_id = a.account_id AND t.payee_account_id = :payeeId ORDER BY t.date_time_of_transaction DESC", nativeQuery = true)
     List<Transaction> getAllTransactionByPayeeId(@Param("payeeId") Long payeeId);
 
     @Query(value = "SELECT SUM(t.tutor_payout) FROM `transaction` t JOIN account a ON t.payee_account_id = a.account_id AND t.payee_account_id = :payeeId", nativeQuery = true)
