@@ -150,4 +150,15 @@ public class ForumCategoryServiceImpl implements ForumCategoryService {
             throw new UpdateForumCategoryException("ForumCategory cannot be null");
         }
     }
+
+    @Override
+    public List<ForumCategory> getForumCategoryByCourseId(Long courseId) throws ForumCategoryNotFoundException {
+        List<ForumCategory> forumCategoryList = forumCategoryRepository.findByCourseId(courseId);
+
+        if (forumCategoryList != null) {
+            return forumCategoryList;
+        } else {
+            throw new ForumCategoryNotFoundException("Forum Categories with course ID: " + courseId + " does not exist!");
+        }
+    }
 }

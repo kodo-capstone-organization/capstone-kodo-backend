@@ -1,22 +1,30 @@
 package com.spring.kodo.restentity.request;
 
+import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.ForumCategory;
 
-public class UpdateForumCategoryReq {
+import java.util.List;
+
+public
+class UpdateForumCategoryReq {
     private ForumCategory forumCategory;
 
-    public UpdateForumCategoryReq() {
+    public
+    UpdateForumCategoryReq() {
     }
 
-    public UpdateForumCategoryReq(ForumCategory forumCategory) {
+    public
+    UpdateForumCategoryReq(ForumCategory forumCategory) {
         this.forumCategory = forumCategory;
     }
 
-    public ForumCategory getForumCategory() {
+    public
+    ForumCategory getForumCategory() {
         return forumCategory;
     }
 
-    public void setForumCategory(ForumCategory forumCategory) {
+    public
+    void setForumCategory(ForumCategory forumCategory) {
         this.forumCategory = forumCategory;
     }
 }

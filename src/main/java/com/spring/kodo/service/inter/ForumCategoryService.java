@@ -21,4 +21,7 @@ public interface ForumCategoryService {
     Boolean deleteForumCategory(Long forumCategoryId) throws ForumCategoryNotFoundException, ForumThreadNotFoundException, ForumPostNotFoundException;
 
     ForumCategory addForumThreadToForumCategory(ForumCategory forumCategory, ForumThread forumThread) throws UpdateForumCategoryException, ForumCategoryNotFoundException, ForumThreadNotFoundException;
-}
+
+    List<ForumCategory> getForumCategoryByCourseId(Long courseId) throws ForumCategoryNotFoundException;
+
+    }
