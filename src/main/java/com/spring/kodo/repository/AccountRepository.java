@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,4 +60,13 @@ public interface AccountRepository extends JpaRepository<Account, Long>
 
     @Query(value = "SELECT COUNT(*) FROM account a JOIN account_courses ac on a.account_id = ac.account_id JOIN course c ON c.course_id = ac.course_id WHERE a.account_id = :accountId", nativeQuery = true)
     Optional<Integer> getTotalCourseCountByAccountId(@Param("accountId") Long accountId);
+
+    @Query(value = "SELECT COUNT(*) FROM `account_courses` ac WHERE ac.account_id = :tutorId", nativeQuery = true)
+    Optional<Integer> findNumCoursesTaught(@Param("tutorId") Long tutorId);
+
+    @Query(value = "SELECT COUNT(*) FROM `account_courses` ac JOIN `course` c ON ac.course_id = c.course_id WHERE account_id = :tutorId AND MONTH(date_time_of_creation) = MONTH(NOW()) AND YEAR(date_time_of_creation) = YEAR(NOW())", nativeQuery = true)
+    Optional<Integer> findNumCoursesCreatedCurrentMonth(@Param("tutorId") Long tutorId);
+
+    @Query(value = "SELECT COUNT(*) FROM `account_courses` ac JOIN `course` c ON ac.course_id = c.course_id WHERE account_id = :tutorId AND MONTH(date_time_of_creation) = MONTH(NOW()) - 1 AND YEAR(date_time_of_creation) = YEAR(NOW()) OR MONTH(date_time_of_creation) = 1 AND YEAR(date_time_of_creation) = YEAR(NOW()) - 1", nativeQuery = true)
+    Optional<Integer> findNumCoursesCreatedLastMonth(@Param("tutorId") Long tutorId);
 }

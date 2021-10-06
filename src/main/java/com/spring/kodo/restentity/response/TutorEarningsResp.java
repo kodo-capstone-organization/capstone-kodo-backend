@@ -16,6 +16,14 @@ public class TutorEarningsResp
 
     private List<MonthlyEarningResp> monthlyTutorEarningsForLastYear;
 
+    private BigDecimal earningsLastMonth;
+
+    private Integer numCoursesTaught;
+
+    private Integer numCoursesCreatedCurrentMonth;
+
+    private Integer numCoursesCreatedLastMonth;
+
     public TutorEarningsResp() {
     }
 
@@ -76,5 +84,37 @@ public class TutorEarningsResp
                 ", currentMonthTutorEarning=" + currentMonthTutorEarning +
                 ", monthlyTutorEarningsForLastYear=" + monthlyTutorEarningsForLastYear +
                 '}';
+    }
+
+    public BigDecimal getEarningsLastMonth() {
+        return earningsLastMonth;
+    }
+
+    public void setEarningsLastMonth(BigDecimal earningsLastMonth) {
+        this.earningsLastMonth = earningsLastMonth;
+    }
+
+    public Integer getNumCoursesTaught() {
+        return numCoursesTaught;
+    }
+
+    public void setNumCoursesTaught(Integer numCoursesTaught) {
+        this.numCoursesTaught = numCoursesTaught;
+    }
+
+    public Integer getNumCoursesCreatedCurrentMonth() {
+        return numCoursesCreatedCurrentMonth;
+    }
+
+    public void setNumCoursesCreatedCurrentMonth(Integer numCoursesCreatedCurrentMonth) {
+        this.numCoursesCreatedCurrentMonth = numCoursesCreatedCurrentMonth;
+    }
+
+    public Integer getNumCoursesCreatedLastMonth() {
+        return numCoursesCreatedLastMonth;
+    }
+
+    public void setNumCoursesCreatedLastMonth(Integer numCoursesCreatedLastMonth) {
+        this.numCoursesCreatedLastMonth = numCoursesCreatedLastMonth;
     }
 }
