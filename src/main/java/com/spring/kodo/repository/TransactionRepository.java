@@ -111,4 +111,12 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
 
     @Query(value = "SELECT c.course_id, c.name, SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id WHERE YEAR(t.date_time_of_transaction) = :inputYear GROUP BY c.course_id, c.name", nativeQuery = true)
     List<CourseWithEarningResp> getAllTransactionsByGroupbyCourseByYear(@Param("inputYear") Year inputYear);
+
+    @Query(value = "SELECT e.course_id AS courseid, e.* FROM (SELECT c.course_id, c.name, SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id GROUP BY c.course_id, c.name) AS e " +
+        "WHERE e.earnings = (SELECT MAX(s.earnings) FROM (SELECT SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id GROUP BY c.course_id, c.name) s)", nativeQuery = true)
+List<CourseWithEarningResp> getLifetimeHighestEarningCourse();
+
+    @Query(value = "SELECT e.course_id AS courseid, e.* FROM (SELECT c.course_id, c.name, SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id WHERE YEAR(t.date_time_of_transaction) = YEAR(NOW()) AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) GROUP BY c.course_id, c.name) AS e " +
+            "WHERE e.earnings = (SELECT MAX(s.earnings) FROM (SELECT SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id WHERE YEAR(t.date_time_of_transaction) = YEAR(NOW()) AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) GROUP BY c.course_id, c.name) s)", nativeQuery = true)
+    List<CourseWithEarningResp> getCurrentMonthHighestEarningCourse();
 }

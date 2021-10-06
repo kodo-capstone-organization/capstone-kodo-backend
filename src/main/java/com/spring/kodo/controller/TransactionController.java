@@ -138,8 +138,8 @@ public class TransactionController
         }
     }
 
-    @GetMapping("/getPlatformEarningsAdminData/{requestingAccountId}")
-    public PlatformEarningsResp getPlatformEarningsAdminData(@PathVariable Long requestingAccountId)
+    @GetMapping("/getPlatformMetricsAdminData/{requestingAccountId}")
+    public PlatformEarningsResp getPlatformMetricsAdminData(@PathVariable Long requestingAccountId)
     {
         try
         {
@@ -147,12 +147,16 @@ public class TransactionController
             BigDecimal currentMonthPlatformEarnings = this.transactionService.getCurrentMonthPlatformEarnings(requestingAccountId);
             BigDecimal lastMonthPlatformEarnings = this.transactionService.getLastMonthPlatformEarnings(requestingAccountId);
             List<MonthlyEarningResp> monthlyPlatformEarningsForLastYear = this.transactionService.getMonthlyPlatformEarningsForLastYear(requestingAccountId);
+            List<CourseWithEarningResp> lifetimeHighestEarningCourses = this.transactionService.getLifetimeHighestEarningCourse(requestingAccountId);
+            List<CourseWithEarningResp> currentMonthHighestEarningCourses = this.transactionService.getCurrentMonthHighestEarningCourse(requestingAccountId);
 
             PlatformEarningsResp platformEarningsResp = new PlatformEarningsResp();
             platformEarningsResp.setLifetimePlatformEarnings(lifetimePlatformEarnings);
             platformEarningsResp.setCurrentMonthPlatformEarnings(currentMonthPlatformEarnings);
             platformEarningsResp.setLastMonthPlatformEarnings(lastMonthPlatformEarnings);
             platformEarningsResp.setMonthlyPlatformEarningsForLastYear(monthlyPlatformEarningsForLastYear);
+            platformEarningsResp.setLifetimeHighestEarningCourses(lifetimeHighestEarningCourses);
+            platformEarningsResp.setCurrentMonthHighestEarningCourses(currentMonthHighestEarningCourses);
 
             return platformEarningsResp;
         }

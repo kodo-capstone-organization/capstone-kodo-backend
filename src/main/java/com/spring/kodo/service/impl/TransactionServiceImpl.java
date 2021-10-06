@@ -6,6 +6,7 @@ import com.spring.kodo.entity.Course;
 import com.spring.kodo.entity.Tag;
 import com.spring.kodo.entity.Transaction;
 import com.spring.kodo.repository.TransactionRepository;
+import com.spring.kodo.restentity.response.CourseWithEarningResp;
 import com.spring.kodo.restentity.response.MonthlyEarningResp;
 import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.CourseService;
@@ -537,6 +538,36 @@ public class TransactionServiceImpl implements TransactionService
             Collections.reverse(monthlyTutorEarningsForLastYear);
 
             return monthlyTutorEarningsForLastYear;
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("Account is not a admin");
+        }
+    }
+
+    @Override
+    public List<CourseWithEarningResp> getLifetimeHighestEarningCourse(Long requestingId) throws AccountNotFoundException, AccountPermissionDeniedException
+    {
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingId);
+
+        if (requestingAccount.getIsAdmin())
+        {
+            return this.transactionRepository.getLifetimeHighestEarningCourse();
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("Account is not a admin");
+        }
+    }
+
+    @Override
+    public List<CourseWithEarningResp> getCurrentMonthHighestEarningCourse(Long requestingId) throws AccountNotFoundException, AccountPermissionDeniedException
+    {
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingId);
+
+        if (requestingAccount.getIsAdmin())
+        {
+            return this.transactionRepository.getCurrentMonthHighestEarningCourse();
         }
         else
         {

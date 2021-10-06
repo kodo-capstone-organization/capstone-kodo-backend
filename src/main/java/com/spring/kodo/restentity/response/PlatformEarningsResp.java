@@ -14,14 +14,11 @@ public class PlatformEarningsResp
 
     private List<MonthlyEarningResp> monthlyPlatformEarningsForLastYear;
 
-    public PlatformEarningsResp() {
-    }
+    private List<CourseWithEarningResp> lifetimeHighestEarningCourses;
 
-    public PlatformEarningsResp(BigDecimal lifetimePlatformEarnings, BigDecimal currentMonthPlatformEarnings, BigDecimal lastMonthPlatformEarnings, List<MonthlyEarningResp> monthlyPlatformEarningsForLastYear) {
-        this.lifetimePlatformEarnings = lifetimePlatformEarnings;
-        this.currentMonthPlatformEarnings = currentMonthPlatformEarnings;
-        this.lastMonthPlatformEarnings = lastMonthPlatformEarnings;
-        this.monthlyPlatformEarningsForLastYear = monthlyPlatformEarningsForLastYear;
+    private List<CourseWithEarningResp> currentMonthHighestEarningCourses;
+
+    public PlatformEarningsResp() {
     }
 
     public BigDecimal getLifetimePlatformEarnings() {
@@ -56,13 +53,23 @@ public class PlatformEarningsResp
         this.lastMonthPlatformEarnings = lastMonthPlatformEarnings;
     }
 
-    @Override
-    public String toString() {
-        return "PlatformEarningsResp{" +
-                "lifetimePlatformEarnings=" + lifetimePlatformEarnings +
-                ", currentMonthPlatformEarnings=" + currentMonthPlatformEarnings +
-                ", lastMonthPlatformEarnings=" + lastMonthPlatformEarnings +
-                ", monthlyPlatformEarningsForLastYear=" + monthlyPlatformEarningsForLastYear +
-                '}';
+    public Boolean getIncreaseInMonthlyProfit() {
+        return this.currentMonthPlatformEarnings.compareTo(lastMonthPlatformEarnings) == 1 ? true : false;
+    }
+
+    public List<CourseWithEarningResp> getLifetimeHighestEarningCourses() {
+        return lifetimeHighestEarningCourses;
+    }
+
+    public void setLifetimeHighestEarningCourses(List<CourseWithEarningResp> lifetimeHighestEarningCourses) {
+        this.lifetimeHighestEarningCourses = lifetimeHighestEarningCourses;
+    }
+
+    public List<CourseWithEarningResp> getCurrentMonthHighestEarningCourses() {
+        return currentMonthHighestEarningCourses;
+    }
+
+    public void setCurrentMonthHighestEarningCourses(List<CourseWithEarningResp> currentMonthHighestEarningCourses) {
+        this.currentMonthHighestEarningCourses = currentMonthHighestEarningCourses;
     }
 }
