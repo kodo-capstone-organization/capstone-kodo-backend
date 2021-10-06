@@ -251,7 +251,7 @@ public class TransactionController
             List<MonthlyEarningResp> monthlyTutorEarningsForLastYear = this.transactionService.getMonthlyTutorEarningForLastYear(requestingAccountId, tutorId);
             BigDecimal lastMonthEarnings = this.transactionService.getLastMonthTutorEarnings(requestingAccountId, tutorId);
             Integer numCoursesTaught = this.accountService.getNumCoursesTaught(tutorId);
-            Integer numCoursesCreatedCurrentMonth = this.accountService.getNumCoursesCreatedLastMonth(tutorId);
+            Integer numCoursesCreatedCurrentMonth = this.accountService.getNumCoursesCreatedCurrentMonth(tutorId);
             Integer numCoursesCreatedLastMonth = this.accountService.getNumCoursesCreatedLastMonth(tutorId);
 
             TutorEarningsResp tutorEarningsResp = new TutorEarningsResp();

@@ -87,7 +87,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
     @Query(value = "SELECT COUNT(*) FROM `transaction` t WHERE t.course_course_id = :courseId AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) - 1 AND YEAR(t.date_time_of_transaction) = YEAR(NOW()) OR MONTH(t.date_time_of_transaction) = 1 AND YEAR(t.date_time_of_transaction) = YEAR(NOW()) - 1", nativeQuery = true)
     Optional<BigDecimal> getNumEnrolledLastMonth(@Param("courseId") Long courseId);
 
-    @Query(value="SELECT * FROM `enrolled_course` ec WHERE ec.parent_course_course_id = :courseId AND ec.date_time_of_completion IS NOT NULL", nativeQuery = true)
+    @Query(value="SELECT COUNT(*) FROM `enrolled_course` ec WHERE ec.parent_course_course_id = :courseId AND ec.date_time_of_completion IS NOT NULL", nativeQuery = true)
     Optional<BigDecimal> getNumStudentsCompleted(@Param("courseId") Long courseId);
 
     // Used to get all transactions by payee/tutor
