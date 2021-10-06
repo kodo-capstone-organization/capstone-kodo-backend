@@ -176,7 +176,11 @@ public class TransactionController
 
             BigDecimal lifetimeCourseEarnings = this.transactionService.getLifetimeCourseEarning(requestingAccountId, courseId);
             BigDecimal currentMonthCourseEarnings = this.transactionService.getCurrentMonthCourseEarning(requestingAccountId, courseId);
+            BigDecimal lastMonthCourseEarnings = this.transactionService.getLastMonthCourseEarning(requestingAccountId, courseId);
             List<MonthlyEarningResp> monthlyCourseEarningsForLastYear = this.transactionService.getMonthlyCourseEarningForLastYear(requestingAccountId, courseId);
+            BigDecimal numEnrolledCurrentMonth = this.transactionService.getNumEnrolledCurrentMonth(requestingAccountId, courseId);
+            BigDecimal numEnrolledLastMonth = this.transactionService.getNumEnrolledLastMonth(requestingAccountId, courseId);
+            BigDecimal numStudentsCompleted = this.transactionService.getNumStudentsCompleted(requestingAccountId, courseId);
 
             CourseEarningsResp courseEarningsResp = new CourseEarningsResp();
 
@@ -187,7 +191,11 @@ public class TransactionController
 
             courseEarningsResp.setLifetimeCourseEarning(lifetimeCourseEarnings);
             courseEarningsResp.setCurrentMonthCourseEarning(currentMonthCourseEarnings);
+            courseEarningsResp.setLastMonthCourseEarning(lastMonthCourseEarnings);
             courseEarningsResp.setMonthlyCourseEarningForLastYear(monthlyCourseEarningsForLastYear);
+            courseEarningsResp.setNumEnrollmentMonth(numEnrolledCurrentMonth);
+            courseEarningsResp.setNumEnrollmentLastMonth(numEnrolledLastMonth);
+            courseEarningsResp.setPercentageCompletion(numStudentsCompleted);
 
             return courseEarningsResp;
         }
@@ -241,6 +249,10 @@ public class TransactionController
             BigDecimal lifetimeTutorEarnings = this.transactionService.getLifetimeTutorEarning(requestingAccountId, tutorId);
             BigDecimal currentMonthTutorEarnings = this.transactionService.getCurrentMonthTutorEarning(requestingAccountId, tutorId);
             List<MonthlyEarningResp> monthlyTutorEarningsForLastYear = this.transactionService.getMonthlyTutorEarningForLastYear(requestingAccountId, tutorId);
+            BigDecimal lastMonthEarnings = this.transactionService.getLastMonthTutorEarnings(requestingAccountId, tutorId);
+            Integer numCoursesTaught = this.accountService.getNumCoursesTaught(tutorId);
+            Integer numCoursesCreatedCurrentMonth = this.accountService.getNumCoursesCreatedLastMonth(tutorId);
+            Integer numCoursesCreatedLastMonth = this.accountService.getNumCoursesCreatedLastMonth(tutorId);
 
             TutorEarningsResp tutorEarningsResp = new TutorEarningsResp();
             tutorEarningsResp.setTutorId(tutor.getAccountId());
@@ -249,6 +261,10 @@ public class TransactionController
             tutorEarningsResp.setLifetimeTutorEarning(lifetimeTutorEarnings);
             tutorEarningsResp.setCurrentMonthTutorEarning(currentMonthTutorEarnings);
             tutorEarningsResp.setMonthlyTutorEarningsForLastYear(monthlyTutorEarningsForLastYear);
+            tutorEarningsResp.setEarningsLastMonth(lastMonthEarnings);
+            tutorEarningsResp.setNumCoursesTaught(numCoursesTaught);
+            tutorEarningsResp.setNumCoursesCreatedCurrentMonth(numCoursesCreatedCurrentMonth);
+            tutorEarningsResp.setNumCoursesCreatedLastMonth(numCoursesCreatedLastMonth);
 
             return tutorEarningsResp;
         }
