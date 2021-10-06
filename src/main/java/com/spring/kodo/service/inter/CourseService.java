@@ -68,7 +68,7 @@ public interface CourseService
 
     Course addLessonToCourse(Course course, Lesson lesson) throws UpdateCourseException, CourseNotFoundException, LessonNotFoundException;
 
-    Double getCourseRating(Long courseId) throws CourseNotFoundException;
+    Double getCourseRatingByCourseId(Long courseId) throws CourseNotFoundException;
 
     BigDecimal getTotalEarningsByCourseId(Long courseId) throws CourseNotFoundException;
 

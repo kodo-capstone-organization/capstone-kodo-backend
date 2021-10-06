@@ -54,7 +54,7 @@ public class CourseController
         {
             Course course = this.courseService.getCourseByCourseId(courseId);
             Account tutor = this.accountService.getAccountByCourseId(courseId);
-            Double rating = this.courseService.getCourseRating(courseId);
+            Double rating = this.courseService.getCourseRatingByCourseId(courseId);
 
             CourseWithTutorAndRatingResp courseWithTutorAndRatingResp = createCourseWithtutorResp(course, tutor, rating);
 
@@ -73,7 +73,7 @@ public class CourseController
         {
             Course course = this.courseService.getCourseByCourseId(courseId);
             Account tutor = this.accountService.getAccountByCourseId(courseId);
-            Double rating = this.courseService.getCourseRating(courseId);
+            Double rating = this.courseService.getCourseRatingByCourseId(courseId);
 
             // Explicitly set enrollment to null as it's not needed
             CourseWithTutorAndRatingResp courseWithTutorAndRatingResp = new CourseWithTutorAndRatingResp(
@@ -132,6 +132,19 @@ public class CourseController
         try
         {
             return this.courseService.getCourseByStudentAttemptId(studentAttemptId);
+        }
+        catch (CourseNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
+    @GetMapping("/getCourseRatingByCourseId/{courseId}")
+    public Double getCourseRatingByCourseId(@PathVariable Long courseId)
+    {
+        try
+        {
+            return this.courseService.getCourseRatingByCourseId(courseId);
         }
         catch (CourseNotFoundException ex)
         {
@@ -390,7 +403,7 @@ public class CourseController
         {
             courseId = course.getCourseId();
             tutor = this.accountService.getAccountByCourseId(courseId);
-            rating = this.courseService.getCourseRating(courseId);
+            rating = this.courseService.getCourseRatingByCourseId(courseId);
 
             courseWithTutorAndRatingResp = createCourseWithtutorResp(course, tutor, rating);
             courseWithTutorAndRatingResps.add(courseWithTutorAndRatingResp);
@@ -429,7 +442,7 @@ public class CourseController
         for (Course course : courses)
         {
             tutor = this.accountService.getAccountByCourseId(course.getCourseId());
-            rating = this.courseService.getCourseRating(course.getCourseId());
+            rating = this.courseService.getCourseRatingByCourseId(course.getCourseId());
 
             courseResps.add(new CourseResp(
                     course.getCourseId(),
