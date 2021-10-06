@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity(name="enrolled_course")
-@Table(name="enrolled_course")
+@Entity(name = "enrolled_course")
+@Table(name = "enrolled_course")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class EnrolledCourse
 {
@@ -21,7 +21,7 @@ public class EnrolledCourse
     @Column(nullable = true)
     @Min(0)
     @Max(5)
-    private int courseRating;
+    private Integer courseRating;
 
     @Column(nullable = true)
     private LocalDateTime dateTimeOfCompletion;
@@ -39,10 +39,11 @@ public class EnrolledCourse
 
     public EnrolledCourse()
     {
+        this.courseRating = null;
         this.enrolledLessons = new ArrayList<>();
     }
 
-    public EnrolledCourse(int courseRating)
+    public EnrolledCourse(Integer courseRating)
     {
         this();
 
@@ -59,12 +60,12 @@ public class EnrolledCourse
         this.enrolledCourseId = enrolledCourseId;
     }
 
-    public int getCourseRating()
+    public Integer getCourseRating()
     {
         return courseRating;
     }
 
-    public void setCourseRating(int courseRating)
+    public void setCourseRating(Integer courseRating)
     {
         this.courseRating = courseRating;
     }
