@@ -2,6 +2,7 @@ package com.spring.kodo.repository;
 
 import com.spring.kodo.entity.Transaction;
 import com.spring.kodo.restentity.response.CourseWithEarningResp;
+import com.spring.kodo.restentity.response.TutorWithEarningResp;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -114,9 +115,17 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
 
     @Query(value = "SELECT e.course_id AS courseid, e.* FROM (SELECT c.course_id, c.name, SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id GROUP BY c.course_id, c.name) AS e " +
         "WHERE e.earnings = (SELECT MAX(s.earnings) FROM (SELECT SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id GROUP BY c.course_id, c.name) s)", nativeQuery = true)
-List<CourseWithEarningResp> getLifetimeHighestEarningCourse();
+    List<CourseWithEarningResp> getLifetimeHighestEarningCourses();
 
     @Query(value = "SELECT e.course_id AS courseid, e.* FROM (SELECT c.course_id, c.name, SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id WHERE YEAR(t.date_time_of_transaction) = YEAR(NOW()) AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) GROUP BY c.course_id, c.name) AS e " +
             "WHERE e.earnings = (SELECT MAX(s.earnings) FROM (SELECT SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id WHERE YEAR(t.date_time_of_transaction) = YEAR(NOW()) AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) GROUP BY c.course_id, c.name) s)", nativeQuery = true)
-    List<CourseWithEarningResp> getCurrentMonthHighestEarningCourse();
+    List<CourseWithEarningResp> getCurrentMonthHighestEarningCourses();
+
+    @Query(value = "SELECT e.account_id AS accountid, e.* FROM (SELECT a.account_id, a.name, SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN account a ON t.payee_account_id = a.account_id GROUP BY a.account_id, a.name) AS e " +
+            "WHERE e.earnings = (SELECT MAX(s.earnings) FROM (SELECT SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN account a ON t.payee_account_id = a.account_id GROUP BY a.account_id, a.name) s)", nativeQuery = true)
+    List<TutorWithEarningResp> getLifetimeHighestEarningTutors();
+
+    @Query(value = "SELECT e.account_id AS accountid, e.* FROM (SELECT a.account_id, a.name, SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN account a ON t.payee_account_id = a.account_id WHERE YEAR(t.date_time_of_transaction) = YEAR(NOW()) AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) GROUP BY a.account_id, a.name) AS e " +
+            "WHERE e.earnings = (SELECT MAX(s.earnings) FROM (SELECT SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN account a ON t.payee_account_id = a.account_id WHERE YEAR(t.date_time_of_transaction) = YEAR(NOW()) AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) GROUP BY a.account_id, a.name) s)", nativeQuery = true)
+    List<TutorWithEarningResp> getCurrentMonthHighestEarningTutors();
 }

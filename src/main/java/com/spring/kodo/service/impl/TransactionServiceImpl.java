@@ -8,6 +8,7 @@ import com.spring.kodo.entity.Transaction;
 import com.spring.kodo.repository.TransactionRepository;
 import com.spring.kodo.restentity.response.CourseWithEarningResp;
 import com.spring.kodo.restentity.response.MonthlyEarningResp;
+import com.spring.kodo.restentity.response.TutorWithEarningResp;
 import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.CourseService;
 import com.spring.kodo.service.inter.TagService;
@@ -546,13 +547,13 @@ public class TransactionServiceImpl implements TransactionService
     }
 
     @Override
-    public List<CourseWithEarningResp> getLifetimeHighestEarningCourse(Long requestingId) throws AccountNotFoundException, AccountPermissionDeniedException
+    public List<CourseWithEarningResp> getLifetimeHighestEarningCourses(Long requestingId) throws AccountNotFoundException, AccountPermissionDeniedException
     {
         Account requestingAccount = this.accountService.getAccountByAccountId(requestingId);
 
         if (requestingAccount.getIsAdmin())
         {
-            return this.transactionRepository.getLifetimeHighestEarningCourse();
+            return this.transactionRepository.getLifetimeHighestEarningCourses();
         }
         else
         {
@@ -561,13 +562,43 @@ public class TransactionServiceImpl implements TransactionService
     }
 
     @Override
-    public List<CourseWithEarningResp> getCurrentMonthHighestEarningCourse(Long requestingId) throws AccountNotFoundException, AccountPermissionDeniedException
+    public List<CourseWithEarningResp> getCurrentMonthHighestEarningCourses(Long requestingId) throws AccountNotFoundException, AccountPermissionDeniedException
     {
         Account requestingAccount = this.accountService.getAccountByAccountId(requestingId);
 
         if (requestingAccount.getIsAdmin())
         {
-            return this.transactionRepository.getCurrentMonthHighestEarningCourse();
+            return this.transactionRepository.getCurrentMonthHighestEarningCourses();
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("Account is not a admin");
+        }
+    }
+
+    @Override
+    public List<TutorWithEarningResp> getLifetimeHighestEarningTutors(Long requestingId) throws AccountNotFoundException, AccountPermissionDeniedException
+    {
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingId);
+
+        if (requestingAccount.getIsAdmin())
+        {
+            return this.transactionRepository.getLifetimeHighestEarningTutors();
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("Account is not a admin");
+        }
+    }
+
+    @Override
+    public List<TutorWithEarningResp> getCurrentMonthHighestEarningTutors(Long requestingId) throws AccountNotFoundException, AccountPermissionDeniedException
+    {
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingId);
+
+        if (requestingAccount.getIsAdmin())
+        {
+            return this.transactionRepository.getCurrentMonthHighestEarningTutors();
         }
         else
         {

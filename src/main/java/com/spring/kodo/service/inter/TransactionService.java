@@ -3,6 +3,7 @@ package com.spring.kodo.service.inter;
 import com.spring.kodo.entity.Transaction;
 import com.spring.kodo.restentity.response.CourseWithEarningResp;
 import com.spring.kodo.restentity.response.MonthlyEarningResp;
+import com.spring.kodo.restentity.response.TutorWithEarningResp;
 import com.spring.kodo.util.exception.*;
 
 import java.math.BigDecimal;
@@ -64,7 +65,11 @@ public interface TransactionService
 
     public List<MonthlyEarningResp> getMonthlyTutorEarningForLastYear(Long requestingAccountId, Long tutorId) throws AccountPermissionDeniedException, AccountNotFoundException;
 
-    List<CourseWithEarningResp> getLifetimeHighestEarningCourse(Long requestingId) throws AccountNotFoundException, AccountPermissionDeniedException;
+    List<CourseWithEarningResp> getLifetimeHighestEarningCourses(Long requestingId) throws AccountNotFoundException, AccountPermissionDeniedException;
 
-    List<CourseWithEarningResp> getCurrentMonthHighestEarningCourse(Long requestingId) throws AccountNotFoundException, AccountPermissionDeniedException;
+    List<CourseWithEarningResp> getCurrentMonthHighestEarningCourses(Long requestingId) throws AccountNotFoundException, AccountPermissionDeniedException;
+
+    List<TutorWithEarningResp> getLifetimeHighestEarningTutors(Long requestingId) throws AccountNotFoundException, AccountPermissionDeniedException;
+
+    List<TutorWithEarningResp> getCurrentMonthHighestEarningTutors(Long requestingId) throws AccountNotFoundException, AccountPermissionDeniedException;
 }

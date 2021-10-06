@@ -147,8 +147,10 @@ public class TransactionController
             BigDecimal currentMonthPlatformEarnings = this.transactionService.getCurrentMonthPlatformEarnings(requestingAccountId);
             BigDecimal lastMonthPlatformEarnings = this.transactionService.getLastMonthPlatformEarnings(requestingAccountId);
             List<MonthlyEarningResp> monthlyPlatformEarningsForLastYear = this.transactionService.getMonthlyPlatformEarningsForLastYear(requestingAccountId);
-            List<CourseWithEarningResp> lifetimeHighestEarningCourses = this.transactionService.getLifetimeHighestEarningCourse(requestingAccountId);
-            List<CourseWithEarningResp> currentMonthHighestEarningCourses = this.transactionService.getCurrentMonthHighestEarningCourse(requestingAccountId);
+            List<CourseWithEarningResp> lifetimeHighestEarningCourses = this.transactionService.getLifetimeHighestEarningCourses(requestingAccountId);
+            List<CourseWithEarningResp> currentMonthHighestEarningCourses = this.transactionService.getCurrentMonthHighestEarningCourses(requestingAccountId);
+            List<TutorWithEarningResp> lifetimeHighestEarningTutors = this.transactionService.getLifetimeHighestEarningTutors(requestingAccountId);
+            List<TutorWithEarningResp> currentMonthHighestEarningTutors = this.transactionService.getCurrentMonthHighestEarningTutors(requestingAccountId);
 
             PlatformEarningsResp platformEarningsResp = new PlatformEarningsResp();
             platformEarningsResp.setLifetimePlatformEarnings(lifetimePlatformEarnings);
@@ -157,6 +159,8 @@ public class TransactionController
             platformEarningsResp.setMonthlyPlatformEarningsForLastYear(monthlyPlatformEarningsForLastYear);
             platformEarningsResp.setLifetimeHighestEarningCourses(lifetimeHighestEarningCourses);
             platformEarningsResp.setCurrentMonthHighestEarningCourses(currentMonthHighestEarningCourses);
+            platformEarningsResp.setLifetimeHighestEarningTutors(lifetimeHighestEarningTutors);
+            platformEarningsResp.setCurrentMonthHighestEarningTutors(currentMonthHighestEarningTutors);
 
             return platformEarningsResp;
         }

@@ -2,7 +2,6 @@ package com.spring.kodo.restentity.response;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 public class PlatformEarningsResp
 {
@@ -17,6 +16,10 @@ public class PlatformEarningsResp
     private List<CourseWithEarningResp> lifetimeHighestEarningCourses;
 
     private List<CourseWithEarningResp> currentMonthHighestEarningCourses;
+
+    private List<TutorWithEarningResp> lifetimeHighestEarningTutors;
+
+    private List<TutorWithEarningResp> currentMonthHighestEarningTutors;
 
     public PlatformEarningsResp() {
     }
@@ -71,5 +74,21 @@ public class PlatformEarningsResp
 
     public void setCurrentMonthHighestEarningCourses(List<CourseWithEarningResp> currentMonthHighestEarningCourses) {
         this.currentMonthHighestEarningCourses = currentMonthHighestEarningCourses;
+    }
+
+    public List<TutorWithEarningResp> getLifetimeHighestEarningTutors() {
+        return lifetimeHighestEarningTutors;
+    }
+
+    public void setLifetimeHighestEarningTutors(List<TutorWithEarningResp> lifetimeHighestEarningTutors) {
+        this.lifetimeHighestEarningTutors = lifetimeHighestEarningTutors;
+    }
+
+    public List<TutorWithEarningResp> getCurrentMonthHighestEarningTutors() {
+        return currentMonthHighestEarningTutors;
+    }
+
+    public void setCurrentMonthHighestEarningTutors(List<TutorWithEarningResp> currentMonthHighestEarningTutors) {
+        this.currentMonthHighestEarningTutors = currentMonthHighestEarningTutors;
     }
 }
