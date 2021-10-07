@@ -2,6 +2,7 @@ package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.Course;
 import com.spring.kodo.entity.ForumCategory;
+import com.spring.kodo.entity.ForumPost;
 import com.spring.kodo.entity.ForumThread;
 import com.spring.kodo.repository.ForumCategoryRepository;
 import com.spring.kodo.service.inter.CourseService;
@@ -17,11 +18,13 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 @Service
-public class ForumCategoryServiceImpl implements ForumCategoryService {
+public class ForumCategoryServiceImpl implements ForumCategoryService
+{
     @Autowired // With this annotation, we do not to populate ForumCategoryRepository in this class' constructor
     private ForumCategoryRepository forumCategoryRepository;
 
@@ -34,132 +37,228 @@ public class ForumCategoryServiceImpl implements ForumCategoryService {
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
 
-    public ForumCategoryServiceImpl() {
+    public ForumCategoryServiceImpl()
+    {
         validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.getValidator();
     }
 
     @Override
-    public ForumCategory createNewForumCategory(ForumCategory newForumCategory, Long courseId) throws InputDataValidationException, UnknownPersistenceException, CourseNotFoundException {
-        try {
+    public ForumCategory createNewForumCategory(ForumCategory newForumCategory, Long courseId) throws InputDataValidationException, UnknownPersistenceException, CourseNotFoundException
+    {
+        try
+        {
             Set<ConstraintViolation<ForumCategory>> constraintViolations = validator.validate(newForumCategory);
-            if (constraintViolations.isEmpty()) {
+            if (constraintViolations.isEmpty())
+            {
                 Course course = courseService.getCourseByCourseId(courseId);
                 newForumCategory.setCourse(course);
                 forumCategoryRepository.saveAndFlush(newForumCategory);
                 return newForumCategory;
-            } else {
+            }
+            else
+            {
                 throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
-        } catch (DataAccessException ex) {
+        }
+        catch (DataAccessException ex)
+        {
             throw new UnknownPersistenceException(ex.getMessage());
         }
     }
 
     @Override
-    public ForumCategory getForumCategoryByForumCategoryId(Long forumCategoryId) throws ForumCategoryNotFoundException {
+    public ForumCategory getForumCategoryByForumCategoryId(Long forumCategoryId) throws ForumCategoryNotFoundException
+    {
         ForumCategory forumCategory = forumCategoryRepository.findById(forumCategoryId).orElse(null);
 
-        if (forumCategory != null) {
+        if (forumCategory != null)
+        {
             return forumCategory;
-        } else {
+        }
+        else
+        {
             throw new ForumCategoryNotFoundException("Forum Category with ID: " + forumCategoryId + " does not exist!");
         }
     }
 
     @Override
-    public ForumCategory getForumCategoryByName(String name) throws ForumCategoryNotFoundException {
+    public ForumCategory getForumCategoryByName(String name) throws ForumCategoryNotFoundException
+    {
         ForumCategory forumCategory = forumCategoryRepository.findByName(name).orElse(null);
 
-        if (forumCategory != null) {
+        if (forumCategory != null)
+        {
             return forumCategory;
-        } else {
+        }
+        else
+        {
             throw new ForumCategoryNotFoundException("Forum Category with Name: " + name + " does not exist!");
         }
     }
 
     @Override
-    public List<ForumCategory> getAllForumCategories() {
+    public List<ForumCategory> getForumCategoryByCourseId(Long courseId) throws ForumCategoryNotFoundException
+    {
+        List<ForumCategory> forumCategoryList = forumCategoryRepository.findByCourseId(courseId);
+
+        if (forumCategoryList != null)
+        {
+            return forumCategoryList;
+        }
+        else
+        {
+            throw new ForumCategoryNotFoundException("Forum Categories with course ID: " + courseId + " does not exist!");
+        }
+    }
+
+    @Override
+    public ForumCategory getForumCategoryByForumThreadId(Long forumThreadId) throws ForumCategoryNotFoundException
+    {
+        ForumCategory forumCategory = forumCategoryRepository.findByForumThreadId(forumThreadId).orElse(null);
+
+        if (forumCategory != null)
+        {
+            return forumCategory;
+        }
+        else
+        {
+            throw new ForumCategoryNotFoundException("Forum Category with ForumThread ID: " + forumThreadId + " does not exist!");
+        }
+    }
+
+    @Override
+    public List<ForumCategory> getAllForumCategories()
+    {
         return forumCategoryRepository.findAll();
     }
 
     //only updating attributes, not relationships
     @Override
-    public ForumCategory updateForumCategory(ForumCategory updatedForumCategory) throws ForumCategoryNotFoundException, InputDataValidationException {
-        if (updatedForumCategory != null && updatedForumCategory.getForumCategoryId() != null) {
+    public ForumCategory updateForumCategory(ForumCategory updatedForumCategory) throws ForumCategoryNotFoundException, InputDataValidationException
+    {
+        if (updatedForumCategory != null && updatedForumCategory.getForumCategoryId() != null)
+        {
             Set<ConstraintViolation<ForumCategory>> constraintViolations = validator.validate(updatedForumCategory);
-            if (constraintViolations.isEmpty()) {
+            if (constraintViolations.isEmpty())
+            {
                 ForumCategory forumCategoryToUpdate = forumCategoryRepository.findById(updatedForumCategory.getForumCategoryId()).orElse(null);
-                if (forumCategoryToUpdate != null) {
+                if (forumCategoryToUpdate != null)
+                {
                     forumCategoryToUpdate.setName(updatedForumCategory.getName());
                     forumCategoryToUpdate.setDescription(updatedForumCategory.getDescription());
                     forumCategoryRepository.saveAndFlush(forumCategoryToUpdate);
                     return forumCategoryToUpdate;
-                } else {
+                }
+                else
+                {
                     throw new ForumCategoryNotFoundException("Forum Category with ID: " + updatedForumCategory.getForumCategoryId() + " does not exist!");
                 }
-            } else {
+            }
+            else
+            {
                 throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
-        } else {
+        }
+        else
+        {
             throw new ForumCategoryNotFoundException("Forum Category ID is not provided for forum category to be updated");
         }
     }
 
     @Override
-    public Boolean deleteForumCategory(Long forumCategoryId) throws ForumCategoryNotFoundException, ForumThreadNotFoundException, ForumPostNotFoundException {
-        ForumCategory forumCategoryToDelete = forumCategoryRepository.findById(forumCategoryId).orElse(null);
+    public Boolean deleteForumCategory(Long forumCategoryId) throws DeleteForumCategoryException, ForumCategoryNotFoundException, DeleteForumThreadException, DeleteForumPostException, ForumThreadNotFoundException, ForumPostNotFoundException
+    {
+        if (forumCategoryId != null)
+        {
+            ForumCategory forumCategoryToDelete = getForumCategoryByForumCategoryId(forumCategoryId);
+            List<ForumThread> forumThreadsToDelete = new ArrayList<>(forumCategoryToDelete.getForumThreads());
 
-        if (forumCategoryToDelete != null) {
-            for (ForumThread thread : forumCategoryToDelete.getForumThreads()) {
-                forumThreadService.deleteForumThread(thread.getForumThreadId());
+            forumCategoryToDelete.getForumThreads().clear();
+            for (ForumThread forumThreadToDelete : forumThreadsToDelete)
+            {
+                forumThreadService.deleteForumThread(forumThreadToDelete.getForumThreadId());
             }
-            forumCategoryRepository.deleteById(forumCategoryId);
+
+            forumCategoryRepository.delete(forumCategoryToDelete);
             return true;
-        } else {
-            throw new ForumCategoryNotFoundException("Forum Category with ID: " + forumCategoryId + " does not exist!");
+        }
+        else
+        {
+            throw new DeleteForumCategoryException("Forum Category ID cannot be null");
         }
     }
 
     @Override
-    public ForumCategory addForumThreadToForumCategory(ForumCategory forumCategory, ForumThread forumThread) throws UpdateForumCategoryException, ForumCategoryNotFoundException, ForumThreadNotFoundException {
-        if (forumCategory != null) {
-            if (forumCategory.getForumCategoryId() != null) {
+    public ForumCategory addForumThreadToForumCategory(ForumCategory forumCategory, ForumThread forumThread) throws UpdateForumCategoryException, ForumCategoryNotFoundException, ForumThreadNotFoundException
+    {
+        if (forumCategory != null)
+        {
+            if (forumCategory.getForumCategoryId() != null)
+            {
                 forumCategory = getForumCategoryByForumCategoryId(forumCategory.getForumCategoryId());
-                if (forumThread != null) {
-                    if (forumThread.getForumThreadId() != null) {
+                if (forumThread != null)
+                {
+                    if (forumThread.getForumThreadId() != null)
+                    {
                         forumThread = forumThreadService.getForumThreadByForumThreadId(forumThread.getForumThreadId());
 
-                        if (!forumCategory.getForumThreads().contains(forumThread)) {
+                        if (!forumCategory.getForumThreads().contains(forumThread))
+                        {
                             forumCategory.getForumThreads().add(forumThread);
 
                             forumCategoryRepository.save(forumCategory);
                             return forumCategory;
-                        } else {
+                        }
+                        else
+                        {
                             throw new UpdateForumCategoryException("ForumCategory with ID " + forumCategory.getForumCategoryId() + " already contains ForumThread with ID " + forumThread.getForumThreadId());
                         }
-                    } else {
+                    }
+                    else
+                    {
                         throw new UpdateForumCategoryException("ForumThread ID cannot be null");
                     }
-                } else {
+                }
+                else
+                {
                     throw new UpdateForumCategoryException("ForumThread cannot be null");
                 }
-            } else {
+            }
+            else
+            {
                 throw new UpdateForumCategoryException("ForumCategory ID cannot be null");
             }
-        } else {
+        }
+        else
+        {
             throw new UpdateForumCategoryException("ForumCategory cannot be null");
         }
     }
 
     @Override
-    public List<ForumCategory> getForumCategoryByCourseId(Long courseId) throws ForumCategoryNotFoundException {
-        List<ForumCategory> forumCategoryList = forumCategoryRepository.findByCourseId(courseId);
+    public ForumCategory removeForumThreadToForumCategoryByForumThreadId(Long forumThreadId) throws UpdateForumCategoryException, ForumCategoryNotFoundException
+    {
+        if (forumThreadId != null)
+        {
+            ForumCategory forumCategoryToUpdate = getForumCategoryByForumThreadId(forumThreadId);
+            List<ForumThread> forumThreads = forumCategoryToUpdate.getForumThreads();
 
-        if (forumCategoryList != null) {
-            return forumCategoryList;
-        } else {
-            throw new ForumCategoryNotFoundException("Forum Categories with course ID: " + courseId + " does not exist!");
+            for (int i = 0; i < forumThreads.size(); i++)
+            {
+                if (forumThreads.get(i).getForumThreadId().equals(forumThreadId))
+                {
+                    forumCategoryToUpdate.getForumThreads().remove(i);
+                    break;
+                }
+            }
+
+            forumCategoryRepository.saveAndFlush(forumCategoryToUpdate);
+            return forumCategoryToUpdate;
+        }
+        else
+        {
+            throw new UpdateForumCategoryException("ForumPost ID cannot be null");
         }
     }
 }

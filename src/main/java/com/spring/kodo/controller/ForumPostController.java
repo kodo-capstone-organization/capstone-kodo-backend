@@ -165,16 +165,20 @@ public class ForumPostController
     }
 
     @DeleteMapping("/deleteForumPost/{forumPostId}")
-    public ResponseEntity<String> deleteForumPost(@PathVariable Long forumPostId)
+    public ResponseEntity<String> deleteForumPost(@PathVariable Long forumPostId) throws DeleteForumPostException
     {
         try
         {
-            Boolean deletedForumPost = this.forumPostService.deleteForumPost(forumPostId);
+            this.forumPostService.deleteForumPostAndDisassociateFromForumThread(forumPostId);
             return ResponseEntity.status(HttpStatus.OK).body("Successfully deleted forum post with ID: " + forumPostId);
         }
-        catch (ForumPostNotFoundException ex)
+        catch (ForumThreadNotFoundException | ForumPostNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+        catch (UpdateForumThreadException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
     }
 }

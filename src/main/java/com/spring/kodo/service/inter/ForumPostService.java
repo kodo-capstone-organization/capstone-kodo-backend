@@ -19,5 +19,7 @@ public interface ForumPostService {
 
     ForumPost updateForumPost(ForumPost updatedForumPost) throws ForumPostNotFoundException, InputDataValidationException;
 
-    Boolean deleteForumPost(Long forumPostId) throws ForumPostNotFoundException;
+    Boolean deleteForumPost(Long forumPostId) throws ForumPostNotFoundException, DeleteForumPostException;
+
+    Boolean deleteForumPostAndDisassociateFromForumThread(Long forumPostId) throws ForumPostNotFoundException, DeleteForumPostException, UpdateForumThreadException, ForumThreadNotFoundException;
 }
