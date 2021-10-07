@@ -85,6 +85,12 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
     @Query(value = "SELECT COUNT(*) FROM `transaction` t WHERE t.course_course_id = :courseId AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) AND YEAR(t.date_time_of_transaction) = YEAR(NOW())", nativeQuery = true)
     Optional<BigDecimal> getNumEnrolledCurrentMonthByCourseId(@Param("courseId") Long courseId);
 
+    @Query(value = "SELECT COUNT(*) FROM transaction t WHERE YEAR(t.date_time_of_transaction) = YEAR(NOW()) AND MONTH(t.date_time_of_transaction) = MONTH(NOW())", nativeQuery = true)
+    Optional<Integer> getCurrentMonthEnrollmentCount();
+
+    @Query(value = "SELECT COUNT(*) FROM transaction t WHERE YEAR(t.date_time_of_transaction) = YEAR(NOW()) AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) - 1", nativeQuery = true)
+    Optional<Integer> getPreviousMonthEnrollmentCount();
+
     @Query(value = "SELECT COUNT(*) FROM `transaction` t WHERE t.course_course_id = :courseId AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) - 1 AND YEAR(t.date_time_of_transaction) = YEAR(NOW()) OR MONTH(t.date_time_of_transaction) = 1 AND YEAR(t.date_time_of_transaction) = YEAR(NOW()) - 1", nativeQuery = true)
     Optional<BigDecimal> getNumEnrolledLastMonthByCourseId(@Param("courseId") Long courseId);
 

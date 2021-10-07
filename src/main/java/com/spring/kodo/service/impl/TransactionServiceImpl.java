@@ -687,4 +687,34 @@ public class TransactionServiceImpl implements TransactionService
             throw new AccountPermissionDeniedException("Account is not an admin");
         }
     }
+
+    @Override
+    public Integer getCurrentMonthEnrollmentCount(Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException
+    {
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
+
+        if (requestingAccount.getIsAdmin())
+        {
+            return this.transactionRepository.getCurrentMonthEnrollmentCount().orElse(0);
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("Account is not an admin");
+        }
+    }
+
+    @Override
+    public Integer getPreviousMonthEnrollmentCount(Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException
+    {
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
+
+        if (requestingAccount.getIsAdmin())
+        {
+            return this.transactionRepository.getPreviousMonthEnrollmentCount().orElse(0);
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("Account is not an admin");
+        }
+    }
 }
