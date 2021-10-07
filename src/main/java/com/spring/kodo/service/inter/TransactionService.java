@@ -75,9 +75,9 @@ public interface TransactionService
 
     BigDecimal getLastMonthCourseEarning(Long requestingAccountId, Long tutorId) throws AccountPermissionDeniedException, AccountNotFoundException,  CourseNotFoundException;
 
-    BigDecimal getNumEnrolledCurrentMonth(Long requestingAccountId, Long courseId) throws AccountPermissionDeniedException, AccountNotFoundException , CourseNotFoundException;
+    BigDecimal getNumEnrolledCurrentMonthByCourseId(Long requestingAccountId, Long courseId) throws AccountPermissionDeniedException, AccountNotFoundException , CourseNotFoundException;
 
-    BigDecimal getNumEnrolledLastMonth(Long requestingAccountId, Long courseId) throws AccountPermissionDeniedException, AccountNotFoundException , CourseNotFoundException;
+    BigDecimal getNumEnrolledLastMonthByCourseId(Long requestingAccountId, Long courseId) throws AccountPermissionDeniedException, AccountNotFoundException , CourseNotFoundException;
 
     BigDecimal getNumStudentsCompleted(Long requestingAccountId, Long courseId) throws AccountPermissionDeniedException, AccountNotFoundException , CourseNotFoundException;
 

@@ -593,14 +593,14 @@ public class TransactionServiceImpl implements TransactionService
     }
 
     @Override
-    public BigDecimal getNumEnrolledCurrentMonth(Long requestingAccountId, Long courseId) throws AccountPermissionDeniedException, AccountNotFoundException , CourseNotFoundException
+    public BigDecimal getNumEnrolledCurrentMonthByCourseId(Long requestingAccountId, Long courseId) throws AccountPermissionDeniedException, AccountNotFoundException , CourseNotFoundException
     {
         Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
         Course course = this.courseService.getCourseByCourseId(courseId);
 
         if (requestingAccount.getIsAdmin())
         {
-            return this.transactionRepository.getNumEnrolledCurrentMonth(courseId).orElse(new BigDecimal(0));
+            return this.transactionRepository.getNumEnrolledCurrentMonthByCourseId(courseId).orElse(new BigDecimal(0));
         }
         else
         {
@@ -624,14 +624,14 @@ public class TransactionServiceImpl implements TransactionService
     }
 
     @Override
-    public BigDecimal getNumEnrolledLastMonth(Long requestingAccountId, Long courseId) throws AccountPermissionDeniedException, AccountNotFoundException , CourseNotFoundException
+    public BigDecimal getNumEnrolledLastMonthByCourseId(Long requestingAccountId, Long courseId) throws AccountPermissionDeniedException, AccountNotFoundException , CourseNotFoundException
     {
         Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
         Course course = this.courseService.getCourseByCourseId(courseId);
 
         if (requestingAccount.getIsAdmin())
         {
-            return this.transactionRepository.getNumEnrolledLastMonth(courseId).orElse(new BigDecimal(0));
+            return this.transactionRepository.getNumEnrolledLastMonthByCourseId(courseId).orElse(new BigDecimal(0));
         }
         else
         {

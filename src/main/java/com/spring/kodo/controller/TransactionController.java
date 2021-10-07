@@ -190,8 +190,8 @@ public class TransactionController
             BigDecimal currentMonthCourseEarnings = this.transactionService.getCurrentMonthCourseEarning(requestingAccountId, courseId);
             BigDecimal lastMonthCourseEarnings = this.transactionService.getLastMonthCourseEarning(requestingAccountId, courseId);
             List<MonthlyEarningResp> monthlyCourseEarningsForLastYear = this.transactionService.getMonthlyCourseEarningForLastYear(requestingAccountId, courseId);
-            BigDecimal numEnrolledCurrentMonth = this.transactionService.getNumEnrolledCurrentMonth(requestingAccountId, courseId);
-            BigDecimal numEnrolledLastMonth = this.transactionService.getNumEnrolledLastMonth(requestingAccountId, courseId);
+            BigDecimal numEnrolledCurrentMonth = this.transactionService.getNumEnrolledCurrentMonthByCourseId(requestingAccountId, courseId);
+            BigDecimal numEnrolledLastMonth = this.transactionService.getNumEnrolledLastMonthByCourseId(requestingAccountId, courseId);
             BigDecimal numStudentsCompleted = this.transactionService.getNumStudentsCompleted(requestingAccountId, courseId);
 
             CourseEarningsResp courseEarningsResp = new CourseEarningsResp();

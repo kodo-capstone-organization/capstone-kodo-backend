@@ -83,10 +83,10 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
     Optional<BigDecimal> getTutorPayoutByMonthByCourseId(@Param("courseId") Long courseId, @Param("inputYear") int inputYear, @Param("inputMonth") int inputMonth);
 
     @Query(value = "SELECT COUNT(*) FROM `transaction` t WHERE t.course_course_id = :courseId AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) AND YEAR(t.date_time_of_transaction) = YEAR(NOW())", nativeQuery = true)
-    Optional<BigDecimal> getNumEnrolledCurrentMonth(@Param("courseId") Long courseId);
+    Optional<BigDecimal> getNumEnrolledCurrentMonthByCourseId(@Param("courseId") Long courseId);
 
     @Query(value = "SELECT COUNT(*) FROM `transaction` t WHERE t.course_course_id = :courseId AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) - 1 AND YEAR(t.date_time_of_transaction) = YEAR(NOW()) OR MONTH(t.date_time_of_transaction) = 1 AND YEAR(t.date_time_of_transaction) = YEAR(NOW()) - 1", nativeQuery = true)
-    Optional<BigDecimal> getNumEnrolledLastMonth(@Param("courseId") Long courseId);
+    Optional<BigDecimal> getNumEnrolledLastMonthByCourseId(@Param("courseId") Long courseId);
 
     @Query(value="SELECT COUNT(*) FROM `enrolled_course` ec WHERE ec.parent_course_course_id = :courseId AND ec.date_time_of_completion IS NOT NULL", nativeQuery = true)
     Optional<BigDecimal> getNumStudentsCompleted(@Param("courseId") Long courseId);
