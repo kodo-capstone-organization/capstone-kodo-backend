@@ -21,7 +21,8 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-public class ForumPostServiceImpl implements ForumPostService {
+public class ForumPostServiceImpl implements ForumPostService
+{
 
     @Autowired // With this annotation, we do not to populate ForumPostRepository in this class' constructor
     private ForumPostRepository forumPostRepository;
@@ -35,79 +36,135 @@ public class ForumPostServiceImpl implements ForumPostService {
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
 
-    public ForumPostServiceImpl() {
+    public ForumPostServiceImpl()
+    {
         validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.getValidator();
     }
 
     @Override
-    public ForumPost createNewForumPost(ForumPost newForumPost, Long accountId) throws InputDataValidationException, UnknownPersistenceException, AccountNotFoundException {
-        try {
+    public ForumPost createNewForumPost(ForumPost newForumPost, Long accountId) throws InputDataValidationException, UnknownPersistenceException, AccountNotFoundException
+    {
+        try
+        {
             Set<ConstraintViolation<ForumPost>> constraintViolations = validator.validate(newForumPost);
-            if (constraintViolations.isEmpty()) {
+            if (constraintViolations.isEmpty())
+            {
                 Account account = accountService.getAccountByAccountId(accountId);
                 newForumPost.setAccount(account);
                 forumPostRepository.saveAndFlush(newForumPost);
                 return newForumPost;
-            } else {
+            }
+            else
+            {
                 throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
-        } catch (DataAccessException ex) {
+        }
+        catch (DataAccessException ex)
+        {
             throw new UnknownPersistenceException(ex.getMessage());
         }
     }
 
     @Override
-    public ForumPost getForumPostByForumPostId(Long forumPostId) throws ForumPostNotFoundException {
+    public ForumPost createNewForumPostReply(ForumPost newForumPostReply, Long accountId, Long parentForumPostId) throws UnknownPersistenceException, InputDataValidationException, AccountNotFoundException, ForumPostNotFoundException
+    {
+        try
+        {
+            Set<ConstraintViolation<ForumPost>> constraintViolations = validator.validate(newForumPostReply);
+            if (constraintViolations.isEmpty())
+            {
+                Account account = accountService.getAccountByAccountId(accountId);
+                newForumPostReply.setAccount(account);
+
+                ForumPost parentForumPost = getForumPostByForumPostId(parentForumPostId);
+                parentForumPost.setReply(newForumPostReply);
+
+                forumPostRepository.saveAndFlush(newForumPostReply);
+                return newForumPostReply;
+            }
+            else
+            {
+                throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
+        }
+        catch (DataAccessException ex)
+        {
+            throw new UnknownPersistenceException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public ForumPost getForumPostByForumPostId(Long forumPostId) throws ForumPostNotFoundException
+    {
         ForumPost forumPost = forumPostRepository.findById(forumPostId).orElse(null);
 
-        if (forumPost != null) {
+        if (forumPost != null)
+        {
             return forumPost;
-        } else {
+        }
+        else
+        {
             throw new ForumPostNotFoundException("Forum Post with ID: " + forumPostId + " does not exist!");
         }
     }
 
     @Override
-    public List<ForumPost> getAllForumPosts() {
+    public List<ForumPost> getAllForumPosts()
+    {
         return forumPostRepository.findAll();
     }
 
     @Override
-    public List<ForumPost> getAllForumPostsOfAForumThread(Long forumThreadId) throws ForumThreadNotFoundException {
+    public List<ForumPost> getAllForumPostsOfAForumThread(Long forumThreadId) throws ForumThreadNotFoundException
+    {
         ForumThread forumThread = forumThreadService.getForumThreadByForumThreadId(forumThreadId);
         return forumThread.getForumPosts();
     }
 
     //only updating attributes, not relationships
     @Override
-    public ForumPost updateForumPost(ForumPost updatedForumPost) throws ForumPostNotFoundException, InputDataValidationException {
-        if (updatedForumPost != null && updatedForumPost.getForumPostId() != null) {
+    public ForumPost updateForumPost(ForumPost updatedForumPost) throws ForumPostNotFoundException, InputDataValidationException
+    {
+        if (updatedForumPost != null && updatedForumPost.getForumPostId() != null)
+        {
             Set<ConstraintViolation<ForumPost>> constraintViolations = validator.validate(updatedForumPost);
-            if (constraintViolations.isEmpty()) {
+            if (constraintViolations.isEmpty())
+            {
                 ForumPost forumPostToUpdate = forumPostRepository.findById(updatedForumPost.getForumPostId()).orElse(null);
-                if (forumPostToUpdate != null) {
+                if (forumPostToUpdate != null)
+                {
                     forumPostToUpdate.setMessage(updatedForumPost.getMessage());
                     return forumPostToUpdate;
-                } else {
+                }
+                else
+                {
                     throw new ForumPostNotFoundException("Forum Post with ID: " + updatedForumPost.getForumPostId() + " does not exist!");
                 }
-            } else {
+            }
+            else
+            {
                 throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
-        } else {
+        }
+        else
+        {
             throw new ForumPostNotFoundException("Forum Post ID is not provided for forum post to be updated");
         }
     }
 
     @Override
-    public Boolean deleteForumPost(Long forumPostId) throws ForumPostNotFoundException {
+    public Boolean deleteForumPost(Long forumPostId) throws ForumPostNotFoundException
+    {
         ForumPost forumPostToDelete = forumPostRepository.findById(forumPostId).orElse(null);
 
-        if (forumPostToDelete != null) {
+        if (forumPostToDelete != null)
+        {
             forumPostRepository.deleteById(forumPostId);
             return true;
-        } else {
+        }
+        else
+        {
             throw new ForumPostNotFoundException("Forum Post with ID: " + forumPostId + " does not exist!");
         }
     }

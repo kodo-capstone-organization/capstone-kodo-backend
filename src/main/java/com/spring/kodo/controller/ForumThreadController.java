@@ -1,9 +1,11 @@
 package com.spring.kodo.controller;
 
+import com.spring.kodo.entity.ForumCategory;
 import com.spring.kodo.entity.ForumThread;
 import com.spring.kodo.restentity.request.AddForumPostToForumThreadReq;
 import com.spring.kodo.restentity.request.CreateNewForumThreadReq;
 import com.spring.kodo.restentity.request.UpdateForumThreadReq;
+import com.spring.kodo.service.inter.ForumCategoryService;
 import com.spring.kodo.service.inter.ForumThreadService;
 import com.spring.kodo.util.exception.*;
 import org.slf4j.Logger;
@@ -26,6 +28,9 @@ public class ForumThreadController
     @Autowired
     private ForumThreadService forumThreadService;
 
+    @Autowired
+    private ForumCategoryService forumCategoryService;
+
     @PostMapping("/createNewForumThread")
     public ForumThread createNewForumThread(
             @RequestPart(name = "forumThread", required = true) CreateNewForumThreadReq createNewForumThreadReq
@@ -38,9 +43,11 @@ public class ForumThreadController
             {
                 ForumThread newForumThead = new ForumThread(createNewForumThreadReq.getName(), createNewForumThreadReq.getDescription(), createNewForumThreadReq.getTimeStamp());
                 newForumThead = this.forumThreadService.createNewForumThread(newForumThead, createNewForumThreadReq.getAccountId());
+                ForumCategory forumCategory = this.forumCategoryService.getForumCategoryByForumCategoryId(createNewForumThreadReq.getForumCategoryId());
+                this.forumCategoryService.addForumThreadToForumCategory(forumCategory, newForumThead);
                 return newForumThead;
             }
-            catch (AccountNotFoundException ex)
+            catch (AccountNotFoundException | ForumCategoryNotFoundException | UpdateForumCategoryException | ForumThreadNotFoundException ex)
             {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
             }

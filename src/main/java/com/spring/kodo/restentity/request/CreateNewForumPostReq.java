@@ -7,14 +7,17 @@ public class CreateNewForumPostReq {
     private String message;
     private LocalDateTime timeStamp;
     private Long accountId;
+    private Long forumThreadId;
+
 
     public CreateNewForumPostReq() {
     }
 
-    public CreateNewForumPostReq(String message, LocalDateTime timeStamp, Long accountId) {
+    public CreateNewForumPostReq(String message, LocalDateTime timeStamp, Long accountId, Long forumThreadId) {
         this.message = message;
         this.timeStamp = timeStamp;
         this.accountId = accountId;
+        this.forumThreadId = forumThreadId;
     }
 
     public String getMessage() {
@@ -39,5 +42,13 @@ public class CreateNewForumPostReq {
 
     public void setAccount(Long accountId) {
         this.accountId = accountId;
+    }
+
+    public Long getForumThreadId() {
+        return forumThreadId;
+    }
+
+    public void setForumThreadId(Long forumThreadId) {
+        this.forumThreadId = forumThreadId;
     }
 }
