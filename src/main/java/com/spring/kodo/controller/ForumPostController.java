@@ -40,6 +40,7 @@ public class ForumPostController {
             try {
                 ForumPost newForumPost = new ForumPost(createNewForumPostReq.getMessage(), createNewForumPostReq.getTimeStamp());
                 newForumPost = this.forumPostService.createNewForumPost(newForumPost, createNewForumPostReq.getAccountId());
+                System.out.println(createNewForumPostReq.getForumThreadId());
                 ForumThread forumThread = this.forumThreadService.getForumThreadByForumThreadId(createNewForumPostReq.getForumThreadId());
                 this.forumThreadService.addForumPostToForumThread(forumThread, newForumPost);
                 return newForumPost;

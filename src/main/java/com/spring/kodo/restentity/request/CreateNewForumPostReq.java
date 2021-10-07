@@ -48,7 +48,7 @@ public class CreateNewForumPostReq {
         return forumThreadId;
     }
 
-    public void setForumThreadId(Long accountId) {
+    public void setForumThreadId(Long forumThreadId) {
         this.forumThreadId = forumThreadId;
     }
 }
