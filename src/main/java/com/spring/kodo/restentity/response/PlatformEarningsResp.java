@@ -33,6 +33,8 @@ public class PlatformEarningsResp
 
     private Boolean increaseInMonthlyCourseCreation;
 
+    private List<TransactionWithParticularsResp> transactionWithParticularsResps;
+
     public PlatformEarningsResp() {
     }
 
@@ -150,5 +152,13 @@ public class PlatformEarningsResp
 
     public void setIncreaseInMonthlyCourseCreation(Boolean increaseInMonthlyCourseCreation) {
         this.increaseInMonthlyCourseCreation = increaseInMonthlyCourseCreation;
+    }
+
+    public List<TransactionWithParticularsResp> getTransactionWithParticularsResps() {
+        return transactionWithParticularsResps;
+    }
+
+    public void setTransactionWithParticularsResps(List<TransactionWithParticularsResp> transactionWithParticularsResps) {
+        this.transactionWithParticularsResps = transactionWithParticularsResps;
     }
 }

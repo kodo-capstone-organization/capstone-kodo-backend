@@ -161,6 +161,8 @@ public class TransactionController
             Integer currentMonthNumberOfCourseCreation = this.courseService.getNumberOfNewCourseForCurrentMonth();
             Integer previousMonthNumberOfCourseCreation = this.courseService.getNumberOfNewCoursesForPreviousMonth();
 
+            List<TransactionWithParticularsResp> transactionWithParticularsResps = this.transactionService.getTransactionsWithParticularsForLastThirtyDays(requestingAccountId);
+
             PlatformEarningsResp platformEarningsResp = new PlatformEarningsResp();
             platformEarningsResp.setLifetimePlatformEarnings(lifetimePlatformEarnings);
             platformEarningsResp.setCurrentMonthPlatformEarnings(currentMonthPlatformEarnings);
@@ -179,6 +181,8 @@ public class TransactionController
 
             platformEarningsResp.setCurrentMonthNumberOfCourseCreation(currentMonthNumberOfCourseCreation);
             platformEarningsResp.setIncreaseInMonthlyCourseCreation(currentMonthNumberOfCourseCreation > previousMonthNumberOfCourseCreation);
+
+            platformEarningsResp.setTransactionWithParticularsResps(transactionWithParticularsResps);
 
             return platformEarningsResp;
         }

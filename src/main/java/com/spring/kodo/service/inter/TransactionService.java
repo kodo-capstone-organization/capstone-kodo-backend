@@ -3,6 +3,7 @@ package com.spring.kodo.service.inter;
 import com.spring.kodo.entity.Transaction;
 import com.spring.kodo.restentity.response.CourseWithEarningResp;
 import com.spring.kodo.restentity.response.MonthlyEarningResp;
+import com.spring.kodo.restentity.response.TransactionWithParticularsResp;
 import com.spring.kodo.restentity.response.TutorWithEarningResp;
 import com.spring.kodo.util.exception.*;
 
@@ -86,4 +87,6 @@ public interface TransactionService
     Integer getCurrentMonthEnrollmentCount(Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException;
 
     Integer getPreviousMonthEnrollmentCount(Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException;
+
+    List<TransactionWithParticularsResp> getTransactionsWithParticularsForLastThirtyDays(Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException;
 }

@@ -8,6 +8,7 @@ import com.spring.kodo.entity.Transaction;
 import com.spring.kodo.repository.TransactionRepository;
 import com.spring.kodo.restentity.response.CourseWithEarningResp;
 import com.spring.kodo.restentity.response.MonthlyEarningResp;
+import com.spring.kodo.restentity.response.TransactionWithParticularsResp;
 import com.spring.kodo.restentity.response.TutorWithEarningResp;
 import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.CourseService;
@@ -711,6 +712,21 @@ public class TransactionServiceImpl implements TransactionService
         if (requestingAccount.getIsAdmin())
         {
             return this.transactionRepository.getPreviousMonthEnrollmentCount().orElse(0);
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("Account is not an admin");
+        }
+    }
+
+    @Override
+    public List<TransactionWithParticularsResp> getTransactionsWithParticularsForLastThirtyDays(Long requestingAccountId) throws AccountNotFoundException, AccountPermissionDeniedException
+    {
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
+
+        if (requestingAccount.getIsAdmin())
+        {
+            return this.transactionRepository.getTransactionsWithParticularsForLastThirtyDays();
         }
         else
         {
