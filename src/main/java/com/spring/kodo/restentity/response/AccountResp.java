@@ -12,15 +12,18 @@ public class AccountResp
 
     private Boolean isAdmin;
 
+    private String displayPictureUrl;
+
     public AccountResp() {
     }
 
-    public AccountResp(Long accountId, String name, String username, String email, Boolean isAdmin) {
+    public AccountResp(Long accountId, String name, String username, String email, Boolean isAdmin, String displayPictureUrl) {
         this.accountId = accountId;
         this.name = name;
         this.username = username;
         this.email = email;
         this.isAdmin = isAdmin;
+        this.displayPictureUrl = displayPictureUrl;
     }
 
     public Long getAccountId() {
@@ -61,6 +64,14 @@ public class AccountResp
 
     public void setIsAdmin(Boolean admin) {
         isAdmin = admin;
+    }
+
+    public String getDisplayPictureUrl() {
+        return displayPictureUrl;
+    }
+
+    public void setDisplayPictureUrl(String displayPictureUrl) {
+        this.displayPictureUrl = displayPictureUrl;
     }
 
     @Override
