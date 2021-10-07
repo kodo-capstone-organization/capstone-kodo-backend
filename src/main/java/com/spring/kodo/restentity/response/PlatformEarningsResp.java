@@ -21,6 +21,10 @@ public class PlatformEarningsResp
 
     private List<TutorWithEarningResp> currentMonthHighestEarningTutors;
 
+    private Integer currentMonthNumberOfAccountCreation;
+
+    private Boolean increaseInMonthlyAccountCreation;
+
     public PlatformEarningsResp() {
     }
 
@@ -90,5 +94,21 @@ public class PlatformEarningsResp
 
     public void setCurrentMonthHighestEarningTutors(List<TutorWithEarningResp> currentMonthHighestEarningTutors) {
         this.currentMonthHighestEarningTutors = currentMonthHighestEarningTutors;
+    }
+
+    public Integer getCurrentMonthNumberOfAccountCreation() {
+        return currentMonthNumberOfAccountCreation;
+    }
+
+    public void setCurrentMonthNumberOfAccountCreation(Integer currentMonthNumberOfAccountCreation) {
+        this.currentMonthNumberOfAccountCreation = currentMonthNumberOfAccountCreation;
+    }
+
+    public Boolean getIncreaseInMonthlyAccountCreation() {
+        return increaseInMonthlyAccountCreation;
+    }
+
+    public void setIncreaseInMonthlyAccountCreation(Boolean increaseInMonthlyAccountCreation) {
+        this.increaseInMonthlyAccountCreation = increaseInMonthlyAccountCreation;
     }
 }

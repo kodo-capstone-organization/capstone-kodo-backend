@@ -151,6 +151,8 @@ public class TransactionController
             List<CourseWithEarningResp> currentMonthHighestEarningCourses = this.transactionService.getCurrentMonthHighestEarningCourses(requestingAccountId);
             List<TutorWithEarningResp> lifetimeHighestEarningTutors = this.transactionService.getLifetimeHighestEarningTutors(requestingAccountId);
             List<TutorWithEarningResp> currentMonthHighestEarningTutors = this.transactionService.getCurrentMonthHighestEarningTutors(requestingAccountId);
+            Integer currentMonthNumberOfAccountCreation = this.accountService.getCurrentMonthNumberOfAccountCreation();
+            Integer previousMonthNumberOfAccountCreation = this.accountService.getPreviousMonthNumberOfAccountCreation();
 
             PlatformEarningsResp platformEarningsResp = new PlatformEarningsResp();
             platformEarningsResp.setLifetimePlatformEarnings(lifetimePlatformEarnings);
@@ -161,6 +163,8 @@ public class TransactionController
             platformEarningsResp.setCurrentMonthHighestEarningCourses(currentMonthHighestEarningCourses);
             platformEarningsResp.setLifetimeHighestEarningTutors(lifetimeHighestEarningTutors);
             platformEarningsResp.setCurrentMonthHighestEarningTutors(currentMonthHighestEarningTutors);
+            platformEarningsResp.setCurrentMonthNumberOfAccountCreation(currentMonthNumberOfAccountCreation);
+            platformEarningsResp.setIncreaseInMonthlyAccountCreation(currentMonthNumberOfAccountCreation > previousMonthNumberOfAccountCreation);
 
             return platformEarningsResp;
         }
