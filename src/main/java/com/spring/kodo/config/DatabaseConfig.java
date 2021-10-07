@@ -137,7 +137,7 @@ public class DatabaseConfig
 
     private final Integer COMPLETE_CONTENT_COUNT = (int) (0.1 * (STUDENT_ENROLLED_COUNT * LESSON_COUNT * (MULTIMEDIA_COUNT + QUIZ_COUNT)));
 
-    private final Integer RATE_ENROLLED_COURSES_COUNT = (int) (0.5 * STUDENT_ENROLLED_COUNT);
+    private final Integer RATE_ENROLLED_COURSES_COUNT = (int) (0.85 * STUDENT_ENROLLED_COUNT);
 
     // Don't Edit these
     private final Integer PREFIXED_ADMIN_COUNT = 7;
@@ -853,23 +853,20 @@ public class DatabaseConfig
         enrolledCourses = enrolledCourseService.getAllEnrolledCourses();
 
         int courseRatingSet = 0;
-        int rating = 1;
+        int rating;
 
         for (EnrolledCourse enrolledCourse : enrolledCourses)
         {
+            rating = RandomGeneratorUtil.getRandomInteger(3, 5);
+
             if (RATE_ENROLLED_COURSES_COUNT == courseRatingSet)
             {
                 break;
             }
-            else if (enrolledCourse.getDateTimeOfCompletion() != null)
+            else
             {
-                enrolledCourseService.setCourseRatingByEnrolledCourseId(enrolledCourse.getEnrolledCourseId(), rating++);
+                enrolledCourseService.setCourseRatingByEnrolledCourseId(enrolledCourse.getEnrolledCourseId(), rating);
                 courseRatingSet++;
-            }
-
-            if (rating == 6)
-            {
-                rating = 1;
             }
         }
 

@@ -139,7 +139,7 @@ public interface CourseRepository extends JpaRepository<Course, Long>
             nativeQuery = true)
     List<Course> findAllCoursesThatArePopular();
 
-    @Query(value = "SELECT AVG(ec.course_rating) FROM course c JOIN enrolled_course ec WHERE c.course_id = :courseId", nativeQuery = true)
+    @Query(value = "SELECT COALESCE(AVG(ec.course_rating), 0) FROM enrolled_course ec WHERE ec.parent_course_course_id = :courseId", nativeQuery = true)
     Double findCourseRatingByCourseId(@Param("courseId") Long courseId);
 
     @Query(value = "SELECT SUM(t.course_price) FROM `transaction` t WHERE t.course_course_id = :courseId", nativeQuery = true)
@@ -147,4 +147,6 @@ public interface CourseRepository extends JpaRepository<Course, Long>
 
     @Query(value = "SELECT SUM(t.course_price) FROM `transaction` t WHERE t.course_course_id = :courseId AND YEAR(t.date_time_of_transaction) BETWEEN :year AND YEAR(DATE_ADD(:year, INTERVAL 1 YEAR))", nativeQuery = true)
     BigDecimal findTotalEarningsByCourseIdAndYear(@Param("courseId") Long courseId, @Param("year") Integer year);
+
+
 }

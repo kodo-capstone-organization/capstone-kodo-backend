@@ -736,5 +736,26 @@ public class AccountServiceImpl implements AccountService
         return this.accountRepository.getTotalCourseCountByAccountId(requestingAccount.getAccountId()).orElse(0);
     }
 
+    @Override
+    public Integer getNumCoursesTaught(Long tutorId) throws AccountNotFoundException
+    {
+        Account tutor = getAccountByAccountId(tutorId);
+        return this.accountRepository.findNumCoursesTaught(tutorId).orElse(0);
+    }
+
+    @Override
+    public Integer getNumCoursesCreatedCurrentMonth(Long tutorId) throws AccountNotFoundException
+    {
+        Account tutor = getAccountByAccountId(tutorId);
+        return this.accountRepository.findNumCoursesCreatedCurrentMonth(tutorId).orElse(0);
+    }
+
+    @Override
+   public Integer getNumCoursesCreatedLastMonth(Long tutorId) throws AccountNotFoundException
+   {
+       Account tutor = getAccountByAccountId(tutorId);
+       return this.accountRepository.findNumCoursesCreatedLastMonth(tutorId).orElse(0);
+   }
+
 }
 

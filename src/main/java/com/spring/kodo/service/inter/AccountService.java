@@ -108,4 +108,12 @@ public interface AccountService
     Integer getTotalPublishedCourseCountByAccountId(Long requestingAccountId) throws AccountNotFoundException;
 
     Integer getTotalCourseCountByAccountId(Long requestingAccountId) throws AccountNotFoundException;
+
+    Integer getNumCoursesTaught(Long tutorId) throws AccountNotFoundException;
+
+    Integer getNumCoursesCreatedCurrentMonth(Long tutorId) throws AccountNotFoundException;
+
+    Integer getNumCoursesCreatedLastMonth(Long tutorId) throws AccountNotFoundException;
+
+
 }

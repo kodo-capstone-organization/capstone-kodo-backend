@@ -17,6 +17,14 @@ public class CourseEarningsResp
     private BigDecimal lifetimeCourseEarning;
 
     private BigDecimal currentMonthCourseEarning;
+    //new
+    private BigDecimal lastMonthCourseEarning;
+    //new
+    private BigDecimal numEnrollmentMonth;
+    //new
+    private BigDecimal numEnrollmentLastMonth;
+    //new
+    private BigDecimal percentageCompletion;
 
     private List<MonthlyEarningResp> monthlyCourseEarningForLastYear;
 
@@ -100,5 +108,41 @@ public class CourseEarningsResp
                 ", currentMonthCourseEarning=" + currentMonthCourseEarning +
                 ", monthlyCourseEarningForLastYear=" + monthlyCourseEarningForLastYear +
                 '}';
+    }
+
+
+
+    public BigDecimal getNumEnrollmentMonth() {
+        return numEnrollmentMonth;
+    }
+
+    public void setNumEnrollmentMonth(BigDecimal numEnrollmentMonth) {
+        this.numEnrollmentMonth = numEnrollmentMonth;
+    }
+
+
+
+    public BigDecimal getPercentageCompletion() {
+        return percentageCompletion;
+    }
+
+    public void setPercentageCompletion(BigDecimal percentageCompletion) {
+        this.percentageCompletion = percentageCompletion;
+    }
+
+    public BigDecimal getLastMonthCourseEarning() {
+        return lastMonthCourseEarning;
+    }
+
+    public void setLastMonthCourseEarning(BigDecimal lastMonthCourseEarning) {
+        this.lastMonthCourseEarning = lastMonthCourseEarning;
+    }
+
+    public BigDecimal getNumEnrollmentLastMonth() {
+        return numEnrollmentLastMonth;
+    }
+
+    public void setNumEnrollmentLastMonth(BigDecimal numEnrollmentLastMonth) {
+        this.numEnrollmentLastMonth = numEnrollmentLastMonth;
     }
 }

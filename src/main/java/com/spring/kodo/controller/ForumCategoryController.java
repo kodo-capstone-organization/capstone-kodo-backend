@@ -162,4 +162,17 @@ public class ForumCategoryController
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Add Forum Thread to Forum Category Request");
         }
     }
+
+    @GetMapping("/getForumCategoryByCourseId/{courseId}")
+    public List<ForumCategory> getForumCategoryByCourseId(@PathVariable Long courseId)
+    {
+        try
+        {
+            return this.forumCategoryService.getForumCategoryByCourseId(courseId);
+        }
+        catch (ForumCategoryNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
 }

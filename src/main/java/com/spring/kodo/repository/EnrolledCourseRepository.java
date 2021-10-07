@@ -29,31 +29,38 @@ public interface EnrolledCourseRepository extends JpaRepository<EnrolledCourse, 
     @Query(value = "SELECT * FROM enrolled_course ec JOIN course c JOIN account_enrolled_courses aec ON ec.parent_course_course_id = c.course_id AND ec.enrolled_course_id = aec.enrolled_course_id WHERE c.course_id LIKE :courseId AND aec.account_id = :studentId", nativeQuery = true)
     Optional<EnrolledCourse> findByStudentIdAndCourseId(@Param("studentId") Long studentId, @Param("courseId") Long courseId);
 
-    @Query(value = "SELECT \n" +
-            "       a.account_id AS 'studentId', \n" +
-            "       a.name AS 'studentName', \n" +
-            "       ec.enrolled_course_id AS 'enrolledCourseId', \n" +
-            "       COUNT(ecc.date_time_of_completion) /\n" +
-            "(\n" +
-            "    SELECT COUNT(*)\n" +
-            "    FROM course_lessons cl\n" +
-            "             JOIN lesson_contents lc\n" +
-            "                  ON cl.lesson_id = lc.lesson_id\n" +
-            "    WHERE cl.course_id = :courseId\n" +
-            ") AS 'completionPercentage'\n" +
+    @Query(value = "SELECT\n" +
+            "    a.account_id AS 'accountId',\n" +
+            "    a.username AS 'username',\n" +
+            "    a.name AS 'name',\n" +
+            "    a.bio AS 'bio',\n" +
+            "    a.email AS 'email',\n" +
+            "    a.display_picture_url AS 'displayPictureUrl',\n" +
+            "    a.is_admin AS 'isAdmin',\n" +
+            "    a.is_active AS 'isActive',\n" +
+            "    a.stripe_account_id AS 'stripeAccountId',\n" +
+            "    ec.enrolled_course_id AS 'enrolledCourseId',\n" +
+            "    COUNT(ecc.date_time_of_completion) /\n" +
+            "    (\n" +
+            "        SELECT COUNT(*)\n" +
+            "        FROM course_lessons cl\n" +
+            "                 JOIN lesson_contents lc\n" +
+            "                      ON cl.lesson_id = lc.lesson_id\n" +
+            "        WHERE cl.course_id = :courseId\n" +
+            "    ) AS 'completionPercentage'\n" +
             "FROM account a\n" +
-            "    JOIN account_enrolled_courses aec\n" +
-            "    JOIN enrolled_course ec\n" +
-            "    JOIN enrolled_course_enrolled_lessons ecel\n" +
-            "    JOIN enrolled_lesson_enrolled_contents elec\n" +
-            "    JOIN enrolled_content ecc\n" +
-            "        ON a.account_id = aec.account_id\n" +
-            "        AND aec.enrolled_course_id = ec.enrolled_course_id\n" +
-            "        AND ec.enrolled_course_id = ecel.enrolled_course_id\n" +
-            "        AND ecel.enrolled_lesson_id = elec.enrolled_lesson_id\n" +
-            "        AND elec.enrolled_content_id = ecc.enrolled_content_id\n" +
+            "         JOIN account_enrolled_courses aec\n" +
+            "         JOIN enrolled_course ec\n" +
+            "         JOIN enrolled_course_enrolled_lessons ecel\n" +
+            "         JOIN enrolled_lesson_enrolled_contents elec\n" +
+            "         JOIN enrolled_content ecc\n" +
+            "              ON a.account_id = aec.account_id\n" +
+            "                  AND aec.enrolled_course_id = ec.enrolled_course_id\n" +
+            "                  AND ec.enrolled_course_id = ecel.enrolled_course_id\n" +
+            "                  AND ecel.enrolled_lesson_id = elec.enrolled_lesson_id\n" +
+            "                  AND elec.enrolled_content_id = ecc.enrolled_content_id\n" +
             "WHERE ec.parent_course_course_id = :courseId\n" +
-            "GROUP BY ec.enrolled_course_id;", nativeQuery = true)
+            "GROUP BY ec.enrolled_course_id", nativeQuery = true)
     List<EnrolledCourseWithStudentResp> findAllEnrolledCourseCompletionPercentagesByCourseId(@Param("courseId") Long courseId);
 
     @Query(value = "SELECT \n" +

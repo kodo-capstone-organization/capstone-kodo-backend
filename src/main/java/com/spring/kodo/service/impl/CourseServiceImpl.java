@@ -519,7 +519,7 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
-    public Double getCourseRating(Long courseId) throws CourseNotFoundException
+    public Double getCourseRatingByCourseId(Long courseId) throws CourseNotFoundException
     {
         getCourseByCourseId(courseId);
 

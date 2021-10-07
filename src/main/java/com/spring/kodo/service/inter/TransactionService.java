@@ -72,4 +72,14 @@ public interface TransactionService
     List<TutorWithEarningResp> getLifetimeHighestEarningTutors(Long requestingId) throws AccountNotFoundException, AccountPermissionDeniedException;
 
     List<TutorWithEarningResp> getCurrentMonthHighestEarningTutors(Long requestingId) throws AccountNotFoundException, AccountPermissionDeniedException;
+
+    public BigDecimal getLastMonthCourseEarning(Long requestingAccountId, Long tutorId) throws AccountPermissionDeniedException, AccountNotFoundException,  CourseNotFoundException;
+
+    public BigDecimal getNumEnrolledCurrentMonth(Long requestingAccountId, Long courseId) throws AccountPermissionDeniedException, AccountNotFoundException , CourseNotFoundException;
+
+    public BigDecimal getNumEnrolledLastMonth(Long requestingAccountId, Long courseId) throws AccountPermissionDeniedException, AccountNotFoundException , CourseNotFoundException;
+
+    public BigDecimal getNumStudentsCompleted(Long requestingAccountId, Long courseId) throws AccountPermissionDeniedException, AccountNotFoundException , CourseNotFoundException;
+
+    public BigDecimal getLastMonthTutorEarnings(Long requestingAccountId, Long tutorId) throws AccountPermissionDeniedException, AccountNotFoundException;
 }
