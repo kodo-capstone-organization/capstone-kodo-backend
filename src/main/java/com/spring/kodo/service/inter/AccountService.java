@@ -115,5 +115,7 @@ public interface AccountService
 
     Integer getNumCoursesCreatedLastMonth(Long tutorId) throws AccountNotFoundException;
 
+    Integer getCurrentMonthNumberOfAccountCreation();
 
+    Integer getPreviousMonthNumberOfAccountCreation();
 }

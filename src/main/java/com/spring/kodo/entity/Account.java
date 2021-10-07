@@ -13,6 +13,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -82,6 +83,10 @@ public class Account
     @Column(nullable = true, unique = true)
     private String stripeAccountId;
 
+    @Column(nullable = false)
+    @NotNull
+    private LocalDateTime dateTimeOfCreation;
+
     @ManyToMany(targetEntity = Tag.class, fetch = FetchType.LAZY)
     @JoinTable(
             joinColumns = @JoinColumn(name = "account_id", referencedColumnName = "accountId"),
@@ -113,6 +118,7 @@ public class Account
         this.courses = new ArrayList<>();
         this.interests = new ArrayList<>();
         this.isActive = true;
+        this.dateTimeOfCreation = LocalDateTime.now();
     }
 
     public Account(String username, String password, String name, String bio, String email, boolean isAdmin) throws InputDataValidationException
@@ -302,6 +308,14 @@ public class Account
     public void setStripeAccountId(String stripeAccountId)
     {
         this.stripeAccountId = stripeAccountId;
+    }
+
+    public LocalDateTime getDateTimeOfCreation() {
+        return dateTimeOfCreation;
+    }
+
+    public void setDateTimeOfCreation(LocalDateTime dateTimeOfCreation) {
+        this.dateTimeOfCreation = dateTimeOfCreation;
     }
 
     @Override
