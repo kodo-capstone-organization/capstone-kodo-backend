@@ -7,15 +7,18 @@ public class CreateNewForumThreadReq {
     private String description;
     private LocalDateTime timeStamp;
     private Long accountId;
+    private Long forumCategoryId;
+
 
     public CreateNewForumThreadReq() {
     }
 
-    public CreateNewForumThreadReq(String name, String description, LocalDateTime timeStamp, Long accountId) {
+    public CreateNewForumThreadReq(String name, String description, LocalDateTime timeStamp, Long accountId, Long forumCategoryId) {
         this.name = name;
         this.description = description;
         this.timeStamp = timeStamp;
         this.accountId = accountId;
+        this.forumCategoryId = forumCategoryId;
     }
 
     public String getName() {
@@ -48,5 +51,13 @@ public class CreateNewForumThreadReq {
 
     public void setAccountId(Long accountId) {
         this.accountId = accountId;
+    }
+
+    public Long getForumCategoryId() {
+        return forumCategoryId;
+    }
+
+    public void setForumCategoryId(Long forumCategoryId) {
+        this.forumCategoryId = forumCategoryId;
     }
 }

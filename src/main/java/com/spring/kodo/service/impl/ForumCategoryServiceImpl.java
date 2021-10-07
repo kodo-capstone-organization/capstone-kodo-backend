@@ -93,6 +93,7 @@ public class ForumCategoryServiceImpl implements ForumCategoryService {
                 if (forumCategoryToUpdate != null) {
                     forumCategoryToUpdate.setName(updatedForumCategory.getName());
                     forumCategoryToUpdate.setDescription(updatedForumCategory.getDescription());
+                    forumCategoryRepository.saveAndFlush(forumCategoryToUpdate);
                     return forumCategoryToUpdate;
                 } else {
                     throw new ForumCategoryNotFoundException("Forum Category with ID: " + updatedForumCategory.getForumCategoryId() + " does not exist!");

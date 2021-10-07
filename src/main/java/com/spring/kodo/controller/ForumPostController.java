@@ -1,9 +1,12 @@
 package com.spring.kodo.controller;
 
+import com.spring.kodo.entity.ForumCategory;
 import com.spring.kodo.entity.ForumPost;
+import com.spring.kodo.entity.ForumThread;
 import com.spring.kodo.restentity.request.CreateNewForumPostReq;
 import com.spring.kodo.restentity.request.UpdateForumPostReq;
 import com.spring.kodo.service.inter.ForumPostService;
+import com.spring.kodo.service.inter.ForumThreadService;
 import com.spring.kodo.util.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +25,11 @@ public class ForumPostController {
     Logger logger = LoggerFactory.getLogger(ForumPostController.class);
 
     @Autowired
-    private ForumPostService forumPostService;
+    private ForumPostService   forumPostService;
+
+    @Autowired
+    private ForumThreadService forumThreadService;
+
 
     @PostMapping("/createNewForumPost")
     public ForumPost createNewForumPost(
@@ -33,10 +40,12 @@ public class ForumPostController {
             try {
                 ForumPost newForumPost = new ForumPost(createNewForumPostReq.getMessage(), createNewForumPostReq.getTimeStamp());
                 newForumPost = this.forumPostService.createNewForumPost(newForumPost, createNewForumPostReq.getAccountId());
+                ForumThread forumThread = this.forumThreadService.getForumThreadByForumThreadId(createNewForumPostReq.getForumThreadId());
+                this.forumThreadService.addForumPostToForumThread(forumThread, newForumPost);
                 return newForumPost;
-            } catch (AccountNotFoundException ex) {
+            } catch (AccountNotFoundException | ForumThreadNotFoundException ex) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-            } catch (InputDataValidationException ex) {
+            } catch (InputDataValidationException | UpdateForumThreadException | ForumPostNotFoundException ex) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
             } catch (UnknownPersistenceException ex) {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
