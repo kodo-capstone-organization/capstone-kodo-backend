@@ -151,6 +151,6 @@ public interface CourseRepository extends JpaRepository<Course, Long>
     @Query(value = "SELECT COUNT(*) FROM course c WHERE YEAR(c.date_time_of_creation) = YEAR(NOW()) AND MONTH(c.date_time_of_creation) = MONTH(NOW())", nativeQuery = true)
     Integer findNumberOfNewCoursesForCurrentMonth();
 
-    @Query(value = "SELECT COUNT(*) FROM course c WHERE YEAR(c.date_time_of_creation) = YEAR(NOW()) AND MONTH(c.date_time_of_creation) = MONTH(NOW()) - 1", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM course c WHERE YEAR(c.date_time_of_creation) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(c.date_time_of_creation) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)", nativeQuery = true)
     Integer findNumberOfNewCoursesForPreviousMonth();
 }
