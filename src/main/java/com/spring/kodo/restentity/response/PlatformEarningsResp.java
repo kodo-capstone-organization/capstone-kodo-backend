@@ -29,6 +29,10 @@ public class PlatformEarningsResp
 
     private Boolean increaseInMonthlyEnrollment;
 
+    private Integer currentMonthNumberOfCourseCreation;
+
+    private Boolean increaseInMonthlyCourseCreation;
+
     public PlatformEarningsResp() {
     }
 
@@ -130,5 +134,21 @@ public class PlatformEarningsResp
 
     public void setIncreaseInMonthlyEnrollment(Boolean increaseInMonthlyEnrollment) {
         this.increaseInMonthlyEnrollment = increaseInMonthlyEnrollment;
+    }
+
+    public Integer getCurrentMonthNumberOfCourseCreation() {
+        return currentMonthNumberOfCourseCreation;
+    }
+
+    public void setCurrentMonthNumberOfCourseCreation(Integer currentMonthNumberOfCourseCreation) {
+        this.currentMonthNumberOfCourseCreation = currentMonthNumberOfCourseCreation;
+    }
+
+    public Boolean getIncreaseInMonthlyCourseCreation() {
+        return increaseInMonthlyCourseCreation;
+    }
+
+    public void setIncreaseInMonthlyCourseCreation(Boolean increaseInMonthlyCourseCreation) {
+        this.increaseInMonthlyCourseCreation = increaseInMonthlyCourseCreation;
     }
 }

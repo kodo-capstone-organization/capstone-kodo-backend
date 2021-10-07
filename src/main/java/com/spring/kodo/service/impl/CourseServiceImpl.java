@@ -576,4 +576,16 @@ public class CourseServiceImpl implements CourseService
             throw new AccountPermissionDeniedException("You do not have the rights to toggle enrollment status of this course");
         }
     }
+
+    @Override
+    public Integer getNumberOfNewCourseForCurrentMonth()
+    {
+        return courseRepository.findNumberOfNewCoursesForCurrentMonth();
+    }
+
+    @Override
+    public Integer getNumberOfNewCoursesForPreviousMonth()
+    {
+        return courseRepository.findNumberOfNewCoursesForPreviousMonth();
+    }
 }
