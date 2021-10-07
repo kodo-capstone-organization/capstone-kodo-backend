@@ -6,8 +6,8 @@ import com.spring.kodo.util.exception.*;
 
 import java.util.List;
 
-public interface ForumCategoryService {
-
+public interface ForumCategoryService
+{
     ForumCategory createNewForumCategory(ForumCategory newForumCategory, Long courseId) throws InputDataValidationException, UnknownPersistenceException, CourseNotFoundException;
 
     ForumCategory getForumCategoryByForumCategoryId(Long forumCategoryId) throws ForumCategoryNotFoundException;
@@ -23,5 +23,4 @@ public interface ForumCategoryService {
     ForumCategory addForumThreadToForumCategory(ForumCategory forumCategory, ForumThread forumThread) throws UpdateForumCategoryException, ForumCategoryNotFoundException, ForumThreadNotFoundException;
 
     List<ForumCategory> getForumCategoryByCourseId(Long courseId) throws ForumCategoryNotFoundException;
-
-    }
+}

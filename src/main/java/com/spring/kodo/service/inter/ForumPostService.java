@@ -9,6 +9,8 @@ public interface ForumPostService {
 
     ForumPost createNewForumPost(ForumPost newForumPost, Long accountId) throws InputDataValidationException, UnknownPersistenceException, AccountNotFoundException;
 
+    ForumPost createNewForumPostReply(ForumPost newForumPostReply, Long accountId, Long parentForumPostId) throws UnknownPersistenceException, InputDataValidationException, AccountNotFoundException, ForumPostNotFoundException;
+
     ForumPost getForumPostByForumPostId(Long forumPostId) throws ForumPostNotFoundException;
 
     List<ForumPost> getAllForumPosts();
