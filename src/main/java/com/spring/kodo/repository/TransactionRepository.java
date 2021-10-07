@@ -151,6 +151,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
             "WHERE e.earnings = (SELECT MAX(s.earnings) FROM (SELECT SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN account a ON t.payee_account_id = a.account_id WHERE YEAR(t.date_time_of_transaction) = YEAR(NOW()) AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) GROUP BY a.account_id, a.name) s)", nativeQuery = true)
     List<TutorWithEarningResp> getCurrentMonthHighestEarningTutors();
 
-    @Query(value = "SELECT a1.name AS tutorName, a2.name AS customerName, c.name AS courseName, t.date_time_of_transaction AS dateTimeOfTransaction, t.platform_fee AS platformFee FROM transaction t JOIN course c ON t.course_course_id = c.course_id LEFT JOIN account a1 ON t.payee_account_id = a1.account_id LEFT JOIN account a2 ON t.payer_account_id = a2.account_id WHERE t.date_time_of_transaction BETWEEN NOW() - INTERVAL 30 DAY AND NOW()", nativeQuery = true)
+    @Query(value = "SELECT a1.name AS tutorName, a2.name AS customerName, c.name AS courseName, a2.display_picture_url AS displayPictureUrl, t.date_time_of_transaction AS dateTimeOfTransaction, t.platform_fee AS platformFee FROM transaction t JOIN course c ON t.course_course_id = c.course_id LEFT JOIN account a1 ON t.payee_account_id = a1.account_id LEFT JOIN account a2 ON t.payer_account_id = a2.account_id WHERE t.date_time_of_transaction BETWEEN NOW() - INTERVAL 30 DAY AND NOW()", nativeQuery = true)
     List<TransactionWithParticularsResp> getTransactionsWithParticularsForLastThirtyDays();
 }

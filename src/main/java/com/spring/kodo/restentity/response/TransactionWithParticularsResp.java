@@ -14,4 +14,6 @@ public interface TransactionWithParticularsResp
     LocalDateTime getDateTimeOfTransaction();
 
     BigDecimal getPlatformFee();
+
+    String getDisplayPictureUrl();
 }
