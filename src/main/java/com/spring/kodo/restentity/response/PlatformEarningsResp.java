@@ -2,7 +2,6 @@ package com.spring.kodo.restentity.response;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 public class PlatformEarningsResp
 {
@@ -14,14 +13,29 @@ public class PlatformEarningsResp
 
     private List<MonthlyEarningResp> monthlyPlatformEarningsForLastYear;
 
-    public PlatformEarningsResp() {
-    }
+    private List<CourseWithEarningResp> lifetimeHighestEarningCourses;
 
-    public PlatformEarningsResp(BigDecimal lifetimePlatformEarnings, BigDecimal currentMonthPlatformEarnings, BigDecimal lastMonthPlatformEarnings, List<MonthlyEarningResp> monthlyPlatformEarningsForLastYear) {
-        this.lifetimePlatformEarnings = lifetimePlatformEarnings;
-        this.currentMonthPlatformEarnings = currentMonthPlatformEarnings;
-        this.lastMonthPlatformEarnings = lastMonthPlatformEarnings;
-        this.monthlyPlatformEarningsForLastYear = monthlyPlatformEarningsForLastYear;
+    private List<CourseWithEarningResp> currentMonthHighestEarningCourses;
+
+    private List<TutorWithEarningResp> lifetimeHighestEarningTutors;
+
+    private List<TutorWithEarningResp> currentMonthHighestEarningTutors;
+
+    private Integer currentMonthNumberOfAccountCreation;
+
+    private Boolean increaseInMonthlyAccountCreation;
+
+    private Integer currentMonthNumberOfEnrollments;
+
+    private Boolean increaseInMonthlyEnrollment;
+
+    private Integer currentMonthNumberOfCourseCreation;
+
+    private Boolean increaseInMonthlyCourseCreation;
+
+    private List<TransactionWithParticularsResp> transactionWithParticularsResps;
+
+    public PlatformEarningsResp() {
     }
 
     public BigDecimal getLifetimePlatformEarnings() {
@@ -56,13 +70,95 @@ public class PlatformEarningsResp
         this.lastMonthPlatformEarnings = lastMonthPlatformEarnings;
     }
 
-    @Override
-    public String toString() {
-        return "PlatformEarningsResp{" +
-                "lifetimePlatformEarnings=" + lifetimePlatformEarnings +
-                ", currentMonthPlatformEarnings=" + currentMonthPlatformEarnings +
-                ", lastMonthPlatformEarnings=" + lastMonthPlatformEarnings +
-                ", monthlyPlatformEarningsForLastYear=" + monthlyPlatformEarningsForLastYear +
-                '}';
+    public Boolean getIncreaseInMonthlyProfit() {
+        return this.currentMonthPlatformEarnings.compareTo(lastMonthPlatformEarnings) == 1 ? true : false;
+    }
+
+    public List<CourseWithEarningResp> getLifetimeHighestEarningCourses() {
+        return lifetimeHighestEarningCourses;
+    }
+
+    public void setLifetimeHighestEarningCourses(List<CourseWithEarningResp> lifetimeHighestEarningCourses) {
+        this.lifetimeHighestEarningCourses = lifetimeHighestEarningCourses;
+    }
+
+    public List<CourseWithEarningResp> getCurrentMonthHighestEarningCourses() {
+        return currentMonthHighestEarningCourses;
+    }
+
+    public void setCurrentMonthHighestEarningCourses(List<CourseWithEarningResp> currentMonthHighestEarningCourses) {
+        this.currentMonthHighestEarningCourses = currentMonthHighestEarningCourses;
+    }
+
+    public List<TutorWithEarningResp> getLifetimeHighestEarningTutors() {
+        return lifetimeHighestEarningTutors;
+    }
+
+    public void setLifetimeHighestEarningTutors(List<TutorWithEarningResp> lifetimeHighestEarningTutors) {
+        this.lifetimeHighestEarningTutors = lifetimeHighestEarningTutors;
+    }
+
+    public List<TutorWithEarningResp> getCurrentMonthHighestEarningTutors() {
+        return currentMonthHighestEarningTutors;
+    }
+
+    public void setCurrentMonthHighestEarningTutors(List<TutorWithEarningResp> currentMonthHighestEarningTutors) {
+        this.currentMonthHighestEarningTutors = currentMonthHighestEarningTutors;
+    }
+
+    public Integer getCurrentMonthNumberOfAccountCreation() {
+        return currentMonthNumberOfAccountCreation;
+    }
+
+    public void setCurrentMonthNumberOfAccountCreation(Integer currentMonthNumberOfAccountCreation) {
+        this.currentMonthNumberOfAccountCreation = currentMonthNumberOfAccountCreation;
+    }
+
+    public Boolean getIncreaseInMonthlyAccountCreation() {
+        return increaseInMonthlyAccountCreation;
+    }
+
+    public void setIncreaseInMonthlyAccountCreation(Boolean increaseInMonthlyAccountCreation) {
+        this.increaseInMonthlyAccountCreation = increaseInMonthlyAccountCreation;
+    }
+
+    public Integer getCurrentMonthNumberOfEnrollments() {
+        return currentMonthNumberOfEnrollments;
+    }
+
+    public void setCurrentMonthNumberOfEnrollments(Integer currentMonthNumberOfEnrollments) {
+        this.currentMonthNumberOfEnrollments = currentMonthNumberOfEnrollments;
+    }
+
+    public Boolean getIncreaseInMonthlyEnrollment() {
+        return increaseInMonthlyEnrollment;
+    }
+
+    public void setIncreaseInMonthlyEnrollment(Boolean increaseInMonthlyEnrollment) {
+        this.increaseInMonthlyEnrollment = increaseInMonthlyEnrollment;
+    }
+
+    public Integer getCurrentMonthNumberOfCourseCreation() {
+        return currentMonthNumberOfCourseCreation;
+    }
+
+    public void setCurrentMonthNumberOfCourseCreation(Integer currentMonthNumberOfCourseCreation) {
+        this.currentMonthNumberOfCourseCreation = currentMonthNumberOfCourseCreation;
+    }
+
+    public Boolean getIncreaseInMonthlyCourseCreation() {
+        return increaseInMonthlyCourseCreation;
+    }
+
+    public void setIncreaseInMonthlyCourseCreation(Boolean increaseInMonthlyCourseCreation) {
+        this.increaseInMonthlyCourseCreation = increaseInMonthlyCourseCreation;
+    }
+
+    public List<TransactionWithParticularsResp> getTransactionWithParticularsResps() {
+        return transactionWithParticularsResps;
+    }
+
+    public void setTransactionWithParticularsResps(List<TransactionWithParticularsResp> transactionWithParticularsResps) {
+        this.transactionWithParticularsResps = transactionWithParticularsResps;
     }
 }

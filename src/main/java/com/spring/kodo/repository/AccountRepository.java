@@ -67,6 +67,12 @@ public interface AccountRepository extends JpaRepository<Account, Long>
     @Query(value = "SELECT COUNT(*) FROM `account_courses` ac JOIN `course` c ON ac.course_id = c.course_id WHERE account_id = :tutorId AND MONTH(date_time_of_creation) = MONTH(NOW()) AND YEAR(date_time_of_creation) = YEAR(NOW())", nativeQuery = true)
     Optional<Integer> findNumCoursesCreatedCurrentMonth(@Param("tutorId") Long tutorId);
 
-    @Query(value = "SELECT COUNT(*) FROM `account_courses` ac JOIN `course` c ON ac.course_id = c.course_id WHERE account_id = :tutorId AND MONTH(date_time_of_creation) = MONTH(NOW()) - 1 AND YEAR(date_time_of_creation) = YEAR(NOW()) OR MONTH(date_time_of_creation) = 1 AND YEAR(date_time_of_creation) = YEAR(NOW()) - 1", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM `account_courses` ac JOIN `course` c ON ac.course_id = c.course_id WHERE account_id = :tutorId AND MONTH(date_time_of_creation) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) AND YEAR(date_time_of_creation) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)", nativeQuery = true)
     Optional<Integer> findNumCoursesCreatedLastMonth(@Param("tutorId") Long tutorId);
+
+    @Query(value = "SELECT COUNT(*) FROM account a WHERE YEAR(a.date_time_of_creation) = YEAR(NOW()) AND MONTH(a.date_time_of_creation) = MONTH(NOW())", nativeQuery = true)
+    Optional<Integer> getCurrentMonthNumberOfAccountCreation();
+
+    @Query(value = "SELECT COUNT(*) FROM account a WHERE YEAR(a.date_time_of_creation) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(a.date_time_of_creation) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)", nativeQuery = true)
+    Optional<Integer> getPreviousMonthNumberOfAccountCreation();
 }

@@ -2,6 +2,8 @@ package com.spring.kodo.repository;
 
 import com.spring.kodo.entity.Transaction;
 import com.spring.kodo.restentity.response.CourseWithEarningResp;
+import com.spring.kodo.restentity.response.TransactionWithParticularsResp;
+import com.spring.kodo.restentity.response.TutorWithEarningResp;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,7 +25,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
     @Query(value = "SELECT SUM(t.platform_fee) FROM `transaction` t WHERE MONTH(t.date_time_of_transaction) = MONTH(NOW())", nativeQuery = true)
     Optional<BigDecimal> getCurrentMonthPlatformEarning();
 
-    @Query(value = "SELECT SUM(t.platform_fee) FROM `transaction` t WHERE MONTH(t.date_time_of_transaction) = MONTH(NOW()) - 1 AND YEAR(t.date_time_of_transaction) = YEAR(NOW()) OR MONTH(t.date_time_of_transaction) = 1 AND YEAR(t.date_time_of_transaction) = YEAR(NOW()) - 1", nativeQuery = true)
+    @Query(value = "SELECT SUM(t.platform_fee) FROM `transaction` t WHERE MONTH(t.date_time_of_transaction) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) AND YEAR(t.date_time_of_transaction) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)", nativeQuery = true)
     Optional<BigDecimal> getLastMonthPlatformEarning();
 
     @Query(value = "SELECT SUM(t.platform_fee) FROM `transaction` t WHERE YEAR(t.date_time_of_transaction) = :inputYear AND MONTH(t.date_time_of_transaction) = :inputMonth", nativeQuery = true)
@@ -38,7 +40,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
     @Query(value = "SELECT SUM(t.platform_fee) FROM `transaction` t WHERE t.course_course_id = :courseId AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) AND YEAR(t.date_time_of_transaction) = YEAR(NOW())", nativeQuery = true)
     Optional<BigDecimal> getCurrentMonthCourseEarning(@Param("courseId") Long courseId);
 
-    @Query(value = "SELECT SUM(t.platform_fee) FROM `transaction` t  WHERE t.course_course_id = :courseId AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) - 1 AND YEAR(t.date_time_of_transaction) = YEAR(NOW()) OR MONTH(t.date_time_of_transaction) = 1 AND YEAR(t.date_time_of_transaction) = YEAR(NOW()) - 1", nativeQuery = true)
+    @Query(value = "SELECT SUM(t.platform_fee) FROM `transaction` t  WHERE t.course_course_id = :courseId AND MONTH(t.date_time_of_transaction) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) AND YEAR(t.date_time_of_transaction) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)", nativeQuery = true)
     Optional<BigDecimal> getLastMonthCourseEarning(@Param("courseId") Long courseId);
 
     @Query(value = "SELECT SUM(t.platform_fee) FROM `transaction` t WHERE t.course_course_id = :courseId AND YEAR(t.date_time_of_transaction) = :inputYear AND MONTH(t.date_time_of_transaction) = :inputMonth", nativeQuery = true)
@@ -82,10 +84,16 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
     Optional<BigDecimal> getTutorPayoutByMonthByCourseId(@Param("courseId") Long courseId, @Param("inputYear") int inputYear, @Param("inputMonth") int inputMonth);
 
     @Query(value = "SELECT COUNT(*) FROM `transaction` t WHERE t.course_course_id = :courseId AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) AND YEAR(t.date_time_of_transaction) = YEAR(NOW())", nativeQuery = true)
-    Optional<BigDecimal> getNumEnrolledCurrentMonth(@Param("courseId") Long courseId);
+    Optional<BigDecimal> getNumEnrolledCurrentMonthByCourseId(@Param("courseId") Long courseId);
 
-    @Query(value = "SELECT COUNT(*) FROM `transaction` t WHERE t.course_course_id = :courseId AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) - 1 AND YEAR(t.date_time_of_transaction) = YEAR(NOW()) OR MONTH(t.date_time_of_transaction) = 1 AND YEAR(t.date_time_of_transaction) = YEAR(NOW()) - 1", nativeQuery = true)
-    Optional<BigDecimal> getNumEnrolledLastMonth(@Param("courseId") Long courseId);
+    @Query(value = "SELECT COUNT(*) FROM transaction t WHERE YEAR(t.date_time_of_transaction) = YEAR(NOW()) AND MONTH(t.date_time_of_transaction) = MONTH(NOW())", nativeQuery = true)
+    Optional<Integer> getCurrentMonthEnrollmentCount();
+
+    @Query(value = "SELECT COUNT(*) FROM transaction t WHERE YEAR(t.date_time_of_transaction) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(t.date_time_of_transaction) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)", nativeQuery = true)
+    Optional<Integer> getPreviousMonthEnrollmentCount();
+
+    @Query(value = "SELECT COUNT(*) FROM `transaction` t WHERE t.course_course_id = :courseId AND MONTH(t.date_time_of_transaction) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) AND YEAR(t.date_time_of_transaction) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)", nativeQuery = true)
+    Optional<BigDecimal> getNumEnrolledLastMonthByCourseId(@Param("courseId") Long courseId);
 
     @Query(value="SELECT COUNT(*) FROM `enrolled_course` ec WHERE ec.parent_course_course_id = :courseId AND ec.date_time_of_completion IS NOT NULL", nativeQuery = true)
     Optional<BigDecimal> getNumStudentsCompleted(@Param("courseId") Long courseId);
@@ -106,7 +114,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
     @Query(value = "SELECT * FROM `transaction` t JOIN account a ON t.payee_account_id = a.account_id AND t.payee_account_id = :payeeId WHERE YEAR(t.date_time_of_transaction) = :inputYear", nativeQuery = true)
     List<Transaction> getYearlyTransactionByPayeeId(@Param("payeeId") Long payeeId, @Param("inputYear") Year inputYear);
 
-    @Query(value = "SELECT SUM(t.tutor_payout) FROM `transaction` t WHERE t.payee_account_id = :payeeId AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) - 1 AND YEAR(t.date_time_of_transaction) = YEAR(NOW()) OR MONTH(t.date_time_of_transaction) = 1 AND YEAR(t.date_time_of_transaction) = YEAR(NOW()) - 1", nativeQuery = true)
+    @Query(value = "SELECT SUM(t.tutor_payout) FROM `transaction` t WHERE t.payee_account_id = :payeeId AND MONTH(t.date_time_of_transaction) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) AND YEAR(t.date_time_of_transaction) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)", nativeQuery = true)
     Optional<BigDecimal> lastMonthTutorEarnings(@Param("payeeId") Long payeeId);
 
 
@@ -117,14 +125,32 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
 
 
     // Used to generate earnings summary per course
-    @Query(value = "SELECT c.course_id, c.name, SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id GROUP BY c.course_id, c.name", nativeQuery = true)
+    @Query(value = "SELECT c.course_id AS courseid, c.name, SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id GROUP BY c.course_id, c.name", nativeQuery = true)
     List<CourseWithEarningResp> getAllTransactionsGroupbyCourse();
 
-    @Query(value = "SELECT c.course_id, c.name, SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id WHERE YEAR(t.date_time_of_transaction) = :inputYear AND MONTH(t.date_time_of_transaction) = :inputMonth GROUP BY c.course_id, c.name", nativeQuery = true)
+    @Query(value = "SELECT c.course_id AS courseid, c.name, SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id WHERE YEAR(t.date_time_of_transaction) = :inputYear AND MONTH(t.date_time_of_transaction) = :inputMonth GROUP BY c.course_id, c.name", nativeQuery = true)
     List<CourseWithEarningResp> getAllTransactionsByGroupbyCourseByMonth(@Param("inputYear") Year inputYear, @Param("inputMonth") int inputMonth);
 
-    @Query(value = "SELECT c.course_id, c.name, SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id WHERE YEAR(t.date_time_of_transaction) = :inputYear GROUP BY c.course_id, c.name", nativeQuery = true)
+    @Query(value = "SELECT c.course_id AS courseid, c.name, SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id WHERE YEAR(t.date_time_of_transaction) = :inputYear GROUP BY c.course_id, c.name", nativeQuery = true)
     List<CourseWithEarningResp> getAllTransactionsByGroupbyCourseByYear(@Param("inputYear") Year inputYear);
 
 
+    @Query(value = "SELECT e.course_id AS courseid, e.* FROM (SELECT c.course_id, c.name, SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id GROUP BY c.course_id, c.name) AS e " +
+        "WHERE e.earnings = (SELECT MAX(s.earnings) FROM (SELECT SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id GROUP BY c.course_id, c.name) s)", nativeQuery = true)
+    List<CourseWithEarningResp> getLifetimeHighestEarningCourses();
+
+    @Query(value = "SELECT e.course_id AS courseid, e.* FROM (SELECT c.course_id, c.name, SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id WHERE YEAR(t.date_time_of_transaction) = YEAR(NOW()) AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) GROUP BY c.course_id, c.name) AS e " +
+            "WHERE e.earnings = (SELECT MAX(s.earnings) FROM (SELECT SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id WHERE YEAR(t.date_time_of_transaction) = YEAR(NOW()) AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) GROUP BY c.course_id, c.name) s)", nativeQuery = true)
+    List<CourseWithEarningResp> getCurrentMonthHighestEarningCourses();
+
+    @Query(value = "SELECT e.account_id AS accountid, e.* FROM (SELECT a.account_id, a.name, SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN account a ON t.payee_account_id = a.account_id GROUP BY a.account_id, a.name) AS e " +
+            "WHERE e.earnings = (SELECT MAX(s.earnings) FROM (SELECT SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN account a ON t.payee_account_id = a.account_id GROUP BY a.account_id, a.name) s)", nativeQuery = true)
+    List<TutorWithEarningResp> getLifetimeHighestEarningTutors();
+
+    @Query(value = "SELECT e.account_id AS accountid, e.* FROM (SELECT a.account_id, a.name, SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN account a ON t.payee_account_id = a.account_id WHERE YEAR(t.date_time_of_transaction) = YEAR(NOW()) AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) GROUP BY a.account_id, a.name) AS e " +
+            "WHERE e.earnings = (SELECT MAX(s.earnings) FROM (SELECT SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN account a ON t.payee_account_id = a.account_id WHERE YEAR(t.date_time_of_transaction) = YEAR(NOW()) AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) GROUP BY a.account_id, a.name) s)", nativeQuery = true)
+    List<TutorWithEarningResp> getCurrentMonthHighestEarningTutors();
+
+    @Query(value = "SELECT a1.name AS tutorName, a2.name AS customerName, c.name AS courseName, t.date_time_of_transaction AS dateTimeOfTransaction, t.platform_fee AS platformFee FROM transaction t JOIN course c ON t.course_course_id = c.course_id LEFT JOIN account a1 ON t.payee_account_id = a1.account_id LEFT JOIN account a2 ON t.payer_account_id = a2.account_id WHERE t.date_time_of_transaction BETWEEN NOW() - INTERVAL 30 DAY AND NOW()", nativeQuery = true)
+    List<TransactionWithParticularsResp> getTransactionsWithParticularsForLastThirtyDays();
 }

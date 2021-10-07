@@ -757,5 +757,16 @@ public class AccountServiceImpl implements AccountService
        return this.accountRepository.findNumCoursesCreatedLastMonth(tutorId).orElse(0);
    }
 
+   @Override
+   public Integer getCurrentMonthNumberOfAccountCreation()
+   {
+       return this.accountRepository.getCurrentMonthNumberOfAccountCreation().orElse(0);
+   }
+
+   @Override
+   public Integer getPreviousMonthNumberOfAccountCreation()
+   {
+       return this.accountRepository.getPreviousMonthNumberOfAccountCreation().orElse(0);
+   }
 }
 

@@ -148,5 +148,9 @@ public interface CourseRepository extends JpaRepository<Course, Long>
     @Query(value = "SELECT SUM(t.course_price) FROM `transaction` t WHERE t.course_course_id = :courseId AND YEAR(t.date_time_of_transaction) BETWEEN :year AND YEAR(DATE_ADD(:year, INTERVAL 1 YEAR))", nativeQuery = true)
     BigDecimal findTotalEarningsByCourseIdAndYear(@Param("courseId") Long courseId, @Param("year") Integer year);
 
+    @Query(value = "SELECT COUNT(*) FROM course c WHERE YEAR(c.date_time_of_creation) = YEAR(NOW()) AND MONTH(c.date_time_of_creation) = MONTH(NOW())", nativeQuery = true)
+    Integer findNumberOfNewCoursesForCurrentMonth();
 
+    @Query(value = "SELECT COUNT(*) FROM course c WHERE YEAR(c.date_time_of_creation) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(c.date_time_of_creation) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)", nativeQuery = true)
+    Integer findNumberOfNewCoursesForPreviousMonth();
 }

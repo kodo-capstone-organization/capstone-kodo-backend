@@ -1,10 +1,12 @@
 package com.spring.kodo.controller;
 
-import com.spring.kodo.entity.*;
-import com.spring.kodo.restentity.request.MultimediaReq;
-import com.spring.kodo.restentity.request.UpdateLessonReq;
-import com.spring.kodo.service.inter.*;
-import com.spring.kodo.util.exception.*;
+import com.spring.kodo.entity.Account;
+import com.spring.kodo.entity.EnrolledLesson;
+import com.spring.kodo.restentity.response.EnrolledLessonWithStudentNameResp;
+import com.spring.kodo.service.inter.AccountService;
+import com.spring.kodo.service.inter.EnrolledLessonService;
+import com.spring.kodo.util.exception.AccountNotFoundException;
+import com.spring.kodo.util.exception.EnrolledLessonNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ public class EnrolledLessonController
 
     @Autowired
     private EnrolledLessonService enrolledLessonService;
+
+    @Autowired
+    private AccountService accountService;
 
     @GetMapping("/getAllEnrolledLessons")
     public List<EnrolledLesson> getAllEnrolledLessons()
@@ -54,6 +59,41 @@ public class EnrolledLessonController
             return this.enrolledLessonService.getEnrolledLessonByStudentIdAndLessonId(studentId, lessonId);
         }
         catch (EnrolledLessonNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
+    @GetMapping("/getAllEnrolledLessonsByLessonId/{lessonId}")
+    public List<EnrolledLesson> getAllEnrolledLessonsByLessonId(@PathVariable Long lessonId)
+    {
+        return this.enrolledLessonService.getAllEnrolledLessonsByParentLessonId(lessonId);
+    }
+
+    @GetMapping("/getAllEnrolledLessonsWithStudentNameByParentLessonId/{lessonId}")
+    public List<EnrolledLessonWithStudentNameResp> getAllEnrolledLessonsWithStudentNameByParentLessonId(@PathVariable Long lessonId)
+    {
+        try
+        {
+            List<EnrolledLessonWithStudentNameResp> enrolledLessonsWithStudentNameRespList = new ArrayList<>();
+
+            List<EnrolledLesson> enrolledLessons = this.enrolledLessonService.getAllEnrolledLessonsByParentLessonId(lessonId);
+
+            Account account;
+            for (EnrolledLesson enrolledLesson : enrolledLessons)
+            {
+                account = accountService.getAccountByEnrolledLessonId(enrolledLesson.getEnrolledLessonId());
+                enrolledLessonsWithStudentNameRespList.add(
+                        new EnrolledLessonWithStudentNameResp(
+                                enrolledLesson,
+                                account.getName()
+                        )
+                );
+            }
+
+            return enrolledLessonsWithStudentNameRespList;
+        }
+        catch (AccountNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }

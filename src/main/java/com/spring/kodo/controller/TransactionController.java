@@ -138,8 +138,8 @@ public class TransactionController
         }
     }
 
-    @GetMapping("/getPlatformEarningsAdminData/{requestingAccountId}")
-    public PlatformEarningsResp getPlatformEarningsAdminData(@PathVariable Long requestingAccountId)
+    @GetMapping("/getPlatformMetricsAdminData/{requestingAccountId}")
+    public PlatformEarningsResp getPlatformMetricsAdminData(@PathVariable Long requestingAccountId)
     {
         try
         {
@@ -147,12 +147,42 @@ public class TransactionController
             BigDecimal currentMonthPlatformEarnings = this.transactionService.getCurrentMonthPlatformEarnings(requestingAccountId);
             BigDecimal lastMonthPlatformEarnings = this.transactionService.getLastMonthPlatformEarnings(requestingAccountId);
             List<MonthlyEarningResp> monthlyPlatformEarningsForLastYear = this.transactionService.getMonthlyPlatformEarningsForLastYear(requestingAccountId);
+            List<CourseWithEarningResp> lifetimeHighestEarningCourses = this.transactionService.getLifetimeHighestEarningCourses(requestingAccountId);
+            List<CourseWithEarningResp> currentMonthHighestEarningCourses = this.transactionService.getCurrentMonthHighestEarningCourses(requestingAccountId);
+            List<TutorWithEarningResp> lifetimeHighestEarningTutors = this.transactionService.getLifetimeHighestEarningTutors(requestingAccountId);
+            List<TutorWithEarningResp> currentMonthHighestEarningTutors = this.transactionService.getCurrentMonthHighestEarningTutors(requestingAccountId);
+
+            Integer currentMonthNumberOfAccountCreation = this.accountService.getCurrentMonthNumberOfAccountCreation();
+            Integer previousMonthNumberOfAccountCreation = this.accountService.getPreviousMonthNumberOfAccountCreation();
+
+            Integer currentMonthNumberOfEnrollments = this.transactionService.getCurrentMonthEnrollmentCount(requestingAccountId);
+            Integer previousMonthNumberOfEnrollments = this.transactionService.getPreviousMonthEnrollmentCount(requestingAccountId);
+
+            Integer currentMonthNumberOfCourseCreation = this.courseService.getNumberOfNewCourseForCurrentMonth();
+            Integer previousMonthNumberOfCourseCreation = this.courseService.getNumberOfNewCoursesForPreviousMonth();
+
+            List<TransactionWithParticularsResp> transactionWithParticularsResps = this.transactionService.getTransactionsWithParticularsForLastThirtyDays(requestingAccountId);
 
             PlatformEarningsResp platformEarningsResp = new PlatformEarningsResp();
             platformEarningsResp.setLifetimePlatformEarnings(lifetimePlatformEarnings);
             platformEarningsResp.setCurrentMonthPlatformEarnings(currentMonthPlatformEarnings);
             platformEarningsResp.setLastMonthPlatformEarnings(lastMonthPlatformEarnings);
             platformEarningsResp.setMonthlyPlatformEarningsForLastYear(monthlyPlatformEarningsForLastYear);
+            platformEarningsResp.setLifetimeHighestEarningCourses(lifetimeHighestEarningCourses);
+            platformEarningsResp.setCurrentMonthHighestEarningCourses(currentMonthHighestEarningCourses);
+            platformEarningsResp.setLifetimeHighestEarningTutors(lifetimeHighestEarningTutors);
+            platformEarningsResp.setCurrentMonthHighestEarningTutors(currentMonthHighestEarningTutors);
+
+            platformEarningsResp.setCurrentMonthNumberOfAccountCreation(currentMonthNumberOfAccountCreation);
+            platformEarningsResp.setIncreaseInMonthlyAccountCreation(currentMonthNumberOfAccountCreation > previousMonthNumberOfAccountCreation);
+
+            platformEarningsResp.setCurrentMonthNumberOfEnrollments(currentMonthNumberOfEnrollments);
+            platformEarningsResp.setIncreaseInMonthlyEnrollment(currentMonthNumberOfEnrollments > previousMonthNumberOfEnrollments);
+
+            platformEarningsResp.setCurrentMonthNumberOfCourseCreation(currentMonthNumberOfCourseCreation);
+            platformEarningsResp.setIncreaseInMonthlyCourseCreation(currentMonthNumberOfCourseCreation > previousMonthNumberOfCourseCreation);
+
+            platformEarningsResp.setTransactionWithParticularsResps(transactionWithParticularsResps);
 
             return platformEarningsResp;
         }
@@ -178,8 +208,8 @@ public class TransactionController
             BigDecimal currentMonthCourseEarnings = this.transactionService.getCurrentMonthCourseEarning(requestingAccountId, courseId);
             BigDecimal lastMonthCourseEarnings = this.transactionService.getLastMonthCourseEarning(requestingAccountId, courseId);
             List<MonthlyEarningResp> monthlyCourseEarningsForLastYear = this.transactionService.getMonthlyCourseEarningForLastYear(requestingAccountId, courseId);
-            BigDecimal numEnrolledCurrentMonth = this.transactionService.getNumEnrolledCurrentMonth(requestingAccountId, courseId);
-            BigDecimal numEnrolledLastMonth = this.transactionService.getNumEnrolledLastMonth(requestingAccountId, courseId);
+            BigDecimal numEnrolledCurrentMonth = this.transactionService.getNumEnrolledCurrentMonthByCourseId(requestingAccountId, courseId);
+            BigDecimal numEnrolledLastMonth = this.transactionService.getNumEnrolledLastMonthByCourseId(requestingAccountId, courseId);
             BigDecimal numStudentsCompleted = this.transactionService.getNumStudentsCompleted(requestingAccountId, courseId);
 
             CourseEarningsResp courseEarningsResp = new CourseEarningsResp();
