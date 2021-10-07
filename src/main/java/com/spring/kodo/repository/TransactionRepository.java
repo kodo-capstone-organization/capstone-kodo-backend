@@ -125,13 +125,13 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
 
 
     // Used to generate earnings summary per course
-    @Query(value = "SELECT c.course_id, c.name, SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id GROUP BY c.course_id, c.name", nativeQuery = true)
+    @Query(value = "SELECT c.course_id AS courseid, c.name, SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id GROUP BY c.course_id, c.name", nativeQuery = true)
     List<CourseWithEarningResp> getAllTransactionsGroupbyCourse();
 
-    @Query(value = "SELECT c.course_id, c.name, SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id WHERE YEAR(t.date_time_of_transaction) = :inputYear AND MONTH(t.date_time_of_transaction) = :inputMonth GROUP BY c.course_id, c.name", nativeQuery = true)
+    @Query(value = "SELECT c.course_id AS courseid, c.name, SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id WHERE YEAR(t.date_time_of_transaction) = :inputYear AND MONTH(t.date_time_of_transaction) = :inputMonth GROUP BY c.course_id, c.name", nativeQuery = true)
     List<CourseWithEarningResp> getAllTransactionsByGroupbyCourseByMonth(@Param("inputYear") Year inputYear, @Param("inputMonth") int inputMonth);
 
-    @Query(value = "SELECT c.course_id, c.name, SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id WHERE YEAR(t.date_time_of_transaction) = :inputYear GROUP BY c.course_id, c.name", nativeQuery = true)
+    @Query(value = "SELECT c.course_id AS courseid, c.name, SUM(t.tutor_payout) AS earnings FROM `transaction` t JOIN course c ON t.course_course_id = c.course_id WHERE YEAR(t.date_time_of_transaction) = :inputYear GROUP BY c.course_id, c.name", nativeQuery = true)
     List<CourseWithEarningResp> getAllTransactionsByGroupbyCourseByYear(@Param("inputYear") Year inputYear);
 
 
