@@ -2,7 +2,6 @@ package com.spring.kodo.config;
 
 import com.spring.kodo.entity.*;
 import com.spring.kodo.service.inter.*;
-import com.spring.kodo.util.Constants;
 import com.spring.kodo.util.FormatterUtil;
 import com.spring.kodo.util.RandomGeneratorUtil;
 import com.spring.kodo.util.enumeration.MultimediaType;
@@ -706,30 +705,41 @@ public class DatabaseConfig
 
     private void createForumThreads() throws Exception
     {
+        List<Account> accountsInCourse;
+
         ForumCategory forumCategory;
         ForumThread forumThread;
+        Account account;
 
         int forumCategoryIndex = 0;
         int forumThreadIndex = 0;
-        int accountIndex = STUDENT_FIRST_INDEX;
+        int accountIndex = 0;
 
         for (Course course : courses)
         {
-            for (int i = 0; i < FORUM_CATEGORY_COUNT; i++, forumCategoryIndex++)
+            accountIndex = 0;
+            accountsInCourse = accounts.stream().filter(a -> enrolledCourseService.isEnrolledInCourseByStudentIdAndCourseId(a.getAccountId(), course.getCourseId())).toList();
+
+            if (accountsInCourse.size() > 0)
             {
-                forumCategory = forumCategories.get(forumCategoryIndex);
-
-                for (int j = 0; j < FORUM_THREAD_COUNT; j++, forumThreadIndex++, accountIndex++)
+                for (int i = 0; i < FORUM_CATEGORY_COUNT; i++, forumCategoryIndex++)
                 {
-                    forumThread = forumThreads.get(forumThreadIndex);
+                    forumCategory = forumCategories.get(forumCategoryIndex);
 
-                    forumThreadService.createNewForumThread(forumThread, (long) accountIndex);
-
-                    forumCategoryService.addForumThreadToForumCategory(forumCategory, forumThread);
-
-                    if (accountIndex == TUTOR_SIZE - 1)
+                    for (int j = 0; j < FORUM_THREAD_COUNT; j++, forumThreadIndex++, accountIndex++)
                     {
-                        accountIndex = STUDENT_FIRST_INDEX;
+                        account = accountsInCourse.get(accountIndex);
+
+                        forumThread = forumThreads.get(forumThreadIndex);
+
+                        forumThreadService.createNewForumThread(forumThread, account.getAccountId());
+
+                        forumCategoryService.addForumThreadToForumCategory(forumCategory, forumThread);
+
+                        if (accountIndex >= accountsInCourse.size() - 1)
+                        {
+                            accountIndex = 0;
+                        }
                     }
                 }
             }
@@ -742,9 +752,12 @@ public class DatabaseConfig
 
     private void createForumPosts() throws Exception
     {
+        List<Account> accountsInCourse;
+
         ForumThread forumThread;
         ForumPost forumPost;
         ForumPost forumPostReply;
+        Account account;
 
         int forumThreadIndex = 0;
         int forumPostIndex = 0;
@@ -752,39 +765,49 @@ public class DatabaseConfig
 
         for (Course course : courses)
         {
-            for (int i = 0; i < FORUM_CATEGORY_COUNT; i++)
+            accountIndex = 0;
+            accountsInCourse = accounts.stream().filter(a -> enrolledCourseService.isEnrolledInCourseByStudentIdAndCourseId(a.getAccountId(), course.getCourseId())).toList();
+
+            if (accountsInCourse.size() > 0)
             {
-                for (int j = 0; j < FORUM_THREAD_COUNT; j++, forumThreadIndex++)
+                for (int i = 0; i < FORUM_CATEGORY_COUNT; i++)
                 {
-                    forumThread = forumThreads.get(forumThreadIndex);
-
-                    for (int k = 0; k < FORUM_POST_COUNT; k++)
+                    for (int j = 0; j < FORUM_THREAD_COUNT; j++, forumThreadIndex++)
                     {
-                        forumPost = forumPosts.get(forumPostIndex);
+                        forumThread = forumThreads.get(forumThreadIndex);
 
-                        forumPost = forumPostService.createNewForumPost(forumPost, accounts.get(accountIndex).getAccountId());
-                        forumThreadService.addForumPostToForumThread(forumThread, forumPost);
-
-                        forumPostIndex++;
-                        accountIndex++;
-
-                        if (accountIndex >= TUTOR_SIZE - 1)
+                        for (int k = 0; k < FORUM_POST_COUNT; k++)
                         {
-                            accountIndex = STUDENT_FIRST_INDEX;
-                        }
+                            account = accountsInCourse.get(accountIndex);
 
-                        for (int l = 0; l < FORUM_POST_REPLY_COUNT; l++, forumPostIndex++, accountIndex++)
-                        {
-                            forumPostReply = forumPosts.get(forumPostIndex);
+                            forumPost = forumPosts.get(forumPostIndex);
 
-                            forumPostReply = forumPostService.createNewForumPostReply(forumPostReply, accounts.get(accountIndex).getAccountId(), forumPost.getForumPostId());
-                            forumThreadService.addForumPostToForumThread(forumThread, forumPostReply);
+                            forumPost = forumPostService.createNewForumPost(forumPost, account.getAccountId());
+                            forumThreadService.addForumPostToForumThread(forumThread, forumPost);
 
-                            forumPost = forumPostReply;
+                            forumPostIndex++;
+                            accountIndex++;
 
-                            if (accountIndex >= TUTOR_SIZE - 1)
+                            if (accountIndex >= accountsInCourse.size() - 1)
                             {
-                                accountIndex = STUDENT_FIRST_INDEX;
+                                accountIndex = 0;
+                            }
+
+                            for (int l = 0; l < FORUM_POST_REPLY_COUNT; l++, forumPostIndex++, accountIndex++)
+                            {
+                                account = accountsInCourse.get(accountIndex);
+
+                                forumPostReply = forumPosts.get(forumPostIndex);
+
+                                forumPostReply = forumPostService.createNewForumPostReply(forumPostReply, account.getAccountId(), forumPost.getForumPostId());
+                                forumThreadService.addForumPostToForumThread(forumThread, forumPostReply);
+
+                                forumPost = forumPostReply;
+
+                                if (accountIndex >= accountsInCourse.size() - 1)
+                                {
+                                    accountIndex = 0;
+                                }
                             }
                         }
                     }
@@ -1063,10 +1086,10 @@ public class DatabaseConfig
                                         String.format("%s %s Quiz #%d", level, language, j),
                                         "A very interesting " + FormatterUtil.getOrdinal(j) + " quiz on " + language,
                                         i == 1 ?
-                                        LocalTime.of(0, 0, 10)
-                                        : i == 2 ?
-                                        LocalTime.of(0, 3, 30) :
-                                        LocalTime.of(0, 30, 0),
+                                                LocalTime.of(0, 0, 10)
+                                                : i == 2 ?
+                                                LocalTime.of(0, 3, 30) :
+                                                LocalTime.of(0, 30, 0),
                                         10)
                         );
                     }

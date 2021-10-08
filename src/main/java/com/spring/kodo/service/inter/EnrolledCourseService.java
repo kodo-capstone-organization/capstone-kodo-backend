@@ -34,4 +34,6 @@ public interface EnrolledCourseService
     List<EnrolledCourseWithStudentResp> getAllCompletionPercentagesByCourseId(Long courseId);
 
     List<EnrolledCourseWithStudentCompletion> getAllEnrolledStudentsCompletion(Long courseId);
+
+    Boolean isEnrolledInCourseByStudentIdAndCourseId(Long studentId, Long courseId);
 }
