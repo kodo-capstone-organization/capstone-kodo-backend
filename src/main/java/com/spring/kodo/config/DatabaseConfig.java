@@ -134,6 +134,7 @@ public class DatabaseConfig
     private final Integer FORUM_CATEGORY_COUNT = 1;
     private final Integer FORUM_THREAD_COUNT = 3;
     private final Integer FORUM_POST_COUNT = 3;
+    private final Integer FORUM_POST_REPLY_COUNT = 2;
 
     private final Integer COMPLETE_CONTENT_COUNT = (int) (0.1 * (STUDENT_ENROLLED_COUNT * LESSON_COUNT * (MULTIMEDIA_COUNT + QUIZ_COUNT)));
 
@@ -743,6 +744,7 @@ public class DatabaseConfig
     {
         ForumThread forumThread;
         ForumPost forumPost;
+        ForumPost forumPostReply;
 
         int forumThreadIndex = 0;
         int forumPostIndex = 0;
@@ -756,17 +758,34 @@ public class DatabaseConfig
                 {
                     forumThread = forumThreads.get(forumThreadIndex);
 
-                    for (int k = 0; k < FORUM_POST_COUNT; k++, forumPostIndex++)
+                    for (int k = 0; k < FORUM_POST_COUNT; k++)
                     {
                         forumPost = forumPosts.get(forumPostIndex);
 
                         forumPost = forumPostService.createNewForumPost(forumPost, accounts.get(accountIndex).getAccountId());
-
                         forumThreadService.addForumPostToForumThread(forumThread, forumPost);
 
-                        if (accountIndex == TUTOR_SIZE - 1)
+                        forumPostIndex++;
+                        accountIndex++;
+
+                        if (accountIndex >= TUTOR_SIZE - 1)
                         {
                             accountIndex = STUDENT_FIRST_INDEX;
+                        }
+
+                        for (int l = 0; l < FORUM_POST_REPLY_COUNT; l++, forumPostIndex++, accountIndex++)
+                        {
+                            forumPostReply = forumPosts.get(forumPostIndex);
+
+                            forumPostReply = forumPostService.createNewForumPostReply(forumPostReply, accounts.get(accountIndex).getAccountId(), forumPost.getForumPostId());
+                            forumThreadService.addForumPostToForumThread(forumThread, forumPostReply);
+
+                            forumPost = forumPostReply;
+
+                            if (accountIndex >= TUTOR_SIZE - 1)
+                            {
+                                accountIndex = STUDENT_FIRST_INDEX;
+                            }
                         }
                     }
                 }
@@ -777,6 +796,7 @@ public class DatabaseConfig
 
         System.out.printf(">> Created ForumPosts (%d)\n", forumPosts.size());
     }
+
 
     private void completeContent() throws Exception
     {
@@ -1222,6 +1242,10 @@ public class DatabaseConfig
                         for (int k = 1; k <= FORUM_POST_COUNT; k++)
                         {
                             forumPosts.add(new ForumPost("Post #" + k + " on " + level + " " + language));
+                            for (int l = 1; l <= FORUM_POST_REPLY_COUNT; l++)
+                            {
+                                forumPosts.add(new ForumPost("Post #" + k + " Reply #" + l + " on " + level + " " + language));
+                            }
                         }
                     }
                 }

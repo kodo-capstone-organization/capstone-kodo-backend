@@ -81,6 +81,7 @@ public class ForumPostServiceImpl implements ForumPostService
                 parentForumPost.setReply(newForumPostReply);
 
                 forumPostRepository.saveAndFlush(newForumPostReply);
+                forumPostRepository.saveAndFlush(parentForumPost);
                 return newForumPostReply;
             }
             else
@@ -188,7 +189,7 @@ public class ForumPostServiceImpl implements ForumPostService
             {
                 Long forumReplyIdToDelete = forumPostToDelete.getReply().getForumPostId();
                 forumPostToDelete.setReply(null);
-                deleteForumPost(forumReplyIdToDelete);
+                deleteForumPostAndDisassociateFromForumThread(forumReplyIdToDelete);
             }
 
             forumPostRepository.delete(forumPostToDelete);
