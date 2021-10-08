@@ -241,8 +241,8 @@ public class DatabaseConfig
         createQuizQuestions();
         createQuizQuestionOptions();
         createMultimedias();
-        createEnrolledCoursesAndEnrolledLessonsEnrolledContents();
-        createStudentAttemptsAndStudentAttemptQuestionsAndStudentAttemptAnswersAndCompleteContentAndMarkStudentAttempt();
+//        createEnrolledCoursesAndEnrolledLessonsEnrolledContents();
+//        createStudentAttemptsAndStudentAttemptQuestionsAndStudentAttemptAnswersAndCompleteContentAndMarkStudentAttempt();
         createForumCategories();
         createForumThreads();
         createForumPosts();

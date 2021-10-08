@@ -165,12 +165,12 @@ public class ForumPostServiceImpl implements ForumPostService
 
             if (forumPostToDelete.getReplies().size() > 0)
             {
-                List<ForumPost> forumPostReplies = new ArrayList<>(forumPostToDelete.getReplies());
+                List<ForumPost> forumPostRepliesToDelete = new ArrayList<>(forumPostToDelete.getReplies());
                 forumPostToDelete.getReplies().clear();
 
-                for (ForumPost forumPostReply : forumPostReplies)
+                for (ForumPost forumPostReplyToDelete : forumPostRepliesToDelete)
                 {
-                    deleteForumPost(forumPostReply.getForumPostId());
+                    deleteForumPost(forumPostReplyToDelete.getForumPostId());
                 }
             }
 
@@ -191,6 +191,19 @@ public class ForumPostServiceImpl implements ForumPostService
             ForumPost forumPostToDelete = getForumPostByForumPostId(forumPostId);
             forumThreadService.removeForumPostToForumThreadByForumPostId(forumPostId);
 
+            if (forumPostToDelete.getParentForumPost() != null)
+            {
+                List<ForumPost> forumPostReplies = forumPostToDelete.getParentForumPost().getReplies();
+                for (int i = 0; i < forumPostReplies.size(); i++)
+                {
+                    if (forumPostReplies.get(i).getForumPostId().equals(forumPostToDelete.getForumPostId()))
+                    {
+                        forumPostReplies.remove(i);
+                        break;
+                    }
+                }
+            }
+
             if (forumPostToDelete.getReplies().size() > 0)
             {
                 List<ForumPost> forumPostRepliesToDelete = new ArrayList<>(forumPostToDelete.getReplies());
@@ -202,6 +215,10 @@ public class ForumPostServiceImpl implements ForumPostService
                 }
             }
 
+            if (forumPostToDelete.getParentForumPost() != null)
+            {
+                forumPostRepository.saveAndFlush(forumPostToDelete.getParentForumPost());
+            }
             forumPostRepository.delete(forumPostToDelete);
             return true;
         }

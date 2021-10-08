@@ -32,11 +32,6 @@ public class ForumPost
     private ForumPost parentForumPost;
 
     @OneToMany(mappedBy = "parentForumPost", fetch = FetchType.LAZY)
-    @JoinTable(
-            joinColumns = @JoinColumn(name = "parent_forum_post_id", referencedColumnName = "forumPostId"),
-            inverseJoinColumns = @JoinColumn(name = "reply_forum_post_id", referencedColumnName = "forumPostId"),
-            uniqueConstraints = @UniqueConstraint(columnNames = {"parent_forum_post_id", "reply_forum_post_id"})
-    )
     private List<ForumPost> replies;
 
     @ManyToOne(optional = false, targetEntity = Account.class, fetch = FetchType.LAZY)
