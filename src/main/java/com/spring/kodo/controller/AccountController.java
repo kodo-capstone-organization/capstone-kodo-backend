@@ -51,7 +51,8 @@ public class AccountController
                     account.getName(),
                     account.getUsername(),
                     account.getEmail(),
-                    account.getIsAdmin()
+                    account.getIsAdmin(),
+                    account.getDisplayPictureUrl()
             ));
         }
 
