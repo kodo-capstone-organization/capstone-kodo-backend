@@ -8,9 +8,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Entity(name="forum_post")
-@Table(name="forum_post")
+@Entity(name = "forum_post")
+@Table(name = "forum_post")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ForumPost
 {
@@ -27,8 +28,16 @@ public class ForumPost
     @NotNull
     private LocalDateTime timeStamp;
 
-    @OneToOne(optional = true, targetEntity = ForumPost.class, fetch = FetchType.LAZY)
-    private ForumPost reply;
+    @ManyToOne(optional = true, targetEntity = ForumPost.class, fetch = FetchType.LAZY)
+    private ForumPost parentForumPost;
+
+    @OneToMany(mappedBy = "parentForumPost", fetch = FetchType.LAZY)
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "parent_forum_post_id", referencedColumnName = "forumPostId"),
+            inverseJoinColumns = @JoinColumn(name = "reply_forum_post_id", referencedColumnName = "forumPostId"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"parent_forum_post_id", "reply_forum_post_id"})
+    )
+    private List<ForumPost> replies;
 
     @ManyToOne(optional = false, targetEntity = Account.class, fetch = FetchType.LAZY)
     private Account account;
@@ -45,8 +54,10 @@ public class ForumPost
         this.message = message;
     }
 
-    public ForumPost(String message, LocalDateTime timeStamp) {
-        this.message = message;
+    public ForumPost(String message, LocalDateTime timeStamp)
+    {
+        this(message);
+
         this.timeStamp = timeStamp;
     }
 
@@ -80,14 +91,24 @@ public class ForumPost
         this.timeStamp = timeStamp;
     }
 
-    public ForumPost getReply()
+    public ForumPost getParentForumPost()
     {
-        return reply;
+        return parentForumPost;
     }
 
-    public void setReply(ForumPost reply)
+    public void setParentForumPost(ForumPost parentForumPost)
     {
-        this.reply = reply;
+        this.parentForumPost = parentForumPost;
+    }
+
+    public List<ForumPost> getReplies()
+    {
+        return replies;
+    }
+
+    public void setReplies(List<ForumPost> replies)
+    {
+        this.replies = replies;
     }
 
     public Account getAccount()
@@ -107,7 +128,8 @@ public class ForumPost
                 "forumPostId=" + forumPostId +
                 ", message='" + message + '\'' +
                 ", timeStamp=" + timeStamp +
-                ", reply=" + reply +
+                ", parentForumPost=" + parentForumPost +
+                ", replies=" + replies +
                 ", account=" + account +
                 '}';
     }

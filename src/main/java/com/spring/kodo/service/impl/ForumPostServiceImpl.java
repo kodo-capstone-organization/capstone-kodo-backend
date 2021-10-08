@@ -17,6 +17,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -78,7 +79,8 @@ public class ForumPostServiceImpl implements ForumPostService
                 newForumPostReply.setAccount(account);
 
                 ForumPost parentForumPost = getForumPostByForumPostId(parentForumPostId);
-                parentForumPost.setReply(newForumPostReply);
+                parentForumPost.getReplies().add(newForumPostReply);
+                newForumPostReply.setParentForumPost(parentForumPost);
 
                 forumPostRepository.saveAndFlush(newForumPostReply);
                 forumPostRepository.saveAndFlush(parentForumPost);
@@ -161,11 +163,15 @@ public class ForumPostServiceImpl implements ForumPostService
         {
             ForumPost forumPostToDelete = getForumPostByForumPostId(forumPostId);
 
-            if (forumPostToDelete.getReply() != null)
+            if (forumPostToDelete.getReplies().size() > 0)
             {
-                Long forumReplyIdToDelete = forumPostToDelete.getReply().getForumPostId();
-                forumPostToDelete.setReply(null);
-                deleteForumPost(forumReplyIdToDelete);
+                List<ForumPost> forumPostReplies = new ArrayList<>(forumPostToDelete.getReplies());
+                forumPostToDelete.getReplies().clear();
+
+                for (ForumPost forumPostReply : forumPostReplies)
+                {
+                    deleteForumPost(forumPostReply.getForumPostId());
+                }
             }
 
             forumPostRepository.delete(forumPostToDelete);
@@ -185,11 +191,15 @@ public class ForumPostServiceImpl implements ForumPostService
             ForumPost forumPostToDelete = getForumPostByForumPostId(forumPostId);
             forumThreadService.removeForumPostToForumThreadByForumPostId(forumPostId);
 
-            if (forumPostToDelete.getReply() != null)
+            if (forumPostToDelete.getReplies().size() > 0)
             {
-                Long forumReplyIdToDelete = forumPostToDelete.getReply().getForumPostId();
-                forumPostToDelete.setReply(null);
-                deleteForumPostAndDisassociateFromForumThread(forumReplyIdToDelete);
+                List<ForumPost> forumPostRepliesToDelete = new ArrayList<>(forumPostToDelete.getReplies());
+                forumPostToDelete.getReplies().clear();
+
+                for (ForumPost forumPostReplyToDelete : forumPostRepliesToDelete)
+                {
+                    deleteForumPostAndDisassociateFromForumThread(forumPostReplyToDelete.getForumPostId());
+                }
             }
 
             forumPostRepository.delete(forumPostToDelete);
