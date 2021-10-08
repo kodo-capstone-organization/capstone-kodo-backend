@@ -82,15 +82,18 @@ public class ForumPostController
                 Long accountId = createNewForumPostReplyReq.getAccountId();
                 Long parentForumPostId = createNewForumPostReplyReq.getParentForumPostId();
 
+                ForumThread forumThread = forumThreadService.getForumThreadByForumPostId(parentForumPostId);
+
                 newForumPostReply = forumPostService.createNewForumPostReply(newForumPostReply, accountId, parentForumPostId);
+                forumThreadService.addForumPostToForumThread(forumThread, newForumPostReply);
 
                 return newForumPostReply;
             }
-            catch (AccountNotFoundException | ForumPostNotFoundException ex)
+            catch (AccountNotFoundException | ForumPostNotFoundException | ForumThreadNotFoundException ex)
             {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
             }
-            catch (InputDataValidationException ex)
+            catch (UpdateForumThreadException | InputDataValidationException ex)
             {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
             }
