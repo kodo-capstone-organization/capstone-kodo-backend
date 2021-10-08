@@ -143,12 +143,16 @@ public class ForumThreadController
     {
         try
         {
-            Boolean deletedForumThread = this.forumThreadService.deleteForumThread(forumThreadId);
+            this.forumThreadService.deleteForumThreadAndDisassociateFromForumCategory(forumThreadId);
             return ResponseEntity.status(HttpStatus.OK).body("Successfully deleted forum thread with ID: " + forumThreadId);
         }
-        catch (ForumPostNotFoundException | ForumThreadNotFoundException ex)
+        catch (ForumCategoryNotFoundException | ForumThreadNotFoundException | ForumPostNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+        catch (DeleteForumThreadException | DeleteForumPostException | UpdateForumCategoryException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
     }
 

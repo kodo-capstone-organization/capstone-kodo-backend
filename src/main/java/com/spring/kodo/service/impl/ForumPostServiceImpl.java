@@ -154,18 +154,49 @@ public class ForumPostServiceImpl implements ForumPostService
     }
 
     @Override
-    public Boolean deleteForumPost(Long forumPostId) throws ForumPostNotFoundException
+    public Boolean deleteForumPost(Long forumPostId) throws ForumPostNotFoundException, DeleteForumPostException
     {
-        ForumPost forumPostToDelete = forumPostRepository.findById(forumPostId).orElse(null);
-
-        if (forumPostToDelete != null)
+        if (forumPostId != null)
         {
-            forumPostRepository.deleteById(forumPostId);
+            ForumPost forumPostToDelete = getForumPostByForumPostId(forumPostId);
+
+            if (forumPostToDelete.getReply() != null)
+            {
+                Long forumReplyIdToDelete = forumPostToDelete.getReply().getForumPostId();
+                forumPostToDelete.setReply(null);
+                deleteForumPost(forumReplyIdToDelete);
+            }
+
+            forumPostRepository.delete(forumPostToDelete);
             return true;
         }
         else
         {
-            throw new ForumPostNotFoundException("Forum Post with ID: " + forumPostId + " does not exist!");
+            throw new DeleteForumPostException("ForumPost ID cannot be null");
+        }
+    }
+
+    @Override
+    public Boolean deleteForumPostAndDisassociateFromForumThread(Long forumPostId) throws ForumPostNotFoundException, DeleteForumPostException, UpdateForumThreadException, ForumThreadNotFoundException
+    {
+        if (forumPostId != null)
+        {
+            ForumPost forumPostToDelete = getForumPostByForumPostId(forumPostId);
+            forumThreadService.removeForumPostToForumThreadByForumPostId(forumPostId);
+
+            if (forumPostToDelete.getReply() != null)
+            {
+                Long forumReplyIdToDelete = forumPostToDelete.getReply().getForumPostId();
+                forumPostToDelete.setReply(null);
+                deleteForumPost(forumReplyIdToDelete);
+            }
+
+            forumPostRepository.delete(forumPostToDelete);
+            return true;
+        }
+        else
+        {
+            throw new DeleteForumPostException("ForumPost ID cannot be null");
         }
     }
 }

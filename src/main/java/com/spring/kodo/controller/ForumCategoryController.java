@@ -127,12 +127,16 @@ public class ForumCategoryController
     {
         try
         {
-            Boolean deletedForumCategory = this.forumCategoryService.deleteForumCategory(forumCategoryId);
+            this.forumCategoryService.deleteForumCategory(forumCategoryId);
             return ResponseEntity.status(HttpStatus.OK).body("Successfully deleted forum category with ID: " + forumCategoryId);
         }
-        catch (ForumPostNotFoundException | ForumThreadNotFoundException | ForumCategoryNotFoundException ex)
+        catch (ForumCategoryNotFoundException | ForumThreadNotFoundException | ForumPostNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+        catch (DeleteForumCategoryException | DeleteForumThreadException | DeleteForumPostException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
     }
 

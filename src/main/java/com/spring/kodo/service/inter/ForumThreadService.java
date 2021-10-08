@@ -6,7 +6,8 @@ import com.spring.kodo.util.exception.*;
 
 import java.util.List;
 
-public interface ForumThreadService {
+public interface ForumThreadService
+{
 
     ForumThread createNewForumThread(ForumThread newForumThread, Long accountId) throws InputDataValidationException, UnknownPersistenceException, AccountNotFoundException;
 
@@ -14,13 +15,19 @@ public interface ForumThreadService {
 
     ForumThread getForumThreadByName(String name) throws ForumThreadNotFoundException;
 
+    ForumThread getForumThreadByForumPostId(Long forumPostId) throws ForumThreadNotFoundException;
+
     List<ForumThread> getAllForumThreads();
 
     List<ForumThread> getAllForumThreadsOfAForumCategory(Long forumCategoryId) throws ForumCategoryNotFoundException;
 
     ForumThread updateForumThread(ForumThread updatedForumThread) throws ForumThreadNotFoundException, InputDataValidationException;
 
-    Boolean deleteForumThread(Long forumThreadId) throws ForumThreadNotFoundException, ForumPostNotFoundException;
+    Boolean deleteForumThread(Long forumThreadId) throws ForumThreadNotFoundException, ForumPostNotFoundException, DeleteForumPostException, DeleteForumThreadException;
+
+    Boolean deleteForumThreadAndDisassociateFromForumCategory(Long forumThreadId) throws DeleteForumThreadException, ForumThreadNotFoundException, DeleteForumPostException, ForumPostNotFoundException, ForumCategoryNotFoundException, UpdateForumCategoryException;
 
     ForumThread addForumPostToForumThread(ForumThread forumThread, ForumPost forumPost) throws UpdateForumThreadException, ForumThreadNotFoundException, ForumPostNotFoundException;
+
+    ForumThread removeForumPostToForumThreadByForumPostId(Long forumPostId) throws UpdateForumThreadException, ForumThreadNotFoundException;
 }
