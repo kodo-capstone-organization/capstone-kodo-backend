@@ -241,8 +241,8 @@ public class DatabaseConfig
         createQuizQuestions();
         createQuizQuestionOptions();
         createMultimedias();
-//        createEnrolledCoursesAndEnrolledLessonsEnrolledContents();
-//        createStudentAttemptsAndStudentAttemptQuestionsAndStudentAttemptAnswersAndCompleteContentAndMarkStudentAttempt();
+        createEnrolledCoursesAndEnrolledLessonsEnrolledContents();
+        createStudentAttemptsAndStudentAttemptQuestionsAndStudentAttemptAnswersAndCompleteContentAndMarkStudentAttempt();
         createForumCategories();
         createForumThreads();
         createForumPosts();
@@ -719,7 +719,7 @@ public class DatabaseConfig
             {
                 forumCategory = forumCategories.get(forumCategoryIndex);
 
-                for (int j = 0; j < FORUM_THREAD_COUNT; j++, forumThreadIndex++)
+                for (int j = 0; j < FORUM_THREAD_COUNT; j++, forumThreadIndex++, accountIndex++)
                 {
                     forumThread = forumThreads.get(forumThreadIndex);
 

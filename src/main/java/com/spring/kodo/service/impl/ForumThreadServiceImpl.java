@@ -196,14 +196,12 @@ public class ForumThreadServiceImpl implements ForumThreadService
     private Boolean deleteForumThread(ForumThread forumThreadToDelete) throws DeleteForumPostException, ForumPostNotFoundException
     {
         List<ForumPost> forumPostsToDelete = new ArrayList<>(forumThreadToDelete.getForumPosts());
+        forumPostsToDelete = forumPostsToDelete.stream().filter(forumPostToDelete -> forumPostToDelete.getParentForumPost() == null).toList();
 
         forumThreadToDelete.getForumPosts().clear();
         for (ForumPost forumPostToDelete : forumPostsToDelete)
         {
-            if (forumPostToDelete.getParentForumPost() == null)
-            {
-                forumPostService.deleteForumPost(forumPostToDelete.getForumPostId());
-            }
+            forumPostService.deleteForumPost(forumPostToDelete.getForumPostId());
         }
 
         forumThreadRepository.delete(forumThreadToDelete);

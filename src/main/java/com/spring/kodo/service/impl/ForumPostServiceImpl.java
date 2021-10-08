@@ -79,7 +79,6 @@ public class ForumPostServiceImpl implements ForumPostService
                 newForumPostReply.setAccount(account);
 
                 ForumPost parentForumPost = getForumPostByForumPostId(parentForumPostId);
-                parentForumPost.getReplies().add(newForumPostReply);
                 newForumPostReply.setParentForumPost(parentForumPost);
 
                 forumPostRepository.saveAndFlush(newForumPostReply);
@@ -125,6 +124,12 @@ public class ForumPostServiceImpl implements ForumPostService
         return forumThread.getForumPosts();
     }
 
+    @Override
+    public List<ForumPost> getAllForumPostsByParentForumPostId(Long parentForumPostId)
+    {
+        return forumPostRepository.findAllByParentForumPostId(parentForumPostId);
+    }
+
     //only updating attributes, not relationships
     @Override
     public ForumPost updateForumPost(ForumPost updatedForumPost) throws ForumPostNotFoundException, InputDataValidationException
@@ -163,19 +168,17 @@ public class ForumPostServiceImpl implements ForumPostService
         {
             ForumPost forumPostToDelete = getForumPostByForumPostId(forumPostId);
 
-            if (forumPostToDelete.getReplies().size() > 0)
-            {
-                List<ForumPost> forumPostRepliesToDelete = new ArrayList<>(forumPostToDelete.getReplies());
-                forumPostToDelete.getReplies().clear();
+            List<ForumPost> forumPostReplies = getAllForumPostsByParentForumPostId(forumPostToDelete.getForumPostId());
 
-                for (ForumPost forumPostReplyToDelete : forumPostRepliesToDelete)
+            if (forumPostReplies != null)
+            {
+                for (ForumPost forumPostReply : forumPostReplies)
                 {
-                    deleteForumPost(forumPostReplyToDelete.getForumPostId());
+                    deleteForumPost(forumPostReply.getForumPostId());
                 }
             }
 
-            forumPostRepository.delete(forumPostToDelete);
-            return true;
+            return deleteForumPost(forumPostToDelete);
         }
         else
         {
@@ -191,40 +194,32 @@ public class ForumPostServiceImpl implements ForumPostService
             ForumPost forumPostToDelete = getForumPostByForumPostId(forumPostId);
             forumThreadService.removeForumPostToForumThreadByForumPostId(forumPostId);
 
-            if (forumPostToDelete.getParentForumPost() != null)
+            List<ForumPost> forumPostReplies = getAllForumPostsByParentForumPostId(forumPostToDelete.getForumPostId());
+
+            if (forumPostReplies != null)
             {
-                List<ForumPost> forumPostReplies = forumPostToDelete.getParentForumPost().getReplies();
-                for (int i = 0; i < forumPostReplies.size(); i++)
+                for (ForumPost forumPostReply : forumPostReplies)
                 {
-                    if (forumPostReplies.get(i).getForumPostId().equals(forumPostToDelete.getForumPostId()))
-                    {
-                        forumPostReplies.remove(i);
-                        break;
-                    }
+                    deleteForumPostAndDisassociateFromForumThread(forumPostReply.getForumPostId());
                 }
             }
 
-            if (forumPostToDelete.getReplies().size() > 0)
-            {
-                List<ForumPost> forumPostRepliesToDelete = new ArrayList<>(forumPostToDelete.getReplies());
-                forumPostToDelete.getReplies().clear();
-
-                for (ForumPost forumPostReplyToDelete : forumPostRepliesToDelete)
-                {
-                    deleteForumPostAndDisassociateFromForumThread(forumPostReplyToDelete.getForumPostId());
-                }
-            }
-
-            if (forumPostToDelete.getParentForumPost() != null)
-            {
-                forumPostRepository.saveAndFlush(forumPostToDelete.getParentForumPost());
-            }
-            forumPostRepository.delete(forumPostToDelete);
-            return true;
+            return deleteForumPost(forumPostToDelete);
         }
         else
         {
             throw new DeleteForumPostException("ForumPost ID cannot be null");
         }
+    }
+
+    private Boolean deleteForumPost(ForumPost forumPostToDelete)
+    {
+        if (forumPostToDelete.getParentForumPost() != null)
+        {
+            forumPostToDelete.setParentForumPost(null);
+        }
+
+        forumPostRepository.delete(forumPostToDelete);
+        return true;
     }
 }

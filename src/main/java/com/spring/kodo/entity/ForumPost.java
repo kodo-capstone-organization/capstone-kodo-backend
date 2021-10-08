@@ -31,9 +31,6 @@ public class ForumPost
     @ManyToOne(optional = true, targetEntity = ForumPost.class, fetch = FetchType.LAZY)
     private ForumPost parentForumPost;
 
-    @OneToMany(mappedBy = "parentForumPost", fetch = FetchType.LAZY)
-    private List<ForumPost> replies;
-
     @ManyToOne(optional = false, targetEntity = Account.class, fetch = FetchType.LAZY)
     private Account account;
 
@@ -96,16 +93,6 @@ public class ForumPost
         this.parentForumPost = parentForumPost;
     }
 
-    public List<ForumPost> getReplies()
-    {
-        return replies;
-    }
-
-    public void setReplies(List<ForumPost> replies)
-    {
-        this.replies = replies;
-    }
-
     public Account getAccount()
     {
         return account;
@@ -124,7 +111,6 @@ public class ForumPost
                 ", message='" + message + '\'' +
                 ", timeStamp=" + timeStamp +
                 ", parentForumPost=" + parentForumPost +
-                ", replies=" + replies +
                 ", account=" + account +
                 '}';
     }
