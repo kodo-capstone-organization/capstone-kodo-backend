@@ -14,7 +14,7 @@ public interface ForumCategoryService
 
     ForumCategory getForumCategoryByName(String name) throws ForumCategoryNotFoundException;
 
-    List<ForumCategory> getForumCategoryByCourseId(Long courseId) throws ForumCategoryNotFoundException;
+    List<ForumCategory> getAllForumCategoriesByCourseId(Long courseId) throws ForumCategoryNotFoundException;
 
     ForumCategory getForumCategoryByForumThreadId(Long forumThreadId) throws ForumCategoryNotFoundException;
 

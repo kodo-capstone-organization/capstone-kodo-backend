@@ -98,9 +98,9 @@ public class ForumCategoryServiceImpl implements ForumCategoryService
     }
 
     @Override
-    public List<ForumCategory> getForumCategoryByCourseId(Long courseId) throws ForumCategoryNotFoundException
+    public List<ForumCategory> getAllForumCategoriesByCourseId(Long courseId) throws ForumCategoryNotFoundException
     {
-        List<ForumCategory> forumCategoryList = forumCategoryRepository.findByCourseId(courseId);
+        List<ForumCategory> forumCategoryList = forumCategoryRepository.findAllByCourseId(courseId);
 
         if (forumCategoryList != null)
         {
