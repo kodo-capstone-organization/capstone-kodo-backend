@@ -440,6 +440,22 @@ public class TransactionServiceImpl implements TransactionService
     }
 
     @Override
+    public BigDecimal getLastMonthTagEarning(Long requestingAccountId, Long tagId) throws AccountPermissionDeniedException, AccountNotFoundException, TagNotFoundException
+    {
+        Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);
+        Tag tag = this.tagService.getTagByTagId(tagId);
+
+        if (requestingAccount.getIsAdmin())
+        {
+            return this.transactionRepository.getLastMonthTagEarning(tag.getTagId()).orElse(new BigDecimal(0));
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("Account is not a admin");
+        }
+    }
+
+    @Override
     public List<MonthlyEarningResp> getMonthlyTagEarningForLastYear(Long requestingAccountId, Long tagId) throws AccountPermissionDeniedException, AccountNotFoundException, TagNotFoundException
     {
         Account requestingAccount = this.accountService.getAccountByAccountId(requestingAccountId);

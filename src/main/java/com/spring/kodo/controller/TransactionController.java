@@ -248,6 +248,7 @@ public class TransactionController
 
             BigDecimal lifetimeTagEarnings = this.transactionService.getLifetimeTagEarning(requestingAccountId, tagId);
             BigDecimal currentMonthTagEarnings = this.transactionService.getCurrentMonthTagEarning(requestingAccountId, tagId);
+            BigDecimal lastMonthTagEarnings = this.transactionService.getLastMonthTagEarning(requestingAccountId, tagId);
             List<MonthlyEarningResp> monthlyTagEarningsForLastYear = this.transactionService.getMonthlyTagEarningForLastYear(requestingAccountId, tagId);
 
             TagEarningsResp tagEarningsResp = new TagEarningsResp();
@@ -256,6 +257,7 @@ public class TransactionController
 
             tagEarningsResp.setLifetimeTagEarning(lifetimeTagEarnings);
             tagEarningsResp.setCurrentMonthTagEarning(currentMonthTagEarnings);
+            tagEarningsResp.setLastMonthTagEarning(lastMonthTagEarnings);
             tagEarningsResp.setMonthlyTagEarningForLastYear(monthlyTagEarningsForLastYear);
 
             return tagEarningsResp;

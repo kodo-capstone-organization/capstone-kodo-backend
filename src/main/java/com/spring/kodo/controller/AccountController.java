@@ -59,6 +59,31 @@ public class AccountController
         return accountResps;
     }
 
+    @GetMapping("/getAllTutors")
+    public List<AccountResp> getAllTutors()
+    {
+        List<Account> accounts = this.accountService.getAllAccounts();
+        List<AccountResp> accountResps = new ArrayList<>();
+
+        for (Account account : accounts)
+        {
+            if(!(account.getCourses().isEmpty()))
+            {
+                accountResps.add(new AccountResp(
+                        account.getAccountId(),
+                        account.getName(),
+                        account.getUsername(),
+                        account.getEmail(),
+                        account.getIsAdmin(),
+                        account.getDisplayPictureUrl()
+                ));
+            }
+        }
+        return accountResps;
+    }
+
+
+    
     @GetMapping("/getAccountByAccountId/{accountId}")
     public Account getAccountByAccountId(@PathVariable Long accountId)
     {

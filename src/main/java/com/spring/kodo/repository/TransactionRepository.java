@@ -53,6 +53,9 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
     @Query(value = "SELECT SUM(t.platform_fee) FROM `transaction` t JOIN course_course_tags cct ON t.course_course_id = cct.course_id WHERE cct.tag_id = :tagId AND MONTH(t.date_time_of_transaction) = MONTH(NOW()) AND YEAR(t.date_time_of_transaction) = YEAR(NOW())", nativeQuery = true)
     Optional<BigDecimal> getCurrentMonthTagEarning(@Param("tagId") Long tagId);
 
+    @Query(value = "SELECT SUM(t.platform_fee) FROM `transaction` t JOIN course_course_tags cct ON t.course_course_id = cct.course_id WHERE cct.tag_id = :tagId AND MONTH(t.date_time_of_transaction) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) AND YEAR(t.date_time_of_transaction) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)", nativeQuery = true)
+    Optional<BigDecimal> getLastMonthTagEarning(@Param("tagId") Long tagId);
+
     @Query(value = "SELECT SUM(t.platform_fee) FROM `transaction` t JOIN course_course_tags cct ON t.course_course_id = cct.course_id WHERE cct.tag_id = :tagId AND YEAR(t.date_time_of_transaction) = :inputYear AND MONTH(t.date_time_of_transaction) = :inputMonth", nativeQuery = true)
     Optional<BigDecimal> getMonthlyTagEarningForLastYear(@Param("tagId") Long tagId, @Param("inputYear") int inputYear, @Param("inputMonth") int inputMonth);
     // --

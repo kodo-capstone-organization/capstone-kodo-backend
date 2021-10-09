@@ -14,6 +14,8 @@ public class TagEarningsResp
 
     private BigDecimal currentMonthTagEarning;
 
+    private BigDecimal lastMonthTagEarning;
+
     private List<MonthlyEarningResp> monthlyTagEarningForLastYear;
 
     public TagEarningsResp() {
@@ -76,5 +78,13 @@ public class TagEarningsResp
                 ", currentMonthTagEarning=" + currentMonthTagEarning +
                 ", monthlyTagEarningForLastYear=" + monthlyTagEarningForLastYear +
                 '}';
+    }
+
+    public BigDecimal getLastMonthTagEarning() {
+        return lastMonthTagEarning;
+    }
+
+    public void setLastMonthTagEarning(BigDecimal lastMonthTagEarning) {
+        this.lastMonthTagEarning = lastMonthTagEarning;
     }
 }
