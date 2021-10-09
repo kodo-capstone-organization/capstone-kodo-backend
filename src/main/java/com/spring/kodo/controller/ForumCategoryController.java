@@ -1,6 +1,7 @@
 package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.ForumCategory;
+import com.spring.kodo.entity.ForumThread;
 import com.spring.kodo.restentity.request.AddForumThreadToForumCategoryReq;
 import com.spring.kodo.restentity.request.CreateNewForumCategoryReq;
 import com.spring.kodo.restentity.request.UpdateForumCategoryReq;
@@ -74,6 +75,28 @@ public class ForumCategoryController
         }
     }
 
+    @GetMapping("/getForumCategoryWithForumThreadsOnlyByForumCategoryId/{forumCategoryId}")
+    public ForumCategory getForumCategoryWithForumThreadsOnlyByForumCategoryId(@PathVariable Long forumCategoryId)
+    {
+        try
+        {
+            ForumCategory forumCategory = this.forumCategoryService.getForumCategoryByForumCategoryId(forumCategoryId);
+
+            for (ForumThread forumThread : forumCategory.getForumThreads())
+            {
+                forumThread.setForumPosts(null);
+                forumThread.setAccount(null);
+            }
+            forumCategory.setCourse(null);
+
+            return forumCategory;
+        }
+        catch (ForumCategoryNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @GetMapping("/getForumCategoryByName/{name}")
     public ForumCategory getForumCategoryByName(@PathVariable String name)
     {
@@ -91,6 +114,57 @@ public class ForumCategoryController
     public List<ForumCategory> getAllForumCategories()
     {
         return this.forumCategoryService.getAllForumCategories();
+    }
+
+    @GetMapping("/getAllForumCategoriesWithoutForumThreads")
+    public List<ForumCategory> getAllForumCategoriesWithoutForumThreads()
+    {
+        List<ForumCategory> forumCategories = this.forumCategoryService.getAllForumCategories();
+
+        for (ForumCategory forumCategory : forumCategories)
+        {
+            forumCategory.setForumThreads(null);
+        }
+
+        return forumCategories;
+    }
+
+    @GetMapping("/getAllForumCategoriesByCourseId/{courseId}")
+    public List<ForumCategory> getAllForumCategoriesByCourseId(@PathVariable Long courseId)
+    {
+        try
+        {
+            return this.forumCategoryService.getAllForumCategoriesByCourseId(courseId);
+        }
+        catch (ForumCategoryNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
+    @GetMapping("/getAllForumCategoriesWithForumThreadsOnlyByCourseId/{courseId}")
+    public List<ForumCategory> getAllForumCategoriesWithForumThreadsOnlyByCourseId(@PathVariable Long courseId)
+    {
+        try
+        {
+            List<ForumCategory> forumCategories = this.forumCategoryService.getAllForumCategoriesByCourseId(courseId);
+
+            for (ForumCategory forumCategory : forumCategories)
+            {
+                for (ForumThread forumThread : forumCategory.getForumThreads())
+                {
+                    forumThread.setForumPosts(null);
+                    forumThread.setAccount(null);
+                }
+                forumCategory.setCourse(null);
+            }
+
+            return forumCategories;
+        }
+        catch (ForumCategoryNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
     }
 
     //ForumCategory updateForumCategory(ForumCategory updatedForumCategory) throws ForumCategoryNotFoundException, InputDataValidationException;
@@ -164,19 +238,6 @@ public class ForumCategoryController
         else
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Add Forum Thread to Forum Category Request");
-        }
-    }
-
-    @GetMapping("/getForumCategoryByCourseId/{courseId}")
-    public List<ForumCategory> getForumCategoryByCourseId(@PathVariable Long courseId)
-    {
-        try
-        {
-            return this.forumCategoryService.getForumCategoryByCourseId(courseId);
-        }
-        catch (ForumCategoryNotFoundException ex)
-        {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
     }
 }
