@@ -168,16 +168,8 @@ public class ForumThreadServiceImpl implements ForumThreadService
         if (forumThreadId != null)
         {
             ForumThread forumThreadToDelete = getForumThreadByForumThreadId(forumThreadId);
-            List<ForumPost> forumPostsToDelete = new ArrayList<>(forumThreadToDelete.getForumPosts());
 
-            forumThreadToDelete.getForumPosts().clear();
-            for (ForumPost forumPostToDelete : forumPostsToDelete)
-            {
-                forumPostService.deleteForumPost(forumPostToDelete.getForumPostId());
-            }
-
-            forumThreadRepository.delete(forumThreadToDelete);
-            return true;
+            return deleteForumThread(forumThreadToDelete);
         }
         else
         {
@@ -193,21 +185,27 @@ public class ForumThreadServiceImpl implements ForumThreadService
             ForumThread forumThreadToDelete = getForumThreadByForumThreadId(forumThreadId);
             forumCategoryService.removeForumThreadToForumCategoryByForumThreadId(forumThreadId);
 
-            List<ForumPost> forumPostsToDelete = new ArrayList<>(forumThreadToDelete.getForumPosts());
-
-            forumThreadToDelete.getForumPosts().clear();
-            for (ForumPost forumPostToDelete : forumPostsToDelete)
-            {
-                forumPostService.deleteForumPost(forumPostToDelete.getForumPostId());
-            }
-
-            forumThreadRepository.delete(forumThreadToDelete);
-            return true;
+            return deleteForumThread(forumThreadToDelete);
         }
         else
         {
             throw new DeleteForumThreadException("Forum Thread ID cannot be null");
         }
+    }
+
+    private Boolean deleteForumThread(ForumThread forumThreadToDelete) throws DeleteForumPostException, ForumPostNotFoundException
+    {
+        List<ForumPost> forumPostsToDelete = new ArrayList<>(forumThreadToDelete.getForumPosts());
+        forumPostsToDelete = forumPostsToDelete.stream().filter(forumPostToDelete -> forumPostToDelete.getParentForumPost() == null).toList();
+
+        forumThreadToDelete.getForumPosts().clear();
+        for (ForumPost forumPostToDelete : forumPostsToDelete)
+        {
+            forumPostService.deleteForumPost(forumPostToDelete.getForumPostId());
+        }
+
+        forumThreadRepository.delete(forumThreadToDelete);
+        return true;
     }
 
     @Override

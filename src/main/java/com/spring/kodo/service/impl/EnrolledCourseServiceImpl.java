@@ -286,4 +286,12 @@ public class EnrolledCourseServiceImpl implements EnrolledCourseService
     public List<EnrolledCourseWithStudentCompletion> getAllEnrolledStudentsCompletion(Long courseId) {
         return enrolledCourseRepository.findAllEnrolledCourseStudentsByCourseId(courseId);
     }
+
+    @Override
+    public Boolean isEnrolledInCourseByStudentIdAndCourseId(Long studentId, Long courseId)
+    {
+        EnrolledCourse enrolledCourse = enrolledCourseRepository.findByStudentIdAndCourseId(studentId, courseId).orElse(null);
+
+        return enrolledCourse != null;
+    }
 }
