@@ -15,6 +15,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -276,6 +277,20 @@ public class AccountServiceImpl implements AccountService
     public List<Account> getAllAccountsByTagId(Long tagId)
     {
         List<Account> accounts = accountRepository.findAllAccountsByTagId(tagId);
+
+        return accounts;
+    }
+
+    @Override
+    public List<Account> getSomeAccountsBySomeAccountIds(List<Long> accountIds) throws AccountNotFoundException
+    {
+        List<Account> accounts = new ArrayList<>();
+
+        for (Long accountId: accountIds)
+        {
+            Account retrievedAccount = getAccountByAccountId(accountId);
+            accounts.add(retrievedAccount);
+        }
 
         return accounts;
     }

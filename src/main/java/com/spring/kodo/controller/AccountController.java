@@ -82,8 +82,34 @@ public class AccountController
         return accountResps;
     }
 
+    @PostMapping("/getSomeAccountsWithoutEnrollment")
+    public List<AccountResp> getSomeAccountsWithoutEnrollment(@RequestPart(required = true, name = "accountIds") List<Long> accountIds)
+    {
+        try
+        {
+            List<Account> accounts = this.accountService.getSomeAccountsBySomeAccountIds(accountIds);
+            List<AccountResp> accountResps = new ArrayList<>();
 
-    
+            for (Account account : accounts)
+            {
+                accountResps.add(new AccountResp(
+                        account.getAccountId(),
+                        account.getName(),
+                        account.getUsername(),
+                        account.getEmail(),
+                        account.getIsAdmin(),
+                        account.getDisplayPictureUrl()
+                ));
+            }
+
+            return accountResps;
+        }
+        catch (AccountNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @GetMapping("/getAccountByAccountId/{accountId}")
     public Account getAccountByAccountId(@PathVariable Long accountId)
     {
