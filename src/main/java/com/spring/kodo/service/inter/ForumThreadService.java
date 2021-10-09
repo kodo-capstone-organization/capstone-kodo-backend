@@ -19,7 +19,7 @@ public interface ForumThreadService
 
     List<ForumThread> getAllForumThreads();
 
-    List<ForumThread> getAllForumThreadsOfAForumCategory(Long forumCategoryId) throws ForumCategoryNotFoundException;
+    List<ForumThread> getAllForumThreadsByForumCategoryId(Long forumCategoryId) throws ForumCategoryNotFoundException;
 
     ForumThread updateForumThread(ForumThread updatedForumThread) throws ForumThreadNotFoundException, InputDataValidationException;
 

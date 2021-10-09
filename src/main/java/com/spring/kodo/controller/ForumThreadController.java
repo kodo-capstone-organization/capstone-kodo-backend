@@ -1,6 +1,7 @@
 package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.ForumCategory;
+import com.spring.kodo.entity.ForumPost;
 import com.spring.kodo.entity.ForumThread;
 import com.spring.kodo.restentity.request.AddForumPostToForumThreadReq;
 import com.spring.kodo.restentity.request.CreateNewForumThreadReq;
@@ -98,12 +99,28 @@ public class ForumThreadController
         return this.forumThreadService.getAllForumThreads();
     }
 
-    @GetMapping("/getAllForumThreadsOfAForumCategory/{forumCategoryId}")
-    public List<ForumThread> getAllForumThreadsOfAForumCategory(@PathVariable Long forumCategoryId)
+    @GetMapping("/getAllForumThreadsByForumCategoryId/{forumCategoryId}")
+    public List<ForumThread> getAllForumThreadsByForumCategoryId(@PathVariable Long forumCategoryId)
     {
         try
         {
-            return this.forumThreadService.getAllForumThreadsOfAForumCategory(forumCategoryId);
+            forumCategoryService.getForumCategoryByForumCategoryId(forumCategoryId);
+
+            List<ForumThread> forumThreads = forumThreadService.getAllForumThreadsByForumCategoryId(forumCategoryId);
+            for (ForumThread forumThread : forumThreads)
+            {
+                forumThread.getAccount().setCourses(null);
+                forumThread.getAccount().setEnrolledCourses(null);
+                forumThread.getAccount().setInterests(null);
+
+                for (ForumPost forumPost : forumThread.getForumPosts())
+                {
+                    forumPost.setAccount(null);
+                    forumPost.setParentForumPost(null);
+                }
+            }
+
+            return forumThreads;
         }
         catch (ForumCategoryNotFoundException ex)
         {

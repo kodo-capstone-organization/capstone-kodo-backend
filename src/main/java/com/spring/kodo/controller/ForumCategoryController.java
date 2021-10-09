@@ -75,6 +75,28 @@ public class ForumCategoryController
         }
     }
 
+    @GetMapping("/getForumCategoryWithForumThreadsOnlyByForumCategoryId/{forumCategoryId}")
+    public ForumCategory getForumCategoryWithForumThreadsOnlyByForumCategoryId(@PathVariable Long forumCategoryId)
+    {
+        try
+        {
+            ForumCategory forumCategory = this.forumCategoryService.getForumCategoryByForumCategoryId(forumCategoryId);
+
+            for (ForumThread forumThread : forumCategory.getForumThreads())
+            {
+                forumThread.setForumPosts(null);
+                forumThread.setAccount(null);
+            }
+            forumCategory.setCourse(null);
+
+            return forumCategory;
+        }
+        catch (ForumCategoryNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @GetMapping("/getForumCategoryByName/{name}")
     public ForumCategory getForumCategoryByName(@PathVariable String name)
     {

@@ -1223,13 +1223,16 @@ public class DatabaseConfig
 
     private void addForumCategories()
     {
+        ForumCategory forumCategory;
+
         for (String language : LANGUAGES)
         {
             for (String level : LEVELS)
             {
                 for (int i = 1; i <= FORUM_CATEGORY_COUNT; i++)
                 {
-                    forumCategories.add(new ForumCategory("Discussion on " + level + " " + language + " Tips #" + i, "A very informative description on " + language + " tips #" + i));
+                    forumCategory = new ForumCategory("Discussion on " + level + " " + language + " Tips #" + i, "A very informative description on " + language + " tips #" + i);
+                    forumCategories.add(forumCategory);
                 }
             }
         }
@@ -1237,6 +1240,8 @@ public class DatabaseConfig
 
     private void addForumThreads()
     {
+        ForumThread forumThread;
+
         for (String language : LANGUAGES)
         {
             for (String level : LEVELS)
@@ -1245,7 +1250,10 @@ public class DatabaseConfig
                 {
                     for (int j = 1; j <= FORUM_THREAD_COUNT; j++)
                     {
-                        forumThreads.add(new ForumThread("Thread #" + j + " on " + level + " " + language + " Tips #" + i, "Thread #" + j + " description on " + level + " " + language + " Tips #" + i));
+                        forumThread = new ForumThread("Thread #" + j + " on " + level + " " + language + " Tips #" + i, "Thread #" + j + " description on " + level + " " + language + " Tips #" + i);
+                        forumThread.setTimeStamp(getNextDateTime(2, 3));
+
+                        forumThreads.add(forumThread);
                     }
                 }
             }
@@ -1254,6 +1262,8 @@ public class DatabaseConfig
 
     private void addForumPosts()
     {
+        ForumPost forumPost;
+
         for (String language : LANGUAGES)
         {
             for (String level : LEVELS)
@@ -1264,10 +1274,16 @@ public class DatabaseConfig
                     {
                         for (int k = 1; k <= FORUM_POST_COUNT; k++)
                         {
-                            forumPosts.add(new ForumPost("Post #" + k + " on " + level + " " + language));
+                            forumPost = new ForumPost("Post #" + k + " on " + level + " " + language);
+                            forumPost.setTimeStamp(getNextDateTime(0, 2));
+
+                            forumPosts.add(forumPost);
                             for (int l = 1; l <= FORUM_POST_REPLY_COUNT; l++)
                             {
-                                forumPosts.add(new ForumPost("Post #" + k + " Reply #" + l + " on " + level + " " + language));
+                                forumPost = new ForumPost("Post #" + k + " Reply #" + l + " on " + level + " " + language);
+                                forumPost.setTimeStamp(getNextDateTime(0, 2));
+
+                                forumPosts.add(forumPost);
                             }
                         }
                     }

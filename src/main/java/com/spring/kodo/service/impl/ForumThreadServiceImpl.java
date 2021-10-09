@@ -123,10 +123,9 @@ public class ForumThreadServiceImpl implements ForumThreadService
     }
 
     @Override
-    public List<ForumThread> getAllForumThreadsOfAForumCategory(Long forumCategoryId) throws ForumCategoryNotFoundException
+    public List<ForumThread> getAllForumThreadsByForumCategoryId(Long forumCategoryId) throws ForumCategoryNotFoundException
     {
-        ForumCategory forumCategory = forumCategoryService.getForumCategoryByForumCategoryId(forumCategoryId);
-        return forumCategory.getForumThreads();
+        return forumThreadRepository.findAllByForumCategoryId(forumCategoryId);
     }
 
     //only updating attributes, not relationships

@@ -14,9 +14,9 @@ public interface ForumCategoryRepository extends JpaRepository<ForumCategory, Lo
 {
     Optional<ForumCategory> findByName(String name);
 
-    @Query(value = "SELECT fc.* FROM forum_category fc WHERE course_course_id = :courseId", nativeQuery = true)
-    List<ForumCategory> findAllByCourseId(@Param("courseId") Long courseId);
-
     @Query(value = "SELECT fc.* FROM forum_category fc JOIN forum_category_forum_threads fcft ON fc.forum_category_id = fcft.forum_category_id WHERE fcft.forum_thread_id = :forumThreadId", nativeQuery = true)
     Optional<ForumCategory> findByForumThreadId(@Param("forumThreadId") Long forumThreadId);
+
+    @Query(value = "SELECT fc.* FROM forum_category fc WHERE course_course_id = :courseId", nativeQuery = true)
+    List<ForumCategory> findAllByCourseId(@Param("courseId") Long courseId);
 }
