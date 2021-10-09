@@ -59,6 +59,8 @@ public interface AccountService
 
     List<Account> getAllAccountsByTagId(Long tagId);
 
+    List<Account> getSomeAccountsBySomeAccountIds(List<Long> accountIds) throws AccountNotFoundException;
+
     Account updateAccount(Account account) throws UpdateAccountException, AccountNotFoundException, AccountEmailExistException;
 
     Account updateAccount(
