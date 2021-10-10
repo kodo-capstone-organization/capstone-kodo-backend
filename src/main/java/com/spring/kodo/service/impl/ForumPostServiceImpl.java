@@ -17,7 +17,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -115,6 +114,12 @@ public class ForumPostServiceImpl implements ForumPostService
     public List<ForumPost> getAllForumPosts()
     {
         return forumPostRepository.findAll();
+    }
+
+    @Override
+    public List<ForumPost> getAllByNullParentPostAndForumThreadId(Long forumThreadId)
+    {
+        return forumPostRepository.findAllByNullParentPostAndForumThreadId(forumThreadId);
     }
 
     @Override

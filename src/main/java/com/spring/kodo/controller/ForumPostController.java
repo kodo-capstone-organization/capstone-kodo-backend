@@ -1,11 +1,11 @@
 package com.spring.kodo.controller;
 
-import com.spring.kodo.entity.ForumCategory;
 import com.spring.kodo.entity.ForumPost;
 import com.spring.kodo.entity.ForumThread;
 import com.spring.kodo.restentity.request.CreateNewForumPostReplyReq;
 import com.spring.kodo.restentity.request.CreateNewForumPostReq;
 import com.spring.kodo.restentity.request.UpdateForumPostReq;
+import com.spring.kodo.restentity.response.ForumPostWithRepliesResp;
 import com.spring.kodo.service.inter.ForumPostService;
 import com.spring.kodo.service.inter.ForumThreadService;
 import com.spring.kodo.util.exception.*;
@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -122,16 +123,38 @@ public class ForumPostController
     }
 
     @GetMapping("/getAllForumPostsOfAForumThread/{forumThreadId}")
-    public List<ForumPost> getAllForumPostsOfAForumThread(@PathVariable Long forumThreadId)
+    public List<ForumPostWithRepliesResp> getAllForumPostsOfAForumThread(@PathVariable Long forumThreadId)
     {
-        try
+        List<ForumPostWithRepliesResp> forumPostWithRepliesResps = new ArrayList<>();
+
+        List<ForumPost> parentForumPosts = forumPostService.getAllByNullParentPostAndForumThreadId(forumThreadId);
+
+        forumPostWithRepliesResps = addRepliesToForumPost(parentForumPosts);
+
+        return forumPostWithRepliesResps;
+    }
+
+    private List<ForumPostWithRepliesResp> addRepliesToForumPost(List<ForumPost> parentForumPosts)
+    {
+        List<ForumPostWithRepliesResp> forumPostWithRepliesResps = new ArrayList<>();
+
+        for (ForumPost parentForumPost : parentForumPosts)
         {
-            return this.forumPostService.getAllForumPostsOfAForumThread(forumThreadId);
+            forumPostWithRepliesResps.add(new ForumPostWithRepliesResp(
+                    parentForumPost.getForumPostId(),
+                    parentForumPost.getMessage(),
+                    parentForumPost.getTimeStamp()
+            ));
         }
-        catch (ForumThreadNotFoundException ex)
+
+        for (ForumPostWithRepliesResp forumPostWithRepliesResp : forumPostWithRepliesResps)
         {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+            forumPostWithRepliesResp.setReplies(
+                    addRepliesToForumPost(forumPostService.getAllForumPostsByParentForumPostId(forumPostWithRepliesResp.getForumPostId()))
+            );
         }
+
+        return forumPostWithRepliesResps;
     }
 
     @GetMapping("/getAllForumPosts")

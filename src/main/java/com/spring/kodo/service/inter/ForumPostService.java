@@ -15,6 +15,8 @@ public interface ForumPostService {
 
     List<ForumPost> getAllForumPosts();
 
+    List<ForumPost> getAllByNullParentPostAndForumThreadId(Long forumThreadId);
+
     List<ForumPost> getAllForumPostsByParentForumPostId(Long parentForumPostId);
 
     List<ForumPost> getAllForumPostsOfAForumThread(Long forumThreadId) throws ForumThreadNotFoundException;
