@@ -1,6 +1,5 @@
 package com.spring.kodo.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -8,6 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "forum_post")
@@ -28,8 +28,19 @@ public class ForumPost
     @NotNull
     private LocalDateTime timeStamp;
 
+    @Column(nullable = false)
+    @NotNull
+    private Boolean isReported;
+
+    @Column(length = 1024)
+    @Size(min = 0, max = 1024)
+    private String reasonForReport;
+
     @ManyToOne(optional = true, targetEntity = ForumPost.class, fetch = FetchType.LAZY)
     private ForumPost parentForumPost;
+
+    @OneToMany(targetEntity = ForumPost.class, fetch = FetchType.LAZY)
+    private List<ForumPost> replies;
 
     @ManyToOne(optional = false, targetEntity = Account.class, fetch = FetchType.LAZY)
     private Account account;
@@ -37,6 +48,8 @@ public class ForumPost
     public ForumPost()
     {
         this.timeStamp = LocalDateTime.now();
+        this.isReported = false;
+        this.replies = new ArrayList<>();
     }
 
     public ForumPost(String message)
@@ -83,6 +96,26 @@ public class ForumPost
         this.timeStamp = timeStamp;
     }
 
+    public Boolean getReported()
+    {
+        return isReported;
+    }
+
+    public void setReported(Boolean reported)
+    {
+        isReported = reported;
+    }
+
+    public String getReasonForReport()
+    {
+        return reasonForReport;
+    }
+
+    public void setReasonForReport(String reasonForReport)
+    {
+        this.reasonForReport = reasonForReport;
+    }
+
     public ForumPost getParentForumPost()
     {
         return parentForumPost;
@@ -91,6 +124,16 @@ public class ForumPost
     public void setParentForumPost(ForumPost parentForumPost)
     {
         this.parentForumPost = parentForumPost;
+    }
+
+    public List<ForumPost> getReplies()
+    {
+        return replies;
+    }
+
+    public void setReplies(List<ForumPost> replies)
+    {
+        this.replies = replies;
     }
 
     public Account getAccount()
@@ -110,7 +153,10 @@ public class ForumPost
                 "forumPostId=" + forumPostId +
                 ", message='" + message + '\'' +
                 ", timeStamp=" + timeStamp +
+                ", isReported=" + isReported +
+                ", reasonForReport='" + reasonForReport + '\'' +
                 ", parentForumPost=" + parentForumPost +
+                ", replies=" + replies +
                 ", account=" + account +
                 '}';
     }

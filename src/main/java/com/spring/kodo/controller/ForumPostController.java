@@ -149,9 +149,9 @@ public class ForumPostController
 
         for (ForumPostWithRepliesResp forumPostWithRepliesResp : forumPostWithRepliesResps)
         {
-            forumPostWithRepliesResp.setReplies(
-                    addRepliesToForumPost(forumPostService.getAllForumPostsByParentForumPostId(forumPostWithRepliesResp.getForumPostId()))
-            );
+//            forumPostWithRepliesResp.setReplies(
+//                    addRepliesToForumPost(forumPostService.getAllForumPostsByParentForumPostId(forumPostWithRepliesResp.getForumPostId()))
+//            );
         }
 
         return forumPostWithRepliesResps;
