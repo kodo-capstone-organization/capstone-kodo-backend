@@ -122,14 +122,12 @@ public class ForumPostController
         }
     }
 
-    @GetMapping("/getAllForumPostsOfAForumThread/{forumThreadId}")
-    public List<ForumPostWithRepliesResp> getAllForumPostsOfAForumThread(@PathVariable Long forumThreadId)
+    @GetMapping("/getAllForumPostsByForumThreadId/{forumThreadId}")
+    public List<ForumPostWithRepliesResp> getAllForumPostsByForumThreadId(@PathVariable Long forumThreadId)
     {
-        List<ForumPostWithRepliesResp> forumPostWithRepliesResps = new ArrayList<>();
-
         List<ForumPost> parentForumPosts = forumPostService.getAllByNullParentPostAndForumThreadId(forumThreadId);
 
-        forumPostWithRepliesResps = addRepliesToForumPost(parentForumPosts);
+        List<ForumPostWithRepliesResp> forumPostWithRepliesResps = addRepliesToForumPost(parentForumPosts);
 
         return forumPostWithRepliesResps;
     }
@@ -138,20 +136,21 @@ public class ForumPostController
     {
         List<ForumPostWithRepliesResp> forumPostWithRepliesResps = new ArrayList<>();
 
+        ForumPostWithRepliesResp forumPostWithRepliesResp;
+
         for (ForumPost parentForumPost : parentForumPosts)
         {
-            forumPostWithRepliesResps.add(new ForumPostWithRepliesResp(
+            forumPostWithRepliesResp = new ForumPostWithRepliesResp(
                     parentForumPost.getForumPostId(),
                     parentForumPost.getMessage(),
                     parentForumPost.getTimeStamp()
-            ));
-        }
+            );
 
-        for (ForumPostWithRepliesResp forumPostWithRepliesResp : forumPostWithRepliesResps)
-        {
-//            forumPostWithRepliesResp.setReplies(
-//                    addRepliesToForumPost(forumPostService.getAllForumPostsByParentForumPostId(forumPostWithRepliesResp.getForumPostId()))
-//            );
+            forumPostWithRepliesResp.setReplies(
+                    addRepliesToForumPost(parentForumPost.getReplies())
+            );
+
+            forumPostWithRepliesResps.add(forumPostWithRepliesResp);
         }
 
         return forumPostWithRepliesResps;

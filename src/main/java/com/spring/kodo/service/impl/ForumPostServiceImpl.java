@@ -125,7 +125,7 @@ public class ForumPostServiceImpl implements ForumPostService
     }
 
     @Override
-    public List<ForumPost> getAllForumPostsOfAForumThread(Long forumThreadId) throws ForumThreadNotFoundException
+    public List<ForumPost> getAllForumPostsByForumThreadId(Long forumThreadId) throws ForumThreadNotFoundException
     {
         ForumThread forumThread = forumThreadService.getForumThreadByForumThreadId(forumThreadId);
         return forumThread.getForumPosts();
