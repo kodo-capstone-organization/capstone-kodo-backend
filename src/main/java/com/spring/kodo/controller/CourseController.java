@@ -6,6 +6,7 @@ import com.spring.kodo.entity.Tag;
 import com.spring.kodo.restentity.request.CreateNewCourseReq;
 import com.spring.kodo.restentity.request.UpdateCourseReq;
 import com.spring.kodo.restentity.response.CourseResp;
+import com.spring.kodo.restentity.response.CourseBasicResp;
 import com.spring.kodo.restentity.response.CourseWithTutorAndRatingResp;
 import com.spring.kodo.restentity.response.RecommendedCoursesWithTagsResp;
 import com.spring.kodo.service.inter.AccountService;
@@ -461,5 +462,27 @@ public class CourseController
         }
 
         return courseResps;
+    }
+
+    @GetMapping("/getBasicCourseByCourseId/{courseId}")
+    public CourseBasicResp getBasicCourseByCourseId(@PathVariable Long courseId)
+    {
+        try
+        {
+            Course course = this.courseService.getCourseByCourseId(courseId);
+            Account tutor = this.accountService.getAccountByCourseId(courseId);
+            Double rating = this.courseService.getCourseRatingByCourseId(courseId);
+
+            CourseWithTutorAndRatingResp courseWithTutorAndRatingResp = createCourseWithtutorResp(course, tutor, rating);
+            CourseBasicResp courseResp = new CourseBasicResp();
+            courseResp.setCourseId(courseWithTutorAndRatingResp.getCourseId());
+            courseResp.setCourseName(courseWithTutorAndRatingResp.getName());
+            courseResp.setTutorName(courseWithTutorAndRatingResp.getTutor().getName());
+            return courseResp;
+        }
+        catch (CourseNotFoundException | AccountNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
     }
 }
