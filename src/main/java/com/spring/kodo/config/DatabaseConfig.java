@@ -139,6 +139,25 @@ public class DatabaseConfig
 
     private final Integer RATE_ENROLLED_COURSES_COUNT = (int) (0.85 * STUDENT_ENROLLED_COUNT);
 
+    // Timing variables
+    private final Integer ACCOUNT_CREATION_MIN_MONTH = 10;
+    private final Integer ACCOUNT_CREATION_MAX_MONTH = 13;
+
+    private final Integer COURSE_CREATION_MIN_MONTH = ACCOUNT_CREATION_MIN_MONTH - 3; 
+    private final Integer COURSE_CREATION_MAX_MONTH = ACCOUNT_CREATION_MAX_MONTH - 3; 
+
+    private final Integer TRANSACTION_MIN_MONTH = COURSE_CREATION_MIN_MONTH - 3; 
+    private final Integer TRANSACTION_MAX_MONTH = COURSE_CREATION_MAX_MONTH - 3; 
+
+    private final Integer FORUM_THREAD_CREATION_MIN_MONTH = TRANSACTION_MIN_MONTH - 3; 
+    private final Integer FORUM_THREAD_CREATION_MAX_MONTH = TRANSACTION_MAX_MONTH - 3; 
+
+    private final Integer FORUM_POST_CREATION_MIN_MONTH = FORUM_THREAD_CREATION_MIN_MONTH - 3;
+    private final Integer FORUM_POST_CREATION_MAX_MONTH = FORUM_THREAD_CREATION_MAX_MONTH - 3;
+
+    private final Integer CONTENT_COMPLETION_MIN_MONTH = TRANSACTION_MIN_MONTH - 3; 
+    private final Integer CONTENT_COMPLETION_MAX_MONTH = TRANSACTION_MAX_MONTH - 3;
+
     // Don't Edit these
     private final Integer PREFIXED_ADMIN_COUNT = 7;
     private final Integer PREFIXED_TUTOR_COUNT = 0;
@@ -578,7 +597,7 @@ public class DatabaseConfig
         // Create transaction records assuming students successfully made the payments
         // Using a unique value in place of a real stripe sessionId
         transaction = new Transaction(dummyUniqueStripeSessionId, course.getPrice());
-        transaction.setDateTimeOfTransaction(getNextDateTime(0, 6));
+        transaction.setDateTimeOfTransaction(getNextDateTime(TRANSACTION_MIN_MONTH, TRANSACTION_MAX_MONTH));
         transactionService.createNewTransaction(transaction, student.getAccountId(), tutor.getAccountId(), course.getCourseId());
 
         for (Lesson lesson : course.getLessons())
@@ -761,7 +780,7 @@ public class DatabaseConfig
 
         int forumThreadIndex = 0;
         int forumPostIndex = 0;
-        int accountIndex = STUDENT_FIRST_INDEX;
+        int accountIndex;
 
         for (Course course : courses)
         {
@@ -918,6 +937,8 @@ public class DatabaseConfig
 
     private void addAccounts() throws Exception
     {
+        Account account;
+
         int nameIndex = 0;
         int displayPictureUrlIndex = 0;
         int biographyIndex = 0;
@@ -937,7 +958,9 @@ public class DatabaseConfig
         // Deactive User specific admins;
         for (int i = 1; i < PREFIXED_ADMIN_COUNT; i++)
         {
-            accounts.get(i).setIsActive(false);
+            account = accounts.get(i);
+            account.setDateTimeOfCreation(getNextDateTime(ACCOUNT_CREATION_MIN_MONTH, ACCOUNT_CREATION_MAX_MONTH));
+            account.setIsActive(false);
         }
 
         for (int i = 1; i <= STUDENT_COUNT; i++, nameIndex++, displayPictureUrlIndex++, biographyIndex++)
@@ -961,7 +984,10 @@ public class DatabaseConfig
             displayPictureUrl = DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex);
             biography = String.format(STUDENT_BIOGRAPHIES.get(biographyIndex), name);
 
-            accounts.add(new Account("student" + i, "Password1", "Student " + name, biography, "student" + name.toLowerCase(Locale.ROOT) + i + "@gmail.com", displayPictureUrl, false));
+            account = new Account("student" + i, "Password1", "Student " + name, biography, "student" + name.toLowerCase(Locale.ROOT) + i + "@gmail.com", displayPictureUrl, false);
+            account.setDateTimeOfCreation(getNextDateTime(ACCOUNT_CREATION_MIN_MONTH, ACCOUNT_CREATION_MAX_MONTH));
+
+            accounts.add(account);
         }
 
         nameIndex = 0;
@@ -987,7 +1013,10 @@ public class DatabaseConfig
             displayPictureUrl = DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex);
             biography = String.format(TUTOR_BIOGRAPHIES.get(biographyIndex), name);
 
-            accounts.add(new Account("tutor" + i, "Password1", "Tutor " + name, biography, "tutor" + name.toLowerCase(Locale.ROOT) + i + "@gmail.com", displayPictureUrl, false));
+            account = new Account("tutor" + i, "Password1", "Tutor " + name, biography, "tutor" + name.toLowerCase(Locale.ROOT) + i + "@gmail.com", displayPictureUrl, false);
+            account.setDateTimeOfCreation(getNextDateTime(ACCOUNT_CREATION_MIN_MONTH, ACCOUNT_CREATION_MAX_MONTH));
+
+            accounts.add(account);
         }
     }
 
@@ -1027,12 +1056,11 @@ public class DatabaseConfig
                                 String.format("A %s course in %s language", level.toLowerCase(Locale.ROOT), language.toLowerCase(Locale.ROOT)),
                                 price,
                                 BANNER_URLS.get(bannerUrlIndex++),
-//                                String.format("https://%s%scoursebanner.com", level.toLowerCase(Locale.ROOT), language.toLowerCase(Locale.ROOT)),
                                 true // Assume that enrollment is already active
                         )
                 );
 
-                courses.get(i).setDateTimeOfCreation(getNextDateTime(11, 12));
+                courses.get(i).setDateTimeOfCreation(getNextDateTime(COURSE_CREATION_MIN_MONTH, COURSE_CREATION_MAX_MONTH));
 
                 if (bannerUrlIndex == BANNER_URLS.size() - 1)
                 {
@@ -1251,7 +1279,7 @@ public class DatabaseConfig
                     for (int j = 1; j <= FORUM_THREAD_COUNT; j++)
                     {
                         forumThread = new ForumThread("Thread #" + j + " on " + level + " " + language + " Tips #" + i, "Thread #" + j + " description on " + level + " " + language + " Tips #" + i);
-                        forumThread.setTimeStamp(getNextDateTime(2, 3));
+                        forumThread.setTimeStamp(getNextDateTime(FORUM_THREAD_CREATION_MIN_MONTH, FORUM_THREAD_CREATION_MAX_MONTH));
 
                         forumThreads.add(forumThread);
                     }
@@ -1275,13 +1303,13 @@ public class DatabaseConfig
                         for (int k = 1; k <= FORUM_POST_COUNT; k++)
                         {
                             forumPost = new ForumPost("Post #" + k + " on " + level + " " + language);
-                            forumPost.setTimeStamp(getNextDateTime(0, 2));
+                            forumPost.setTimeStamp(getNextDateTime(FORUM_POST_CREATION_MIN_MONTH, FORUM_POST_CREATION_MAX_MONTH));
 
                             forumPosts.add(forumPost);
                             for (int l = 1; l <= FORUM_POST_REPLY_COUNT; l++)
                             {
                                 forumPost = new ForumPost("Post #" + k + " Reply #" + l + " on " + level + " " + language);
-                                forumPost.setTimeStamp(getNextDateTime(0, 2));
+                                forumPost.setTimeStamp(getNextDateTime(FORUM_POST_CREATION_MIN_MONTH, FORUM_POST_CREATION_MAX_MONTH));
 
                                 forumPosts.add(forumPost);
                             }
