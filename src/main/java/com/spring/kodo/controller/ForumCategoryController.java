@@ -1,6 +1,7 @@
 package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.ForumCategory;
+import com.spring.kodo.entity.ForumPost;
 import com.spring.kodo.entity.ForumThread;
 import com.spring.kodo.restentity.request.AddForumThreadToForumCategoryReq;
 import com.spring.kodo.restentity.request.CreateNewForumCategoryReq;
@@ -67,7 +68,26 @@ public class ForumCategoryController
     {
         try
         {
-            return this.forumCategoryService.getForumCategoryByForumCategoryId(forumCategoryId);
+            ForumCategory forumCategory = this.forumCategoryService.getForumCategoryByForumCategoryId(forumCategoryId);
+
+            for (ForumThread forumThread : forumCategory.getForumThreads())
+            {
+                forumThread.getAccount().setCourses(null);
+                forumThread.getAccount().setEnrolledCourses(null);
+                forumThread.getAccount().setInterests(null);
+
+                for (ForumPost forumPost : forumThread.getForumPosts())
+                {
+                    forumPost.getAccount().setCourses(null);
+                    forumPost.getAccount().setEnrolledCourses(null);
+                    forumPost.getAccount().setInterests(null);
+                    forumPost.setParentForumPost(null);
+                }
+            }
+
+            forumCategory.setCourse(null);
+
+            return forumCategory;
         }
         catch (ForumCategoryNotFoundException ex)
         {
