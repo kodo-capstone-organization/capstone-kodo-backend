@@ -3,18 +3,16 @@ package com.spring.kodo.restentity.request;
 public class CompleteMultimediaReq
 {
     private Boolean complete;
-    private Long accountId;
-    private Long contentId;
+    private Long enrolledContentId;
 
     public CompleteMultimediaReq()
     {
     }
 
-    public CompleteMultimediaReq(Boolean complete, Long accountId, Long contentId)
+    public CompleteMultimediaReq(Boolean complete, Long enrolledContentId)
     {
         this.complete = complete;
-        this.accountId = accountId;
-        this.contentId = contentId;
+        this.enrolledContentId = enrolledContentId;
     }
 
     public Boolean getComplete()
@@ -27,23 +25,13 @@ public class CompleteMultimediaReq
         this.complete = complete;
     }
 
-    public Long getAccountId()
+    public Long getEnrolledContentId()
     {
-        return accountId;
+        return enrolledContentId;
     }
 
-    public void setAccountId(Long accountId)
+    public void setEnrolledContentId(Long enrolledContentId)
     {
-        this.accountId = accountId;
-    }
-
-    public Long getContentId()
-    {
-        return contentId;
-    }
-
-    public void setContentId(Long contentId)
-    {
-        this.contentId = contentId;
+        this.enrolledContentId = enrolledContentId;
     }
 }

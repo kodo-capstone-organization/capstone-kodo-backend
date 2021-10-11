@@ -63,18 +63,17 @@ public class EnrolledContentController
         return this.enrolledContentService.getAllEnrolledContents();
     }
 
-    @PostMapping("/setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId")
-    public EnrolledContent setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId(@RequestPart(required = true, name = "completeMultimediaReq") CompleteMultimediaReq completeMultimediaReq)
+    @PostMapping("/setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId")
+    public EnrolledContent setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(@RequestPart(required = true, name = "completeMultimediaReq") CompleteMultimediaReq completeMultimediaReq)
     {
         if (completeMultimediaReq != null)
         {
             try
             {
                 Boolean complete = completeMultimediaReq.getComplete();
-                Long accountId = completeMultimediaReq.getAccountId();
-                Long contentId = completeMultimediaReq.getContentId();
+                Long enrolledContentId = completeMultimediaReq.getEnrolledContentId();
 
-                EnrolledContent enrolledContent = enrolledContentService.setDateTimeOfCompletionOfEnrolledContentByAccountIdAndContentId(complete, accountId, contentId);
+                EnrolledContent enrolledContent = enrolledContentService.setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(complete, enrolledContentId);
 
                 return enrolledContent;
             }
