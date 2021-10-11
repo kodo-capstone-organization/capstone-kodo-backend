@@ -95,6 +95,7 @@ public class DatabaseConfig
     private Environment env;
 
     private List<Account> accounts;
+    private List<Account> randomAccounts;
     private List<Tag> tags;
     private List<Course> courses;
     private List<Lesson> lessons;
@@ -112,12 +113,14 @@ public class DatabaseConfig
     private List<ForumThread> forumThreads;
     private List<ForumPost> forumPosts;
 
-    private LocalDateTime COURSE_REFERENCE_DATE = LocalDateTime.now().minusYears(1);
+    private LocalDateTime COURSE_REFERENCE_DATE = LocalDateTime.now();
 
-    private final Integer LANGUAGES_COUNT = 6; // Current max is 25
+    private final Integer LANGUAGES_COUNT = 10; // Current max is 25
 
     private final Integer TUTOR_COUNT = 15;
-    private final Integer STUDENT_COUNT = 50;
+    private final Integer STUDENT_COUNT = 3;
+
+    private final Integer RANDOM_STUDENT_COUNT = 500;
 
     private final Integer LESSON_COUNT = 3;
 
@@ -127,7 +130,7 @@ public class DatabaseConfig
     private final Integer QUIZ_QUESTION_COUNT = 6;
     private final Integer QUIZ_QUESTION_OPTION_COUNT = 3;
 
-    private final Integer STUDENT_ENROLLED_COUNT = (int) (0.75 * (LANGUAGES_COUNT * STUDENT_COUNT));
+    private final Integer STUDENT_ENROLLED_COUNT = (int) (0.5 * (LANGUAGES_COUNT * STUDENT_COUNT));
     private final Integer STUDENT_ATTEMPT_COUNT = (int) (0.5 * STUDENT_ENROLLED_COUNT * LESSON_COUNT * QUIZ_COUNT);
 
     private final Integer FORUM_CATEGORY_COUNT = 1;
@@ -140,23 +143,26 @@ public class DatabaseConfig
     private final Integer RATE_ENROLLED_COURSES_COUNT = (int) (0.85 * STUDENT_ENROLLED_COUNT);
 
     // Timing variables
-    private final Integer ACCOUNT_CREATION_MIN_MONTH = 10;
-    private final Integer ACCOUNT_CREATION_MAX_MONTH = 13;
+    private final Integer CONTENT_COMPLETION_MIN_MONTH = 0;
+    private final Integer CONTENT_COMPLETION_MAX_MONTH = 3;
 
-    private final Integer COURSE_CREATION_MIN_MONTH = ACCOUNT_CREATION_MIN_MONTH - 3; 
-    private final Integer COURSE_CREATION_MAX_MONTH = ACCOUNT_CREATION_MAX_MONTH - 3; 
+    private final Integer FORUM_POST_CREATION_MIN_MONTH = 0;
+    private final Integer FORUM_POST_CREATION_MAX_MONTH = 3;
 
-    private final Integer TRANSACTION_MIN_MONTH = COURSE_CREATION_MIN_MONTH - 3; 
-    private final Integer TRANSACTION_MAX_MONTH = COURSE_CREATION_MAX_MONTH - 3; 
+    private final Integer FORUM_THREAD_CREATION_MIN_MONTH = FORUM_POST_CREATION_MAX_MONTH + 1;
+    private final Integer FORUM_THREAD_CREATION_MAX_MONTH = FORUM_POST_CREATION_MAX_MONTH + 1 + 3;
 
-    private final Integer FORUM_THREAD_CREATION_MIN_MONTH = TRANSACTION_MIN_MONTH - 3; 
-    private final Integer FORUM_THREAD_CREATION_MAX_MONTH = TRANSACTION_MAX_MONTH - 3; 
+    private final Integer TRANSACTION_MIN_MONTH = FORUM_THREAD_CREATION_MAX_MONTH + 1;
+    private final Integer TRANSACTION_MAX_MONTH = FORUM_THREAD_CREATION_MAX_MONTH + 1 + 3;
 
-    private final Integer FORUM_POST_CREATION_MIN_MONTH = FORUM_THREAD_CREATION_MIN_MONTH - 3;
-    private final Integer FORUM_POST_CREATION_MAX_MONTH = FORUM_THREAD_CREATION_MAX_MONTH - 3;
+    private final Integer COURSE_CREATION_MIN_MONTH = TRANSACTION_MAX_MONTH + 1;
+    private final Integer COURSE_CREATION_MAX_MONTH = TRANSACTION_MAX_MONTH + 1 + 3;
 
-    private final Integer CONTENT_COMPLETION_MIN_MONTH = TRANSACTION_MIN_MONTH - 3; 
-    private final Integer CONTENT_COMPLETION_MAX_MONTH = TRANSACTION_MAX_MONTH - 3;
+    private final Integer ACCOUNT_CREATION_MIN_MONTH = COURSE_CREATION_MAX_MONTH + 1;
+    private final Integer ACCOUNT_CREATION_MAX_MONTH = COURSE_CREATION_MAX_MONTH + 1 + 3;
+
+    private final Integer RANDOM_ACCOUNT_CREATION_MIN_MONTH = 0;
+    private final Integer RANDOM_ACCOUNT_CREATION_MAX_MONTH = 12;
 
     // Don't Edit these
     private final Integer PREFIXED_ADMIN_COUNT = 7;
@@ -175,6 +181,7 @@ public class DatabaseConfig
     public DatabaseConfig()
     {
         accounts = new ArrayList<>();
+        randomAccounts = new ArrayList<>();
         tags = new ArrayList<>();
         courses = new ArrayList<>();
         lessons = new ArrayList<>();
@@ -266,6 +273,7 @@ public class DatabaseConfig
         createForumPosts();
         completeContent();
         rateEnrolledCourses();
+        createRandomAccountsAndEnrolledCourses();
 
         System.out.println("\n===== Init Data Fully Loaded to Database =====");
 
@@ -539,7 +547,7 @@ public class DatabaseConfig
                 {
                     try
                     {
-                        createEnrolledCourseAndEnrolledLessonsEnrolledContents(studentIndex, courseIndex);
+                        createEnrolledCourseAndEnrolledLessonsAndEnrolledContents(accounts.get(studentIndex), courseIndex, TRANSACTION_MIN_MONTH, TRANSACTION_MAX_MONTH);
                     }
                     catch (Exception ex)
                     {
@@ -557,7 +565,7 @@ public class DatabaseConfig
 
             try
             {
-                createEnrolledCourseAndEnrolledLessonsEnrolledContents(studentIndex, courseIndex);
+                createEnrolledCourseAndEnrolledLessonsAndEnrolledContents(accounts.get(studentIndex), courseIndex, TRANSACTION_MIN_MONTH, TRANSACTION_MAX_MONTH);
                 i++;
             }
             catch (Exception ex)
@@ -574,10 +582,9 @@ public class DatabaseConfig
         System.out.printf(">> Created EnrolledContents (%d)\n", enrolledContents.size());
     }
 
-    private void createEnrolledCourseAndEnrolledLessonsEnrolledContents(int studentIndex, int courseIndex) throws Exception
+    private void createEnrolledCourseAndEnrolledLessonsAndEnrolledContents(Account student, int courseIndex, int transactionMinMonth, int transactionMaxMonth) throws Exception
     {
         Account tutor;
-        Account student;
         Course course;
         EnrolledCourse enrolledCourse;
         EnrolledLesson enrolledLesson;
@@ -586,7 +593,6 @@ public class DatabaseConfig
 
         String dummyUniqueStripeSessionId;
 
-        student = accounts.get(studentIndex);
         course = courses.get(courseIndex);
         tutor = accountService.getAccountByCourseId(course.getCourseId());
         dummyUniqueStripeSessionId = "acct_" + RandomGeneratorUtil.getRandomString(16);
@@ -597,7 +603,7 @@ public class DatabaseConfig
         // Create transaction records assuming students successfully made the payments
         // Using a unique value in place of a real stripe sessionId
         transaction = new Transaction(dummyUniqueStripeSessionId, course.getPrice());
-        transaction.setDateTimeOfTransaction(getNextDateTime(TRANSACTION_MIN_MONTH, TRANSACTION_MAX_MONTH));
+        transaction.setDateTimeOfTransaction(getNextDateTime(transactionMinMonth, transactionMaxMonth));
         transactionService.createNewTransaction(transaction, student.getAccountId(), tutor.getAccountId(), course.getCourseId());
 
         for (Lesson lesson : course.getLessons())
@@ -747,6 +753,11 @@ public class DatabaseConfig
 
                     for (int j = 0; j < FORUM_THREAD_COUNT; j++, forumThreadIndex++, accountIndex++)
                     {
+                        if (accountIndex >= accountsInCourse.size() - 1)
+                        {
+                            accountIndex = 0;
+                        }
+
                         account = accountsInCourse.get(accountIndex);
 
                         forumThread = forumThreads.get(forumThreadIndex);
@@ -754,11 +765,6 @@ public class DatabaseConfig
                         forumThreadService.createNewForumThread(forumThread, account.getAccountId());
 
                         forumCategoryService.addForumThreadToForumCategory(forumCategory, forumThread);
-
-                        if (accountIndex >= accountsInCourse.size() - 1)
-                        {
-                            accountIndex = 0;
-                        }
                     }
                 }
             }
@@ -797,6 +803,11 @@ public class DatabaseConfig
 
                         for (int k = 0; k < FORUM_POST_COUNT; k++)
                         {
+                            if (accountIndex >= accountsInCourse.size() - 1)
+                            {
+                                accountIndex = 0;
+                            }
+
                             account = accountsInCourse.get(accountIndex);
 
                             forumPost = forumPosts.get(forumPostIndex);
@@ -807,13 +818,13 @@ public class DatabaseConfig
                             forumPostIndex++;
                             accountIndex++;
 
-                            if (accountIndex >= accountsInCourse.size() - 1)
-                            {
-                                accountIndex = 0;
-                            }
-
                             for (int l = 0; l < FORUM_POST_REPLY_COUNT; l++, forumPostIndex++, accountIndex++)
                             {
+                                if (accountIndex >= accountsInCourse.size() - 1)
+                                {
+                                    accountIndex = 0;
+                                }
+
                                 account = accountsInCourse.get(accountIndex);
 
                                 forumPostReply = forumPosts.get(forumPostIndex);
@@ -822,11 +833,6 @@ public class DatabaseConfig
                                 forumThreadService.addForumPostToForumThread(forumThread, forumPostReply);
 
                                 forumPost = forumPostReply;
-
-                                if (accountIndex >= accountsInCourse.size() - 1)
-                                {
-                                    accountIndex = 0;
-                                }
                             }
                         }
                     }
@@ -872,7 +878,7 @@ public class DatabaseConfig
                                 }
                                 else if (completedContent < iterativeBreak)
                                 {
-                                    enrolledContent = enrolledContentService.setFakeDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(getNextDateTime(0, 3), enrolledContent.getEnrolledContentId());
+                                    enrolledContent = enrolledContentService.setFakeDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(getNextDateTime(CONTENT_COMPLETION_MIN_MONTH, CONTENT_COMPLETION_MAX_MONTH), enrolledContent.getEnrolledContentId());
                                     completedContent++;
                                 }
                                 else if (completedContent >= iterativeBreak)
@@ -883,7 +889,7 @@ public class DatabaseConfig
                                     }
                                     else
                                     {
-                                        enrolledContent = enrolledContentService.setFakeDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(getNextDateTime(0, 3), enrolledContent.getEnrolledContentId());
+                                        enrolledContent = enrolledContentService.setFakeDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(getNextDateTime(CONTENT_COMPLETION_MIN_MONTH, CONTENT_COMPLETION_MAX_MONTH), enrolledContent.getEnrolledContentId());
                                         contentPerStudentIndex++;
                                         completedContent++;
                                     }
@@ -935,6 +941,26 @@ public class DatabaseConfig
         System.out.printf(">> Rated EnrolledCourses (%d)\n", courseRatingSet);
     }
 
+    private void createRandomAccountsAndEnrolledCourses() throws Exception
+    {
+        Account student;
+
+        int courseIndex = 0;
+
+        for (Account account : randomAccounts)
+        {
+            if (courseIndex == courses.size() - 1)
+            {
+                courseIndex = 0;
+            }
+
+            student = accountService.createNewAccount(account);
+            createEnrolledCourseAndEnrolledLessonsAndEnrolledContents(student, courseIndex++, RANDOM_ACCOUNT_CREATION_MIN_MONTH, RANDOM_ACCOUNT_CREATION_MAX_MONTH);
+        }
+
+        System.out.printf(">> Create Random Accounts and EnrolledCourses (%d)\n", randomAccounts.size());
+    }
+
     private void addAccounts() throws Exception
     {
         Account account;
@@ -942,6 +968,7 @@ public class DatabaseConfig
         int nameIndex = 0;
         int displayPictureUrlIndex = 0;
         int biographyIndex = 0;
+        int randomInt;
 
         String name;
         String displayPictureUrl;
@@ -984,7 +1011,7 @@ public class DatabaseConfig
             displayPictureUrl = DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex);
             biography = String.format(STUDENT_BIOGRAPHIES.get(biographyIndex), name);
 
-            account = new Account("student" + i, "Password1", "Student " + name, biography, "student" + name.toLowerCase(Locale.ROOT) + i + "@gmail.com", displayPictureUrl, false);
+            account = new Account("student" + i, "Password1", name, biography, "student" + name.toLowerCase(Locale.ROOT) + i + "@gmail.com", displayPictureUrl, false);
             account.setDateTimeOfCreation(getNextDateTime(ACCOUNT_CREATION_MIN_MONTH, ACCOUNT_CREATION_MAX_MONTH));
 
             accounts.add(account);
@@ -1013,10 +1040,60 @@ public class DatabaseConfig
             displayPictureUrl = DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex);
             biography = String.format(TUTOR_BIOGRAPHIES.get(biographyIndex), name);
 
-            account = new Account("tutor" + i, "Password1", "Tutor " + name, biography, "tutor" + name.toLowerCase(Locale.ROOT) + i + "@gmail.com", displayPictureUrl, false);
+            account = new Account("tutor" + i, "Password1", name, biography, "tutor" + name.toLowerCase(Locale.ROOT) + i + "@gmail.com", displayPictureUrl, false);
             account.setDateTimeOfCreation(getNextDateTime(ACCOUNT_CREATION_MIN_MONTH, ACCOUNT_CREATION_MAX_MONTH));
 
             accounts.add(account);
+        }
+
+        nameIndex = 0;
+        while (nameIndex < RANDOM_STUDENT_COUNT)
+        {
+            for (int i = 0; nameIndex < RANDOM_STUDENT_COUNT && i < STUDENT_NAMES.size(); i++, nameIndex++, displayPictureUrlIndex++, biographyIndex++)
+            {
+                if (displayPictureUrlIndex >= DISPLAY_PICTURE_URLS.size())
+                {
+                    displayPictureUrlIndex = 0;
+                }
+
+                if (biographyIndex >= TUTOR_BIOGRAPHIES.size())
+                {
+                    biographyIndex = 0;
+                }
+
+                name = STUDENT_NAMES.get(i);
+                randomInt = RandomGeneratorUtil.getRandomInteger(100000, 999999);
+                displayPictureUrl = DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex);
+                biography = String.format(STUDENT_BIOGRAPHIES.get(biographyIndex), name);
+
+                account = new Account(i + name + randomInt, "Password1", name, biography, name.toLowerCase(Locale.ROOT) + i + randomInt + "@gmail.com", displayPictureUrl, false);
+                account.setDateTimeOfCreation(getNextDateTime(RANDOM_ACCOUNT_CREATION_MIN_MONTH, RANDOM_ACCOUNT_CREATION_MAX_MONTH));
+
+                randomAccounts.add(account);
+            }
+
+            for (int i = 0; nameIndex < RANDOM_STUDENT_COUNT && i < TUTOR_NAMES.size(); i++, nameIndex++, displayPictureUrlIndex++, biographyIndex++)
+            {
+                if (displayPictureUrlIndex >= DISPLAY_PICTURE_URLS.size())
+                {
+                    displayPictureUrlIndex = 0;
+                }
+
+                if (biographyIndex >= TUTOR_BIOGRAPHIES.size())
+                {
+                    biographyIndex = 0;
+                }
+
+                name = TUTOR_NAMES.get(i);
+                randomInt = RandomGeneratorUtil.getRandomInteger(100000, 999999);
+                displayPictureUrl = DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex);
+                biography = String.format(TUTOR_BIOGRAPHIES.get(biographyIndex), name);
+
+                account = new Account(i + name + randomInt, "Password1", name, biography, name.toLowerCase(Locale.ROOT) + i + randomInt + "@gmail.com", displayPictureUrl, false);
+                account.setDateTimeOfCreation(getNextDateTime(RANDOM_ACCOUNT_CREATION_MIN_MONTH, RANDOM_ACCOUNT_CREATION_MAX_MONTH));
+
+                randomAccounts.add(account);
+            }
         }
     }
 
@@ -1030,6 +1107,8 @@ public class DatabaseConfig
 
     private void addCourses()
     {
+        Course course;
+
         String level;
         BigDecimal price = BigDecimal.valueOf(19.99);
         List<BigDecimal> prices = new ArrayList<>();
@@ -1050,17 +1129,17 @@ public class DatabaseConfig
                 level = LEVELS.get(i);
                 price = prices.get(i);
 
-                courses.add(
-                        new Course(
-                                String.format("%s %s Course", level, language),
-                                String.format("A %s course in %s language", level.toLowerCase(Locale.ROOT), language.toLowerCase(Locale.ROOT)),
-                                price,
-                                BANNER_URLS.get(bannerUrlIndex++),
-                                true // Assume that enrollment is already active
-                        )
+                course = new Course(
+                        String.format("%s %s Course", level, language),
+                        String.format("A %s course in %s language", level.toLowerCase(Locale.ROOT), language.toLowerCase(Locale.ROOT)),
+                        price,
+                        BANNER_URLS.get(bannerUrlIndex++),
+                        true // Assume that enrollment is already active
                 );
 
-                courses.get(i).setDateTimeOfCreation(getNextDateTime(COURSE_CREATION_MIN_MONTH, COURSE_CREATION_MAX_MONTH));
+                course.setDateTimeOfCreation(getNextDateTime(COURSE_CREATION_MIN_MONTH, COURSE_CREATION_MAX_MONTH));
+
+                courses.add(course);
 
                 if (bannerUrlIndex == BANNER_URLS.size() - 1)
                 {

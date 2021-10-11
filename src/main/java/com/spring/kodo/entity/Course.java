@@ -219,9 +219,11 @@ public class Course
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", bannerUrl='" + bannerUrl + '\'' +
+                ", isEnrollmentActive=" + isEnrollmentActive +
                 ", enrollment=" + enrollment +
                 ", lessons=" + lessons +
                 ", courseTags=" + courseTags +
+                ", dateTimeOfCreation=" + dateTimeOfCreation +
                 '}';
     }
 }
