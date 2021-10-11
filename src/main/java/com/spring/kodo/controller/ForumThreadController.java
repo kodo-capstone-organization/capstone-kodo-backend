@@ -72,7 +72,21 @@ public class ForumThreadController
     {
         try
         {
-            return this.forumThreadService.getForumThreadByForumThreadId(forumThreadId);
+            ForumThread forumThread = this.forumThreadService.getForumThreadByForumThreadId(forumThreadId);
+
+            forumThread.getAccount().setCourses(null);
+            forumThread.getAccount().setEnrolledCourses(null);
+            forumThread.getAccount().setInterests(null);
+
+            for (ForumPost forumPost : forumThread.getForumPosts())
+            {
+                forumPost.getAccount().setCourses(null);
+                forumPost.getAccount().setEnrolledCourses(null);
+                forumPost.getAccount().setInterests(null);
+                forumPost.setParentForumPost(null);
+            }
+
+            return forumThread;
         }
         catch (ForumThreadNotFoundException ex)
         {
