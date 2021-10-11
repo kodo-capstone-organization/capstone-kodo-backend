@@ -1,5 +1,6 @@
 package com.spring.kodo.controller;
 
+import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.ForumPost;
 import com.spring.kodo.entity.ForumThread;
 import com.spring.kodo.restentity.request.CreateNewForumPostReplyReq;
@@ -134,16 +135,25 @@ public class ForumPostController
 
     private List<ForumPostWithRepliesResp> addRepliesToForumPost(List<ForumPost> parentForumPosts)
     {
+        Account account;
+
         List<ForumPostWithRepliesResp> forumPostWithRepliesResps = new ArrayList<>();
 
         ForumPostWithRepliesResp forumPostWithRepliesResp;
 
         for (ForumPost parentForumPost : parentForumPosts)
         {
+            account = parentForumPost.getAccount();
+
+            account.setInterests(null);
+            account.setCourses(null);
+            account.setEnrolledCourses(null);
+
             forumPostWithRepliesResp = new ForumPostWithRepliesResp(
                     parentForumPost.getForumPostId(),
                     parentForumPost.getMessage(),
-                    parentForumPost.getTimeStamp()
+                    parentForumPost.getTimeStamp(),
+                    account
             );
 
             forumPostWithRepliesResp.setReplies(
