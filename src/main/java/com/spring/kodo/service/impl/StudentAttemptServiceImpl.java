@@ -209,114 +209,93 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
                 studentAttemptAnswers = studentAttemptQuestion.getStudentAttemptAnswers();
                 quizQuestionOptions = quizQuestion.getQuizQuestionOptions();
 
-                if (quizQuestion.getQuestionType().equals(QuestionType.MCQ))
+                if (quizQuestion.getQuestionType().equals(QuestionType.MCQ)
+                        || quizQuestion.getQuestionType().equals(QuestionType.TF))
                 {
-                    // Check options against one another
-                    // Duplicated but wait for FE implementation, check if it works well before merge
-                    for (QuizQuestionOption quizQuestionOption : quizQuestionOptions)
-                    {
-                        if (quizQuestionOption.getCorrect())
-                        {
-                            for (StudentAttemptAnswer studentAttemptAnswer : studentAttemptAnswers)
-                            {
-                                if (studentAttemptAnswer.getCorrect() == null)
-                                {
-                                    if (quizQuestionOption.getLeftContent().equals(studentAttemptAnswer.getLeftContent()))
-                                    {
-                                        studentAttemptAnswer.setCorrect(true);
-                                        studentAttemptAnswer.setMarks(quizQuestion.getMarks());
-                                    }
-                                    else
-                                    {
-                                        studentAttemptAnswer.setCorrect(false);
-                                        studentAttemptAnswer.setMarks(0);
-                                    }
-
-                                    studentAttemptAnswerService.updateStudentAttemptAnswer(studentAttemptAnswer);
-                                }
-                            }
-                        }
-                    }
-                }
-                else if (quizQuestion.getQuestionType().equals(QuestionType.TF))
-                {
-                    // Check options against one another
-                    // Duplicated but wait for FE implementation, check if it works well before merge
-                    for (QuizQuestionOption quizQuestionOption : quizQuestionOptions)
-                    {
-                        if (quizQuestionOption.getCorrect())
-                        {
-                            for (StudentAttemptAnswer studentAttemptAnswer : studentAttemptAnswers)
-                            {
-                                if (studentAttemptAnswer.getCorrect() == null)
-                                {
-                                    if (quizQuestionOption.getLeftContent().equals(studentAttemptAnswer.getLeftContent()))
-                                    {
-                                        studentAttemptAnswer.setCorrect(true);
-                                        studentAttemptAnswer.setMarks(quizQuestion.getMarks());
-                                    }
-                                    else
-                                    {
-                                        studentAttemptAnswer.setCorrect(false);
-                                        studentAttemptAnswer.setMarks(0);
-                                    }
-
-                                    studentAttemptAnswerService.updateStudentAttemptAnswer(studentAttemptAnswer);
-                                }
-                            }
-                        }
-                    }
+                    markMCQOrTF(quizQuestion, quizQuestionOptions, studentAttemptAnswers);
                 }
                 else if (quizQuestion.getQuestionType().equals(QuestionType.MATCHING))
                 {
-                    boolean allCorrect = true;
-                    // Check options against one another
-                    for (QuizQuestionOption quizQuestionOption : quizQuestionOptions)
-                    {
-                        for (StudentAttemptAnswer studentAttemptAnswer : studentAttemptAnswers)
-                        {
-                            if (studentAttemptAnswer.getCorrect() == null || !studentAttemptAnswer.getCorrect())
-                            {
-                                if (quizQuestionOption.getLeftContent().equals(studentAttemptAnswer.getLeftContent())
-                                        && quizQuestionOption.getRightContent().equals(studentAttemptAnswer.getRightContent()))
-                                {
-                                    studentAttemptAnswer.setCorrect(true);
-//                                    studentAttemptAnswer.setMarks(FormatterUtil.round(quizQuestion.getMarks() / (double) quizQuestion.getQuizQuestionOptions().size(), 2));
-                                }
-                                else
-                                {
-                                    studentAttemptAnswer.setCorrect(false);
-                                }
-
-                                studentAttemptAnswer.setMarks(0);
-
-                                studentAttemptAnswerService.updateStudentAttemptAnswer(studentAttemptAnswer);
-                            }
-                        }
-                    }
-
-                    for (StudentAttemptAnswer studentAttemptAnswer : studentAttemptAnswers)
-                    {
-                        if (!studentAttemptAnswer.getCorrect())
-                        {
-                            allCorrect = false;
-                            break;
-                        }
-                    }
-
-                    if (allCorrect)
-                    {
-                        if (studentAttemptAnswers.size() > 0)
-                        {
-                            studentAttemptAnswers.get(0).setMarks(quizQuestion.getMarks());
-                            studentAttemptAnswerService.updateStudentAttemptAnswer(studentAttemptAnswers.get(0));
-                        }
-                    }
+                    markMatching(quizQuestion, quizQuestionOptions, studentAttemptAnswers);
                 }
             }
         }
 
         studentAttemptRepository.saveAndFlush(studentAttempt);
         return studentAttempt;
+    }
+
+    private void markMCQOrTF(QuizQuestion quizQuestion, List<QuizQuestionOption> quizQuestionOptions, List<StudentAttemptAnswer> studentAttemptAnswers) throws UpdateStudentAttemptAnswerException, StudentAttemptAnswerNotFoundException
+    {
+        for (QuizQuestionOption quizQuestionOption : quizQuestionOptions)
+        {
+            if (quizQuestionOption.getCorrect())
+            {
+                for (StudentAttemptAnswer studentAttemptAnswer : studentAttemptAnswers)
+                {
+                    if (studentAttemptAnswer.getCorrect() == null)
+                    {
+                        if (quizQuestionOption.getLeftContent().equals(studentAttemptAnswer.getLeftContent()))
+                        {
+                            studentAttemptAnswer.setCorrect(true);
+                            studentAttemptAnswer.setMarks(quizQuestion.getMarks());
+                        }
+                        else
+                        {
+                            studentAttemptAnswer.setCorrect(false);
+                            studentAttemptAnswer.setMarks(0);
+                        }
+
+                        studentAttemptAnswerService.updateStudentAttemptAnswer(studentAttemptAnswer);
+                    }
+                }
+            }
+        }
+    }
+
+    private void markMatching(QuizQuestion quizQuestion, List<QuizQuestionOption> quizQuestionOptions, List<StudentAttemptAnswer> studentAttemptAnswers) throws UpdateStudentAttemptAnswerException, StudentAttemptAnswerNotFoundException
+    {
+        boolean allCorrect = true;
+        // Check options against one another
+        for (QuizQuestionOption quizQuestionOption : quizQuestionOptions)
+        {
+            for (StudentAttemptAnswer studentAttemptAnswer : studentAttemptAnswers)
+            {
+                if (studentAttemptAnswer.getCorrect() == null || !studentAttemptAnswer.getCorrect())
+                {
+                    if (quizQuestionOption.getLeftContent().equals(studentAttemptAnswer.getLeftContent())
+                            && quizQuestionOption.getRightContent().equals(studentAttemptAnswer.getRightContent()))
+                    {
+                        studentAttemptAnswer.setCorrect(true);
+                    }
+                    else
+                    {
+                        studentAttemptAnswer.setCorrect(false);
+                    }
+
+                    studentAttemptAnswer.setMarks(0);
+
+                    studentAttemptAnswerService.updateStudentAttemptAnswer(studentAttemptAnswer);
+                }
+            }
+        }
+
+        for (StudentAttemptAnswer studentAttemptAnswer : studentAttemptAnswers)
+        {
+            if (!studentAttemptAnswer.getCorrect())
+            {
+                allCorrect = false;
+                break;
+            }
+        }
+
+        if (allCorrect)
+        {
+            if (studentAttemptAnswers.size() == quizQuestionOptions.size())
+            {
+                studentAttemptAnswers.get(0).setMarks(quizQuestion.getMarks());
+                studentAttemptAnswerService.updateStudentAttemptAnswer(studentAttemptAnswers.get(0));
+            }
+        }
     }
 }
