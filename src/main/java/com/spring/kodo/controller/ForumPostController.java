@@ -89,6 +89,8 @@ public class ForumPostController
                 newForumPostReply = forumPostService.createNewForumPostReply(newForumPostReply, accountId, parentForumPostId);
                 forumThreadService.addForumPostToForumThread(forumThread, newForumPostReply);
 
+                newForumPostReply.setParentForumPost(null);
+
                 return newForumPostReply;
             }
             catch (AccountNotFoundException | ForumPostNotFoundException | ForumThreadNotFoundException ex)
