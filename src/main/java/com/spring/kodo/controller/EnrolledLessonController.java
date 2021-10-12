@@ -32,11 +32,6 @@ public class EnrolledLessonController
     @Autowired
     private AccountService accountService;
 
-    @GetMapping("/getAllEnrolledLessons")
-    public List<EnrolledLesson> getAllEnrolledLessons()
-    {
-        return this.enrolledLessonService.getAllEnrolledLessons();
-    }
 
     @GetMapping("/getEnrolledLessonByEnrolledLessonId/{enrolledLessonId}")
     public EnrolledLesson getEnrolledLessonByEnrolledLessonId(@PathVariable Long enrolledLessonId)
@@ -46,6 +41,30 @@ public class EnrolledLessonController
             return this.enrolledLessonService.getEnrolledLessonByEnrolledLessonId(enrolledLessonId);
         }
         catch (EnrolledLessonNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
+    @GetMapping("/getEnrolledLessonByEnrolledLessonIdAndAccountId/{enrolledLessonId}/{accountId}")
+    public EnrolledLesson getEnrolledLessonByEnrolledLessonIdAndAccountId(@PathVariable Long enrolledLessonId, @PathVariable Long accountId)
+    {
+        try
+        {
+            Account account = this.accountService.getAccountByEnrolledLessonId(enrolledLessonId);
+
+            if (account.getAccountId().equals(accountId))
+            {
+                EnrolledLesson enrolledLesson = enrolledLessonService.getEnrolledLessonByEnrolledLessonId(enrolledLessonId);
+
+                return enrolledLesson;
+            }
+            else
+            {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have access to this lesson");
+            }
+        }
+        catch (AccountNotFoundException | EnrolledLessonNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
@@ -62,6 +81,12 @@ public class EnrolledLessonController
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
+    }
+
+    @GetMapping("/getAllEnrolledLessons")
+    public List<EnrolledLesson> getAllEnrolledLessons()
+    {
+        return this.enrolledLessonService.getAllEnrolledLessons();
     }
 
     @GetMapping("/getAllEnrolledLessonsByLessonId/{lessonId}")

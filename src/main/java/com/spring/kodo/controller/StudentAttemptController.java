@@ -1,14 +1,8 @@
 package com.spring.kodo.controller;
 
-import com.spring.kodo.entity.EnrolledContent;
-import com.spring.kodo.entity.StudentAttempt;
-import com.spring.kodo.entity.StudentAttemptAnswer;
-import com.spring.kodo.entity.StudentAttemptQuestion;
+import com.spring.kodo.entity.*;
 import com.spring.kodo.restentity.request.CreateNewStudentAttemptReq;
-import com.spring.kodo.service.inter.EnrolledContentService;
-import com.spring.kodo.service.inter.StudentAttemptAnswerService;
-import com.spring.kodo.service.inter.StudentAttemptQuestionService;
-import com.spring.kodo.service.inter.StudentAttemptService;
+import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +19,9 @@ import java.util.List;
 public class StudentAttemptController
 {
     Logger logger = LoggerFactory.getLogger(LessonController.class);
+
+    @Autowired
+    private AccountService accountService;
 
     @Autowired
     private StudentAttemptService studentAttemptService;
@@ -109,19 +106,10 @@ public class StudentAttemptController
                 enrolledContentService.addStudentAttemptToEnrolledContent(enrolledContent, studentAttempt);
 
                 // Check if quiz is completed
-
-//                if (studentAttemptService.isStudentAttemptCompleted(studentAttempt.getStudentAttemptId()))
-//                {
-                // Set EnrolledContent DateTimeOfCompletion
                 enrolledContentService.setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(true, enrolledContentId);
 
                 studentAttempt = studentAttemptService.markStudentAttemptByStudentAttemptId(studentAttempt.getStudentAttemptId());
-//                }
-//                else
-//                {
-//
-//                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "StudentAttempt is not completed");
-//                }
+
                 return studentAttempt;
             }
             catch (InputDataValidationException ex)
@@ -155,6 +143,28 @@ public class StudentAttemptController
             return this.studentAttemptService.getStudentAttemptByStudentAttemptId(studentAttemptId);
         }
         catch (StudentAttemptNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
+    @GetMapping("/getStudentAttemptByStudentAttemptIdAndAccountId/{studentAttemptId}/{accountId}")
+    public StudentAttempt getStudentAttemptByStudentAttemptIdAndAccountId(@PathVariable Long studentAttemptId, @PathVariable Long accountId)
+    {
+        try
+        {
+            Account account = this.accountService.getAccountByStudentAttemptId(studentAttemptId);
+
+            if (account.getAccountId().equals(accountId))
+            {
+                return this.studentAttemptService.getStudentAttemptByStudentAttemptId(studentAttemptId);
+            }
+            else
+            {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have access to this student attempt");
+            }
+        }
+        catch (AccountNotFoundException | StudentAttemptNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }

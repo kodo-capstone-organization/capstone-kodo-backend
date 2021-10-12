@@ -1,15 +1,22 @@
 package com.spring.kodo.controller;
 
+import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.EnrolledCourse;
 import com.spring.kodo.restentity.response.EnrolledCourseWithStudentCompletion;
 import com.spring.kodo.restentity.response.EnrolledCourseWithStudentResp;
-import com.spring.kodo.service.inter.*;
-import com.spring.kodo.util.exception.*;
+import com.spring.kodo.service.inter.AccountService;
+import com.spring.kodo.service.inter.EnrolledCourseService;
+import com.spring.kodo.util.exception.AccountNotFoundException;
+import com.spring.kodo.util.exception.EnrolledCourseNotFoundException;
+import com.spring.kodo.util.exception.InputDataValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -26,12 +33,6 @@ public class EnrolledCourseController
     @Autowired
     private AccountService accountService;
 
-    @Autowired
-    private EnrolledLessonService enrolledLessonService;
-
-    @Autowired
-    private CourseService courseService;
-
     @GetMapping("/getEnrolledCourseByEnrolledCourseId/{enrolledCourseId}")
     public EnrolledCourse getEnrolledCourseByEnrolledCourseId(@PathVariable Long enrolledCourseId)
     {
@@ -42,6 +43,30 @@ public class EnrolledCourseController
             return enrolledCourse;
         }
         catch (EnrolledCourseNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
+    @GetMapping("/getEnrolledCourseByEnrolledCourseIdAndAccountId/{enrolledCourseId}/{accountId}")
+    public EnrolledCourse getEnrolledCourseByEnrolledCourseIdAndAccountId(@PathVariable Long enrolledCourseId, @PathVariable Long accountId)
+    {
+        try
+        {
+            Account account = this.accountService.getAccountByEnrolledCourseId(enrolledCourseId);
+
+            if (account.getAccountId().equals(accountId))
+            {
+                EnrolledCourse enrolledCourse = enrolledCourseService.getEnrolledCourseByEnrolledCourseId(enrolledCourseId);
+
+                return enrolledCourse;
+            }
+            else
+            {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have access to this course");
+            }
+        }
+        catch (AccountNotFoundException | EnrolledCourseNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }

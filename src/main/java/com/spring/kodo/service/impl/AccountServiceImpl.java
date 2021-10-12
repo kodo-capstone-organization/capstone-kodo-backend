@@ -236,6 +236,21 @@ public class AccountServiceImpl implements AccountService
     }
 
     @Override
+    public Account getAccountByEnrolledContentId(Long enrolledContentId) throws AccountNotFoundException
+    {
+        Account account = accountRepository.findByEnrolledContentId(enrolledContentId).orElse(null);
+
+        if (account != null)
+        {
+            return account;
+        }
+        else
+        {
+            throw new AccountNotFoundException("Account with EnrolledContent ID: " + enrolledContentId + " does not exist!");
+        }
+    }
+
+    @Override
     public Account getAccountByStudentAttemptId(Long studentAttemptId) throws AccountNotFoundException
     {
         Account account = accountRepository.findByStudentAttemptId(studentAttemptId).orElse(null);

@@ -51,6 +51,8 @@ public interface AccountService
 
     Account getAccountByEnrolledLessonId(Long enrolledLessonId) throws AccountNotFoundException;
 
+    Account getAccountByEnrolledContentId(Long enrolledContentId) throws AccountNotFoundException;
+
     Account getAccountByStudentAttemptId(Long studentAttemptId) throws AccountNotFoundException;
 
     Account getAccountByQuizId(Long quizId) throws AccountNotFoundException;

@@ -1,11 +1,13 @@
 package com.spring.kodo.controller;
 
+import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.EnrolledContent;
 import com.spring.kodo.restentity.request.CompleteMultimediaReq;
 import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.CourseService;
 import com.spring.kodo.service.inter.EnrolledContentService;
 import com.spring.kodo.service.inter.EnrolledLessonService;
+import com.spring.kodo.util.exception.AccountNotFoundException;
 import com.spring.kodo.util.exception.EnrolledContentNotFoundException;
 import com.spring.kodo.util.exception.EnrolledCourseNotFoundException;
 import com.spring.kodo.util.exception.EnrolledLessonNotFoundException;
@@ -25,6 +27,9 @@ public class EnrolledContentController
     Logger logger = LoggerFactory.getLogger(EnrolledContentController.class);
 
     @Autowired
+    private AccountService accountService;
+
+    @Autowired
     private EnrolledContentService enrolledContentService;
 
     @GetMapping("/getEnrolledContentByEnrolledContentId/{enrolledContentId}")
@@ -37,6 +42,30 @@ public class EnrolledContentController
             return enrolledContent;
         }
         catch (EnrolledContentNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
+    @GetMapping("/getEnrolledContentByEnrolledContentIdAndAccountId/{enrolledContentId}/{accountId}")
+    public EnrolledContent getEnrolledContentByEnrolledContentIdAndAccountId(@PathVariable Long enrolledContentId, @PathVariable Long accountId)
+    {
+        try
+        {
+            Account account = this.accountService.getAccountByEnrolledContentId(enrolledContentId);
+
+            if (account.getAccountId().equals(accountId))
+            {
+                EnrolledContent enrolledContent = enrolledContentService.getEnrolledContentByEnrolledContentId(enrolledContentId);
+
+                return enrolledContent;
+            }
+            else
+            {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have access to this content");
+            }
+        }
+        catch (AccountNotFoundException | EnrolledContentNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }

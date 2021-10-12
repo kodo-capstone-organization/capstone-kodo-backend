@@ -37,7 +37,19 @@ public interface AccountRepository extends JpaRepository<Account, Long>
     @Query(value = "SELECT * FROM account a JOIN kodo.account_enrolled_courses aec JOIN kodo.enrolled_course_enrolled_lessons ecel ON a.account_id = aec.account_id AND aec.enrolled_course_id = ecel.enrolled_course_id WHERE ecel.enrolled_lesson_id = :enrolledLessonId", nativeQuery = true)
     Optional<Account> findByEnrolledLessonId(@Param("enrolledLessonId") Long enrolledLessonId);
 
-    @Query(value = "SELECT * FROM account a JOIN account_student_attempts asa ON a.account_id = asa.account_id WHERE asa.student_attempt_id = :studentAttemptId", nativeQuery = true)
+    @Query(value = "SELECT * FROM account a JOIN kodo.account_enrolled_courses aec JOIN kodo.enrolled_course_enrolled_lessons ecel JOIN kodo.enrolled_lesson_enrolled_contents elec ON a.account_id = aec.account_id AND aec.enrolled_course_id = ecel.enrolled_course_id AND ecel.enrolled_lesson_id = elec.enrolled_lesson_id WHERE elec.enrolled_content_id = :enrolledContentId", nativeQuery = true)
+    Optional<Account> findByEnrolledContentId(@Param("enrolledContentId") Long enrolledContentId);
+
+    @Query(value = "SELECT * FROM account a\n" +
+            "    JOIN account_enrolled_courses aec\n" +
+            "    JOIN enrolled_course_enrolled_lessons ecel\n" +
+            "    JOIN enrolled_lesson_enrolled_contents elec\n" +
+            "    JOIN enrolled_content_student_attempts ecsa\n" +
+            "        on a.account_id = aec.account_id\n" +
+            "        AND aec.enrolled_course_id = ecel.enrolled_course_id\n" +
+            "        AND ecel.enrolled_lesson_id = elec.enrolled_lesson_id\n" +
+            "        AND elec.enrolled_content_id = ecsa.enrolled_content_id\n" +
+            "WHERE ecsa.student_attempt_id = :studentAttemptId", nativeQuery = true)
     Optional<Account> findByStudentAttemptId(@Param("studentAttemptId") Long studentAttemptId);
 
     @Query(value = "SELECT * FROM account a JOIN account_courses ac ON a.account_id = ac.account_id\n"
