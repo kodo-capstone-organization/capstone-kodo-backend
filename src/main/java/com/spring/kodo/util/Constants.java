@@ -80,64 +80,63 @@ public class Constants
     );
 
     public static final List<String> DISPLAY_PICTURE_URLS = Arrays.asList(
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/97cd16bd-0366-49c6-b43b-f28dab927ec7.gif?generation=1632963149561382&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/bffabec6-cd83-497a-bf12-c3d357522b04.gif?generation=1632963160121737&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/673b0b74-47f9-426a-986a-17f953b89179.gif?generation=1632963166690651&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/53c94a6a-adcf-42f5-a542-091de7f6a5cb.gif?generation=1632963173484262&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/41ff343c-be4f-4631-baa0-7b7248184755.gif?generation=1632963179774696&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/8514c36f-1c3e-49ab-a98f-ea5ce8c77499.png?generation=1632963184850445&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/b36abec2-17d8-4772-b44c-9542020d570f.gif?generation=1632963192539566&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/1fc0a39e-95e0-4951-87b3-c3cfcd937232.gif?generation=1632963206016535&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/0eb92686-b072-4075-9450-9f4729f20ede.gif?generation=1632963212812240&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/f42409bf-4c7b-480e-92af-673ed0f97155.gif?generation=1632963220398860&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/9936587a-de96-431b-8d4e-88316bfd0fd7.gif?generation=1632963226219037&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/db557ef9-493e-49c4-9e00-9458d3ca2096.gif?generation=1632963232059315&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/e511a110-583b-4a4c-92c0-63675c39f0a4.gif?generation=1632963259278914&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/affd2909-8850-45d1-987e-ed08b186dc18.gif?generation=1632963271915915&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/c7823697-9a61-4811-8205-62473751bf20.gif?generation=1632963278763142&alt=media"
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/9ca368fe-c889-4017-bcfd-10bd7e4106c7.gif?generation=1634011614151231&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/48058e88-adb5-4c27-b663-9a99ec7f7e32.gif?generation=1634011669482862&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/a50f64d5-416e-4da6-ba80-9344b8241940.gif?generation=1634011675344910&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/71cf29b7-da0b-4699-ae2d-853bd09a779c.gif?generation=1634011681859491&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/453de803-272d-449c-a4a4-eaf7d3822219.gif?generation=1634011689225405&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/b1d7244b-0d0e-424f-b8ec-c7dabe960518.gif?generation=1634011696323864&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/01635a66-664a-43cc-9415-d0df520e4ba1.gif?generation=1634011701601496&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/d11e1e01-ad55-4026-8e92-ccc4db1d7abe.gif?generation=1634011707447331&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/67b12319-413a-4edc-84a8-7a9ba3c4e2de.gif?generation=1634011722605701&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/9866564d-d329-42b2-bc6c-1da2d713be18.gif?generation=1634011729029255&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/55bceaf4-4739-43dc-9239-552d25379c11.gif?generation=1634011734096369&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/68d99680-2e66-4952-82b1-ace6264f2dec.gif?generation=1634011739698120&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/1385fe45-29f1-4dc0-b453-c84ae852016f.gif?generation=1634011746103612&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/ba28c703-d399-433c-8458-ef82b02bc018.gif?generation=1634011753132018&alt=media"
     );
 
     public static final List<String> PDF_URLS = Arrays.asList(
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/c07f7087-9136-4823-999d-b8ecb1f96ece.pdf?generation=1632963502872154&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/9dc018cb-29f5-4003-b33f-9bea71f32b86.pdf?generation=1632963529079476&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/239a4406-4e27-4984-bdfa-03d18f7c120c.pdf?generation=1632963535817471&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/cdccbb3a-f917-4956-9482-349bd6a51121.pdf?generation=1632963541701581&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/a0f58e0c-8031-46e0-988a-f361f475126c.pdf?generation=1632963547299924&alt=media"
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/5eed2d70-befc-4168-a064-41c46acde76d.pdf?generation=1634011939916828&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/32c7c111-aa1f-467d-a45c-626715a204f5.pdf?generation=1634011946445529&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/34f18173-1677-4f2b-9e91-15b9503c5ac6.pdf?generation=1634011951238992&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/2401997d-d386-4e50-a419-870d374ec706.pdf?generation=1634011956622391&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/20d26fd5-7b72-4640-88ad-562349012232.pdf?generation=1634011961283717&alt=media"
     );
 
     public static final List<String> MP4_URLS = Arrays.asList(
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/e5a3537b-8bf3-4626-97cd-db48a491642d.mp4?generation=1632965650328139&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/e9580be0-f9d1-4b52-9151-b1bb1fa3ce8c.mp4?generation=1632965664108589&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/5dbf90c8-b219-443a-bf0d-a0b062f27823.mp4?generation=1632965669987164&alt=media"
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/b4f7d56b-f101-4125-93c9-4229f35898e8.mp4?generation=1634012220588838&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/40b8e6dd-8a48-439f-98e0-ad9ce628d62a.mp4?generation=1634012226230477&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/a9d7e058-9b76-4b5a-b479-c1baa06366f9.mp4?generation=1634012230938287&alt=media"
     );
 
     public static final List<String> DOCX_URLS = Arrays.asList(
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/59f5e0e2-4352-4f32-8284-03358463acab.docx?generation=1632964583294106&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/5e666f82-2f69-4962-a635-081273cec007.docx?generation=1632964595859856&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/4818366e-cb22-4fd3-b521-ed589544cace.docx?generation=1632964602562412&alt=media"
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/e0359cc2-8ce7-4385-a448-4310156e0287.docx?generation=1634012041177623&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/1f5daa97-27e0-43e3-8600-e96e7716d1a5.docx?generation=1634012047026187&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/d1b1bef4-2811-4d3d-9ced-92a22867aa88.docx?generation=1634012053344599&alt=media"
     );
 
     public static final List<String> ZIP_URLS = Arrays.asList(
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/df93adca-6082-4719-b630-1fc38ac39e97.zip?generation=1632965035030081&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/9bdc4f05-51f4-4030-b253-c764a885caf8.zip?generation=1632965041441863&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/e9314925-9ae3-4fdb-a039-cb6d4ad86f82.zip?generation=1632965046662913&alt=media"
-    );
-
-    public static final List<String> BANNER_URLS = Arrays.asList(
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/54ac91ee-583b-4cfd-99e9-1540388bb952.png?generation=1632977979927790&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/be5d7a30-7ed8-4477-8ccd-6d2c753e15d6.png?generation=1632977984509668&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/03c59cfa-e4c5-4ccb-8fc7-ae6f7c746bf8.png?generation=1632977990663019&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/78feb644-9831-4ad4-8fd3-662014d3156b.png?generation=1632977997412681&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/c37c293c-f1d6-4e0b-a30c-66f21db4ee18.png?generation=1632978001877833&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/5233d316-c7b1-43dc-b04f-a839291c78f2.png?generation=1632978006764388&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/1c8529d1-89d5-4fb5-b924-1057af6acfe5.png?generation=1632978012444772&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/26551397-6c40-403b-8987-9efc070f582a.png?generation=1632978017461782&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/fe5f7255-40fb-4ade-be88-6fb8024e1ca7.png?generation=1632978022267549&alt=media"
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/b9de9595-070c-48e1-b91f-2d59599c80d7.zip?generation=1634012123563947&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/16d3c971-a41b-4a57-bfc9-f23f9ea3e5fc.zip?generation=1634012129111475&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/f3e2fcb7-f22a-4b57-8514-20587f0bc177.zip?generation=1634012134144687&alt=media"
     );
 
     public static final List<String> PNG_URLS = Arrays.asList(
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/4bf71562-bb65-40d2-bb0c-8f52bde2e385.png?generation=1633089178006447&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/8809da79-69ff-407b-ac6e-6a04b12352d5.png?generation=1633089184102132&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/capstone-kodo-bucket/o/e5fc1e76-1e29-4004-813d-8828cab4956c.png?generation=1633089189255294&alt=media"
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/604b43b8-4652-4bea-a36f-2d616b31547c.png?generation=1634012358353872&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/02a01782-6eee-49dd-a488-da411c5ab252.png?generation=1634012362273728&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/5bb3451c-18ed-4d7f-b271-2076e4aba7bd.png?generation=1634012366453941&alt=media"
+    );
+
+    public static final List<String> BANNER_URLS = Arrays.asList(
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/44897ebe-71d7-46e6-9a95-c7b3c290372a.png?generation=1634012281223330&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/af9702a6-a6a5-4dfe-83c9-cdea00e6104d.png?generation=1634012286602439&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/a972ef90-cfe1-458b-bfc9-aa15e59143cf.png?generation=1634012291807567&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/c3285de7-e96b-403e-9ec9-f9cb1e14323b.png?generation=1634012296090137&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/05058c8d-014e-42e6-9e88-e71fdad41f77.png?generation=1634012300260618&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/4ae42446-21c8-47c2-84b6-b98ac822279f.png?generation=1634012304485156&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/069b3d6d-b8f4-458b-9544-046eedb4380b.png?generation=1634012308892399&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/3d750230-4847-4efb-b84e-53bb70fd780a.png?generation=1634012314247761&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/dfbf18bf-4982-4b2b-8a6d-bb80470d7d5b.png?generation=1634012318353923&alt=media"
     );
 }

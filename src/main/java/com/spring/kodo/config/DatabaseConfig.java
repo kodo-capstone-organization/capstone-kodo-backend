@@ -565,7 +565,6 @@ public class DatabaseConfig
 
             try
             {
-                System.out.println(accounts.get(studentIndex).getUsername());
                 createEnrolledCourseAndEnrolledLessonsAndEnrolledContents(accounts.get(studentIndex), courseIndex, TRANSACTION_MIN_MONTH, TRANSACTION_MAX_MONTH);
                 i++;
             }
