@@ -120,7 +120,7 @@ public class DatabaseConfig
     private final Integer TUTOR_COUNT = 15;
     private final Integer STUDENT_COUNT = 10;
 
-    private final Integer RANDOM_STUDENT_COUNT = 500;
+    private final Integer RANDOM_STUDENT_COUNT = 100;
 
     private final Integer LESSON_COUNT = 3;
 
