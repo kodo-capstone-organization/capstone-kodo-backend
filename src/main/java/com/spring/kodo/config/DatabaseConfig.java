@@ -115,10 +115,10 @@ public class DatabaseConfig
 
     private LocalDateTime COURSE_REFERENCE_DATE = LocalDateTime.now();
 
-    private final Integer LANGUAGES_COUNT = 10; // Current max is 25
+    private final Integer LANGUAGES_COUNT = 5; // Current max is 25
 
     private final Integer TUTOR_COUNT = 15;
-    private final Integer STUDENT_COUNT = 3;
+    private final Integer STUDENT_COUNT = 10;
 
     private final Integer RANDOM_STUDENT_COUNT = 500;
 
@@ -561,10 +561,11 @@ public class DatabaseConfig
         while (i < STUDENT_ENROLLED_COUNT)
         {
             int courseIndex = RandomGeneratorUtil.getRandomInteger(0, (courses.size() - 1) * 3 / 4);
-            int studentIndex = RandomGeneratorUtil.getRandomInteger(STUDENT_FIRST_INDEX, (STUDENT_SIZE - 1) * 3 / 4);
+            int studentIndex = RandomGeneratorUtil.getRandomInteger(STUDENT_FIRST_INDEX, (STUDENT_SIZE - 1));
 
             try
             {
+                System.out.println(accounts.get(studentIndex).getUsername());
                 createEnrolledCourseAndEnrolledLessonsAndEnrolledContents(accounts.get(studentIndex), courseIndex, TRANSACTION_MIN_MONTH, TRANSACTION_MAX_MONTH);
                 i++;
             }
