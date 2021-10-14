@@ -72,6 +72,21 @@ public class EnrolledCourseController
         }
     }
 
+    @GetMapping("/getEnrolledCourseByCourseIdAndAccountId/{courseId}/{accountId}")
+    public EnrolledCourse getEnrolledCourseByCourseIdAndAccountId(@PathVariable Long courseId, @PathVariable Long accountId)
+    {
+        try
+        {
+            EnrolledCourse enrolledCourse = enrolledCourseService.getEnrolledCourseByStudentIdAndCourseId(accountId, courseId);
+
+            return enrolledCourse;
+        }
+        catch (EnrolledCourseNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @GetMapping("/getEnrolledCourseByStudentIdAndCourseId/{studentId}/{courseId}")
     public EnrolledCourse getEnrolledCourseByStudentIdAndCourseId(@PathVariable Long studentId, @PathVariable Long courseId)
     {

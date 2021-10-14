@@ -123,6 +123,25 @@ public class AccountController
         }
     }
 
+    @GetMapping("/getAccountByCourseId/{courseId}")
+    public Account getAccountByCourseId(@PathVariable Long courseId)
+    {
+        try
+        {
+            Account account = this.accountService.getAccountByCourseId(courseId);
+
+            account.setEnrolledCourses(null);
+            account.setCourses(null);
+            account.setInterests(null);
+
+            return account;
+        }
+        catch (AccountNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @GetMapping("/getAccountByEnrolledCourseId/{enrolledCourseId}")
     public Account getAccountByEnrolledCourseId(@PathVariable Long enrolledCourseId)
     {

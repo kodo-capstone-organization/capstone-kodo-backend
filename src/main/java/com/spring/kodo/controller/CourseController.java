@@ -2,6 +2,7 @@ package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Course;
+import com.spring.kodo.entity.EnrolledCourse;
 import com.spring.kodo.entity.Tag;
 import com.spring.kodo.restentity.request.CreateNewCourseReq;
 import com.spring.kodo.restentity.request.UpdateCourseReq;
@@ -9,10 +10,7 @@ import com.spring.kodo.restentity.response.CourseResp;
 import com.spring.kodo.restentity.response.CourseBasicResp;
 import com.spring.kodo.restentity.response.CourseWithTutorAndRatingResp;
 import com.spring.kodo.restentity.response.RecommendedCoursesWithTagsResp;
-import com.spring.kodo.service.inter.AccountService;
-import com.spring.kodo.service.inter.CourseService;
-import com.spring.kodo.service.inter.FileService;
-import com.spring.kodo.service.inter.TagService;
+import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +44,7 @@ public class CourseController
     private FileService fileService;
 
     @Autowired
-    private LessonController lessonController;
+    private EnrolledCourseService enrolledCourseService;
 
     @GetMapping("/getCourseByCourseId/{courseId}")
     public CourseWithTutorAndRatingResp getCourseByCourseId(@PathVariable Long courseId)
@@ -94,6 +92,48 @@ public class CourseController
             );
 
             return courseWithTutorAndRatingResp;
+        }
+        catch (CourseNotFoundException | AccountNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
+    @GetMapping("/getCourseWithoutEnrollmentByCourseIdAndAccountId/{courseId}/{accountId}")
+    public CourseWithTutorAndRatingResp getCourseWithoutEnrollmentByCourseIdAndAccountId(@PathVariable Long courseId, @PathVariable Long accountId)
+    {
+        try
+        {
+            Account tutor = this.accountService.getAccountByCourseId(courseId);
+
+            if (tutor.getAccountId().equals(accountId))
+            {
+                Course course = this.courseService.getCourseByCourseId(courseId);
+                Double rating = this.courseService.getCourseRatingByCourseId(courseId);
+
+                // Explicitly set enrollment to null as it's not needed
+                CourseWithTutorAndRatingResp courseWithTutorAndRatingResp = new CourseWithTutorAndRatingResp(
+                        course.getCourseId(),
+                        course.getName(),
+                        course.getDescription(),
+                        course.getPrice(),
+                        course.getBannerUrl(),
+                        course.getDateTimeOfCreation(),
+                        null,
+                        course.getCourseTags(),
+                        course.getLessons(),
+                        tutor,
+                        course.getBannerPictureFilename(),
+                        course.getIsEnrollmentActive(),
+                        rating
+                );
+
+                return courseWithTutorAndRatingResp;
+            }
+            else
+            {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have access to this course");
+            }
         }
         catch (CourseNotFoundException | AccountNotFoundException ex)
         {
@@ -434,7 +474,8 @@ public class CourseController
         return courseWithTutorAndRatingResp;
     }
 
-    private List<CourseResp> getBasicCourses(List<Course> courses) throws AccountNotFoundException, CourseNotFoundException {
+    private List<CourseResp> getBasicCourses(List<Course> courses) throws AccountNotFoundException, CourseNotFoundException
+    {
         List<CourseResp> courseResps = new ArrayList<>();
 
         Account tutor;
@@ -481,6 +522,50 @@ public class CourseController
             return courseResp;
         }
         catch (CourseNotFoundException | AccountNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
+    @GetMapping("/isTutorByCourseIdAndAccountId/{courseId}/{accountId}")
+    public Boolean isTutorByCourseIdAndAccountId(@PathVariable Long courseId, @PathVariable Long accountId)
+    {
+        try
+        {
+            courseService.getCourseByCourseId(courseId);
+
+            Account account = accountService.getAccountByCourseId(courseId);
+
+            if (account.getAccountId().equals(accountId))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        catch (AccountNotFoundException | CourseNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
+    @GetMapping("/isStudentByCourseIdAndAccountId/{courseId}/{accountId}")
+    public Boolean isStudentByCourseIdAndAccountId(@PathVariable Long courseId, @PathVariable Long accountId)
+    {
+        try
+        {
+            courseService.getCourseByCourseId(courseId);
+
+            enrolledCourseService.getEnrolledCourseByStudentIdAndCourseId(accountId, courseId);
+            return true;
+        }
+        catch (EnrolledCourseNotFoundException ex)
+        {
+            return false;
+        }
+        catch (CourseNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
