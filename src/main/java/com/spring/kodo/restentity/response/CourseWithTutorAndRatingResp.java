@@ -20,13 +20,14 @@ public class CourseWithTutorAndRatingResp
     private Account tutor;
     private String bannerPictureFileName;
     private Boolean isEnrollmentActive;
+    private Boolean isReviewRequested;
     private Double courseRating;
 
     public CourseWithTutorAndRatingResp()
     {
     }
 
-    public CourseWithTutorAndRatingResp(Long courseId, String name, String description, BigDecimal price, String bannerUrl, LocalDateTime dateTimeOfCreation, List<EnrolledCourse> enrollment, List<Tag> courseTags, List<Lesson> lessons, Account tutor, String bannerPictureFileName, Boolean isEnrollmentActive, Double courseRating)
+    public CourseWithTutorAndRatingResp(Long courseId, String name, String description, BigDecimal price, String bannerUrl, LocalDateTime dateTimeOfCreation, List<EnrolledCourse> enrollment, List<Tag> courseTags, List<Lesson> lessons, Account tutor, String bannerPictureFileName, Boolean isEnrollmentActive, Double courseRating, Boolean isReviewRequested)
     {
         this.courseId = courseId;
         this.name = name;
@@ -41,6 +42,7 @@ public class CourseWithTutorAndRatingResp
         this.bannerPictureFileName = bannerPictureFileName;
         this.isEnrollmentActive = isEnrollmentActive;
         this.courseRating = courseRating;
+        this.isReviewRequested = isReviewRequested;
     }
 
     public CourseWithTutorAndRatingResp(Course course, Account tutor, Double courseRating)
@@ -185,5 +187,13 @@ public class CourseWithTutorAndRatingResp
 
     public void setDateTimeOfCreation(LocalDateTime dateTimeOfCreation) {
         this.dateTimeOfCreation = dateTimeOfCreation;
+    }
+
+    public Boolean getIsReviewRequested() {
+        return isReviewRequested;
+    }
+
+    public void setIsReviewRequested(Boolean reviewRequested) {
+        isReviewRequested = reviewRequested;
     }
 }

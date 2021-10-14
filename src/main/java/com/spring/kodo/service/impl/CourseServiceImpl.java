@@ -578,6 +578,26 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
+    public Long toggleReviewRequestStatus(Long courseIdToToggle, Long requestingAccountId) throws AccountNotFoundException, CourseNotFoundException, AccountPermissionDeniedException
+    {
+
+        Account requestingAccount = accountService.getAccountByAccountId(requestingAccountId);
+        Course courseToToggle = getCourseByCourseId(courseIdToToggle);
+        Account tutorOfCourse = accountService.getAccountByCourseId(courseIdToToggle);
+
+        if (requestingAccount.getIsAdmin() || requestingAccount.getAccountId() == tutorOfCourse.getAccountId())
+        {
+            // Toggle
+            courseToToggle.setIsReviewRequested(!courseToToggle.getIsEnrollmentActive());
+            return courseRepository.saveAndFlush(courseToToggle).getCourseId();
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("You do not have the rights to toggle review request of this course");
+        }
+    }
+
+    @Override
     public Integer getNumberOfNewCourseForCurrentMonth()
     {
         return courseRepository.findNumberOfNewCoursesForCurrentMonth();

@@ -1134,7 +1134,8 @@ public class DatabaseConfig
                         String.format("A %s course in %s language", level.toLowerCase(Locale.ROOT), language.toLowerCase(Locale.ROOT)),
                         price,
                         BANNER_URLS.get(bannerUrlIndex++),
-                        true // Assume that enrollment is already active
+                        true, // Assume that enrollment is already active
+                        true // Assume that review is already requested since enrollment is already active
                 );
 
                 course.setDateTimeOfCreation(getNextDateTime(COURSE_CREATION_MIN_MONTH, COURSE_CREATION_MAX_MONTH));
@@ -1157,6 +1158,7 @@ public class DatabaseConfig
         for (int i = 0; i < LEVELS.size(); i++)
         {
             courses.get(courses.size() - 1 - i).setIsEnrollmentActive(false);
+            courses.get(courses.size() - 1 - i).setIsReviewRequested(false);
         }
     }
 

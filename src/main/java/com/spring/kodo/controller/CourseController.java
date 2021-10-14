@@ -88,7 +88,8 @@ public class CourseController
                     tutor,
                     course.getBannerPictureFilename(),
                     course.getIsEnrollmentActive(),
-                    rating
+                    rating,
+                    course.getIsReviewRequested()
             );
 
             return courseWithTutorAndRatingResp;
@@ -125,7 +126,8 @@ public class CourseController
                         tutor,
                         course.getBannerPictureFilename(),
                         course.getIsEnrollmentActive(),
-                        rating
+                        rating,
+                        course.getIsReviewRequested()
                 );
 
                 return courseWithTutorAndRatingResp;
@@ -419,7 +421,7 @@ public class CourseController
         try
         {
             Long toggledCourseId = this.courseService.toggleEnrollmentActiveStatus(courseId, requestingAccountId);
-            return ResponseEntity.status(HttpStatus.OK).body("Successfully deleted course with Course ID: " + toggledCourseId);
+            return ResponseEntity.status(HttpStatus.OK).body("Successfully activated course enrollment for course with Course ID: " + toggledCourseId);
         }
         catch (AccountPermissionDeniedException ex)
         {
@@ -468,7 +470,8 @@ public class CourseController
                 tutor,
                 course.getBannerPictureFilename(),
                 course.getIsEnrollmentActive(),
-                rating
+                rating,
+                course.getIsReviewRequested()
         );
 
         return courseWithTutorAndRatingResp;
@@ -522,6 +525,24 @@ public class CourseController
             return courseResp;
         }
         catch (CourseNotFoundException | AccountNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
+    @DeleteMapping("/toggleReviewRequestStatus/{courseId}&{requestingAccountId}")
+    public ResponseEntity toggleReviewRequestStatus(@PathVariable Long courseId, @PathVariable Long requestingAccountId)
+    {
+        try
+        {
+            Long toggledCourseId = this.courseService.toggleReviewRequestStatus(courseId, requestingAccountId);
+            return ResponseEntity.status(HttpStatus.OK).body("Successfully request for review for course with Course ID: " + toggledCourseId);
+        }
+        catch (AccountPermissionDeniedException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
+        }
+        catch (AccountNotFoundException | CourseNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
