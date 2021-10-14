@@ -17,10 +17,7 @@ import org.springframework.core.env.Environment;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.spring.kodo.util.Constants.*;
@@ -298,7 +295,14 @@ public class DatabaseConfig
 
         for (int i = ADMIN_FIRST_INDEX; i < ADMIN_SIZE; i++)
         {
-            accountService.createNewAccount(accounts.get(i), null);
+            if (accounts.get(i).getUsername().equals("tanweekek"))
+            {
+                accountService.createNewAccount(accounts.get(i), Arrays.asList("Java", "IOT", "Mobile", "Angular", "JSF", "PrimeFaces"));
+            }
+            else
+            {
+                accountService.createNewAccount(accounts.get(i), null);
+            }
         }
 
         for (int i = STUDENT_FIRST_INDEX; i < STUDENT_SIZE; i++, tagIndex++)
@@ -989,7 +993,7 @@ public class DatabaseConfig
         {
             account = accounts.get(i);
             account.setDateTimeOfCreation(getNextDateTime(ACCOUNT_CREATION_MIN_MONTH, ACCOUNT_CREATION_MAX_MONTH));
-            account.setIsActive(false);
+//            account.setIsActive(false);
         }
 
         for (int i = 1; i <= STUDENT_COUNT; i++, nameIndex++, displayPictureUrlIndex++, biographyIndex++)
