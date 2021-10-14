@@ -17,10 +17,7 @@ import org.springframework.core.env.Environment;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.spring.kodo.util.Constants.*;
@@ -165,7 +162,7 @@ public class DatabaseConfig
     private final Integer RANDOM_ACCOUNT_CREATION_MAX_MONTH = 12;
 
     // Don't Edit these
-    private final Integer PREFIXED_ADMIN_COUNT = 7;
+    private final Integer PREFIXED_ADMIN_COUNT = 8;
     private final Integer PREFIXED_TUTOR_COUNT = 0;
     private final Integer PREFIXED_STUDENT_COUNT = 0;
 
@@ -298,7 +295,14 @@ public class DatabaseConfig
 
         for (int i = ADMIN_FIRST_INDEX; i < ADMIN_SIZE; i++)
         {
-            accountService.createNewAccount(accounts.get(i), null);
+            if (accounts.get(i).getUsername().equals("tanweekek"))
+            {
+                accountService.createNewAccount(accounts.get(i), Arrays.asList("Java", "IOT", "Mobile", "Angular", "JSF", "PrimeFaces"));
+            }
+            else
+            {
+                accountService.createNewAccount(accounts.get(i), null);
+            }
         }
 
         for (int i = STUDENT_FIRST_INDEX; i < STUDENT_SIZE; i++, tagIndex++)
@@ -975,19 +979,21 @@ public class DatabaseConfig
         String biography;
 
         accounts.add(new Account("admin", "Password1", "Admin Adam", "I am Admin", "admin@gmail.com", DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex), true));
-        accounts.add(new Account("chloe", "Password1", "Admin Chloe", "I am Chloe", "chloe@gmail.com", DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex), true));
-        accounts.add(new Account("bryson", "Password1", "Admin Bryson", "I am Bryson", "bryson@gmail.com", DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex), true));
-        accounts.add(new Account("chandya", "Password1", "Admin Chandya", "I am Chandya", "chandya@gmail.com", DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex), true));
-        accounts.add(new Account("ayush", "Password1", "Admin Ayush", "I am Ayush", "ayush@gmail.com", DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex), true));
-        accounts.add(new Account("elaine", "Password1", "Admin Elaine", "I am Elaine", "elaine@gmail.com", DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex), true));
-        accounts.add(new Account("theodoric", "Password1", "Admin Theodoric", "I am Theodoric", "theodoric@gmail.com", DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex), true));
+        accounts.add(new Account("chloe", "Password1", "Admin Chloe", "I am Chloe, the Team Leader of Kodo", "chloe@gmail.com", DISPLAY_PICTURE_URLS.get(14), true));
+        accounts.add(new Account("bryson", "Password1", "Admin Bryson", "I am Bryson, the Technical Leader of Kodo", "bryson@gmail.com", DISPLAY_PICTURE_URLS.get(6), true));
+        accounts.add(new Account("chandya", "Password1", "Admin Chandya", "I am Chandya", "chandya@gmail.com", DISPLAY_PICTURE_URLS.get(7), true));
+        accounts.add(new Account("ayush", "Password1", "Admin Ayush", "I am Ayush", "ayush@gmail.com", DISPLAY_PICTURE_URLS.get(8), true));
+        accounts.add(new Account("elaine", "Password1", "Admin Elaine", "I am Elaine", "elaine@gmail.com", DISPLAY_PICTURE_URLS.get(9), true));
+        accounts.add(new Account("theodoric", "Password1", "Admin Theodoric", "I am Theodoric", "theodoric@gmail.com", DISPLAY_PICTURE_URLS.get(12), true));
+        accounts.add(new Account("tanweekek", "Password1", "Prof Tan Wee Kek", "Dr. TAN Wee Kek is currently an Associate Professor in the Department of Information Systems and Analytics at the School of Computing, National University of Singapore. He is also currently serving as an Assistant Dean (Student Life) in the School of Computing. He graduated with a Doctor of Philosophy in Information Systems in July 2013 and a Bachelor of Computing in Information Systems (1st Class Honours) in July 2007, both from the National University of Singapore.\n", "tanweekek@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/0ed1576b-7bb1-4fe0-a240-0923d2c3e514.gif?generation=1634200608311607&alt=media", true));
+
 
         // Deactive User specific admins;
         for (int i = 1; i < PREFIXED_ADMIN_COUNT; i++)
         {
             account = accounts.get(i);
             account.setDateTimeOfCreation(getNextDateTime(ACCOUNT_CREATION_MIN_MONTH, ACCOUNT_CREATION_MAX_MONTH));
-            account.setIsActive(false);
+//            account.setIsActive(false);
         }
 
         for (int i = 1; i <= STUDENT_COUNT; i++, nameIndex++, displayPictureUrlIndex++, biographyIndex++)

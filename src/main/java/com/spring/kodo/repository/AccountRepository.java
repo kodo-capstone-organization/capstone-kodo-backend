@@ -31,6 +31,9 @@ public interface AccountRepository extends JpaRepository<Account, Long>
     @Query(value = "SELECT * FROM account a JOIN kodo.account_courses ac ON a.account_id = ac.account_id WHERE ac.course_id = :courseId", nativeQuery = true)
     Optional<Account> findByCourseId(@Param("courseId") Long courseId);
 
+    @Query(value = "SELECT * FROM account a JOIN kodo.account_courses ac JOIN kodo.course_lessons cl ON a.account_id = ac.account_id AND ac.course_id = cl.course_id WHERE cl.lesson_id = :lessonId", nativeQuery = true)
+    Optional<Account> findByLessonId(@Param("lessonId") Long lessonId);
+
     @Query(value = "SELECT * FROM account a JOIN kodo.account_enrolled_courses aec ON a.account_id = aec.account_id WHERE aec.enrolled_course_id = :enrolledCourseId", nativeQuery = true)
     Optional<Account> findByEnrolledCourseId(@Param("enrolledCourseId") Long enrolledCourseId);
 

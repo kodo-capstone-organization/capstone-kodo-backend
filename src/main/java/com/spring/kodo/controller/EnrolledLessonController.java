@@ -1,11 +1,14 @@
 package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.Account;
+import com.spring.kodo.entity.Course;
 import com.spring.kodo.entity.EnrolledLesson;
 import com.spring.kodo.restentity.response.EnrolledLessonWithStudentNameResp;
 import com.spring.kodo.service.inter.AccountService;
+import com.spring.kodo.service.inter.CourseService;
 import com.spring.kodo.service.inter.EnrolledLessonService;
 import com.spring.kodo.util.exception.AccountNotFoundException;
+import com.spring.kodo.util.exception.CourseNotFoundException;
 import com.spring.kodo.util.exception.EnrolledLessonNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +35,8 @@ public class EnrolledLessonController
     @Autowired
     private AccountService accountService;
 
+    @Autowired
+    private CourseService courseService;
 
     @GetMapping("/getEnrolledLessonByEnrolledLessonId/{enrolledLessonId}")
     public EnrolledLesson getEnrolledLessonByEnrolledLessonId(@PathVariable Long enrolledLessonId)
@@ -95,30 +100,47 @@ public class EnrolledLessonController
         return this.enrolledLessonService.getAllEnrolledLessonsByParentLessonId(lessonId);
     }
 
-    @GetMapping("/getAllEnrolledLessonsWithStudentNameByParentLessonId/{lessonId}")
-    public List<EnrolledLessonWithStudentNameResp> getAllEnrolledLessonsWithStudentNameByParentLessonId(@PathVariable Long lessonId)
+    @GetMapping("/getAllEnrolledLessonsWithStudentNameByCourseIdAndLessonIdAndAccountId/{courseId}/{lessonId}/{accountId}")
+    public List<EnrolledLessonWithStudentNameResp> getAllEnrolledLessonsWithStudentNameByCourseIdAndLessonIdAndAccountId(@PathVariable Long courseId, @PathVariable Long lessonId, @PathVariable Long accountId)
     {
         try
         {
-            List<EnrolledLessonWithStudentNameResp> enrolledLessonsWithStudentNameRespList = new ArrayList<>();
+            Account account = accountService.getAccountByLessonId(lessonId);
 
-            List<EnrolledLesson> enrolledLessons = this.enrolledLessonService.getAllEnrolledLessonsByParentLessonId(lessonId);
+            Course course = courseService.getCourseByLessonId(lessonId);
 
-            Account account;
-            for (EnrolledLesson enrolledLesson : enrolledLessons)
+            if (account.getAccountId().equals(accountId))
             {
-                account = accountService.getAccountByEnrolledLessonId(enrolledLesson.getEnrolledLessonId());
-                enrolledLessonsWithStudentNameRespList.add(
-                        new EnrolledLessonWithStudentNameResp(
-                                enrolledLesson,
-                                account.getName()
-                        )
-                );
-            }
+                if (course.getCourseId().equals(courseId))
+                {
+                    List<EnrolledLessonWithStudentNameResp> enrolledLessonsWithStudentNameRespList = new ArrayList<>();
 
-            return enrolledLessonsWithStudentNameRespList;
+                    List<EnrolledLesson> enrolledLessons = this.enrolledLessonService.getAllEnrolledLessonsByParentLessonId(lessonId);
+
+                    for (EnrolledLesson enrolledLesson : enrolledLessons)
+                    {
+                        account = accountService.getAccountByEnrolledLessonId(enrolledLesson.getEnrolledLessonId());
+                        enrolledLessonsWithStudentNameRespList.add(
+                                new EnrolledLessonWithStudentNameResp(
+                                        enrolledLesson,
+                                        account.getName()
+                                )
+                        );
+                    }
+
+                    return enrolledLessonsWithStudentNameRespList;
+                }
+                else
+                {
+                    throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have access to this lesson");
+                }
+            }
+            else
+            {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have access to this lesson");
+            }
         }
-        catch (AccountNotFoundException ex)
+        catch (AccountNotFoundException | CourseNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
