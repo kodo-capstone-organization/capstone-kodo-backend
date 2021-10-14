@@ -569,6 +569,12 @@ public class CourseServiceImpl implements CourseService
         {
             // Toggle
             courseToToggle.setIsEnrollmentActive(!courseToToggle.getIsEnrollmentActive());
+
+            // Edge case whereby Admins want to unpublish a course, tutor should be able to review and update the course
+            if (!courseToToggle.getIsEnrollmentActive()) {
+                courseToToggle.setIsReviewRequested(false);
+            }
+
             return courseRepository.saveAndFlush(courseToToggle).getCourseId();
         }
         else
