@@ -979,7 +979,7 @@ public class DatabaseConfig
         String biography;
 
         accounts.add(new Account("admin", "Password1", "Admin Adam", "I am Admin", "admin@gmail.com", DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex), true));
-        accounts.add(new Account("chloe", "Password1", "Admin Chloe", "I am Chloe, the Team Leader of Kodo", "chloe@gmail.com", DISPLAY_PICTURE_URLS.get(14), true));
+        accounts.add(new Account("chloe", "Password1", "Admin Chloe", "I am Chloe, the Team Leader of Kodo", "chloe@gmail.com", DISPLAY_PICTURE_URLS.get(13), true));
         accounts.add(new Account("bryson", "Password1", "Admin Bryson", "I am Bryson, the Technical Leader of Kodo", "bryson@gmail.com", DISPLAY_PICTURE_URLS.get(6), true));
         accounts.add(new Account("chandya", "Password1", "Admin Chandya", "I am Chandya", "chandya@gmail.com", DISPLAY_PICTURE_URLS.get(7), true));
         accounts.add(new Account("ayush", "Password1", "Admin Ayush", "I am Ayush", "ayush@gmail.com", DISPLAY_PICTURE_URLS.get(8), true));

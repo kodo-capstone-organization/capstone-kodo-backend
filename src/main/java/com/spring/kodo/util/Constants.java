@@ -80,7 +80,6 @@ public class Constants
     );
 
     public static final List<String> DISPLAY_PICTURE_URLS = Arrays.asList(
-            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/9ca368fe-c889-4017-bcfd-10bd7e4106c7.gif?generation=1634011614151231&alt=media",
             "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/48058e88-adb5-4c27-b663-9a99ec7f7e32.gif?generation=1634011669482862&alt=media",
             "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/a50f64d5-416e-4da6-ba80-9344b8241940.gif?generation=1634011675344910&alt=media",
             "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/71cf29b7-da0b-4699-ae2d-853bd09a779c.gif?generation=1634011681859491&alt=media",
