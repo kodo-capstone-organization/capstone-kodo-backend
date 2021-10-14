@@ -19,6 +19,8 @@ public interface ForumPostService {
 
     List<ForumPost> getAllForumPostsByForumThreadId(Long forumThreadId) throws ForumThreadNotFoundException;
 
+    List<ForumPost> getReportedForumPostsByThreadId(Long forumThreadId);
+
     ForumPost updateForumPost(ForumPost updatedForumPost) throws ForumPostNotFoundException, InputDataValidationException;
 
     Boolean deleteForumPost(Long forumPostId) throws ForumPostNotFoundException, DeleteForumPostException;

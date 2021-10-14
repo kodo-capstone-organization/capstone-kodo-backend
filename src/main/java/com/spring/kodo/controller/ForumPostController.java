@@ -135,6 +135,14 @@ public class ForumPostController
         return forumPostWithRepliesResps;
     }
 
+    @GetMapping("/getAllReportedForumPostsByForumThreadId/{forumThreadId}")
+    public List<ForumPost> getAllReportedForumPostsByForumThreadId(@PathVariable Long forumThreadId)
+    {
+        List<ForumPost> forumPosts = forumPostService.getReportedForumPostsByThreadId(forumThreadId);
+
+        return forumPosts;
+    }
+
     private List<ForumPostWithRepliesResp> addRepliesToForumPost(List<ForumPost> parentForumPosts)
     {
         Account account;

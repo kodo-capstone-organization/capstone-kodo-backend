@@ -131,6 +131,13 @@ public class ForumPostServiceImpl implements ForumPostService
         return forumThread.getForumPosts();
     }
 
+    @Override
+    public List<ForumPost> getReportedForumPostsByThreadId(Long forumThreadId)
+    {
+        return forumPostRepository.findAllReportedForumPostsByThreadId(forumThreadId);
+    }
+
+
     //only updating attributes, not relationships
     @Override
     public ForumPost updateForumPost(ForumPost updatedForumPost) throws ForumPostNotFoundException, InputDataValidationException
@@ -236,4 +243,6 @@ public class ForumPostServiceImpl implements ForumPostService
             throw new DeleteForumPostException("ForumPost ID cannot be null");
         }
     }
+
+
 }

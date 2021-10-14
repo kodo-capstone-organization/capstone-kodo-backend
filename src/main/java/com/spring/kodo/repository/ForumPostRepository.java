@@ -15,4 +15,7 @@ public interface ForumPostRepository extends JpaRepository<ForumPost, Long>
 {
     @Query(value = "SELECT fp.* FROM forum_post fp JOIN forum_thread_forum_posts ftfp ON fp.forum_post_id = ftfp.forum_post_id WHERE fp.parent_forum_post_forum_post_id IS NULL AND ftfp.forum_thread_id = :forumThreadId", nativeQuery = true)
     List<ForumPost> findAllByNullParentPostAndForumThreadId(@Param("forumThreadId") Long forumThreadId);
+
+    @Query(value = "SELECT fp.* FROM forum_post fp JOIN forum_thread_forum_posts ftfp ON fp.forum_post_id = ftfp.forum_post_id WHERE ftfp.forum_thread_id = :forumThreadId AND fp.is_reported = true", nativeQuery = true)
+    List<ForumPost> findAllReportedForumPostsByThreadId(@Param("forumThreadId") Long forumThreadId);
 }

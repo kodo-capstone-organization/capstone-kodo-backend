@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -87,6 +88,33 @@ public class TransactionController
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
+    }
+
+    @GetMapping("/getAllTutorsAndEarnings")
+    public List<TutorAndEarningsResp> getAllTutorsAndEarnings()
+    {
+        List<Account> accounts = this.accountService.getAllAccounts();
+        List<TutorAndEarningsResp> accountResps = new ArrayList<>();
+
+        for (Account account : accounts)
+        {
+            if(!(account.getCourses().isEmpty()))
+            {
+                try {
+                    TutorAndEarningsResp tutor = new TutorAndEarningsResp();
+                    tutor.setAccountId(account.getAccountId());
+                    tutor.setTutorName(account.getName());
+                    tutor.setUsername(account.getUsername());
+                    tutor.setEmail(account.getEmail());
+                    tutor.setEarnings(this.transactionService.getLifetimeTotalEarningsByAccountId(account.getAccountId()));
+                    accountResps.add(tutor);
+                } catch (AccountNotFoundException ex)
+                {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+                }
+            }
+        }
+        return accountResps;
     }
 
     @GetMapping("/getTutorEarningsByAccountId/{accountId}")
@@ -271,6 +299,7 @@ public class TransactionController
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
     }
+
 
     @GetMapping("/getTutorEarningsAdminData/{tutorId}&{requestingAccountId}")
     public TutorEarningsResp getTutorEarningsAdminData(@PathVariable Long tutorId, @PathVariable Long requestingAccountId)
