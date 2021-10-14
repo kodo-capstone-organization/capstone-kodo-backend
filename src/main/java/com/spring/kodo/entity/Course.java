@@ -45,6 +45,10 @@ public class Course
     @NotNull
     private Boolean isEnrollmentActive;
 
+    @Column(nullable = false)
+    @NotNull
+    private Boolean isReviewRequested;
+
     @OneToMany(targetEntity = EnrolledCourse.class, mappedBy = "parentCourse", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<EnrolledCourse> enrollment;
 
@@ -75,6 +79,7 @@ public class Course
         this.courseTags = new ArrayList<>();
         this.dateTimeOfCreation = LocalDateTime.now();
         this.isEnrollmentActive = false; // A new course is inactive by default
+        this.isReviewRequested = false; // A new course is not pending request by default
     }
 
     public Course(Long courseId, String name, String description, BigDecimal price, String bannerUrl)
@@ -98,7 +103,7 @@ public class Course
         this.bannerUrl = bannerUrl;
     }
 
-    public Course(String name, String description, BigDecimal price, String bannerUrl, Boolean isEnrollmentActive)
+    public Course(String name, String description, BigDecimal price, String bannerUrl, Boolean isEnrollmentActive, Boolean isReviewRequested)
     {
         this();
 
@@ -107,6 +112,7 @@ public class Course
         this.price = price;
         this.bannerUrl = bannerUrl;
         this.isEnrollmentActive = isEnrollmentActive;
+        this.isReviewRequested = isReviewRequested;
     }
 
     public Long getCourseId()
@@ -210,9 +216,16 @@ public class Course
         this.dateTimeOfCreation = dateTimeOfCreation;
     }
 
+    public Boolean getIsReviewRequested() {
+        return isReviewRequested;
+    }
+
+    public void setIsReviewRequested(Boolean reviewRequested) {
+        isReviewRequested = reviewRequested;
+    }
+
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "Course{" +
                 "courseId=" + courseId +
                 ", name='" + name + '\'' +
@@ -220,6 +233,7 @@ public class Course
                 ", price=" + price +
                 ", bannerUrl='" + bannerUrl + '\'' +
                 ", isEnrollmentActive=" + isEnrollmentActive +
+                ", isReviewRequested=" + isReviewRequested +
                 ", enrollment=" + enrollment +
                 ", lessons=" + lessons +
                 ", courseTags=" + courseTags +

@@ -76,6 +76,8 @@ public interface CourseService
 
     Long toggleEnrollmentActiveStatus(Long courseIdToToggle, Long requestingAccountId) throws AccountNotFoundException, CourseNotFoundException, AccountPermissionDeniedException;
 
+    Long toggleReviewRequestStatus(Long courseIdToToggle, Long requestingAccountId) throws AccountNotFoundException, CourseNotFoundException, AccountPermissionDeniedException;
+
     Integer getNumberOfNewCourseForCurrentMonth();
 
     Integer getNumberOfNewCoursesForPreviousMonth();
