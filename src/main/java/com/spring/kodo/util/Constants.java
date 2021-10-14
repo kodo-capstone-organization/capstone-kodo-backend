@@ -93,7 +93,8 @@ public class Constants
             "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/55bceaf4-4739-43dc-9239-552d25379c11.gif?generation=1634011734096369&alt=media",
             "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/68d99680-2e66-4952-82b1-ace6264f2dec.gif?generation=1634011739698120&alt=media",
             "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/1385fe45-29f1-4dc0-b453-c84ae852016f.gif?generation=1634011746103612&alt=media",
-            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/ba28c703-d399-433c-8458-ef82b02bc018.gif?generation=1634011753132018&alt=media"
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/ba28c703-d399-433c-8458-ef82b02bc018.gif?generation=1634011753132018&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/532fae92-ade2-458d-a63b-8bf57ad1d0c1.gif?generation=1634200294027079&alt=media"
     );
 
     public static final List<String> PDF_URLS = Arrays.asList(
