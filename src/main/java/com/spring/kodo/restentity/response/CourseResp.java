@@ -19,10 +19,11 @@ public class CourseResp
     private Account tutor;
     private String bannerPictureFileName;
     private Boolean isEnrollmentActive;
+    private Boolean isReviewRequested;
     private Double courseRating;
     private Integer enrollmentLength;
 
-    public CourseResp(Long courseId, String name, String description, BigDecimal price, String bannerUrl, LocalDateTime dateTimeOfCreation, List<Tag> courseTags, Account tutor, String bannerPictureFileName, Boolean isEnrollmentActive, Double courseRating, Integer enrollmentLength) {
+    public CourseResp(Long courseId, String name, String description, BigDecimal price, String bannerUrl, LocalDateTime dateTimeOfCreation, List<Tag> courseTags, Account tutor, String bannerPictureFileName, Boolean isEnrollmentActive, Double courseRating, Integer enrollmentLength, Boolean isReviewRequested) {
         this.courseId = courseId;
         this.name = name;
         this.description = description;
@@ -35,6 +36,7 @@ public class CourseResp
         this.isEnrollmentActive = isEnrollmentActive;
         this.courseRating = courseRating;
         this.enrollmentLength = enrollmentLength;
+        this.isReviewRequested = isReviewRequested;
     }
 
     public Boolean getEnrollmentActive() {
@@ -141,6 +143,14 @@ public class CourseResp
         this.courseRating = courseRating;
     }
 
+    public Boolean getIsReviewRequested() {
+        return isReviewRequested;
+    }
+
+    public void setIsReviewRequested(Boolean reviewRequested) {
+        isReviewRequested = reviewRequested;
+    }
+
     @Override
     public String toString() {
         return "CourseResp{" +
@@ -154,6 +164,7 @@ public class CourseResp
                 ", tutor=" + tutor +
                 ", bannerPictureFileName='" + bannerPictureFileName + '\'' +
                 ", isEnrollmentActive=" + isEnrollmentActive +
+                ", isReviewRequested=" + isReviewRequested +
                 ", courseRating=" + courseRating +
                 ", enrollmentLength=" + enrollmentLength +
                 '}';
