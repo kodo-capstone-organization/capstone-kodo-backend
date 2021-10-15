@@ -192,6 +192,9 @@ public class ForumPostController
             try
             {
                 ForumPost updatedForumPost = this.forumPostService.updateForumPost(updateForumPostReq.getForumPost());
+
+                updatedForumPost = unmarshallForumPostReplies(updatedForumPost);
+
                 return updatedForumPost;
             }
             catch (ForumPostNotFoundException ex)
@@ -207,6 +210,26 @@ public class ForumPostController
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Update Forum Post Request");
         }
+    }
+
+    private ForumPost unmarshallForumPostReplies(ForumPost forumPost)
+    {
+        forumPost.setParentForumPost(null);
+        forumPost.getAccount().setInterests(null);
+        forumPost.getAccount().setCourses(null);
+        forumPost.getAccount().setEnrolledCourses(null);
+
+        for (ForumPost forumPostReply : forumPost.getReplies())
+        {
+            forumPostReply.setParentForumPost(null);
+            forumPostReply.getAccount().setInterests(null);
+            forumPostReply.getAccount().setCourses(null);
+            forumPostReply.getAccount().setEnrolledCourses(null);
+
+            unmarshallForumPostReplies(forumPostReply);
+        }
+
+        return forumPost;
     }
 
     @DeleteMapping("/deleteForumPost/{forumPostId}")

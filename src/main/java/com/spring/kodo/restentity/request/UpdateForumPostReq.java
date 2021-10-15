@@ -5,6 +5,10 @@ import com.spring.kodo.entity.ForumPost;
 public class UpdateForumPostReq {
     private ForumPost forumPost;
 
+    public UpdateForumPostReq()
+    {
+    }
+
     public UpdateForumPostReq(ForumPost forumPost) {
         this.forumPost = forumPost;
     }

@@ -151,6 +151,8 @@ public class ForumPostServiceImpl implements ForumPostService
                 if (forumPostToUpdate != null)
                 {
                     forumPostToUpdate.setMessage(updatedForumPost.getMessage());
+                    forumPostToUpdate.setReported(updatedForumPost.getReported());
+                    forumPostToUpdate.setReasonForReport(updatedForumPost.getReasonForReport());
                     return forumPostToUpdate;
                 }
                 else
