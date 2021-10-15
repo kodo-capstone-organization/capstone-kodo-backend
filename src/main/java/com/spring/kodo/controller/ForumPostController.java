@@ -191,6 +191,8 @@ public class ForumPostController
         {
             try
             {
+                updateForumPostReq.getForumPost().setReasonForReport(updateForumPostReq.getReasonForReport());
+
                 ForumPost updatedForumPost = this.forumPostService.updateForumPost(updateForumPostReq.getForumPost());
 
                 updatedForumPost = unmarshallForumPostReplies(updatedForumPost);
