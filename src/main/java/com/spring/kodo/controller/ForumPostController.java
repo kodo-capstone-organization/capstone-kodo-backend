@@ -163,6 +163,8 @@ public class ForumPostController
                     parentForumPost.getForumPostId(),
                     parentForumPost.getMessage(),
                     parentForumPost.getTimeStamp(),
+                    parentForumPost.getReported(),
+                    parentForumPost.getReasonForReport(),
                     account
             );
 
