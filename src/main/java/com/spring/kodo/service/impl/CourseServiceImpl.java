@@ -186,6 +186,9 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
+    public List<Course> getCoursesPendingRequest() { return courseRepository.getAllCoursesPendingForApproval(); }
+
+    @Override
     public List<Course> getAllCourses()
     {
         return courseRepository.findAll();

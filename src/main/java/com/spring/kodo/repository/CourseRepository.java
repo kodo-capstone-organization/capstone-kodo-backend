@@ -153,4 +153,7 @@ public interface CourseRepository extends JpaRepository<Course, Long>
 
     @Query(value = "SELECT COUNT(*) FROM course c WHERE YEAR(c.date_time_of_creation) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(c.date_time_of_creation) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)", nativeQuery = true)
     Integer findNumberOfNewCoursesForPreviousMonth();
+
+    @Query(value = "SELECT * FROM course c WHERE c.is_enrollment_active IS false AND c.is_review_requested IS true", nativeQuery = true)
+    List<Course> getAllCoursesPendingForApproval();
 }

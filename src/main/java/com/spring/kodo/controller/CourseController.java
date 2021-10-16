@@ -227,6 +227,22 @@ public class CourseController
         }
     }
 
+    @GetMapping("/getPendingCourses")
+    public List<CourseResp> getPendingCourses()
+    {
+        try
+        {
+            List<Course> courses = this.courseService.getCoursesPendingRequest();
+            List<CourseResp> courseResps = getBasicCourses(courses);
+
+            return courseResps;
+        }
+        catch (AccountNotFoundException | CourseNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @GetMapping("/getAllCoursesByTagTitle/{tagTitle}")
     public List<CourseWithTutorAndRatingResp> getAllCoursesByTagTitle(@PathVariable String tagTitle)
     {

@@ -35,6 +35,8 @@ public interface CourseService
 
     List<Course> getAllCoursesWithActiveEnrollment();
 
+    List<Course> getCoursesPendingRequest();
+
     List<Course> getAllCourses();
 
     List<Course> getAllCoursesByTagTitle(String tagTitle);
