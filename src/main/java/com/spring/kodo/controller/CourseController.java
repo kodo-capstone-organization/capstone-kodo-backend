@@ -501,7 +501,8 @@ public class CourseController
                     course.getBannerPictureFilename(),
                     course.getIsEnrollmentActive(),
                     rating,
-                    course.getEnrollment().size()
+                    course.getEnrollment().size(),
+                    course.getIsReviewRequested()
             ));
         }
 
