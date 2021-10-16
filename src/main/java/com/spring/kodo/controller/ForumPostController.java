@@ -140,6 +140,11 @@ public class ForumPostController
     {
         List<ForumPost> forumPosts = forumPostService.getReportedForumPostsByThreadId(forumThreadId);
 
+        for (ForumPost forumPost : forumPosts)
+        {
+            unmarshallForumPostReplies(forumPost);
+        }
+
         return forumPosts;
     }
 

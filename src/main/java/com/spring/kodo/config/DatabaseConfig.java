@@ -984,7 +984,7 @@ public class DatabaseConfig
         accounts.add(new Account("chandya", "Password1", "Admin Chandya", "I am Chandya", "chandya@gmail.com", DISPLAY_PICTURE_URLS.get(7), true));
         accounts.add(new Account("ayush", "Password1", "Admin Ayush", "I am Ayush", "ayush@gmail.com", DISPLAY_PICTURE_URLS.get(8), true));
         accounts.add(new Account("elaine", "Password1", "Admin Elaine", "I am Elaine", "elaine@gmail.com", DISPLAY_PICTURE_URLS.get(9), true));
-        accounts.add(new Account("theodoric", "Password1", "Admin Theodoric", "I am Theodoric", "theodoric@gmail.com", DISPLAY_PICTURE_URLS.get(12), true));
+        accounts.add(new Account("theo", "Password1", "Admin Theo", "I am Theodoric", "theodoric@gmail.com", DISPLAY_PICTURE_URLS.get(12), true));
         accounts.add(new Account("tanweekek", "Password1", "Prof Tan Wee Kek", "Dr. TAN Wee Kek is currently an Associate Professor in the Department of Information Systems and Analytics at the School of Computing, National University of Singapore. He is also currently serving as an Assistant Dean (Student Life) in the School of Computing. He graduated with a Doctor of Philosophy in Information Systems in July 2013 and a Bachelor of Computing in Information Systems (1st Class Honours) in July 2007, both from the National University of Singapore.\n", "tanweekek@gmail.com", "https://storage.googleapis.com/download/storage/v1/b/kodo-capstone-bucket/o/0ed1576b-7bb1-4fe0-a240-0923d2c3e514.gif?generation=1634200608311607&alt=media", true));
 
 
