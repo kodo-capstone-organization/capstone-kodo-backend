@@ -1,20 +1,22 @@
 package com.spring.kodo.integrationtest;
 
 import com.spring.kodo.entity.Account;
+import com.spring.kodo.entity.Tag;
 import com.spring.kodo.repository.AccountRepository;
+import com.spring.kodo.repository.TagRepository;
 import com.spring.kodo.service.impl.AccountServiceImpl;
+import com.spring.kodo.service.impl.TagServiceImpl;
+import com.spring.kodo.util.exception.AccountNotFoundException;
 import com.spring.kodo.util.exception.AccountUsernameExistException;
 import com.spring.kodo.util.exception.InputDataValidationException;
 import org.aspectj.lang.annotation.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,10 +33,17 @@ public class AccountServiceImplIntegrationTest
     @Mock
     private AccountRepository accountRepository;
 
-//    @Before
-//    public void setUp() throws Exception
-//    {
-//    }
+    @Mock
+    private TagRepository tagRepository;
+
+    @Mock
+    private TagServiceImpl tagServiceImpl;
+
+    @Test(expected = AccountNotFoundException.class)
+    public void whenGetAccount_theAccountNotFoundException() throws Exception
+    {
+        accountServiceImpl.getAccountByAccountId(1L);
+    }
 
     @Test
     public void whenCreateNewAccount_thenReturnAccount() throws Exception
@@ -43,12 +52,13 @@ public class AccountServiceImplIntegrationTest
         Account savedAccount = new Account(1L, "test1", "Test1Test1Test1", "test1", "test1", "test1@email.com", null, false);
         Account unsavedAccount = new Account("test1", "Test1Test1Test1", "test1", "test1", "test1@email.com", null, false);
 
+        Mockito.when(accountRepository.saveAndFlush(ArgumentMatchers.any(Account.class))).thenReturn(savedAccount);
+
         // ACTION
         Account retrievedAccount = accountServiceImpl.createNewAccount(unsavedAccount);
 
         // ASSERTION
-        assertNotNull(retrievedAccount.getAccountId());
-        assertEquals(retrievedAccount.getName(), savedAccount.getName());
+        assertEquals(savedAccount.getName(), retrievedAccount.getName());
     }
 
     @Test(expected = InputDataValidationException.class)
@@ -67,14 +77,14 @@ public class AccountServiceImplIntegrationTest
         // PREPARATION
         Account savedAccount = Mockito.mock(Account.class);
 
-        Mockito.when(accountRepository.findById(ArgumentMatchers.anyLong()))
+        Mockito.when(accountRepository.findById(1L))
                 .thenReturn(Optional.of(savedAccount));
 
         // ACTION
         Account retrievedAccount = accountServiceImpl.getAccountByAccountId(1L);
 
         // ASSERTION
-        assertEquals(retrievedAccount.getName(), savedAccount.getName());
+        assertEquals(savedAccount.getName(), retrievedAccount.getName());
     }
 
     @Test
@@ -93,6 +103,8 @@ public class AccountServiceImplIntegrationTest
 
         // ACTION
         List<Account> retrievedAccounts = accountServiceImpl.getAllAccounts();
+
+        assertEquals(accountsSize, retrievedAccounts.size());
 
         // ASSERTION
         for (int i = 0; i < accountsSize; i++)
