@@ -5,7 +5,7 @@ import com.spring.kodo.repository.AccountRepository;
 import com.spring.kodo.service.impl.AccountServiceImpl;
 import com.spring.kodo.util.exception.AccountUsernameExistException;
 import com.spring.kodo.util.exception.InputDataValidationException;
-import org.junit.Before;
+import org.aspectj.lang.annotation.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
@@ -31,10 +31,10 @@ public class AccountServiceImplIntegrationTest
     @Mock
     private AccountRepository accountRepository;
 
-    @Before
-    public void setUp() throws Exception
-    {
-    }
+//    @Before
+//    public void setUp() throws Exception
+//    {
+//    }
 
     @Test
     public void whenCreateNewAccount_thenReturnAccount() throws Exception
@@ -43,16 +43,12 @@ public class AccountServiceImplIntegrationTest
         Account savedAccount = new Account(1L, "test1", "Test1Test1Test1", "test1", "test1", "test1@email.com", null, false);
         Account unsavedAccount = new Account("test1", "Test1Test1Test1", "test1", "test1", "test1@email.com", null, false);
 
-        Mockito.when(accountRepository.save(ArgumentMatchers.any(Account.class)))
-                .thenReturn(savedAccount);
-
         // ACTION
-        Account retrievedAccount = accountServiceImpl.createNewAccount(savedAccount);
+        Account retrievedAccount = accountServiceImpl.createNewAccount(unsavedAccount);
 
         // ASSERTION
         assertNotNull(retrievedAccount.getAccountId());
-        assertNotNull(savedAccount.getAccountId());
-        assertEquals(retrievedAccount.getAccountId().longValue(), savedAccount.getAccountId().longValue());
+        assertEquals(retrievedAccount.getName(), savedAccount.getName());
     }
 
     @Test(expected = InputDataValidationException.class)
@@ -61,28 +57,9 @@ public class AccountServiceImplIntegrationTest
         // PREPARATION
         Account unsavedAccount = new Account("test1", "Test1Test1Test1", "test1", "test1", "test1", null, false);
 
-        Mockito.when(accountRepository.save(ArgumentMatchers.any(Account.class)))
-                .thenReturn(unsavedAccount);
-
         // ACTION
         accountServiceImpl.createNewAccount(unsavedAccount);
     }
-
-    @Test(expected = AccountUsernameExistException.class)
-    public void whenCreateNewAccount_thenThrowAccountUsernameExistException() throws Exception
-    {
-        // PREPARATION
-        Account unsavedAccount = new Account("test1", "Test1Test1Test1", "test1", "test1", "test1@email.com", null, false);
-        Account savedAccount = new Account(1L,"test1", "Test1Test1Test1", "test1", "test1", "test1@email.com", null, false);
-
-        Mockito.when(accountRepository.save(unsavedAccount))
-                .thenReturn(savedAccount);
-
-        // ACTION
-        accountServiceImpl.createNewAccount(unsavedAccount);
-        accountServiceImpl.createNewAccount(unsavedAccount);
-    }
-
 
     @Test
     public void whenGetAccount_thenReturnAccount() throws Exception
@@ -97,9 +74,7 @@ public class AccountServiceImplIntegrationTest
         Account retrievedAccount = accountServiceImpl.getAccountByAccountId(1L);
 
         // ASSERTION
-        assertNotNull(savedAccount.getAccountId());
-        assertNotNull(retrievedAccount.getAccountId());
-        assertEquals(savedAccount.getAccountId().longValue(), retrievedAccount.getAccountId().longValue());
+        assertEquals(retrievedAccount.getName(), savedAccount.getName());
     }
 
     @Test
