@@ -1,16 +1,10 @@
 package com.spring.kodo.controller;
 
-import com.spring.kodo.entity.Lesson;
-import com.spring.kodo.entity.Quiz;
-import com.spring.kodo.entity.QuizQuestion;
-import com.spring.kodo.entity.QuizQuestionOption;
+import com.spring.kodo.entity.*;
 import com.spring.kodo.restentity.request.CreateNewQuizReq;
 import com.spring.kodo.restentity.request.UpdateQuizReq;
 import com.spring.kodo.restentity.response.QuizWithStudentAttemptCountResp;
-import com.spring.kodo.service.inter.LessonService;
-import com.spring.kodo.service.inter.QuizQuestionOptionService;
-import com.spring.kodo.service.inter.QuizQuestionService;
-import com.spring.kodo.service.inter.QuizService;
+import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +22,9 @@ import java.util.stream.Collectors;
 public class QuizController
 {
     Logger logger = LoggerFactory.getLogger(QuizController.class);
+
+    @Autowired
+    private AccountService accountService;
 
     @Autowired
     private QuizService quizService;
@@ -128,6 +125,28 @@ public class QuizController
             return this.quizService.getQuizByQuizId(quizId);
         }
         catch (QuizNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
+    @GetMapping("/getQuizByQuizId/{quizId}/{accountId}")
+    public Quiz getQuizByQuizIdAndAccountId(@PathVariable Long quizId, @PathVariable Long accountId)
+    {
+        try
+        {
+            Account account = accountService.getAccountByQuizId(quizId);
+
+            if (account.getAccountId().equals(accountId))
+            {
+                return this.quizService.getQuizByQuizId(quizId);
+            }
+            else
+            {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have access to this quiz");
+            }
+        }
+        catch (AccountNotFoundException | QuizNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
