@@ -50,6 +50,13 @@ public class EnrolledCourse
         this.courseRating = courseRating;
     }
 
+    public EnrolledCourse(Long enrolledCourseId, Integer courseRating)
+    {
+        this(courseRating);
+
+        this.enrolledCourseId = enrolledCourseId;
+    }
+
     public Long getEnrolledCourseId()
     {
         return enrolledCourseId;

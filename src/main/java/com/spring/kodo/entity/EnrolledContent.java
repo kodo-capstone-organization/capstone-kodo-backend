@@ -36,6 +36,12 @@ public class EnrolledContent
         this.studentAttempts = new ArrayList<>();
     }
 
+    public EnrolledContent(Long enrolledContentId)
+    {
+        this();
+        this.enrolledContentId = enrolledContentId;
+    }
+
     public Long getEnrolledContentId()
     {
         return enrolledContentId;
