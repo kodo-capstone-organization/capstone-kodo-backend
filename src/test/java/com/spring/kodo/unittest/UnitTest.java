@@ -8,7 +8,8 @@ import org.junit.runners.Suite;
         AccountServiceImplUnitTest.class,
         ContentServiceImplUnitTest.class,
         CourseServiceImplUnitTest.class,
-        TagServiceImplUnitTest.class
+        TagServiceImplUnitTest.class,
+        TransactionServiceImplUnitTest.class
 })
 public class UnitTest
 {
