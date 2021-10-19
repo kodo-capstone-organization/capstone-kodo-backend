@@ -7,7 +7,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         AccountServiceImplUnitTest.class,
         ContentServiceImplUnitTest.class,
-        CourseServiceImplUnitTest.class
+        CourseServiceImplUnitTest.class,
+        TagServiceImplUnitTest.class
 })
 public class UnitTest
 {
