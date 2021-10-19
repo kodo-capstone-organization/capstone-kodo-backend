@@ -130,7 +130,7 @@ public class QuizController
         }
     }
 
-    @GetMapping("/getQuizByQuizId/{quizId}/{accountId}")
+    @GetMapping("/getQuizByQuizIdAndAccountId/{quizId}/{accountId}")
     public Quiz getQuizByQuizIdAndAccountId(@PathVariable Long quizId, @PathVariable Long accountId)
     {
         try
