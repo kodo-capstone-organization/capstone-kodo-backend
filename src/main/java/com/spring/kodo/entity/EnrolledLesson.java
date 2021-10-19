@@ -35,6 +35,12 @@ public class EnrolledLesson
         this.enrolledContents = new ArrayList<>();
     }
 
+    public EnrolledLesson(Long enrolledLessonId)
+    {
+        this();
+        this.enrolledLessonId = enrolledLessonId;
+    }
+
     public Long getEnrolledLessonId()
     {
         return enrolledLessonId;
