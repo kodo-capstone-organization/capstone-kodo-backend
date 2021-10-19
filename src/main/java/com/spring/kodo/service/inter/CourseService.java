@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface CourseService
 {
-    Course createNewCourse(Course newCourse, Long tutorId, List<String> tagTitles)
+    Course createNewCourse(Course newCourse, List<String> tagTitles)
             throws CreateNewCourseException,
             UpdateCourseException,
             TagNotFoundException,

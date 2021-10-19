@@ -47,7 +47,7 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
-    public Course createNewCourse(Course newCourse, Long tutorId, List<String> tagTitles)
+    public Course createNewCourse(Course newCourse, List<String> tagTitles)
             throws CreateNewCourseException,
             UpdateCourseException,
             TagNotFoundException,

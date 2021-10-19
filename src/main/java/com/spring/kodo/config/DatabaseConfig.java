@@ -358,7 +358,7 @@ public class DatabaseConfig
                 tagTitles.add(tagTitle);
                 tagTitles.add(LEVELS.get(j).toLowerCase(Locale.ROOT));
 
-                courseService.createNewCourse(course, tutor.getAccountId(), tagTitles);
+                courseService.createNewCourse(course, tagTitles);
 
                 accountService.updateAccount(tutor);
                 accountService.addCourseToAccount(tutor, course);

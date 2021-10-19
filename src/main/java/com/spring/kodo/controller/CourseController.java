@@ -342,7 +342,7 @@ public class CourseController
             try
             {
                 Course newCourse = new Course(createNewCourseReq.getName(), createNewCourseReq.getDescription(), createNewCourseReq.getPrice(), "");
-                newCourse = this.courseService.createNewCourse(newCourse, createNewCourseReq.getTutorId(), createNewCourseReq.getTagTitles());
+                newCourse = this.courseService.createNewCourse(newCourse, createNewCourseReq.getTagTitles());
 
                 // Handle banner picture upload
                 if (bannerPicture != null)
