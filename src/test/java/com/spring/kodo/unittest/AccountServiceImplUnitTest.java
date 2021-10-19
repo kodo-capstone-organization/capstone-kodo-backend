@@ -1,4 +1,4 @@
-package com.spring.kodo.integrationtest;
+package com.spring.kodo.unittest;
 
 import com.spring.kodo.entity.Account;
 import com.spring.kodo.repository.AccountRepository;
