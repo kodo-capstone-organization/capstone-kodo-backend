@@ -11,7 +11,8 @@ import org.junit.runners.Suite;
         TransactionServiceImplUnitTest.class,
         EnrolledContentServiceImplUnitTest.class,
         EnrolledLessonServiceImplUnitTest.class,
-        TagServiceImplUnitTest.class
+        TagServiceImplUnitTest.class,
+        ForumCategoryServiceImplUnitTest.class
 })
 public class UnitTest
 {
