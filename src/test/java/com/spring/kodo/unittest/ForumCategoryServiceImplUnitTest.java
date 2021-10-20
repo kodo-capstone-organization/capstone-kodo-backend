@@ -109,8 +109,6 @@ public class ForumCategoryServiceImplUnitTest
         // ACTION
         List<ForumCategory> retrievedForumCategories = forumCategoryServiceImpl.getAllForumCategories();
 
-        assertEquals(forumCategoriesSize, retrievedForumCategories.size());
-
         // ASSERTION
         for (int i = 0; i < forumCategoriesSize; i++)
         {

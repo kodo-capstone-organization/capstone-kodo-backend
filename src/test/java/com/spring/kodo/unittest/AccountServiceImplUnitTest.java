@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -316,8 +315,6 @@ public class AccountServiceImplUnitTest
         // ASSERTION
         for (int i = 0; i < accountsSize; i++)
         {
-            assertNotNull(savedAccounts.get(i).getAccountId());
-            assertNotNull(retrievedAccounts.get(i).getAccountId());
             assertEquals(savedAccounts.get(i).getAccountId().longValue(), retrievedAccounts.get(i).getAccountId().longValue());
         }
     }

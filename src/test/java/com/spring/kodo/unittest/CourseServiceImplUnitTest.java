@@ -63,37 +63,6 @@ public class CourseServiceImplUnitTest
         assertEquals(savedCourse.getName(), retrievedCourse.getName());
     }
 
-    // Cannot invoke "com.spring.kodo.entity.Tag.getTitle()" because "tag" is null
-//    @Test
-//    public void whenCreateNewCourseWithTags_thenReturnCourse() throws Exception
-//    {
-//        // PREPARATION
-//        List<String> tagTitles = Arrays.asList("Java", "C#", "C", "Test");
-//        List<Tag> savedTags = new ArrayList<>();
-//
-//        for (int i = 1; i <= tagTitles.size(); i++)
-//        {
-//            savedTags.add(new Tag((long) i, tagTitles.get(i - 1)));
-//        }
-//
-//        Course unsavedCourse = new Course("test course", "test description", BigDecimal.TEN, "");
-//        Course savedCourse = new Course(1L, "test course", "test description", BigDecimal.TEN, "");
-//
-//        // ACTION
-//        Mockito.when(courseRepository.saveAndFlush(ArgumentMatchers.any(Course.class))).thenReturn(savedCourse);
-//
-//        for (Tag savedTag : savedTags)
-//        {
-//            Mockito.when(tagService.getTagByTitleOrCreateNew(savedTag.getTitle())).thenReturn(savedTag);
-//            Mockito.when(tagRepository.findByTitle(savedTag.getTitle())).thenReturn(Optional.of(savedTag));
-//        }
-//
-//        Course retrievedCourse = courseServiceImpl.createNewCourse(unsavedCourse, tagTitles);
-//
-//        // ASSERTION
-//        assertEquals(savedCourse.getName(), retrievedCourse.getName());
-//    }
-
     @Test
     public void whenGetCourseByCourseId_thenReturnCourse() throws Exception
     {

@@ -220,7 +220,7 @@ public class EnrolledContentServiceImplUnitTest
         Mockito.when(enrolledCourseService.checkDateTimeOfCompletionOfEnrolledCourseByEnrolledLessonId(ArgumentMatchers.anyLong(), ArgumentMatchers.any())).thenReturn(savedEnrolledCourse);
 
         // ACTION
-        EnrolledContent retrievedEnrolledContent = enrolledContentServiceImpl.setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(true, 2L);
+        EnrolledContent retrievedEnrolledContent = enrolledContentServiceImpl.setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(true, ArgumentMatchers.anyLong());
 
         // ASSERTION
         assertEquals(savedEnrolledContentWithDate.getDateTimeOfCompletion().getYear(), retrievedEnrolledContent.getDateTimeOfCompletion().getYear());
