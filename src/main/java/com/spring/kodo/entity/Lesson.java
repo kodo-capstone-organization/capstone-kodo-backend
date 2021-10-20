@@ -62,6 +62,13 @@ public class Lesson
         this.sequence = sequence;
     }
 
+    public Lesson(Long lessonId, String name, String description, Integer sequence)
+    {
+        this(name, description, sequence);
+
+        this.lessonId = lessonId;
+    }
+
     public Long getLessonId()
     {
         return lessonId;

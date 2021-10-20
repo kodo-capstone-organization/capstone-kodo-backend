@@ -10,6 +10,7 @@ import org.junit.runners.Suite;
         CourseServiceImplUnitTest.class,
         TransactionServiceImplUnitTest.class,
         EnrolledContentServiceImplUnitTest.class,
+        EnrolledLessonServiceImplUnitTest.class,
         TagServiceImplUnitTest.class
 })
 public class UnitTest
