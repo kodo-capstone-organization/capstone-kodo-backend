@@ -1,7 +1,6 @@
 package com.spring.kodo.unittest;
 
 import com.spring.kodo.entity.*;
-import com.spring.kodo.repository.ContentRepository;
 import com.spring.kodo.repository.EnrolledContentRepository;
 import com.spring.kodo.service.impl.EnrolledContentServiceImpl;
 import com.spring.kodo.service.inter.ContentService;
@@ -9,6 +8,7 @@ import com.spring.kodo.service.inter.EnrolledCourseService;
 import com.spring.kodo.service.inter.EnrolledLessonService;
 import com.spring.kodo.util.enumeration.MultimediaType;
 import com.spring.kodo.util.exception.EnrolledContentNotFoundException;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -20,12 +20,12 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 @RunWith(MockitoJUnitRunner.class)
 @TestMethodOrder(MethodOrderer.Alphanumeric.class)
@@ -46,41 +46,101 @@ public class EnrolledContentServiceImplUnitTest
     @Mock
     private ContentService contentService;
 
-    @Test
-    public void whenCreateNewEnrolledContent_thenReturnEnrolledContent() throws Exception
+    private Content savedMultimedia;
+    private Content savedQuiz;
+
+    private EnrolledContent savedEnrolledContentWithMultimedia;
+    private EnrolledContent unsavedEnrolledContentWithMultimedia;
+    private EnrolledContent savedEnrolledContentWithQuiz;
+    private EnrolledContent unsavedEnrolledContentWithQuiz;
+    private EnrolledContent savedEnrolledContentWithDate;
+    private EnrolledContent unsavedEnrolledContentWithDate;
+
+    private EnrolledLesson savedEnrolledLesson;
+    private EnrolledCourse savedEnrolledCourse;
+
+    @Before
+    public void setup()
     {
-        // PREPARATION
-        EnrolledContent savedEnrolledContent = new EnrolledContent(1L);
-        EnrolledContent unsavedEnrolledContent = new EnrolledContent();
+        savedMultimedia = new Multimedia(1L, "Lecture 1 Multimedia", "Lecture 1 Multimedia", "https://www.youtube.com/watch?v=7FJQ0TdsMxI", MultimediaType.VIDEO);
+        savedQuiz = new Quiz(1L, "Lecture 1 Quiz", "Lecture 1 Quiz", LocalTime.of(1, 0, 0), 100);
 
-        Content savedContent = new Multimedia(1L, "test", "test", "http://test.com", MultimediaType.DOCUMENT);
-        savedEnrolledContent.setParentContent(savedContent);
-        unsavedEnrolledContent.setParentContent(savedContent);
+        savedEnrolledContentWithMultimedia = new EnrolledContent(1L);
+        unsavedEnrolledContentWithMultimedia = new EnrolledContent();
 
-        // ACTION
-        Mockito.when(enrolledContentRepository.saveAndFlush(ArgumentMatchers.any(EnrolledContent.class))).thenReturn(savedEnrolledContent);
-        Mockito.when(contentService.getContentByContentId(1L)).thenReturn(savedContent);
+        savedEnrolledContentWithMultimedia.setParentContent(savedMultimedia);
+        unsavedEnrolledContentWithMultimedia.setParentContent(savedMultimedia);
 
-        EnrolledContent retrievedEnrolledContent = enrolledContentServiceImpl.createNewEnrolledContent(1L);
+        savedEnrolledContentWithQuiz = new EnrolledContent(1L);
+        unsavedEnrolledContentWithQuiz = new EnrolledContent();
 
-        // ASSERTION
-        assertEquals(savedEnrolledContent.getDateTimeOfCompletion(), retrievedEnrolledContent.getDateTimeOfCompletion());
+        savedEnrolledContentWithQuiz.setParentContent(savedQuiz);
+        unsavedEnrolledContentWithQuiz.setParentContent(savedQuiz);
+
+        savedEnrolledContentWithDate = new EnrolledContent(1L);
+        unsavedEnrolledContentWithDate = new EnrolledContent();
+
+        savedEnrolledContentWithDate.setDateTimeOfCompletion(LocalDateTime.now());
+        unsavedEnrolledContentWithDate.setDateTimeOfCompletion(LocalDateTime.now());
+
+        savedEnrolledLesson = new EnrolledLesson(1L);
+        savedEnrolledCourse = new EnrolledCourse(1L, 5);
     }
 
     @Test
-    public void whenGetEnrolledContentByEnrolledContentId_thenReturnEnrolledContent() throws Exception
+    public void whenCreateNewEnrolledContentWithMultimedia_thenReturnEnrolledContentWithMultimedia() throws Exception
     {
         // PREPARATION
-        EnrolledContent savedEnrolledContent = Mockito.mock(EnrolledContent.class);
+        Mockito.when(enrolledContentRepository.saveAndFlush(ArgumentMatchers.any(EnrolledContent.class))).thenReturn(savedEnrolledContentWithMultimedia);
+        Mockito.when(contentService.getContentByContentId(ArgumentMatchers.anyLong())).thenReturn(savedMultimedia);
 
+        // ACTION
+        EnrolledContent retrievedEnrolledContent = enrolledContentServiceImpl.createNewEnrolledContent(1L);
+
+        // ASSERTION
+        assertEquals(savedEnrolledContentWithMultimedia.getDateTimeOfCompletion(), retrievedEnrolledContent.getDateTimeOfCompletion());
+    }
+
+    @Test
+    public void whenCreateNewEnrolledContentWithQuiz_thenReturnEnrolledContentWithQuiz() throws Exception
+    {
+        // PREPARATION
+        Mockito.when(enrolledContentRepository.saveAndFlush(ArgumentMatchers.any(EnrolledContent.class))).thenReturn(savedEnrolledContentWithQuiz);
+        Mockito.when(contentService.getContentByContentId(ArgumentMatchers.anyLong())).thenReturn(savedQuiz);
+
+        // ACTION
+        EnrolledContent retrievedEnrolledContent = enrolledContentServiceImpl.createNewEnrolledContent(1L);
+
+        // ASSERTION
+        assertEquals(savedEnrolledContentWithQuiz.getDateTimeOfCompletion(), retrievedEnrolledContent.getDateTimeOfCompletion());
+    }
+
+    @Test
+    public void whenGetEnrolledContentByEnrolledContentId_thenReturnEnrolledContentWithMultimedia() throws Exception
+    {
+        // PREPARATION
         Mockito.when(enrolledContentRepository.findById(ArgumentMatchers.anyLong()))
-                .thenReturn(Optional.of(savedEnrolledContent));
+                .thenReturn(Optional.of(savedEnrolledContentWithMultimedia));
 
         // ACTION
         EnrolledContent retrievedEnrolledContent = enrolledContentServiceImpl.getEnrolledContentByEnrolledContentId(ArgumentMatchers.anyLong());
 
         // ASSERTION
-        assertEquals(savedEnrolledContent.getEnrolledContentId(), retrievedEnrolledContent.getEnrolledContentId());
+        assertEquals(savedEnrolledContentWithMultimedia.getEnrolledContentId(), retrievedEnrolledContent.getEnrolledContentId());
+    }
+
+    @Test
+    public void whenGetEnrolledContentByEnrolledContentId_thenReturnEnrolledContentWithQuiz() throws Exception
+    {
+        // PREPARATION
+        Mockito.when(enrolledContentRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.of(savedEnrolledContentWithQuiz));
+
+        // ACTION
+        EnrolledContent retrievedEnrolledContent = enrolledContentServiceImpl.getEnrolledContentByEnrolledContentId(ArgumentMatchers.anyLong());
+
+        // ASSERTION
+        assertEquals(savedEnrolledContentWithQuiz.getEnrolledContentId(), retrievedEnrolledContent.getEnrolledContentId());
     }
 
     @Test(expected = EnrolledContentNotFoundException.class)
@@ -91,19 +151,31 @@ public class EnrolledContentServiceImplUnitTest
     }
 
     @Test
-    public void whenGetEnrolledContentByAccountIdAndContentId_thenReturnEnrolledContent() throws Exception
+    public void whenGetEnrolledContentByAccountIdAndContentId_thenReturnEnrolledContentWithMultimedia() throws Exception
     {
         // PREPARATION
-        EnrolledContent savedEnrolledContent = Mockito.mock(EnrolledContent.class);
-
         Mockito.when(enrolledContentRepository.findByAccountIdAndContentId(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong()))
-                .thenReturn(Optional.of(savedEnrolledContent));
+                .thenReturn(Optional.of(savedEnrolledContentWithMultimedia));
 
         // ACTION
         EnrolledContent retrievedEnrolledContent = enrolledContentServiceImpl.getEnrolledContentByAccountIdAndContentId(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong());
 
         // ASSERTION
-        assertEquals(savedEnrolledContent.getEnrolledContentId(), retrievedEnrolledContent.getEnrolledContentId());
+        assertEquals(savedEnrolledContentWithMultimedia.getEnrolledContentId(), retrievedEnrolledContent.getEnrolledContentId());
+    }
+
+    @Test
+    public void whenGetEnrolledContentByAccountIdAndContentId_thenReturnEnrolledContentWithQuiz() throws Exception
+    {
+        // PREPARATION
+        Mockito.when(enrolledContentRepository.findByAccountIdAndContentId(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.of(savedEnrolledContentWithQuiz));
+
+        // ACTION
+        EnrolledContent retrievedEnrolledContent = enrolledContentServiceImpl.getEnrolledContentByAccountIdAndContentId(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong());
+
+        // ASSERTION
+        assertEquals(savedEnrolledContentWithQuiz.getEnrolledContentId(), retrievedEnrolledContent.getEnrolledContentId());
     }
 
     @Test(expected = EnrolledContentNotFoundException.class)
@@ -139,34 +211,22 @@ public class EnrolledContentServiceImplUnitTest
         }
     }
 
-//    @Test
-//    public void whenSetDateTimeOfCompletionOfEnrolledContentByEnrolledContentId_thenReturnEnrolledContent() throws Exception
-//    {
-//        // PREPARATION
-//        EnrolledContent savedEnrolledContent = new EnrolledContent(1L);
-//        EnrolledContent savedEnrolledContentWithDate = new EnrolledContent(1L);
-//        savedEnrolledContentWithDate.setDateTimeOfCompletion(LocalDateTime.now());
-//
-//        EnrolledLesson enrolledLesson = new EnrolledLesson(1L);
-//        enrolledLesson.setParentLesson(new Lesson());
-//
-//        EnrolledCourse enrolledCourse = new EnrolledCourse(1L, 5);
-//        enrolledCourse.setParentCourse(new Course());
-//
-//        // ACTION
-//        Mockito.when(enrolledContentRepository.saveAndFlush(ArgumentMatchers.any(EnrolledContent.class))).thenReturn(savedEnrolledContentWithDate);
-//        Mockito.when(enrolledContentRepository.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.of(savedEnrolledContent));
-//        Mockito.when(enrolledLessonService.checkDateTimeOfCompletionOfEnrolledLessonByEnrolledContentId(1L, LocalDateTime.now())).thenReturn(enrolledLesson);
-//        Mockito.when(enrolledCourseService.checkDateTimeOfCompletionOfEnrolledCourseByEnrolledLessonId(1L, LocalDateTime.now())).thenReturn(enrolledCourse);
-//
-//        assertNotNull(enrolledLessonService.checkDateTimeOfCompletionOfEnrolledLessonByEnrolledContentId(1L, LocalDateTime.now()));
-//        assertNotNull(enrolledLessonService.checkDateTimeOfCompletionOfEnrolledLessonByEnrolledContentId(1L, LocalDateTime.now()).getEnrolledLessonId());
-//
-//        EnrolledContent retrievedEnrolledContent = enrolledContentServiceImpl.setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(true, 1L);
-//
-//        // ASSERTION
-//        assertEquals(savedEnrolledContentWithDate.getDateTimeOfCompletion(), retrievedEnrolledContent.getDateTimeOfCompletion());
-//    }
+    @Test
+    public void whenSetDateTimeOfCompletionOfEnrolledContentByEnrolledContentId_thenReturnEnrolledContent() throws Exception
+    {
+        // PREPARATION
+        Mockito.when(enrolledContentRepository.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.of(savedEnrolledContentWithMultimedia));
+        Mockito.when(enrolledLessonService.checkDateTimeOfCompletionOfEnrolledLessonByEnrolledContentId(1L, LocalDateTime.now())).thenReturn(savedEnrolledLesson);
+        Mockito.when(enrolledCourseService.checkDateTimeOfCompletionOfEnrolledCourseByEnrolledLessonId(1L, LocalDateTime.now())).thenReturn(savedEnrolledCourse);
+
+        // ACTION
+        EnrolledContent retrievedEnrolledContent = enrolledContentServiceImpl.setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(true, ArgumentMatchers.anyLong());
+
+        // ASSERTION
+        assertEquals(savedEnrolledContentWithDate.getDateTimeOfCompletion().getYear(), retrievedEnrolledContent.getDateTimeOfCompletion().getYear());
+        assertEquals(savedEnrolledContentWithDate.getDateTimeOfCompletion().getMonth(), retrievedEnrolledContent.getDateTimeOfCompletion().getMonth());
+        assertEquals(savedEnrolledContentWithDate.getDateTimeOfCompletion().getDayOfMonth(), retrievedEnrolledContent.getDateTimeOfCompletion().getDayOfMonth());
+    }
 
     @Test(expected = EnrolledContentNotFoundException.class)
     public void whenSetDateTimeOfCompletionOfEnrolledContentByEnrolledContentId_thenEnrolledContentNotFoundException() throws Exception

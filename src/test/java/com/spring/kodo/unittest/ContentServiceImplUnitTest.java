@@ -38,7 +38,7 @@ public class ContentServiceImplUnitTest
     private Content savedQuiz;
 
     @Before
-    public void setUp()
+    public void setup()
     {
         savedMultimedia = new Multimedia(1L, "Lecture 1 Multimedia", "Lecture 1 Multimedia", "https://www.youtube.com/watch?v=7FJQ0TdsMxI", MultimediaType.VIDEO);
         savedQuiz = new Quiz(2L, "Lecture 1 Quiz", "Lecture 1 Quiz", LocalTime.of(1, 0, 0), 100);

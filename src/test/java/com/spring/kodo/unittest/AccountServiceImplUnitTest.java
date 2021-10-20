@@ -41,7 +41,7 @@ public class AccountServiceImplUnitTest
     private Account wrongEmailAccount;
 
     @Before
-    public void setUp() throws Exception
+    public void setup() throws Exception
     {
         savedAccount = new Account(1L, "emily", "EmilyChariot1", "Emily Chariot", "Hi! I am Emily Chariot", "emilychartiot1@gmail.com", null, false);
         savedAdminAccount = new Account(1L, "emilyadmin", "EmilyChariotAdmin1", "Emily Chariot Admin", "Hi! I am Emily Chariot Admin", "emilychartiotadmin1@gmail.com", null, true);
