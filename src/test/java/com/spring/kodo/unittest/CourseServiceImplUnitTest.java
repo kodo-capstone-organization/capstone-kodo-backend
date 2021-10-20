@@ -4,6 +4,7 @@ import com.spring.kodo.entity.Course;
 import com.spring.kodo.repository.CourseRepository;
 import com.spring.kodo.service.impl.CourseServiceImpl;
 import com.spring.kodo.util.exception.CourseNotFoundException;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -16,6 +17,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,19 +34,30 @@ public class CourseServiceImplUnitTest
     @Mock
     private CourseRepository courseRepository;
 
+    private Course savedCourse;
+    private Course unsavedCourse;
+
+    private List<String> emptyTagTitles;
+    private List<String> tagTitles;
+
+    @Before
+    public void setup()
+    {
+        savedCourse = new Course(1L, "Java Course", "Java Course Description", BigDecimal.TEN, "https://helpx.adobe.com/content/dam/help/en/photos…before_and_after/image-before/Landscape-Color.jpg");
+        unsavedCourse = new Course("Java Course", "Java Course Description", BigDecimal.TEN, "https://helpx.adobe.com/content/dam/help/en/photos…before_and_after/image-before/Landscape-Color.jpg");
+
+        emptyTagTitles = new ArrayList<>();
+        tagTitles = Arrays.asList("Java", "C#", "C", "Test");
+    }
+
     @Test
     public void whenCreateNewCourse_thenReturnCourse() throws Exception
     {
         // PREPARATION
-        List<String> tagTitles = new ArrayList<>();
-
-        Course unsavedCourse = new Course("test course", "test description", BigDecimal.TEN, "");
-        Course savedCourse = new Course(1L, "test course", "test description", BigDecimal.TEN, "");
-
-        // ACTION
         Mockito.when(courseRepository.saveAndFlush(ArgumentMatchers.any(Course.class))).thenReturn(savedCourse);
 
-        Course retrievedCourse = courseServiceImpl.createNewCourse(unsavedCourse, tagTitles);
+        // ACTION
+        Course retrievedCourse = courseServiceImpl.createNewCourse(unsavedCourse, emptyTagTitles);
 
         // ASSERTION
         assertEquals(savedCourse.getName(), retrievedCourse.getName());
@@ -85,8 +98,6 @@ public class CourseServiceImplUnitTest
     public void whenGetCourseByCourseId_thenReturnCourse() throws Exception
     {
         // PREPARATION
-        Course savedCourse = Mockito.mock(Course.class);
-
         Mockito.when(courseRepository.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(savedCourse));
 
@@ -108,8 +119,6 @@ public class CourseServiceImplUnitTest
     public void whenGetCourseByLessonId_thenReturnLesson() throws Exception
     {
         // PREPARATION
-        Course savedCourse = Mockito.mock(Course.class);
-
         Mockito.when(courseRepository.findByLessonId(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(savedCourse));
 
@@ -131,8 +140,6 @@ public class CourseServiceImplUnitTest
     public void whenGetCourseByName_thenReturnLesson() throws Exception
     {
         // PREPARATION
-        Course savedCourse = Mockito.mock(Course.class);
-
         Mockito.when(courseRepository.findByName(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.of(savedCourse));
 
@@ -154,8 +161,6 @@ public class CourseServiceImplUnitTest
     public void whenGetCourseByContentId_thenReturnContent() throws Exception
     {
         // PREPARATION
-        Course savedCourse = Mockito.mock(Course.class);
-
         Mockito.when(courseRepository.findByContentId(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(savedCourse));
 
@@ -177,8 +182,6 @@ public class CourseServiceImplUnitTest
     public void whenGetCourseByEnrolledContentId_thenReturnEnrolledContent() throws Exception
     {
         // PREPARATION
-        Course savedCourse = Mockito.mock(Course.class);
-
         Mockito.when(courseRepository.findByEnrolledContentId(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(savedCourse));
 
@@ -200,8 +203,6 @@ public class CourseServiceImplUnitTest
     public void whenGetCourseByStudentAttemptId_thenReturnStudentAttempt() throws Exception
     {
         // PREPARATION
-        Course savedCourse = Mockito.mock(Course.class);
-
         Mockito.when(courseRepository.findByStudentAttemptId(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(savedCourse));
 
