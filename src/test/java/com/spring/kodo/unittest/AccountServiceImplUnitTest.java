@@ -6,6 +6,7 @@ import com.spring.kodo.service.impl.AccountServiceImpl;
 import com.spring.kodo.util.exception.AccountNotFoundException;
 import com.spring.kodo.util.exception.InputDataValidationException;
 import com.spring.kodo.util.exception.InvalidLoginCredentialsException;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -34,14 +35,23 @@ public class AccountServiceImplUnitTest
     @Mock
     private AccountRepository accountRepository;
 
+    private Account savedAccount;
+    private Account savedAdminAccount;
+    private Account unsavedAccount;
+    private Account wrongEmailAccount;
+
+    @Before
+    public void setUp() throws Exception
+    {
+        savedAccount = new Account(1L, "emily", "EmilyChariot1", "Emily Chariot", "Hi! I am Emily Chariot", "emilychartiot1@gmail.com", null, false);
+        savedAdminAccount = new Account(1L, "emilyadmin", "EmilyChariotAdmin1", "Emily Chariot Admin", "Hi! I am Emily Chariot Admin", "emilychartiotadmin1@gmail.com", null, true);
+        unsavedAccount = new Account("emily", "EmilyChariot1", "Emily Chariot", "Hi! I am Emily Chariot", "emilychartiot1@gmail.com", null, false);
+        wrongEmailAccount = new Account("emily", "EmilyChariot1", "Emily Chariot", "Hi! I am Emily Chariot", "emilychartiot1", null, false);
+    }
 
     @Test
     public void whenCreateNewAccount_thenReturnAccount() throws Exception
     {
-        // PREPARATION
-        Account savedAccount = new Account(1L, "test1", "Test1Test1Test1", "test1", "test1", "test1@email.com", null, false);
-        Account unsavedAccount = new Account("test1", "Test1Test1Test1", "test1", "test1", "test1@email.com", null, false);
-
         Mockito.when(accountRepository.saveAndFlush(ArgumentMatchers.any(Account.class))).thenReturn(savedAccount);
 
         // ACTION
@@ -54,19 +64,13 @@ public class AccountServiceImplUnitTest
     @Test(expected = InputDataValidationException.class)
     public void whenCreateNewAccount_thenInputDataValidationException() throws Exception
     {
-        // PREPARATION
-        Account unsavedAccount = new Account("test1", "Test1Test1Test1", "test1", "test1", "test1", null, false);
-
         // ACTION
-        accountServiceImpl.createNewAccount(unsavedAccount);
+        accountServiceImpl.createNewAccount(wrongEmailAccount);
     }
 
     @Test
     public void whenGetAccountByAccountId_thenReturnAccount() throws Exception
     {
-        // PREPARATION
-        Account savedAccount = Mockito.mock(Account.class);
-
         Mockito.when(accountRepository.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(savedAccount));
 
@@ -87,9 +91,6 @@ public class AccountServiceImplUnitTest
     @Test
     public void whenGetAccountByUsername_thenReturnAccount() throws Exception
     {
-        // PREPARATION
-        Account savedAccount = Mockito.mock(Account.class);
-
         Mockito.when(accountRepository.findByUsername(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.of(savedAccount));
 
@@ -110,9 +111,6 @@ public class AccountServiceImplUnitTest
     @Test
     public void whenGetAccountByEmail_thenReturnAccount() throws Exception
     {
-        // PREPARATION
-        Account savedAccount = Mockito.mock(Account.class);
-
         Mockito.when(accountRepository.findByEmail(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.of(savedAccount));
 
@@ -133,9 +131,6 @@ public class AccountServiceImplUnitTest
     @Test
     public void whenGetAccountByCourseId_thenReturnAccount() throws Exception
     {
-        // PREPARATION
-        Account savedAccount = Mockito.mock(Account.class);
-
         Mockito.when(accountRepository.findByCourseId(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(savedAccount));
 
@@ -156,9 +151,6 @@ public class AccountServiceImplUnitTest
     @Test
     public void whenGetAccountByLessonId_thenReturnAccount() throws Exception
     {
-        // PREPARATION
-        Account savedAccount = Mockito.mock(Account.class);
-
         Mockito.when(accountRepository.findByLessonId(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(savedAccount));
 
@@ -179,9 +171,6 @@ public class AccountServiceImplUnitTest
     @Test
     public void whenGetAccountByEnrolledCourseId_thenReturnAccount() throws Exception
     {
-        // PREPARATION
-        Account savedAccount = Mockito.mock(Account.class);
-
         Mockito.when(accountRepository.findByEnrolledCourseId(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(savedAccount));
 
@@ -202,9 +191,6 @@ public class AccountServiceImplUnitTest
     @Test
     public void whenGetAccountByEnrolledLessonId_thenReturnAccount() throws Exception
     {
-        // PREPARATION
-        Account savedAccount = Mockito.mock(Account.class);
-
         Mockito.when(accountRepository.findByEnrolledLessonId(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(savedAccount));
 
@@ -225,9 +211,6 @@ public class AccountServiceImplUnitTest
     @Test
     public void whenGetAccountByEnrolledContentId_thenReturnAccount() throws Exception
     {
-        // PREPARATION
-        Account savedAccount = Mockito.mock(Account.class);
-
         Mockito.when(accountRepository.findByEnrolledContentId(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(savedAccount));
 
@@ -248,9 +231,6 @@ public class AccountServiceImplUnitTest
     @Test
     public void whenGetAccountByStudentAttemptId_thenReturnAccount() throws Exception
     {
-        // PREPARATION
-        Account savedAccount = Mockito.mock(Account.class);
-
         Mockito.when(accountRepository.findByStudentAttemptId(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(savedAccount));
 
@@ -271,9 +251,6 @@ public class AccountServiceImplUnitTest
     @Test
     public void whenGetAccountByQuizId_thenReturnAccount() throws Exception
     {
-        // PREPARATION
-        Account savedAccount = Mockito.mock(Account.class);
-
         Mockito.when(accountRepository.findByQuizId(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(savedAccount));
 
@@ -348,12 +325,10 @@ public class AccountServiceImplUnitTest
     @Test
     public void whenUserLogin_thenReturnAccount() throws Exception
     {
-        Account savedAccount = new Account(1L, "test1", "Test1Test1Test1", "test1", "test1", "test1@email.com", null, false);
-
-        Mockito.when(accountRepository.findByUsername("test1"))
+        Mockito.when(accountRepository.findByUsername("emily"))
                 .thenReturn(Optional.of(savedAccount));
 
-        Account loggedInAccount = accountServiceImpl.userLogin("test1", "Test1Test1Test1");
+        Account loggedInAccount = accountServiceImpl.userLogin("emily", "EmilyChariot1");
 
         assertEquals(savedAccount.getName(), loggedInAccount.getName());
     }
@@ -361,25 +336,23 @@ public class AccountServiceImplUnitTest
     @Test(expected = InvalidLoginCredentialsException.class)
     public void whenUserLogin_thenInvalidLoginCredentialsException() throws Exception
     {
-        Account loggedInAccount = accountServiceImpl.userLogin("test1", "Test1Test1Test1");
+        Account loggedInAccount = accountServiceImpl.userLogin("emily", "EmilyChariot1");
     }
 
     @Test
     public void whenAdminLogin_thenReturnAccount() throws Exception
     {
-        Account savedAccount = new Account(1L, "test1", "Test1Test1Test1", "test1", "test1", "test1@email.com", null, true);
+        Mockito.when(accountRepository.findByUsername("emilyadmin"))
+                .thenReturn(Optional.of(savedAdminAccount));
 
-        Mockito.when(accountRepository.findByUsername("test1"))
-                .thenReturn(Optional.of(savedAccount));
+        Account loggedInAccount = accountServiceImpl.adminLogin("emilyadmin", "EmilyChariotAdmin1");
 
-        Account loggedInAccount = accountServiceImpl.adminLogin("test1", "Test1Test1Test1");
-
-        assertEquals(savedAccount.getName(), loggedInAccount.getName());
+        assertEquals(savedAdminAccount.getName(), loggedInAccount.getName());
     }
 
     @Test(expected = InvalidLoginCredentialsException.class)
     public void whenAdminLogin_thenInvalidLoginCredentialsException() throws Exception
     {
-        Account loggedInAccount = accountServiceImpl.adminLogin("test1", "Test1Test1Test1");
+        Account loggedInAccount = accountServiceImpl.adminLogin("emilyadmin", "EmilyChariotAdmin1");
     }
 }
