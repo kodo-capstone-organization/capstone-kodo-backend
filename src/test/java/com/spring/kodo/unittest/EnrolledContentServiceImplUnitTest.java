@@ -215,9 +215,9 @@ public class EnrolledContentServiceImplUnitTest
     public void whenSetDateTimeOfCompletionOfEnrolledContentByEnrolledContentId_thenReturnEnrolledContent() throws Exception
     {
         // PREPARATION
-        Mockito.when(enrolledContentRepository.findById(1L)).thenReturn(Optional.of(savedEnrolledContentWithMultimedia));
-        Mockito.when(enrolledLessonService.checkDateTimeOfCompletionOfEnrolledLessonByEnrolledContentId(1L, LocalDateTime.now())).thenReturn(savedEnrolledLesson);
-        Mockito.when(enrolledCourseService.checkDateTimeOfCompletionOfEnrolledCourseByEnrolledLessonId(1L, LocalDateTime.now())).thenReturn(savedEnrolledCourse);
+        Mockito.when(enrolledContentRepository.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.of(savedEnrolledContentWithMultimedia));
+        Mockito.when(enrolledLessonService.checkDateTimeOfCompletionOfEnrolledLessonByEnrolledContentId(ArgumentMatchers.anyLong(), ArgumentMatchers.any())).thenReturn(savedEnrolledLesson);
+        Mockito.when(enrolledCourseService.checkDateTimeOfCompletionOfEnrolledCourseByEnrolledLessonId(ArgumentMatchers.anyLong(), ArgumentMatchers.any())).thenReturn(savedEnrolledCourse);
 
         // ACTION
         EnrolledContent retrievedEnrolledContent = enrolledContentServiceImpl.setDateTimeOfCompletionOfEnrolledContentByEnrolledContentId(true, 2L);
