@@ -37,14 +37,26 @@ public class Quiz extends Content
     public Quiz()
     {
         this.quizQuestions = new ArrayList<>();
+        this.studentAttempts = new ArrayList<>();
     }
 
     public Quiz(String name, String description, LocalTime timeLimit, Integer maxAttemptsPerStudent)
     {
         super(name, description);
-        this.quizQuestions = new ArrayList<>();
+
         this.timeLimit = timeLimit;
         this.maxAttemptsPerStudent = maxAttemptsPerStudent;
+        this.quizQuestions = new ArrayList<>();
+        this.studentAttempts = new ArrayList<>();
+    }
+
+    public Quiz(Long contentId, String name, String description, LocalTime timeLimit, Integer maxAttemptsPerStudent)
+    {
+        super(contentId, name, description);
+        this.timeLimit = timeLimit;
+        this.maxAttemptsPerStudent = maxAttemptsPerStudent;
+        this.quizQuestions = new ArrayList<>();
+        this.studentAttempts = new ArrayList<>();
     }
 
     public LocalTime getTimeLimit()
