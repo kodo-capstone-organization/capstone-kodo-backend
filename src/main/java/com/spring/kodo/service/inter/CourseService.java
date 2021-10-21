@@ -33,6 +33,10 @@ public interface CourseService
 
     Course getCourseByStudentAttemptId(Long studentAttemptId) throws CourseNotFoundException;
 
+    Course getCourseByForumCategoryId(Long forumCategoryId) throws CourseNotFoundException;
+
+    Course getCourseByForumThreadId(Long forumThreadId) throws CourseNotFoundException;
+
     List<Course> getAllCoursesWithActiveEnrollment();
 
     List<Course> getCoursesPendingRequest();

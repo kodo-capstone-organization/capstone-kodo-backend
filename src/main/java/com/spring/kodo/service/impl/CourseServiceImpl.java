@@ -180,6 +180,36 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
+    public Course getCourseByForumCategoryId(Long forumCategoryId) throws CourseNotFoundException
+    {
+        Course course = courseRepository.findByForumCategoryId(forumCategoryId).orElse(null);
+
+        if (course != null)
+        {
+            return course;
+        }
+        else
+        {
+            throw new CourseNotFoundException("Course with ForumCategory ID: " + forumCategoryId + " does not exist!");
+        }
+    }
+
+    @Override
+    public Course getCourseByForumThreadId(Long forumThreadId) throws CourseNotFoundException
+    {
+        Course course = courseRepository.findByForumThreadId(forumThreadId).orElse(null);
+
+        if (course != null)
+        {
+            return course;
+        }
+        else
+        {
+            throw new CourseNotFoundException("Course with ForumThread ID: " + forumThreadId + " does not exist!");
+        }
+    }
+
+    @Override
     public List<Course> getAllCoursesWithActiveEnrollment()
     {
         return courseRepository.findAllWithActiveEnrollment();

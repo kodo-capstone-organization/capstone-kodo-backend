@@ -1,11 +1,13 @@
 package com.spring.kodo.controller;
 
+import com.spring.kodo.entity.Course;
 import com.spring.kodo.entity.ForumCategory;
 import com.spring.kodo.entity.ForumPost;
 import com.spring.kodo.entity.ForumThread;
 import com.spring.kodo.restentity.request.AddForumPostToForumThreadReq;
 import com.spring.kodo.restentity.request.CreateNewForumThreadReq;
 import com.spring.kodo.restentity.request.UpdateForumThreadReq;
+import com.spring.kodo.service.inter.CourseService;
 import com.spring.kodo.service.inter.ForumCategoryService;
 import com.spring.kodo.service.inter.ForumThreadService;
 import com.spring.kodo.util.exception.*;
@@ -31,6 +33,9 @@ public class ForumThreadController
 
     @Autowired
     private ForumCategoryService forumCategoryService;
+
+    @Autowired
+    private CourseService courseService;
 
     @PostMapping("/createNewForumThread")
     public ForumThread createNewForumThread(
@@ -89,6 +94,42 @@ public class ForumThreadController
             return forumThread;
         }
         catch (ForumThreadNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
+    @GetMapping("/getForumThreadByForumThreadIdAndCourseId/{forumThreadId}/{courseId}")
+    public ForumThread getForumThreadByForumThreadIdAndCourseId(@PathVariable Long forumThreadId, @PathVariable Long courseId)
+    {
+        try
+        {
+            Course course = this.courseService.getCourseByForumThreadId(forumThreadId);
+
+            if (course.getCourseId().equals(courseId))
+            {
+                ForumThread forumThread = this.forumThreadService.getForumThreadByForumThreadId(forumThreadId);
+
+                forumThread.getAccount().setCourses(null);
+                forumThread.getAccount().setEnrolledCourses(null);
+                forumThread.getAccount().setInterests(null);
+
+                for (ForumPost forumPost : forumThread.getForumPosts())
+                {
+                    forumPost.getAccount().setCourses(null);
+                    forumPost.getAccount().setEnrolledCourses(null);
+                    forumPost.getAccount().setInterests(null);
+                    forumPost.setParentForumPost(null);
+                }
+
+                return forumThread;
+            }
+            else
+            {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have access to this forum thread");
+            }
+        }
+        catch (CourseNotFoundException | ForumThreadNotFoundException ex)
         {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
