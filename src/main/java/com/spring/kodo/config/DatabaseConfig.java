@@ -953,7 +953,7 @@ public class DatabaseConfig
 
         for (Account account : randomAccounts)
         {
-            if (courseIndex == courses.size() - 1)
+            if (courseIndex == 3)
             {
                 courseIndex = 0;
             }
