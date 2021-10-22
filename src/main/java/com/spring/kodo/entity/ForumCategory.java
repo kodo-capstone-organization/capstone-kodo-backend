@@ -51,6 +51,13 @@ public class ForumCategory
         this.description = description;
     }
 
+    public ForumCategory(Long forumCategoryId, String name, String description)
+    {
+        this(name, description);
+
+        this.forumCategoryId = forumCategoryId;
+    }
+
     public Long getForumCategoryId()
     {
         return forumCategoryId;

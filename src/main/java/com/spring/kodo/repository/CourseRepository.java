@@ -43,6 +43,12 @@ public interface CourseRepository extends JpaRepository<Course, Long>
             "WHERE ecsa.student_attempt_id = :studentAttemptId", nativeQuery = true)
     Optional<Course> findByStudentAttemptId(@Param("studentAttemptId") Long studentAttemptId);
 
+    @Query(value = "SELECT c.* FROM kodo.course c JOIN kodo.forum_category fc ON c.course_id = fc.course_course_id WHERE fc.forum_category_id = :forumCategoryId", nativeQuery = true)
+    Optional<Course> findByForumCategoryId(@Param("forumCategoryId") Long forumCategoryId);
+
+    @Query(value = "SELECT c.* FROM kodo.course c JOIN kodo.forum_category fc JOIN forum_category_forum_threads fcft ON fc.forum_category_id = fcft.forum_category_id AND c.course_id = fc.course_course_id WHERE fcft.forum_thread_id = :forumThreadId", nativeQuery = true)
+    Optional<Course> findByForumThreadId(@Param("forumThreadId") Long forumThreadId);
+
     @Query("SELECT c FROM course c WHERE c.isEnrollmentActive = TRUE")
     List<Course> findAllWithActiveEnrollment();
 

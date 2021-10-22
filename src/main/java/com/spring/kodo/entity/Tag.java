@@ -5,11 +5,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.List;
 import java.util.Locale;
 
-@Entity(name="tag")
-@Table(name="tag")
+@Entity(name = "tag")
+@Table(name = "tag")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Tag
 {
@@ -29,6 +28,12 @@ public class Tag
     public Tag(String title)
     {
         this.title = title.toLowerCase(Locale.ROOT);
+    }
+
+    public Tag(Long tagId, String title)
+    {
+        this(title);
+        this.tagId = tagId;
     }
 
     public Long getTagId()

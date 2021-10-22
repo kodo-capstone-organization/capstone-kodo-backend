@@ -42,6 +42,13 @@ public class Multimedia extends Content
         this.multimediaType = mutlimediaType;
     }
 
+    public Multimedia(Long contentId, String name, String description, String url, MultimediaType multimediaType)
+    {
+        super(contentId, name, description);
+        this.url = url;
+        this.multimediaType = multimediaType;
+    }
+
     public String getUrl()
     {
         return url;

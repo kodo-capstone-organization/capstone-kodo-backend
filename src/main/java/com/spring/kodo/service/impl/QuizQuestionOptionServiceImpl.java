@@ -68,7 +68,9 @@ public class QuizQuestionOptionServiceImpl implements QuizQuestionOptionService
             for (QuizQuestionOption quizQuestionOption : newQuizQuestionOptions)
             {
                 leftContents.add(quizQuestionOption.getLeftContent());
-                rightContents.add(quizQuestionOption.getRightContent());
+                if(quizQuestionOption.getRightContent()!=null) {
+                    rightContents.add(quizQuestionOption.getRightContent());
+                }
             }
 
             if ((!hasRightContent && leftContents.size() == newQuizQuestionOptions.size()) || (leftContents.size() == rightContents.size()))

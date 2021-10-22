@@ -47,7 +47,7 @@ public class CourseServiceImpl implements CourseService
     }
 
     @Override
-    public Course createNewCourse(Course newCourse, Long tutorId, List<String> tagTitles)
+    public Course createNewCourse(Course newCourse, List<String> tagTitles)
             throws CreateNewCourseException,
             UpdateCourseException,
             TagNotFoundException,
@@ -176,6 +176,36 @@ public class CourseServiceImpl implements CourseService
         else
         {
             throw new CourseNotFoundException("Course with StudentAttempt ID: " + studentAttemptId + " does not exist!");
+        }
+    }
+
+    @Override
+    public Course getCourseByForumCategoryId(Long forumCategoryId) throws CourseNotFoundException
+    {
+        Course course = courseRepository.findByForumCategoryId(forumCategoryId).orElse(null);
+
+        if (course != null)
+        {
+            return course;
+        }
+        else
+        {
+            throw new CourseNotFoundException("Course with ForumCategory ID: " + forumCategoryId + " does not exist!");
+        }
+    }
+
+    @Override
+    public Course getCourseByForumThreadId(Long forumThreadId) throws CourseNotFoundException
+    {
+        Course course = courseRepository.findByForumThreadId(forumThreadId).orElse(null);
+
+        if (course != null)
+        {
+            return course;
+        }
+        else
+        {
+            throw new CourseNotFoundException("Course with ForumThread ID: " + forumThreadId + " does not exist!");
         }
     }
 

@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface CourseService
 {
-    Course createNewCourse(Course newCourse, Long tutorId, List<String> tagTitles)
+    Course createNewCourse(Course newCourse, List<String> tagTitles)
             throws CreateNewCourseException,
             UpdateCourseException,
             TagNotFoundException,
@@ -32,6 +32,10 @@ public interface CourseService
     Course getCourseByEnrolledContentId(Long enrolledContentId) throws CourseNotFoundException;
 
     Course getCourseByStudentAttemptId(Long studentAttemptId) throws CourseNotFoundException;
+
+    Course getCourseByForumCategoryId(Long forumCategoryId) throws CourseNotFoundException;
+
+    Course getCourseByForumThreadId(Long forumThreadId) throws CourseNotFoundException;
 
     List<Course> getAllCoursesWithActiveEnrollment();
 

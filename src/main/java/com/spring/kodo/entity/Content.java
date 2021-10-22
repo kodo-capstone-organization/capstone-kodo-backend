@@ -42,6 +42,12 @@ public abstract class Content
         this.description = description;
     }
 
+    public Content(Long contentId, String name, String description)
+    {
+        this(name, description);
+        this.contentId = contentId;
+    }
+
     public Long getContentId()
     {
         return contentId;
