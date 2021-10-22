@@ -1,6 +1,7 @@
 package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.Account;
+import com.spring.kodo.entity.Course;
 import com.spring.kodo.entity.ForumPost;
 import com.spring.kodo.entity.ForumThread;
 import com.spring.kodo.repository.ForumPostRepository;
@@ -135,6 +136,25 @@ public class ForumPostServiceImpl implements ForumPostService
     public List<ForumPost> getReportedForumPostsByThreadId(Long forumThreadId)
     {
         return forumPostRepository.findAllReportedForumPostsByThreadId(forumThreadId);
+    }
+
+    @Override
+    public Long toggleReport(Long forumPostId, Long requestingAccountId) throws AccountNotFoundException, ForumPostNotFoundException, AccountPermissionDeniedException {
+        Account requestingAccount = accountService.getAccountByAccountId(requestingAccountId);
+        ForumPost forumPostToUpdate = getForumPostByForumPostId(forumPostId);
+
+        if (requestingAccount.getIsAdmin())
+        {
+            // Toggle
+            forumPostToUpdate.setReported(false);
+            forumPostToUpdate.setReasonForReport("");
+
+            return forumPostRepository.saveAndFlush(forumPostToUpdate).getForumPostId();
+        }
+        else
+        {
+            throw new AccountPermissionDeniedException("You do not have the rights to toggle enrollment status of this course");
+        }
     }
 
 

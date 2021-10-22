@@ -21,6 +21,8 @@ public interface ForumPostService {
 
     List<ForumPost> getReportedForumPostsByThreadId(Long forumThreadId);
 
+    Long toggleReport(Long forumPostId, Long requestingAccountId) throws AccountNotFoundException, ForumPostNotFoundException, AccountPermissionDeniedException;
+
     ForumPost updateForumPost(ForumPost updatedForumPost) throws ForumPostNotFoundException, InputDataValidationException;
 
     Boolean deleteForumPost(Long forumPostId) throws ForumPostNotFoundException, DeleteForumPostException;

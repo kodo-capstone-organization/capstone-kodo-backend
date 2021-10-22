@@ -70,6 +70,24 @@ public class ForumPostController
         }
     }
 
+    @DeleteMapping("/toggleReport/{forumPostId}&{requestingAccountId}")
+    public ResponseEntity toggleReport(@PathVariable Long forumPostId, @PathVariable Long requestingAccountId)
+    {
+        try
+        {
+            Long toggledPostId = this.forumPostService.toggleReport(forumPostId, requestingAccountId);
+            return ResponseEntity.status(HttpStatus.OK).body("Successfully updated forum post report with post ID: " + toggledPostId);
+        }
+        catch (AccountPermissionDeniedException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
+        }
+        catch (AccountNotFoundException |  ForumPostNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @PostMapping("/createNewForumPostReply")
     public ForumPost createNewForumPostReply(
             @RequestPart(name = "forumPostReply", required = true) CreateNewForumPostReplyReq createNewForumPostReplyReq
