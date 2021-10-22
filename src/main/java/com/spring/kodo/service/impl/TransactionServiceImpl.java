@@ -224,7 +224,7 @@ public class TransactionServiceImpl implements TransactionService
             inputData.put("courseId", c.getCourseId().toString());
             inputData.put("courseName", c.getName());
             inputData.put("lifetimeEarnings",  getLifetimeTutorPayoutByCourseId(c.getCourseId()).toString());
-            inputData.put("currentMonthEarnings", getCurrentMonthCourseEarning(requestingAccountId, c.getCourseId()).toString());
+            inputData.put("currentMonthEarnings", this.transactionRepository.getTutorPayoutByMonthByCourseId(c.getCourseId(), NowMonthYearUtil.getNowYear().getValue(), NowMonthYearUtil.getNowMonth()).orElse(new BigDecimal(0)).toString());
             inputData.put("monthlyAverageEarnings", getAverageMonthlyCourseEarning(c.getCourseId()).toString());
             inputData.put("highestEarningMonthWithValue", getHighestEarningMonthWithValueByCourseId(c.getCourseId()));
 
