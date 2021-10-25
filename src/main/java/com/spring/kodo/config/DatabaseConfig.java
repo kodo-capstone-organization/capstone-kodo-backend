@@ -20,7 +20,7 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.spring.kodo.util.helper.Constants.*;
+import static com.spring.kodo.util.helper.ConstantsHelper.*;
 
 @Configuration
 public class DatabaseConfig

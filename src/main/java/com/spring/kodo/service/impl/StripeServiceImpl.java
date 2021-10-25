@@ -4,7 +4,7 @@ import com.google.gson.JsonSyntaxException;
 import com.spring.kodo.entity.*;
 import com.spring.kodo.entity.rest.request.StripePaymentReq;
 import com.spring.kodo.service.inter.*;
-import com.spring.kodo.util.helper.Constants;
+import com.spring.kodo.util.helper.ConstantsHelper;
 import com.spring.kodo.util.exception.*;
 import com.stripe.Stripe;
 import com.stripe.exception.SignatureVerificationException;
@@ -104,7 +104,7 @@ public class StripeServiceImpl implements StripeService
                                         .build())
                         .setPaymentIntentData(
                                 SessionCreateParams.PaymentIntentData.builder()
-                                        .setApplicationFeeAmount(stripePaymentReq.getAmount().multiply(new BigDecimal(100)).multiply(Constants.PLATFORM_FEE_PERCENTAGE).longValue())
+                                        .setApplicationFeeAmount(stripePaymentReq.getAmount().multiply(new BigDecimal(100)).multiply(ConstantsHelper.PLATFORM_FEE_PERCENTAGE).longValue())
                                         .setTransferData(
                                                 SessionCreateParams.PaymentIntentData.TransferData.builder()
                                                         .setDestination(stripePaymentReq.getTutorStripeAccountId())

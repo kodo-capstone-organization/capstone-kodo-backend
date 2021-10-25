@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 // Declare any program-wide constants here.
-// To use in other files, import Constants and do Constants.field
-public class Constants
+// To use in other files, import ConstantsHelper and do ConstantsHelper.field
+public class ConstantsHelper
 {
     public static final String PROJECT_TITLE = "Kodo";
     public static final String PROJECT_NAME = "kodo-backend";
