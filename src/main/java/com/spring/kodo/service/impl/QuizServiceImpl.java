@@ -2,7 +2,7 @@ package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.*;
 import com.spring.kodo.repository.QuizRepository;
-import com.spring.kodo.restentity.response.QuizWithStudentAttemptCountResp;
+import com.spring.kodo.entity.rest.response.QuizWithStudentAttemptCountResp;
 import com.spring.kodo.service.inter.LessonService;
 import com.spring.kodo.service.inter.QuizQuestionOptionService;
 import com.spring.kodo.service.inter.QuizQuestionService;

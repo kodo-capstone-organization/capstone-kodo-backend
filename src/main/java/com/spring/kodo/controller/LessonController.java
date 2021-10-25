@@ -1,8 +1,8 @@
 package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.*;
-import com.spring.kodo.restentity.request.MultimediaReq;
-import com.spring.kodo.restentity.request.UpdateLessonReq;
+import com.spring.kodo.entity.rest.request.MultimediaReq;
+import com.spring.kodo.entity.rest.request.UpdateLessonReq;
 import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.exception.*;
 import org.slf4j.Logger;

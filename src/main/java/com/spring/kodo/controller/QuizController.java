@@ -1,9 +1,9 @@
 package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.*;
-import com.spring.kodo.restentity.request.CreateNewQuizReq;
-import com.spring.kodo.restentity.request.UpdateQuizReq;
-import com.spring.kodo.restentity.response.QuizWithStudentAttemptCountResp;
+import com.spring.kodo.entity.rest.request.CreateNewQuizReq;
+import com.spring.kodo.entity.rest.request.UpdateQuizReq;
+import com.spring.kodo.entity.rest.response.QuizWithStudentAttemptCountResp;
 import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.exception.*;
 import org.slf4j.Logger;

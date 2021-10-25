@@ -1,7 +1,7 @@
 package com.spring.kodo.repository;
 
 import com.spring.kodo.entity.Tag;
-import com.spring.kodo.restentity.response.TagWithAccountsCountAndCoursesCount;
+import com.spring.kodo.entity.rest.response.TagWithAccountsCountAndCoursesCount;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

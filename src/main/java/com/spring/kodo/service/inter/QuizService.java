@@ -3,9 +3,8 @@ package com.spring.kodo.service.inter;
 import com.spring.kodo.entity.Quiz;
 import com.spring.kodo.entity.QuizQuestion;
 import com.spring.kodo.entity.QuizQuestionOption;
-import com.spring.kodo.restentity.response.QuizWithStudentAttemptCountResp;
+import com.spring.kodo.entity.rest.response.QuizWithStudentAttemptCountResp;
 import com.spring.kodo.util.exception.*;
-import org.apache.http.MethodNotSupportedException;
 
 import java.util.List;
 

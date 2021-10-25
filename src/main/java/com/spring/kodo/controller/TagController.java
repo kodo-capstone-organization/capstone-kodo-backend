@@ -1,12 +1,10 @@
 package com.spring.kodo.controller;
 
-import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Tag;
-import com.spring.kodo.restentity.request.CreateNewTagsReq;
-import com.spring.kodo.restentity.response.TagWithAccountsCountAndCoursesCount;
+import com.spring.kodo.entity.rest.request.CreateNewTagsReq;
+import com.spring.kodo.entity.rest.response.TagWithAccountsCountAndCoursesCount;
 import com.spring.kodo.util.exception.*;
 import com.spring.kodo.service.inter.TagService;
-import org.aspectj.bridge.MessageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

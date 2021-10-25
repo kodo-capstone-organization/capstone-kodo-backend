@@ -3,7 +3,7 @@ package com.spring.kodo.controller;
 import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Course;
 import com.spring.kodo.entity.EnrolledLesson;
-import com.spring.kodo.restentity.response.EnrolledLessonWithStudentNameResp;
+import com.spring.kodo.entity.rest.response.EnrolledLessonWithStudentNameResp;
 import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.CourseService;
 import com.spring.kodo.service.inter.EnrolledLessonService;

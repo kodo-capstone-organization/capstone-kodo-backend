@@ -4,7 +4,7 @@ import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.Course;
 import com.spring.kodo.entity.Tag;
 import com.spring.kodo.entity.Transaction;
-import com.spring.kodo.restentity.response.*;
+import com.spring.kodo.entity.rest.response.*;
 import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.CourseService;
 import com.spring.kodo.service.inter.TagService;

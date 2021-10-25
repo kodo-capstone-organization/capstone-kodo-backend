@@ -1,6 +1,6 @@
 package com.spring.kodo.controller;
 
-import com.spring.kodo.restentity.request.StripePaymentReq;
+import com.spring.kodo.entity.rest.request.StripePaymentReq;
 import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.StripeService;
 import com.spring.kodo.util.exception.*;
