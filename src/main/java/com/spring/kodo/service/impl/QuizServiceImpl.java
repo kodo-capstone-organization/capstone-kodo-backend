@@ -7,7 +7,7 @@ import com.spring.kodo.service.inter.LessonService;
 import com.spring.kodo.service.inter.QuizQuestionOptionService;
 import com.spring.kodo.service.inter.QuizQuestionService;
 import com.spring.kodo.service.inter.QuizService;
-import com.spring.kodo.util.FormatterUtil;
+import com.spring.kodo.util.helper.FormatterHelper;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -60,7 +60,7 @@ public class QuizServiceImpl implements QuizService
                 }
                 else
                 {
-                    throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                    throw new InputDataValidationException(FormatterHelper.prepareInputDataValidationErrorsMessage(constraintViolations));
                 }
             }
             else
@@ -219,7 +219,7 @@ public class QuizServiceImpl implements QuizService
                 }
                 else
                 {
-                    throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                    throw new InputDataValidationException(FormatterHelper.prepareInputDataValidationErrorsMessage(constraintViolations));
                 }
             }
             else

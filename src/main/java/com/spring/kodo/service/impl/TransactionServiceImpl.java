@@ -14,8 +14,8 @@ import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.CourseService;
 import com.spring.kodo.service.inter.TagService;
 import com.spring.kodo.service.inter.TransactionService;
-import com.spring.kodo.util.FormatterUtil;
-import com.spring.kodo.util.NowMonthYearUtil;
+import com.spring.kodo.util.helper.FormatterHelper;
+import com.spring.kodo.util.helper.NowMonthYearHelper;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -83,7 +83,7 @@ public class TransactionServiceImpl implements TransactionService
             }
             else
             {
-                throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                throw new InputDataValidationException(FormatterHelper.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
         }
         catch (DataAccessException ex)
@@ -180,7 +180,7 @@ public class TransactionServiceImpl implements TransactionService
         Map<String, Object> result = this.transactionRepository.getHighestEarningMonthWithValue(courseId);
         if (result.get("MonthSum") != null)
         {
-            String monthShortName = NowMonthYearUtil.getMonthListShortName().get((int) result.get("DisMonth") - 1);
+            String monthShortName = NowMonthYearHelper.getMonthListShortName().get((int) result.get("DisMonth") - 1);
             // E.g. Aug 2021 ($123.00)
             return monthShortName + " " + result.get("DisYear") + " ($" + result.get("MonthSum") + ")";
         }
@@ -224,13 +224,13 @@ public class TransactionServiceImpl implements TransactionService
             inputData.put("courseId", c.getCourseId().toString());
             inputData.put("courseName", c.getName());
             inputData.put("lifetimeEarnings",  getLifetimeTutorPayoutByCourseId(c.getCourseId()).toString());
-            inputData.put("currentMonthEarnings", this.transactionRepository.getTutorPayoutByMonthByCourseId(c.getCourseId(), NowMonthYearUtil.getNowYear().getValue(), NowMonthYearUtil.getNowMonth()).orElse(new BigDecimal(0)).toString());
+            inputData.put("currentMonthEarnings", this.transactionRepository.getTutorPayoutByMonthByCourseId(c.getCourseId(), NowMonthYearHelper.getNowYear().getValue(), NowMonthYearHelper.getNowMonth()).orElse(new BigDecimal(0)).toString());
             inputData.put("monthlyAverageEarnings", getAverageMonthlyCourseEarning(c.getCourseId()).toString());
             inputData.put("highestEarningMonthWithValue", getHighestEarningMonthWithValueByCourseId(c.getCourseId()));
 
             LocalDate today = LocalDate.now();
             LocalDate firstOfCurMonth = today.withDayOfMonth(1);
-            List<String> monthListShortName = NowMonthYearUtil.getMonthListShortName();
+            List<String> monthListShortName = NowMonthYearHelper.getMonthListShortName();
             List<Map<String, String>> data = new ArrayList<>();
 
             int iter = 12;
@@ -312,7 +312,7 @@ public class TransactionServiceImpl implements TransactionService
 
             List<MonthlyEarningResp> monthlyPlatformEarningsForLastYear = new ArrayList<>();
 
-            List<String> monthListShortName = NowMonthYearUtil.getMonthListShortName();
+            List<String> monthListShortName = NowMonthYearHelper.getMonthListShortName();
 
             for (int i = 0; i < 12; i++)
             {
@@ -382,7 +382,7 @@ public class TransactionServiceImpl implements TransactionService
 
             List<MonthlyEarningResp> monthlyCourseEarningsForLastYear = new ArrayList<>();
 
-            List<String> monthListShortName = NowMonthYearUtil.getMonthListShortName();
+            List<String> monthListShortName = NowMonthYearHelper.getMonthListShortName();
 
             for (int i = 0; i < 12; i++)
             {
@@ -468,7 +468,7 @@ public class TransactionServiceImpl implements TransactionService
 
             List<MonthlyEarningResp> monthlyTagEarningsForLastYear = new ArrayList<>();
 
-            List<String> monthListShortName = NowMonthYearUtil.getMonthListShortName();
+            List<String> monthListShortName = NowMonthYearHelper.getMonthListShortName();
 
             for (int i = 0; i < 12; i++)
             {
@@ -538,7 +538,7 @@ public class TransactionServiceImpl implements TransactionService
 
             List<MonthlyEarningResp> monthlyTutorEarningsForLastYear = new ArrayList<>();
 
-            List<String> monthListShortName = NowMonthYearUtil.getMonthListShortName();
+            List<String> monthListShortName = NowMonthYearHelper.getMonthListShortName();
 
             for (int i = 0; i < 12; i++)
             {

@@ -1,4 +1,4 @@
-package com.spring.kodo.util;
+package com.spring.kodo.util.helper;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class NowMonthYearUtil
+public class NowMonthYearHelper
 {
     public static int getNowMonth()
     {

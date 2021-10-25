@@ -1,9 +1,9 @@
-package com.spring.kodo.util;
+package com.spring.kodo.util.helper;
 
 import javax.validation.ConstraintViolation;
 import java.util.Set;
 
-public class FormatterUtil
+public class FormatterHelper
 {
     public static String prepareInputDataValidationErrorsMessage(Set<? extends ConstraintViolation<?>> constraintViolations)
     {

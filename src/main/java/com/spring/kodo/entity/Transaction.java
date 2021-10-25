@@ -1,7 +1,7 @@
 package com.spring.kodo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.spring.kodo.util.Constants;
+import com.spring.kodo.util.helper.Constants;
 
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;

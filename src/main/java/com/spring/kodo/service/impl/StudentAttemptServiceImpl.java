@@ -6,7 +6,7 @@ import com.spring.kodo.service.inter.EnrolledContentService;
 import com.spring.kodo.service.inter.StudentAttemptAnswerService;
 import com.spring.kodo.service.inter.StudentAttemptQuestionService;
 import com.spring.kodo.service.inter.StudentAttemptService;
-import com.spring.kodo.util.FormatterUtil;
+import com.spring.kodo.util.helper.FormatterHelper;
 import com.spring.kodo.util.enumeration.QuestionType;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +88,7 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
             }
             else
             {
-                throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                throw new InputDataValidationException(FormatterHelper.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
         }
         catch (DataAccessException ex)

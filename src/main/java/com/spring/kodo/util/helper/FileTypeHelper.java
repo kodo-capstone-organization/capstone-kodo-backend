@@ -1,8 +1,8 @@
-package com.spring.kodo.util;
+package com.spring.kodo.util.helper;
 
 import com.spring.kodo.util.enumeration.MultimediaType;
 
-public class FileTypeUtil
+public class FileTypeHelper
 {
     public static MultimediaType getMultimediaType(String url)
     {

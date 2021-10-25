@@ -1,4 +1,4 @@
-package com.spring.kodo.util.cryptography;
+package com.spring.kodo.util.helper;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

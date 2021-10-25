@@ -1,6 +1,6 @@
-package com.spring.kodo.util;
+package com.spring.kodo.util.helper;
 
-public class RandomGeneratorUtil
+public class RandomGeneratorHelper
 {
     private static Character[] CHARACTERS_BASE = new Character[] {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
