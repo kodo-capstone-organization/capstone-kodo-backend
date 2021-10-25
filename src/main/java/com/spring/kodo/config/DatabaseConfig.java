@@ -130,10 +130,10 @@ public class DatabaseConfig
     private final Integer STUDENT_ENROLLED_COUNT = (int) (0.5 * (LANGUAGES_COUNT * STUDENT_COUNT));
     private final Integer STUDENT_ATTEMPT_COUNT = (int) (0.5 * STUDENT_ENROLLED_COUNT * LESSON_COUNT * QUIZ_COUNT);
 
-    private final Integer FORUM_CATEGORY_COUNT = 1;
+    private final Integer FORUM_CATEGORY_COUNT = 3;
     private final Integer FORUM_THREAD_COUNT = 3;
     private final Integer FORUM_POST_COUNT = 3;
-    private final Integer FORUM_POST_REPLY_COUNT = 2;
+    private final Integer FORUM_POST_REPLY_COUNT = 1;
 
     private final Integer COMPLETE_CONTENT_COUNT = (int) (0.1 * (STUDENT_ENROLLED_COUNT * LESSON_COUNT * (MULTIMEDIA_COUNT + QUIZ_COUNT)));
 

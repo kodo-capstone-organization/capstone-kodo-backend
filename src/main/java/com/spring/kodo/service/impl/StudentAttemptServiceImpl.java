@@ -83,7 +83,7 @@ public class StudentAttemptServiceImpl implements StudentAttemptService
                 }
                 else
                 {
-                    throw new CreateNewStudentAttemptException("Quiz ID cannot be null");
+                    throw new CreateNewStudentAttemptException("EnrolledContent ID cannot be null");
                 }
             }
             else

@@ -15,6 +15,8 @@ public interface QuizService
 
     Quiz getQuizByQuizId(Long quizId) throws QuizNotFoundException;
 
+    Quiz getQuizByEnrolledContentId(Long quizId) throws QuizNotFoundException;
+
     List<Quiz> getAllQuizzes();
 
     Quiz addQuizQuestionToQuiz(Quiz quiz, QuizQuestion quizQuestion) throws QuizNotFoundException, UpdateQuizException, UnknownPersistenceException, QuizQuestionNotFoundException;

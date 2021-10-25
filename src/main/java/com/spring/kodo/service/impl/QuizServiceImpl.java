@@ -90,6 +90,21 @@ public class QuizServiceImpl implements QuizService
     }
 
     @Override
+    public Quiz getQuizByEnrolledContentId(Long enrolledContentId) throws QuizNotFoundException
+    {
+        Quiz quiz = quizRepository.findByEnrolledContentId(enrolledContentId).orElse(null);
+
+        if (quiz != null)
+        {
+            return quiz;
+        }
+        else
+        {
+            throw new QuizNotFoundException("Quiz with EnrolledContent ID: " + enrolledContentId + " does not exist!");
+        }
+    }
+
+    @Override
     public List<Quiz> getAllQuizzes()
     {
         return quizRepository.findAll();

@@ -15,6 +15,9 @@ public interface QuizRepository extends JpaRepository<Quiz, Long>
 {
     Optional<Quiz> findByName(String name);
 
+    @Query(value = "SELECT * FROM kodo.content c JOIN kodo.quiz q JOIN kodo.enrolled_content ec ON c.content_id = q.content_id AND q.content_id = ec.parent_content_content_id WHERE ec.enrolled_content_id = :enrolledContentId", nativeQuery = true)
+    Optional<Quiz> findByEnrolledContentId(@Param("enrolledContentId") Long enrolledContentId);
+
     @Query(value =
             "SELECT\n" +
             "       q.content_id as 'contentId',\n" +

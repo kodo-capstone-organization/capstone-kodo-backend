@@ -152,6 +152,29 @@ public class QuizController
         }
     }
 
+    @GetMapping("/getQuizByEnrolledContentIdAndAccountId/{enrolledContentId}/{accountId}")
+    public Quiz getQuizByEnrolledContentIdAndAccountId(@PathVariable Long enrolledContentId, @PathVariable Long accountId)
+    {
+        try
+        {
+            Account account = accountService.getAccountByEnrolledContentId(enrolledContentId);
+
+            if (account.getAccountId().equals(accountId))
+            {
+                Quiz quiz = this.quizService.getQuizByEnrolledContentId(enrolledContentId);
+                return quiz;
+            }
+            else
+            {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have access to this quiz");
+            }
+        }
+        catch (AccountNotFoundException | QuizNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
     @GetMapping("/getAllQuizzes")
     public List<Quiz> getAllQuizzes()
     {

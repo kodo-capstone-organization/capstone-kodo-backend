@@ -104,28 +104,28 @@ public class QuizQuestionOptionServiceImpl implements QuizQuestionOptionService
     }
 
     @Override
-    public QuizQuestionOption getQuizQuestionOptionByQuizQuestionOptionId(Long quizQuestionId) throws QuizQuestionOptionNotFoundException
+    public QuizQuestionOption getQuizQuestionOptionByQuizQuestionOptionId(Long quizQuestionOptionId) throws QuizQuestionOptionNotFoundException
     {
-        QuizQuestionOption quizQuestion = quizQuestionOptionRepository.findById(quizQuestionId).orElse(null);
+        QuizQuestionOption quizQuestionOption = quizQuestionOptionRepository.findById(quizQuestionOptionId).orElse(null);
 
-        if (quizQuestion != null)
+        if (quizQuestionOption != null)
         {
-            return quizQuestion;
+            return quizQuestionOption;
         }
         else
         {
-            throw new QuizQuestionOptionNotFoundException("QuizQuestionOption with ID: " + quizQuestionId + " does not exist!");
+            throw new QuizQuestionOptionNotFoundException("QuizQuestionOption with ID: " + quizQuestionOptionId + " does not exist!");
         }
     }
 
     @Override
     public QuizQuestionOption getQuizQuestionOptionByLeftContent(String leftContent) throws QuizQuestionOptionNotFoundException
     {
-        QuizQuestionOption quizQuestion = quizQuestionOptionRepository.findByLeftContent(leftContent).orElse(null);
+        QuizQuestionOption quizQuestionOption = quizQuestionOptionRepository.findByLeftContent(leftContent).orElse(null);
 
-        if (quizQuestion != null)
+        if (quizQuestionOption != null)
         {
-            return quizQuestion;
+            return quizQuestionOption;
         }
         else
         {
@@ -136,11 +136,11 @@ public class QuizQuestionOptionServiceImpl implements QuizQuestionOptionService
     @Override
     public QuizQuestionOption getQuizQuestionOptionByRightContent(String rightContent) throws QuizQuestionOptionNotFoundException
     {
-        QuizQuestionOption quizQuestion = quizQuestionOptionRepository.findByRightContent(rightContent).orElse(null);
+        QuizQuestionOption quizQuestionOption = quizQuestionOptionRepository.findByRightContent(rightContent).orElse(null);
 
-        if (quizQuestion != null)
+        if (quizQuestionOption != null)
         {
-            return quizQuestion;
+            return quizQuestionOption;
         }
         else
         {
