@@ -22,7 +22,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>
     @Query(value = "SELECT SUM(t.platform_fee) FROM `transaction` t", nativeQuery = true)
     Optional<BigDecimal> getLifetimePlatformEarning();
 
-    @Query(value = "SELECT SUM(t.platform_fee) FROM `transaction` t WHERE MONTH(t.date_time_of_transaction) = MONTH(NOW())", nativeQuery = true)
+    @Query(value = "SELECT SUM(t.platform_fee) FROM `transaction` t WHERE MONTH(t.date_time_of_transaction) = MONTH(NOW()) AND YEAR(t.date_time_of_transaction) = YEAR(NOW())", nativeQuery = true)
     Optional<BigDecimal> getCurrentMonthPlatformEarning();
 
     @Query(value = "SELECT SUM(t.platform_fee) FROM `transaction` t WHERE MONTH(t.date_time_of_transaction) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) AND YEAR(t.date_time_of_transaction) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)", nativeQuery = true)
