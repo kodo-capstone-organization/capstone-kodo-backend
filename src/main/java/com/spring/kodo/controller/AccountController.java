@@ -1,10 +1,10 @@
 package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.Account;
-import com.spring.kodo.restentity.request.CreateNewAccountReq;
-import com.spring.kodo.restentity.request.UpdateAccountPasswordReq;
-import com.spring.kodo.restentity.request.UpdateAccountReq;
-import com.spring.kodo.restentity.response.AccountResp;
+import com.spring.kodo.entity.rest.request.CreateNewAccountReq;
+import com.spring.kodo.entity.rest.request.UpdateAccountPasswordReq;
+import com.spring.kodo.entity.rest.request.UpdateAccountReq;
+import com.spring.kodo.entity.rest.response.AccountResp;
 import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.FileService;
 import com.spring.kodo.util.exception.*;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 

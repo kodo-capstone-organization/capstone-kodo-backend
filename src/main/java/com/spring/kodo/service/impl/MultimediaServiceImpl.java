@@ -5,7 +5,7 @@ import com.spring.kodo.entity.Multimedia;
 import com.spring.kodo.repository.MultimediaRepository;
 import com.spring.kodo.service.inter.FileService;
 import com.spring.kodo.service.inter.MultimediaService;
-import com.spring.kodo.util.FormatterUtil;
+import com.spring.kodo.util.helper.FormatterHelper;
 import com.spring.kodo.util.enumeration.MultimediaType;
 import com.spring.kodo.util.exception.InputDataValidationException;
 import com.spring.kodo.util.exception.MultimediaNotFoundException;
@@ -52,7 +52,7 @@ public class MultimediaServiceImpl implements MultimediaService
             }
             else
             {
-                throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                throw new InputDataValidationException(FormatterHelper.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
         }
         catch (DataAccessException ex)

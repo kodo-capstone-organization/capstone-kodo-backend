@@ -3,7 +3,7 @@ package com.spring.kodo.service.impl;
 import com.spring.kodo.entity.*;
 import com.spring.kodo.repository.EnrolledContentRepository;
 import com.spring.kodo.service.inter.*;
-import com.spring.kodo.util.FormatterUtil;
+import com.spring.kodo.util.helper.FormatterHelper;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -69,7 +69,7 @@ public class EnrolledContentServiceImpl implements EnrolledContentService
             }
             else
             {
-                throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                throw new InputDataValidationException(FormatterHelper.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
         }
         catch (DataAccessException ex)

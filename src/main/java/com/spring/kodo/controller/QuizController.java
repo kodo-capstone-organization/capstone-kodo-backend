@@ -1,9 +1,9 @@
 package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.*;
-import com.spring.kodo.restentity.request.CreateNewQuizReq;
-import com.spring.kodo.restentity.request.UpdateQuizReq;
-import com.spring.kodo.restentity.response.QuizWithStudentAttemptCountResp;
+import com.spring.kodo.entity.rest.request.CreateNewQuizReq;
+import com.spring.kodo.entity.rest.request.UpdateQuizReq;
+import com.spring.kodo.entity.rest.response.QuizWithStudentAttemptCountResp;
 import com.spring.kodo.service.inter.*;
 import com.spring.kodo.util.exception.*;
 import org.slf4j.Logger;
@@ -140,6 +140,29 @@ public class QuizController
             if (account.getAccountId().equals(accountId))
             {
                 return this.quizService.getQuizByQuizId(quizId);
+            }
+            else
+            {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have access to this quiz");
+            }
+        }
+        catch (AccountNotFoundException | QuizNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
+
+    @GetMapping("/getQuizByEnrolledContentIdAndAccountId/{enrolledContentId}/{accountId}")
+    public Quiz getQuizByEnrolledContentIdAndAccountId(@PathVariable Long enrolledContentId, @PathVariable Long accountId)
+    {
+        try
+        {
+            Account account = accountService.getAccountByEnrolledContentId(enrolledContentId);
+
+            if (account.getAccountId().equals(accountId))
+            {
+                Quiz quiz = this.quizService.getQuizByEnrolledContentId(enrolledContentId);
+                return quiz;
             }
             else
             {

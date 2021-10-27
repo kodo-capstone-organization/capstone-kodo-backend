@@ -1,7 +1,7 @@
 package com.spring.kodo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.spring.kodo.util.Constants;
+import com.spring.kodo.util.helper.ConstantsHelper;
 
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
@@ -76,10 +76,10 @@ public class Transaction
         this.coursePrice = coursePrice;
 
         // Total application fee consisting of Kodo platform fee and Stripe fees
-        BigDecimal totalApplicationFee = Constants.PLATFORM_FEE_PERCENTAGE.multiply(this.coursePrice).setScale(2, RoundingMode.DOWN);
+        BigDecimal totalApplicationFee = ConstantsHelper.PLATFORM_FEE_PERCENTAGE.multiply(this.coursePrice).setScale(2, RoundingMode.DOWN);
 
         this.tutorPayout = this.coursePrice.subtract(totalApplicationFee).setScale(2, RoundingMode.DOWN);
-        this.stripeFee = Constants.STRIPE_FEE_PERCENTAGE.multiply(this.coursePrice).add(Constants.STRIPE_FEE_ACCOUNT_BASE).setScale(2, RoundingMode.DOWN);
+        this.stripeFee = ConstantsHelper.STRIPE_FEE_PERCENTAGE.multiply(this.coursePrice).add(ConstantsHelper.STRIPE_FEE_ACCOUNT_BASE).setScale(2, RoundingMode.DOWN);
 
         // Net platform fee receivable by Kodo after paying for Stripe fees
         this.platformFee = totalApplicationFee.subtract(this.stripeFee);

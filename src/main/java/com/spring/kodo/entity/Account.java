@@ -3,8 +3,8 @@ package com.spring.kodo.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
-import com.spring.kodo.util.FormatterUtil;
-import com.spring.kodo.util.cryptography.CryptographicHelper;
+import com.spring.kodo.util.helper.FormatterHelper;
+import com.spring.kodo.util.helper.CryptographicHelper;
 import com.spring.kodo.util.exception.InputDataValidationException;
 import org.hibernate.validator.constraints.URL;
 
@@ -237,7 +237,7 @@ public class Account
 
     public String getDisplayPictureFilename()
     {
-        return FormatterUtil.getGCSObjectNameFromMediaLink(getDisplayPictureUrl());
+        return FormatterHelper.getGCSObjectNameFromMediaLink(getDisplayPictureUrl());
     }
 
     public String getDisplayPictureUrl()

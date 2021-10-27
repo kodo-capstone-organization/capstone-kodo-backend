@@ -2,7 +2,7 @@ package com.spring.kodo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.spring.kodo.util.FormatterUtil;
+import com.spring.kodo.util.helper.FormatterHelper;
 import com.spring.kodo.util.enumeration.MultimediaType;
 import org.hibernate.validator.constraints.URL;
 
@@ -61,7 +61,7 @@ public class Multimedia extends Content
 
     public String getUrlFilename()
     {
-        return FormatterUtil.getGCSObjectNameFromMediaLink(this.url);
+        return FormatterHelper.getGCSObjectNameFromMediaLink(this.url);
     }
 
     public String getNewFilename() {

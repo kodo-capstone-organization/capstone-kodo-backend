@@ -1,7 +1,7 @@
 package com.spring.kodo.service.inter;
 
 import com.spring.kodo.entity.Tag;
-import com.spring.kodo.restentity.response.TagWithAccountsCountAndCoursesCount;
+import com.spring.kodo.entity.rest.response.TagWithAccountsCountAndCoursesCount;
 import com.spring.kodo.util.exception.*;
 
 import java.util.List;

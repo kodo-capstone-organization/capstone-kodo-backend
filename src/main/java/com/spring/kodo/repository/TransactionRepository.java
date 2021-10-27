@@ -1,9 +1,9 @@
 package com.spring.kodo.repository;
 
 import com.spring.kodo.entity.Transaction;
-import com.spring.kodo.restentity.response.CourseWithEarningResp;
-import com.spring.kodo.restentity.response.TransactionWithParticularsResp;
-import com.spring.kodo.restentity.response.TutorWithEarningResp;
+import com.spring.kodo.entity.rest.response.CourseWithEarningResp;
+import com.spring.kodo.entity.rest.response.TransactionWithParticularsResp;
+import com.spring.kodo.entity.rest.response.TutorWithEarningResp;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

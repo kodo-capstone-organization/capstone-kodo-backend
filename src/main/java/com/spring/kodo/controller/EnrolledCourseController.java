@@ -2,8 +2,8 @@ package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.EnrolledCourse;
-import com.spring.kodo.restentity.response.EnrolledCourseWithStudentCompletion;
-import com.spring.kodo.restentity.response.EnrolledCourseWithStudentResp;
+import com.spring.kodo.entity.rest.response.EnrolledCourseWithStudentCompletion;
+import com.spring.kodo.entity.rest.response.EnrolledCourseWithStudentResp;
 import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.EnrolledCourseService;
 import com.spring.kodo.util.exception.AccountNotFoundException;

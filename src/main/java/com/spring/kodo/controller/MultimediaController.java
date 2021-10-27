@@ -6,7 +6,7 @@ import com.spring.kodo.entity.Multimedia;
 import com.spring.kodo.service.inter.FileService;
 import com.spring.kodo.service.inter.LessonService;
 import com.spring.kodo.service.inter.MultimediaService;
-import com.spring.kodo.util.FileTypeUtil;
+import com.spring.kodo.util.helper.FileTypeHelper;
 import com.spring.kodo.util.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ public class MultimediaController
         try {
             String url = this.fileService.upload(file);
 
-            Multimedia multimedia = multimediaService.createNewMultimedia(new Multimedia(name, description, url, FileTypeUtil.getMultimediaType(file.getOriginalFilename())));
+            Multimedia multimedia = multimediaService.createNewMultimedia(new Multimedia(name, description, url, FileTypeHelper.getMultimediaType(file.getOriginalFilename())));
 
             Lesson lesson = this.lessonService.getLessonByLessonId(lessonId);
             this.lessonService.addContentToLesson(lesson, multimedia);
@@ -82,7 +82,7 @@ public class MultimediaController
                 this.fileService.delete(multimedia.getUrlFilename());
                 String newUrl = this.fileService.upload(file);
                 multimedia.setUrl(newUrl);
-                multimedia.setMultimediaType(FileTypeUtil.getMultimediaType(file.getOriginalFilename()));
+                multimedia.setMultimediaType(FileTypeHelper.getMultimediaType(file.getOriginalFilename()));
             }
 
             multimedia.setName(name);

@@ -2,8 +2,8 @@ package com.spring.kodo.service.inter;
 
 import com.spring.kodo.entity.EnrolledLesson;
 import com.spring.kodo.entity.EnrolledCourse;
-import com.spring.kodo.restentity.response.EnrolledCourseWithStudentCompletion;
-import com.spring.kodo.restentity.response.EnrolledCourseWithStudentResp;
+import com.spring.kodo.entity.rest.response.EnrolledCourseWithStudentCompletion;
+import com.spring.kodo.entity.rest.response.EnrolledCourseWithStudentResp;
 import com.spring.kodo.util.exception.*;
 
 import java.time.LocalDateTime;

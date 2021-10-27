@@ -2,8 +2,8 @@ package com.spring.kodo.config;
 
 import com.spring.kodo.entity.*;
 import com.spring.kodo.service.inter.*;
-import com.spring.kodo.util.FormatterUtil;
-import com.spring.kodo.util.RandomGeneratorUtil;
+import com.spring.kodo.util.helper.FormatterHelper;
+import com.spring.kodo.util.helper.RandomGeneratorHelper;
 import com.spring.kodo.util.enumeration.MultimediaType;
 import com.spring.kodo.util.enumeration.QuestionType;
 import com.spring.kodo.util.exception.InvalidDateTimeOfCompletionException;
@@ -20,7 +20,7 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.spring.kodo.util.Constants.*;
+import static com.spring.kodo.util.helper.ConstantsHelper.*;
 
 @Configuration
 public class DatabaseConfig
@@ -130,10 +130,10 @@ public class DatabaseConfig
     private final Integer STUDENT_ENROLLED_COUNT = (int) (0.5 * (LANGUAGES_COUNT * STUDENT_COUNT));
     private final Integer STUDENT_ATTEMPT_COUNT = (int) (0.5 * STUDENT_ENROLLED_COUNT * LESSON_COUNT * QUIZ_COUNT);
 
-    private final Integer FORUM_CATEGORY_COUNT = 1;
+    private final Integer FORUM_CATEGORY_COUNT = 3;
     private final Integer FORUM_THREAD_COUNT = 3;
     private final Integer FORUM_POST_COUNT = 3;
-    private final Integer FORUM_POST_REPLY_COUNT = 2;
+    private final Integer FORUM_POST_REPLY_COUNT = 1;
 
     private final Integer COMPLETE_CONTENT_COUNT = (int) (0.1 * (STUDENT_ENROLLED_COUNT * LESSON_COUNT * (MULTIMEDIA_COUNT + QUIZ_COUNT)));
 
@@ -564,8 +564,8 @@ public class DatabaseConfig
         // Randomisation for data variation
         while (i < STUDENT_ENROLLED_COUNT)
         {
-            int courseIndex = RandomGeneratorUtil.getRandomInteger(0, (courses.size() - 1) * 3 / 4);
-            int studentIndex = RandomGeneratorUtil.getRandomInteger(STUDENT_FIRST_INDEX, (STUDENT_SIZE - 1));
+            int courseIndex = RandomGeneratorHelper.getRandomInteger(0, (courses.size() - 1) * 3 / 4);
+            int studentIndex = RandomGeneratorHelper.getRandomInteger(STUDENT_FIRST_INDEX, (STUDENT_SIZE - 1));
 
             try
             {
@@ -599,7 +599,7 @@ public class DatabaseConfig
 
         course = courses.get(courseIndex);
         tutor = accountService.getAccountByCourseId(course.getCourseId());
-        dummyUniqueStripeSessionId = "acct_" + RandomGeneratorUtil.getRandomString(16);
+        dummyUniqueStripeSessionId = "acct_" + RandomGeneratorHelper.getRandomString(16);
 
         enrolledCourse = enrolledCourseService.createNewEnrolledCourse(student.getAccountId(), course.getCourseId());
         accountService.addEnrolledCourseToAccount(student, enrolledCourse);
@@ -929,7 +929,7 @@ public class DatabaseConfig
 
         for (EnrolledCourse enrolledCourse : enrolledCourses)
         {
-            rating = RandomGeneratorUtil.getRandomInteger(3, 5);
+            rating = RandomGeneratorHelper.getRandomInteger(3, 5);
 
             if (RATE_ENROLLED_COURSES_COUNT == courseRatingSet)
             {
@@ -1068,7 +1068,7 @@ public class DatabaseConfig
                 }
 
                 name = STUDENT_NAMES.get(i);
-                randomInt = RandomGeneratorUtil.getRandomInteger(100000, 999999);
+                randomInt = RandomGeneratorHelper.getRandomInteger(100000, 999999);
                 displayPictureUrl = DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex);
                 biography = String.format(STUDENT_BIOGRAPHIES.get(biographyIndex), name);
 
@@ -1091,7 +1091,7 @@ public class DatabaseConfig
                 }
 
                 name = TUTOR_NAMES.get(i);
-                randomInt = RandomGeneratorUtil.getRandomInteger(100000, 999999);
+                randomInt = RandomGeneratorHelper.getRandomInteger(100000, 999999);
                 displayPictureUrl = DISPLAY_PICTURE_URLS.get(displayPictureUrlIndex);
                 biography = String.format(TUTOR_BIOGRAPHIES.get(biographyIndex), name);
 
@@ -1179,7 +1179,7 @@ public class DatabaseConfig
                     lessons.add(
                             new Lesson(
                                     String.format("%s %s Lesson %d", level, language, i),
-                                    "A very interesting " + FormatterUtil.getOrdinal(i) + " lesson on " + language, i)
+                                    "A very interesting " + FormatterHelper.getOrdinal(i) + " lesson on " + language, i)
                     );
                 }
             }
@@ -1199,7 +1199,7 @@ public class DatabaseConfig
                         quizzes.add(
                                 new Quiz(
                                         String.format("%s %s Quiz #%d", level, language, j),
-                                        "A very interesting " + FormatterUtil.getOrdinal(j) + " quiz on " + language,
+                                        "A very interesting " + FormatterHelper.getOrdinal(j) + " quiz on " + language,
                                         i == 1 ?
                                                 LocalTime.of(0, 0, 10)
                                                 : i == 2 ?
@@ -1226,17 +1226,17 @@ public class DatabaseConfig
                         for (int k = 1; k <= QUIZ_QUESTION_COUNT; )
                         {
                             QuizQuestion mcqQuestion = new QuizQuestion(
-                                    String.format("%s %s question of quiz for lesson %d of %s %s course", FormatterUtil.getOrdinal(k++), QuestionType.MCQ, i, level, language),
+                                    String.format("%s %s question of quiz for lesson %d of %s %s course", FormatterHelper.getOrdinal(k++), QuestionType.MCQ, i, level, language),
                                     QuestionType.MCQ,
                                     1);
 
                             QuizQuestion tfQuestion = new QuizQuestion(
-                                    String.format("%s %s question of quiz for lesson %d of %s %s course", FormatterUtil.getOrdinal(k++), QuestionType.TF, i, level, language),
+                                    String.format("%s %s question of quiz for lesson %d of %s %s course", FormatterHelper.getOrdinal(k++), QuestionType.TF, i, level, language),
                                     QuestionType.TF,
                                     1);
 
                             QuizQuestion matchingQuestion = new QuizQuestion(
-                                    String.format("%s %s question of quiz for lesson %d of %s %s course", FormatterUtil.getOrdinal(k++), QuestionType.MATCHING, i, level, language),
+                                    String.format("%s %s question of quiz for lesson %d of %s %s course", FormatterHelper.getOrdinal(k++), QuestionType.MATCHING, i, level, language),
                                     QuestionType.MATCHING,
                                     1);
 
@@ -1277,7 +1277,7 @@ public class DatabaseConfig
                             // Matching
                             for (int l = 1; l <= QUIZ_QUESTION_OPTION_COUNT; l++)
                             {
-                                quizQuestionOptions.add(new QuizQuestionOption(String.valueOf(l), FormatterUtil.getOrdinal(l), true));
+                                quizQuestionOptions.add(new QuizQuestionOption(String.valueOf(l), FormatterHelper.getOrdinal(l), true));
                             }
                             k++;
                         }
@@ -1301,11 +1301,11 @@ public class DatabaseConfig
             {
                 for (int i = 1; i <= LESSON_COUNT; i++)
                 {
-                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-1", "A very interesting " + FormatterUtil.getOrdinal(i) + " PDF on " + language, PDF_URLS.get(pdfUrlIndex++), MultimediaType.PDF));
-                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-2", "A very interesting " + FormatterUtil.getOrdinal(i) + " MP4 on " + language, MP4_URLS.get(mp4UrlIndex++), MultimediaType.VIDEO));
-                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-3", "A very interesting " + FormatterUtil.getOrdinal(i) + " DOCX on " + language, DOCX_URLS.get(docxUrlIndex++), MultimediaType.DOCUMENT));
-                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-4", "A very interesting " + FormatterUtil.getOrdinal(i) + " ZIP on " + language, ZIP_URLS.get(zipUrlIndex++), MultimediaType.ZIP));
-                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-5", "A very interesting " + FormatterUtil.getOrdinal(i) + " PNG on " + language, PNG_URLS.get(pngUrlIndex++), MultimediaType.IMAGE));
+                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-1", "A very interesting " + FormatterHelper.getOrdinal(i) + " PDF on " + language, PDF_URLS.get(pdfUrlIndex++), MultimediaType.PDF));
+                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-2", "A very interesting " + FormatterHelper.getOrdinal(i) + " MP4 on " + language, MP4_URLS.get(mp4UrlIndex++), MultimediaType.VIDEO));
+                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-3", "A very interesting " + FormatterHelper.getOrdinal(i) + " DOCX on " + language, DOCX_URLS.get(docxUrlIndex++), MultimediaType.DOCUMENT));
+                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-4", "A very interesting " + FormatterHelper.getOrdinal(i) + " ZIP on " + language, ZIP_URLS.get(zipUrlIndex++), MultimediaType.ZIP));
+                    multimedias.add(new Multimedia(level + " " + language + " Multimedia #" + i + "-5", "A very interesting " + FormatterHelper.getOrdinal(i) + " PNG on " + language, PNG_URLS.get(pngUrlIndex++), MultimediaType.IMAGE));
 
                     if (pdfUrlIndex == PDF_URLS.size())
                     {
@@ -1409,10 +1409,10 @@ public class DatabaseConfig
 
     private LocalDateTime getNextDateTime(int minMonthsBefore, int maxMonthsBefore)
     {
-        int days = RandomGeneratorUtil.getRandomInteger(0, 30);
-        int hours = RandomGeneratorUtil.getRandomInteger(0, 24);
-        int minutes = RandomGeneratorUtil.getRandomInteger(0, 60);
-        int seconds = RandomGeneratorUtil.getRandomInteger(0, 60);
+        int days = RandomGeneratorHelper.getRandomInteger(0, 30);
+        int hours = RandomGeneratorHelper.getRandomInteger(0, 24);
+        int minutes = RandomGeneratorHelper.getRandomInteger(0, 60);
+        int seconds = RandomGeneratorHelper.getRandomInteger(0, 60);
 
         COURSE_REFERENCE_DATE = COURSE_REFERENCE_DATE.plusDays(days);
         COURSE_REFERENCE_DATE = COURSE_REFERENCE_DATE.plusHours(hours);

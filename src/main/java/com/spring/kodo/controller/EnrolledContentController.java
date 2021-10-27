@@ -2,11 +2,9 @@ package com.spring.kodo.controller;
 
 import com.spring.kodo.entity.Account;
 import com.spring.kodo.entity.EnrolledContent;
-import com.spring.kodo.restentity.request.CompleteMultimediaReq;
+import com.spring.kodo.entity.rest.request.CompleteMultimediaReq;
 import com.spring.kodo.service.inter.AccountService;
-import com.spring.kodo.service.inter.CourseService;
 import com.spring.kodo.service.inter.EnrolledContentService;
-import com.spring.kodo.service.inter.EnrolledLessonService;
 import com.spring.kodo.util.exception.AccountNotFoundException;
 import com.spring.kodo.util.exception.EnrolledContentNotFoundException;
 import com.spring.kodo.util.exception.EnrolledCourseNotFoundException;

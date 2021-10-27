@@ -1,9 +1,8 @@
 package com.spring.kodo.repository;
 
 import com.spring.kodo.entity.EnrolledCourse;
-import com.spring.kodo.entity.EnrolledLesson;
-import com.spring.kodo.restentity.response.EnrolledCourseWithStudentResp;
-import com.spring.kodo.restentity.response.EnrolledCourseWithStudentCompletion;
+import com.spring.kodo.entity.rest.response.EnrolledCourseWithStudentResp;
+import com.spring.kodo.entity.rest.response.EnrolledCourseWithStudentCompletion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

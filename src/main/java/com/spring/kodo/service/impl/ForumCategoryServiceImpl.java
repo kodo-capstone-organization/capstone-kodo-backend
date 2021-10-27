@@ -2,13 +2,12 @@ package com.spring.kodo.service.impl;
 
 import com.spring.kodo.entity.Course;
 import com.spring.kodo.entity.ForumCategory;
-import com.spring.kodo.entity.ForumPost;
 import com.spring.kodo.entity.ForumThread;
 import com.spring.kodo.repository.ForumCategoryRepository;
 import com.spring.kodo.service.inter.CourseService;
 import com.spring.kodo.service.inter.ForumCategoryService;
 import com.spring.kodo.service.inter.ForumThreadService;
-import com.spring.kodo.util.FormatterUtil;
+import com.spring.kodo.util.helper.FormatterHelper;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -58,7 +57,7 @@ public class ForumCategoryServiceImpl implements ForumCategoryService
             }
             else
             {
-                throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                throw new InputDataValidationException(FormatterHelper.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
         }
         catch (DataAccessException ex)
@@ -157,7 +156,7 @@ public class ForumCategoryServiceImpl implements ForumCategoryService
             }
             else
             {
-                throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                throw new InputDataValidationException(FormatterHelper.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
         }
         else

@@ -5,13 +5,13 @@ import com.spring.kodo.entity.Course;
 import com.spring.kodo.entity.EnrolledCourse;
 import com.spring.kodo.entity.EnrolledLesson;
 import com.spring.kodo.repository.EnrolledCourseRepository;
-import com.spring.kodo.restentity.response.EnrolledCourseWithStudentResp;
-import com.spring.kodo.restentity.response.EnrolledCourseWithStudentCompletion;
+import com.spring.kodo.entity.rest.response.EnrolledCourseWithStudentResp;
+import com.spring.kodo.entity.rest.response.EnrolledCourseWithStudentCompletion;
 import com.spring.kodo.service.inter.AccountService;
 import com.spring.kodo.service.inter.CourseService;
 import com.spring.kodo.service.inter.EnrolledCourseService;
 import com.spring.kodo.service.inter.EnrolledLessonService;
-import com.spring.kodo.util.FormatterUtil;
+import com.spring.kodo.util.helper.FormatterHelper;
 import com.spring.kodo.util.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -92,7 +92,7 @@ public class EnrolledCourseServiceImpl implements EnrolledCourseService
             }
             else
             {
-                throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+                throw new InputDataValidationException(FormatterHelper.prepareInputDataValidationErrorsMessage(constraintViolations));
             }
         }
         catch (DataAccessException ex)
@@ -244,7 +244,7 @@ public class EnrolledCourseServiceImpl implements EnrolledCourseService
         }
         else
         {
-            throw new InputDataValidationException(FormatterUtil.prepareInputDataValidationErrorsMessage(constraintViolations));
+            throw new InputDataValidationException(FormatterHelper.prepareInputDataValidationErrorsMessage(constraintViolations));
         }
     }
 
