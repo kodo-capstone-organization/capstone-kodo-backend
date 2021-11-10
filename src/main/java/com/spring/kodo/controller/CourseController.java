@@ -512,7 +512,7 @@ public class CourseController
                     course.getBannerUrl(),
                     course.getDateTimeOfCreation(),
                     course.getCourseTags(),
-                    tutor,
+                    tutor.getName(),
                     course.getBannerPictureFilename(),
                     course.getIsEnrollmentActive(),
                     rating,

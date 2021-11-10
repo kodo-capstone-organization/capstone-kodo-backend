@@ -16,14 +16,14 @@ public class CourseResp
     private String bannerUrl;
     private LocalDateTime dateTimeOfCreation;
     private List<Tag> courseTags;
-    private Account tutor;
+    private String tutorName;
     private String bannerPictureFileName;
     private Boolean isEnrollmentActive;
     private Boolean isReviewRequested;
     private Double courseRating;
     private Integer enrollmentLength;
 
-    public CourseResp(Long courseId, String name, String description, BigDecimal price, String bannerUrl, LocalDateTime dateTimeOfCreation, List<Tag> courseTags, Account tutor, String bannerPictureFileName, Boolean isEnrollmentActive, Double courseRating, Integer enrollmentLength, Boolean isReviewRequested) {
+    public CourseResp(Long courseId, String name, String description, BigDecimal price, String bannerUrl, LocalDateTime dateTimeOfCreation, List<Tag> courseTags, String tutorName, String bannerPictureFileName, Boolean isEnrollmentActive, Double courseRating, Integer enrollmentLength, Boolean isReviewRequested) {
         this.courseId = courseId;
         this.name = name;
         this.description = description;
@@ -31,7 +31,7 @@ public class CourseResp
         this.bannerUrl = bannerUrl;
         this.dateTimeOfCreation = dateTimeOfCreation;
         this.courseTags = courseTags;
-        this.tutor = tutor;
+        this.tutorName = tutorName;
         this.bannerPictureFileName = bannerPictureFileName;
         this.isEnrollmentActive = isEnrollmentActive;
         this.courseRating = courseRating;
@@ -111,12 +111,12 @@ public class CourseResp
         this.courseTags = courseTags;
     }
 
-    public Account getTutor() {
-        return tutor;
+    public String getTutorName() {
+        return tutorName;
     }
 
-    public void setTutor(Account tutor) {
-        this.tutor = tutor;
+    public void setTutor(String tutorName) {
+        this.tutorName = tutorName;
     }
 
     public String getBannerPictureFileName() {
@@ -161,7 +161,7 @@ public class CourseResp
                 ", bannerUrl='" + bannerUrl + '\'' +
                 ", dateTimeOfCreation=" + dateTimeOfCreation +
                 ", courseTags=" + courseTags +
-                ", tutor=" + tutor +
+                ", tutorName=" + tutorName +
                 ", bannerPictureFileName='" + bannerPictureFileName + '\'' +
                 ", isEnrollmentActive=" + isEnrollmentActive +
                 ", isReviewRequested=" + isReviewRequested +
